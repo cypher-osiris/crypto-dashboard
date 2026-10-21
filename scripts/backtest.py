@@ -6,7 +6,7 @@ Backtest the dashboard's signal system (same indicator math and composite score 
   python3 scripts/backtest.py --refresh  # ignore the candle cache
 
 History (free, no keys): Coinbase Exchange 1h (365 days, paginated 300/request; 4h built from 1h) and 1d (~730 days)
-for BTC/XRP/XLM/HBAR/AXL; Kraken OHLC for ZBCN (720 bars per interval: 1h ~30 days, 4h ~120 days, 1d ~2 years).
+for coins with a Coinbase pair in data/coins.json; Kraken OHLC for Kraken pairs (ZBCN) (720 bars per interval: 1h ~30 days, 4h ~120 days, 1d ~2 years).
 
 No lookahead: every indicator value at bar i uses only candles <= i (causal recursions, verified against
 signals.analyze()); signals act at the CLOSE of bar i, entries fill at the OPEN of bar i+1; the composite at a 4h close

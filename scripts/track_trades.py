@@ -42,10 +42,12 @@ DATA = os.path.join(ROOT, "data")
 LOCK = os.path.join(ROOT, "state", "lock")
 CENTRAL = ZoneInfo("America/Chicago")
 UA = {"User-Agent": "crypto-dashboard-tracker/1.0", "Accept": "application/json"}
-SOURCES = {
-    "bitcoin": ("coinbase", "BTC-USD"), "ripple": ("coinbase", "XRP-USD"), "stellar": ("coinbase", "XLM-USD"),
-    "hedera-hashgraph": ("coinbase", "HBAR-USD"), "axelar": ("coinbase", "AXL-USD"), "zebec-network": ("kraken", "ZBCNUSD"),
-}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import coins as coincfg  # noqa: E402  (coin list: data/coins.json)
+_CFG = coincfg.coins()
+SOURCES = {c["id"]: coincfg.source(c) for c in _CFG}
+SYMBOLS = {c["id"]: c["symbol"] for c in _CFG}
+SLATE_MAX = coincfg.slate_max()
 LOG_MAX = 500
 
 
@@ -268,8 +270,8 @@ def compute_stats(trades):
     for t in active:
         per.setdefault(t["coin"], []).append(t["id"])
     warn += [f"{c}: {len(v)} active ideas ({', '.join(v)}) - max 1 per coin" for c, v in per.items() if len(v) > 1]
-    if len(active) > 5:
-        warn.append(f"{len(active)} active ideas - max 5")
+    if len(active) > SLATE_MAX:
+        warn.append(f"{len(active)} active ideas - max {SLATE_MAX}")
     return {
         "total": len(trades), "open": sum(1 for t in trades if t["status"] == "open"),
         "pending": sum(1 for t in trades if t["status"] == "pending"), "closed": len(closed), "won": wins,
@@ -317,7 +319,7 @@ def run(lock_held=False, log_events=True):
             else:
                 fetched[c] = res
     events = []
-    sym = {"bitcoin": "BTC", "ripple": "XRP", "stellar": "XLM", "hedera-hashgraph": "HBAR", "axelar": "AXL", "zebec-network": "ZBCN"}
+    sym = SYMBOLS
     for t in active:
         if t["coin"] not in fetched:
             continue

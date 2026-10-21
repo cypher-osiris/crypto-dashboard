@@ -28,16 +28,11 @@ DATA = os.path.join(ROOT, "data")
 API = "https://api.coingecko.com/api/v3"
 CENTRAL = ZoneInfo("America/Chicago")
 
-# CoinGecko IDs verified 2026-10-21 via /search and /coins/markets.
-# NOTE: AXL is "axelar" (NOT "axelar-network", which resolves to an unrelated ~$1 asset).
-COINS = [
-    {"id": "hedera-hashgraph", "symbol": "HBAR", "name": "Hedera"},
-    {"id": "stellar", "symbol": "XLM", "name": "Stellar"},
-    {"id": "ripple", "symbol": "XRP", "name": "XRP"},
-    {"id": "zebec-network", "symbol": "ZBCN", "name": "Zebec Network"},
-    {"id": "axelar", "symbol": "AXL", "name": "Axelar"},
-]
-BACKDROP = {"id": "bitcoin", "symbol": "BTC", "name": "Bitcoin"}
+# Coin list lives in data/coins.json (CoinGecko ids verified 2026-10-21; AXL is "axelar", NOT "axelar-network").
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import coins as coincfg  # noqa: E402
+COINS = [{"id": c["id"], "symbol": c["symbol"], "name": c["name"], "group": c.get("group")} for c in coincfg.coins()]
+BACKDROP_ID = coincfg.backdrop()
 SLEEP_BETWEEN = 2.5  # seconds between calls; free tier allows ~5-30 calls/min
 LOG_MAX = 500
 
@@ -78,11 +73,14 @@ def load(name, default):
         return json.load(f)
 
 
-def save(name, obj):
+def save(name, obj, compact=False):
     p = os.path.join(DATA, name)
     tmp = p + ".tmp"
     with open(tmp, "w") as f:
-        json.dump(obj, f, indent=2)
+        if compact:  # prices.json: 12 coins x 30 days of history -> keep it small for page load
+            json.dump(obj, f, separators=(",", ":"))
+        else:
+            json.dump(obj, f, indent=2)
         f.write("\n")
     os.replace(tmp, p)
 
@@ -108,7 +106,7 @@ def sig(x):
 
 # ---------------------------------------------------------------- fetching
 def fetch_prices():
-    all_coins = COINS + [BACKDROP]
+    all_coins = COINS + ([] if any(c["id"] == BACKDROP_ID for c in COINS) else [{"id": BACKDROP_ID, "symbol": "BTC", "name": "Bitcoin", "group": None}])
     ids = ",".join(c["id"] for c in all_coins)
     print("Fetching quotes ...")
     markets = get("/coins/markets", {
@@ -127,7 +125,7 @@ def fetch_prices():
         h = get(f"/coins/{c['id']}/market_chart", {"vs_currency": "usd", "days": 30})
         m = by_id[c["id"]]
         out[c["id"]] = {
-            "id": c["id"], "symbol": c["symbol"], "name": c["name"],
+            "id": c["id"], "symbol": c["symbol"], "name": c["name"], "group": c.get("group"),
             "price": m["current_price"],
             "change_24h": m.get("price_change_percentage_24h_in_currency"),
             "change_7d": m.get("price_change_percentage_7d_in_currency"),
@@ -145,8 +143,9 @@ def fetch_prices():
         "updated_utc": now.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "updated_central": now.astimezone(CENTRAL).strftime("%Y-%m-%d %I:%M %p %Z"),
         "source": "CoinGecko public API (coins/markets + coins/{id}/market_chart?days=30)",
-        "backdrop": BACKDROP["id"],
+        "backdrop": BACKDROP_ID,
         "coins": [c["id"] for c in COINS],
+        "groups": [dict(g, coins=[c["id"] for c in COINS if c.get("group") == g["id"]]) for g in coincfg.config().get("groups", [])],
         "assets": out,
     }
 
@@ -168,7 +167,7 @@ def main():
             sys.exit("no data/prices.json to reuse")
     else:
         prices = fetch_prices()
-        save("prices.json", prices)
+        save("prices.json", prices, compact=True)
         print("Wrote data/prices.json")
 
     with track_trades.file_lock():
@@ -183,7 +182,7 @@ def main():
         log = load("log.json", {"entries": []})
         quotes = ", ".join(
             f"{prices['assets'][i]['symbol']} {prices['assets'][i]['price']:.6g} ({prices['assets'][i]['change_24h'] or 0:+.1f}%)"
-            for i in [prices["backdrop"]] + prices["coins"])
+            for i in dict.fromkeys([prices["backdrop"]] + prices["coins"]))
         s = tdoc["stats"]
         msg = (f"Re-evaluated trades on existing data (no fetch); prices as of {prices['updated_central']}: {quotes}." if args.no_fetch
                else f"Prices refreshed: {quotes}.")
