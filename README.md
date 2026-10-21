@@ -245,6 +245,17 @@ whose coin has a pair (for XDC and ZBCN, not on Coinbase, it replaces the missin
 button in the calculator. Never on short ideas, never leverage wording (US Kraken users get spot). Non-US visitors: only if
 `kraken_non_us` is `true` (default `false`: Kraken only credits referrals from the referrer's own country, or within the EEA).
 Empty `kraken_url` ⇒ no Kraken UI. Don't post the Kraken link on X.
+**Uphold (spot only; added Oct 21, 2026).** `uphold_url` = the site's referral link, used exactly
+as given (`wallet.uphold.com/signup?referral=REDACTED&campaign=uw_p_d_w_acq_raf&utm_source=raf&utm_medium=referafriend`;
+loads 200 with "You've been invited to try Uphold!", but the page shows that for any `referral=` value, so it can't confirm
+the code). `uphold_assets` maps coin id → Uphold code from `https://api.uphold.com/v0/assets` (paginated: send
+`Range: items=0-149` then `items=150-299`); all 13 site coins are listed (status open, buy). Placement: "Buy <SYM> on Uphold"
+(`uphold_label`, `{SYM}` placeholder) only on active **long** cards for coins with **no Coinbase product** (XDC, ZBCN), so cards stay at
+two exchange buttons; coins in `uphold_first` (XDC) show Uphold first, then Kraken; ZBCN shows Kraken first. Not in the
+calculator or header. Shown when the country is exactly `US` (or a US time zone), not US territories (Uphold doesn't serve USVI/UM and
+opens no new accounts in PR/GU/AS/MP). Non-US: only if `uphold_non_us` is `true` (default `false`: the referral program pays
+only in the US excluding NY plus some Latin-American countries, not Europe/UK; uphold.com/legal/uphold-referral-program-terms).
+Don't post the Uphold link on X.
 X posts (`make_post.py`) can't be geo-gated: keep Bitunix links out of posts aimed at a US audience.
 
 When `bitunix_url` is a non-empty `https://` URL the site shows a "Trade this setup on Bitunix" button on every
@@ -313,7 +324,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-17`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-18`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
