@@ -1,6 +1,48 @@
 {
   "entries": [
     {
+      "t": "2026-10-21T23:42:53Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84232 (+1.6%), HBAR 0.084019 (-0.2%), XLM 0.183704 (+0.9%), XRP 1.36 (+2.3%), ZBCN 0.00228531 (+7.2%), AXL 0.053756 (+0.9%), XDC 0.034852 (+8.2%), ETH 2474.56 (+1.2%), SOL 106.9 (+0.5%), DOGE 0.081848 (+0.2%), ADA 0.225319 (+0.7%), LINK 12.49 (+1.4%), SUI 1.028 (-0.1%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T23:38:37Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84263 (+1.7%), HBAR 0.084062 (-0.2%), XLM 0.183864 (+1.0%), XRP 1.37 (+2.4%), ZBCN 0.0022827 (+6.8%), AXL 0.053843 (+1.1%), XDC 0.0348501 (+8.2%), ETH 2476.33 (+1.3%), SOL 107 (+0.6%), DOGE 0.081888 (+0.2%), ADA 0.225537 (+0.8%), LINK 12.51 (+1.6%), SUI 1.029 (+0.0%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T23:35:11Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84264 (+1.7%), HBAR 0.084101 (-0.3%), XLM 0.183886 (+0.9%), XRP 1.36 (+2.3%), ZBCN 0.00228188 (+6.6%), AXL 0.053753 (+1.1%), XDC 0.034853 (+8.2%), ETH 2476.13 (+1.2%), SOL 107.01 (+0.6%), DOGE 0.081852 (+0.0%), ADA 0.22555 (+0.8%), LINK 12.51 (+1.5%), SUI 1.029 (-0.1%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T23:34:43Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84264 (+1.7%), HBAR 0.084101 (-0.3%), XLM 0.183886 (+0.9%), XRP 1.36 (+2.3%), ZBCN 0.00228188 (+6.6%), AXL 0.053753 (+1.1%), XDC 0.034853 (+8.2%), ETH 2476.13 (+1.2%), SOL 107.01 (+0.6%), DOGE 0.081852 (+0.0%), ADA 0.22555 (+0.8%), LINK 12.51 (+1.5%), SUI 1.029 (-0.1%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T23:31:45Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84259 (+1.7%), HBAR 0.084026 (-0.3%), XLM 0.183903 (+0.9%), XRP 1.37 (+2.3%), ZBCN 0.00228516 (+6.7%), AXL 0.053936 (+1.2%), XDC 0.034848 (+8.2%), ETH 2473.89 (+1.2%), SOL 106.94 (+0.5%), DOGE 0.081821 (+0.1%), ADA 0.225444 (+0.8%), LINK 12.5 (+1.5%), SUI 1.029 (-0.0%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T23:23:55Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84336 (+1.8%), HBAR 0.08432 (+0.0%), XLM 0.184204 (+1.1%), XRP 1.37 (+2.6%), ZBCN 0.00228398 (+7.2%), AXL 0.054075 (+1.8%), XDC 0.0348577 (+8.1%), ETH 2478.81 (+1.4%), SOL 107.15 (+0.7%), DOGE 0.082032 (+0.4%), ADA 0.22604 (+1.2%), LINK 12.55 (+2.0%), SUI 1.033 (+0.3%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T23:23:36Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84336 (+1.8%), HBAR 0.08432 (+0.0%), XLM 0.184204 (+1.1%), XRP 1.37 (+2.6%), ZBCN 0.00228398 (+7.2%), AXL 0.054075 (+1.8%), XDC 0.0348577 (+8.1%), ETH 2478.81 (+1.4%), SOL 107.15 (+0.7%), DOGE 0.082032 (+0.4%), ADA 0.22604 (+1.2%), LINK 12.55 (+2.0%), SUI 1.033 (+0.3%). Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-21T23:06:14Z",
       "kind": "analysis",
       "author": "Lumi (evening update)",
@@ -10,13 +52,13 @@
       "t": "2026-10-21T23:04:05Z",
       "kind": "auto",
       "author": "update_prices.py",
-      "text": "Prices refreshed: BTC 84423 (+1.8%), HBAR 0.084558 (+0.5%), XLM 0.184217 (+1.1%), XRP 1.37 (+2.7%), ZBCN 0.00228334 (+7.6%), AXL 0.054249 (+2.3%), XDC 0.0348291 (+8.0%), ETH 2483.57 (+1.3%), SOL 107.43 (+0.8%), DOGE 0.082239 (+0.5%), ADA 0.226534 (+1.3%), LINK 12.57 (+2.2%), SUI 1.033 (+0.4%). Trades: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347–0.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706. Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
+      "text": "Prices refreshed: BTC 84423 (+1.8%), HBAR 0.084558 (+0.5%), XLM 0.184217 (+1.1%), XRP 1.37 (+2.7%), ZBCN 0.00228334 (+7.6%), AXL 0.054249 (+2.3%), XDC 0.0348291 (+8.0%), ETH 2483.57 (+1.3%), SOL 107.43 (+0.8%), DOGE 0.082239 (+0.5%), ADA 0.226534 (+1.3%), LINK 12.57 (+2.2%), SUI 1.033 (+0.4%). Trades: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347\u20130.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368\u20131.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706. Open trades: 3; pending: 2; closed: 1; win rate: 0.0%."
     },
     {
       "t": "2026-10-21T23:04:05.905000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347–0.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706."
+      "text": "Trade events: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347\u20130.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368\u20131.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706."
     },
     {
       "t": "2026-10-21T21:36:39Z",
@@ -40,7 +82,7 @@
       "t": "2026-10-21T20:23:17.907000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T002 XRP: missed-it plan ARMED (price past the missed-it limit 1.365); watching: Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368; T004 ZBCN: missed-it plan void (main idea filled)."
+      "text": "Trade events: T002 XRP: missed-it plan ARMED (price past the missed-it limit 1.365); watching: Retest of 1.368\u20131.375 holds: a 1h candle trades into the zone and closes at or above 1.368; T004 ZBCN: missed-it plan void (main idea filled)."
     },
     {
       "t": "2026-10-21T19:58:04Z",
@@ -52,7 +94,7 @@
       "t": "2026-10-21T19:29:06.748000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T004 ZBCN long 3x FILLED at 0.00234 (zone 0.0023–0.00234)."
+      "text": "Trade events: T004 ZBCN long 3x FILLED at 0.00234 (zone 0.0023\u20130.00234)."
     },
     {
       "t": "2026-10-21T18:31:28Z",
@@ -76,7 +118,7 @@
       "t": "2026-10-21T17:15:00Z",
       "kind": "analysis",
       "author": "Lumi (noon update)",
-      "text": "Noon update: prices, signals and market context refreshed (BTC ~$84.4K, Fear & Greed 63). No fills, targets or stops: T002 XRP long (bid 1.345–1.355), T003 XLM short (0.1895–0.1915) and T004 ZBCN long (0.0023–0.00234) all still pending and valid; HBAR and AXL stay 'no setup'. Added XRPL Oct 23 amendment, ledger-slowdown and derivatives-OI notes with sources."
+      "text": "Noon update: prices, signals and market context refreshed (BTC ~$84.4K, Fear & Greed 63). No fills, targets or stops: T002 XRP long (bid 1.345\u20131.355), T003 XLM short (0.1895\u20130.1915) and T004 ZBCN long (0.0023\u20130.00234) all still pending and valid; HBAR and AXL stay 'no setup'. Added XRPL Oct 23 amendment, ledger-slowdown and derivatives-OI notes with sources."
     },
     {
       "t": "2026-10-21T17:08:18Z",
@@ -94,13 +136,13 @@
       "t": "2026-10-21T16:55:00Z",
       "kind": "analysis",
       "author": "Grok Bot",
-      "text": "Paper-trade leverage lowered from 5x to 3x going forward. T001 stays as recorded (5x, stopped, −18.8%). T002 (pending XRP limit long at 1.35) converted to 3x: stop −10.0%, T1 +15.6%, T2 +26.7% on margin. Added live browser prices, signals, market context, track record and a position calculator."
+      "text": "Paper-trade leverage lowered from 5x to 3x going forward. T001 stays as recorded (5x, stopped, \u221218.8%). T002 (pending XRP limit long at 1.35) converted to 3x: stop \u221210.0%, T1 +15.6%, T2 +26.7% on margin. Added live browser prices, signals, market context, track record and a position calculator."
     },
     {
       "t": "2026-10-21T16:06:00Z",
       "kind": "analysis",
       "author": "Initial seed (Grok Bot setup)",
-      "text": "Dashboard created. Fixed AXL CoinGecko id (it is 'axelar'; 'axelar-network' resolves to an unrelated ~$1 asset). Seed XRP long (entry 1.33 / stop 1.28 / targets 1.40, 1.42, opened Oct 16) evaluated against hourly history: STOPPED on Oct 18 when XRP traded to ≈1.26 (−18.8% at 5x) — it never reached 1.40 before or after. New idea T002: XRP 5x long limit at 1.35, stop 1.305, targets 1.42 / 1.47, valid 48h. Seeded commentary, levels and 7-day projections for BTC and all five coins."
+      "text": "Dashboard created. Fixed AXL CoinGecko id (it is 'axelar'; 'axelar-network' resolves to an unrelated ~$1 asset). Seed XRP long (entry 1.33 / stop 1.28 / targets 1.40, 1.42, opened Oct 16) evaluated against hourly history: STOPPED on Oct 18 when XRP traded to \u22481.26 (\u221218.8% at 5x) \u2014 it never reached 1.40 before or after. New idea T002: XRP 5x long limit at 1.35, stop 1.305, targets 1.42 / 1.47, valid 48h. Seeded commentary, levels and 7-day projections for BTC and all five coins."
     },
     {
       "t": "2026-10-21T16:01:23Z",

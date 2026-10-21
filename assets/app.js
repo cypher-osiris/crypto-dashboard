@@ -58,6 +58,9 @@
   // fallback colors; data/coins.json "colors" override/extend these at load time
   const COIN_COLORS = { HBAR: ["#3a3a3a", "#0b0b0b"], XLM: ["#5b6cff", "#1b1f4a"], XRP: ["#2d3748", "#0a0f17"], ZBCN: ["#06b6d4", "#0e3a52"], AXL: ["#6366f1", "#111827"], BTC: ["#f7931a", "#7a3e00"] };
   const uniq = (a) => [...new Set(a)];
+  // coin id -> static coin page (links generated into #coin-pages by scripts/build_pages.py)
+  const pageOf = (id) => { const a = document.querySelector(`#coin-pages a[data-coin="${id}"]`); return a ? a.getAttribute("href") : ""; };
+  const pageLink = (id, sym, txt) => { const h = pageOf(id); return h ? `<a class="cp-link" href="${esc(h)}">${esc(txt || `${sym} analysis, levels & how to buy`)} →</a>` : ""; };
   // groups: [{id,label,coins:[ids]}] from prices.json (written from data/coins.json) or coins.json; fallback one group
   function groupsOf(prices) {
     const cfg = Dash.state.coincfg;
@@ -220,7 +223,7 @@
           <div class="coin-id">
             <div class="coin-mark" style="--c1:${c1 || "#334155"};--c2:${c2 || "#0f172a"}">${esc(a.symbol)}</div>
             <div><h4 class="name">${esc(a.symbol)}<small>${esc(a.name)}${a.market_cap_rank ? " · rank #" + a.market_cap_rank : ""}</small></h4>
-              ${an.bias ? `<div class="bias">${esc(an.bias)}</div>` : ""}</div>
+              ${an.bias ? `<div class="bias">${esc(an.bias)}</div>` : ""}${pageLink(id, a.symbol, `Full ${a.symbol} analysis`)}</div>
           </div>
           <div class="coin-right">
             ${spark(a.history)}
@@ -411,6 +414,7 @@
       ${closed ? "" : missedBlock(t, a.price)}
       ${t.leverage_note ? `<p class="meta">${esc(t.leverage_note)}</p>` : ""}
       <details class="why"><summary>Reasoning</summary><p>${esc(t.reasoning || "")}</p></details>
+      ${pageLink(id, a.symbol)}
     </article>`;
   }
 
@@ -449,7 +453,7 @@
     $("slate-grid").innerHTML = `<div class="slate-grid-cards">${shown.map((s) => slateCard(prices, s)).join("") || '<p class="meta">No active ideas right now.</p>'}</div>` +
       (none.length ? `<div class="slate-none"><h3 class="sub-h">No setup right now <small class="muted">(tap for why)</small></h3><div class="slate-none-list">${none.map((s) => {
         const a = prices.assets[s.id];
-        return `<details class="none-item"><summary><b>${esc(a.symbol)}</b> <span class="mono" data-lp="${s.id}">${fmtPrice(a.price)}</span> <span data-lc="${s.id}">${chip(a.change_24h)}</span></summary><p>${esc(s.note || "No setup right now.")}</p></details>`;
+        return `<details class="none-item"><summary><b>${esc(a.symbol)}</b> <span class="mono" data-lp="${s.id}">${fmtPrice(a.price)}</span> <span data-lc="${s.id}">${chip(a.change_24h)}</span></summary><p>${esc(s.note || "No setup right now.")} ${pageLink(s.id, a.symbol, `${a.symbol} levels & how to buy`)}</p></details>`;
       }).join("")}</div></div>` : "");
     shown.forEach((s) => updateSlateLive(s.id, prices.assets[s.id].price));
 

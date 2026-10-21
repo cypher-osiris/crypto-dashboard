@@ -35,6 +35,7 @@ scripts/make_brand.py      logo mark (assets/brand/logo.png), favicons/favicon.i
 scripts/coins.py           loader for data/coins.json used by every script
 scripts/backtest.py        backtest of the signals.py indicators/composite -> data/backtest.json (~20 s first run)
 scripts/signals.py         RSI/MACD/EMA/Bollinger/StochRSI/volume signals -> data/signals.json + JSON on stdout (~1 s, no args)
+scripts/build_pages.py     static SEO coin pages (/xdc/ /xrp/ /xlm/ /hbar/ /axl/ /zbcn/ /btc/ /eth/ /sol/) + sitemap.xml from data/*.json (publish.sh runs it)
 scripts/context.py         total mcap, BTC dominance, Fear & Greed, OKX BTC funding/OI -> data/context.json
 ```
 
@@ -103,6 +104,8 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
 4. Prepend an `{"t": ISO-UTC, "kind":"analysis", "author":"...", "text":"..."}` entry to `data/log.json`.
 5. Refresh the social card: `python3 scripts/make_og.py` (rewrites `assets/og.png` from the current slate, ~1 s).
 6. Publish: `PUBLISH_MSG="Evening update" scripts/publish.sh data index.html assets/og.png` (or the manual git steps below).
+   Because a `data` path is published, publish.sh first runs `scripts/build_pages.py` and commits the regenerated coin pages
+   and sitemap.xml in the same commit (see "Coin pages" below). If you publish by hand with git, run `python3 scripts/build_pages.py` first.
 
 ## Live data in the browser
 Prices stream straight from exchanges to the visitor (nothing to run): Coinbase Exchange websocket `ticker` for
@@ -213,8 +216,12 @@ information coefficient per component, first 70% in-sample / last 30% out-of-sam
 ```
 **Hardware-wallet pick (NOT geo-gated).** "Keep your crypto safe" section under the position calculator (`#wallet-pick`),
 shown to every visitor: short self-custody copy, "Lumi's pick: D'CENT Biometric Wallet" button (`dcent_url`/`dcent_label`)
-and the same "Affiliate link · disclosure" tag (it also reveals the footer disclosure). `ledger_url` is a placeholder:
-while empty the Ledger button is hidden; fill it in to show Ledger as a second option. Empty `dcent_url` ⇒ section hidden.
+and the same "Affiliate link · disclosure" tag (it also reveals the footer disclosure). `ledger_url` = Bobby's Ledger referral
+link (`https://shop.ledger.com/pages/referral-program?referral_code=GR4WE2W9HKCA1`, set Oct 21, 2026; loads 200, and Ledger's page
+says "Receive up to $20 worth of Bitcoin when you purchase your Ledger device", $5-$20 by model). When set it shows: "Or choose
+Ledger" in this section, the footer line "Holding long term? Self-custody with Ledger" (`#aff-ledger-foot`), and a
+"Get a Ledger" button (`ledger_page_label`) in every coin page's self-custody section; all visitors, no geo gate, with
+`ledger_note` as the disclosure (keep it in line with Ledger's page if their offer changes). Empty ⇒ all hidden. Never mention D'CENT's card product. Empty `dcent_url` ⇒ section hidden.
 **Geo-gated (assets/affiliate.js).** Bitunix bans US users, so Bitunix links are shown only to visitors confirmed
 NON-US. US visitors (incl. PR/GU/VI/AS/MP/UM) get Coinbase in the same places instead: "Trade on Coinbase Advanced"
 (`coinbase_advanced_url`) as the header button, calculator button and per-trade button (neutral wording, no "setup"/leverage
@@ -232,7 +239,8 @@ not a trade screen, and an existing member (including the referrer, who can't us
 On Android with the Coinbase app installed, the link may open the app instead. So each per-trade Coinbase button carries a note
 ("Referral sign-up link (new Coinbase accounts). Already have one? Sign in at Coinbase Advanced and open XRP-USD."), and
 **coins with no `coinbase` product (ZBCN, XDC) get no Coinbase trade button**, only "<SYM> isn't listed on Coinbase…".
-The slate card exposes `data-sym`, `data-lev` and `data-cb` for this. Bitunix always uses the general referral link. Spot ideas
+The slate card exposes `data-sym`, `data-lev` and `data-cb` for this. Bitunix always uses the general referral link. Per-trade Bitunix buttons read
+"Copy this paper trade on Bitunix" (since Oct 21, 2026). Spot ideas
 (`data-lev="1"`) are labelled "Buy <SYM> spot on Bitunix" (XDC: Bitunix lists XDC/USDT spot, no XDC perpetual).
 **Kraken (secondary, spot only; added Oct 21, 2026).** `kraken_url` = `https://www.kraken.com/sign-up?inviteCode=hs33dp3f`
 (Kraken's own share links land on `www.kraken.com/sign-up?...&inviteCode=<code>`; checked in headless Chrome: the sign-up form
@@ -281,6 +289,28 @@ focal coin (big symbol and price, a 7-day line, the zone, stop and T1) or `--foc
 It needs matplotlib, plus fontTools for the bold weights, which are cached in `state/fonts`. Nothing is ever posted
 automatically.
 
+## Coin pages (scripts/build_pages.py): /xdc/ /xrp/ /xlm/ /hbar/ /axl/ /zbcn/ /btc/ /eth/ /sol/
+Static, crawlable pages, one per coin in `PAGES` (watchlist + BTC/ETH/SOL; DOGE/ADA/LINK/SUI have too little hand-written
+analysis for a non-thin page yet: add them to `PAGES` once they get full reviews). Generated from that coin's own data only:
+H1 "<SYM> Price Analysis & Levels to Watch, updated <analysis as_of date>", price/24h/7d/30d/range/mcap (prices.json), a static
+30-day SVG chart with support/resistance and the active entry zone, levels + bias + N-day projection + signals table (1h/4h/1d),
+Lumi's full commentary + sources (analysis.json), the slate idea with stop/targets and the "if you missed the entry" plan,
+past ideas (trades.json), catalysts, a "How to buy <SYM>" section (US / outside-US venue facts from coins.json + config.json
+`kraken_pairs`/`uphold_assets`; Bitunix spot/perp list `BITUNIX_PERP` in the script, checked Oct 21 2026), self-custody (+ Ledger),
+a 4-5 question FAQ (same text in FAQPage JSON-LD), links to the other coin pages and the dashboard. Head: unique title,
+description, canonical `https://lumitrades.io/<slug>/`, OG/Twitter tags, JSON-LD WebPage + BreadcrumbList + FAQPage.
+Referral buttons are not in the HTML: `assets/affiliate.js` fills `#aff-coin` for the visitor's region (US: Coinbase join link
+where listed, Kraken, Uphold, max 3, Uphold first for `uphold_first`; non-US: Bitunix spot) and `#aff-ledger` (all visitors).
+Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config.json` relative to its own URL.
+- **Regeneration:** `scripts/publish.sh` runs `python3 scripts/build_pages.py --paths` (under the lock, after the pull) whenever
+  a path under `data` is published, and adds every page + `sitemap.xml` (+ `index.html` if its generated link blocks changed) to
+  the same commit. So the 3x-daily update and the 30-min job's event publishes refresh the pages automatically. `BUILD_PAGES=0`
+  skips it; a build error only warns. Manual: `python3 scripts/build_pages.py` (only rewrites files whose content changed).
+- `sitemap.xml` is generated (dashboard + every page, `lastmod` = build date, UTC). Don't hand-edit it.
+- `index.html` has two generated blocks (`<!-- coin-pages:start -->` row under the nav, `<!-- coin-pages-foot:start -->` footer
+  links); app.js reads `#coin-pages a[data-coin]` to add "<SYM> analysis, levels & how to buy →" links to slate cards, no-setup
+  items and coin cards. Pages pick up the `?v=` cache-buster from index.html at build time.
+
 ## SEO & social (index.html head, scripts/make_og.py)
 - `<title>`, meta description, `robots: index, follow`, canonical `https://lumitrades.io/`.
 - Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). `python3 scripts/make_og.py`
@@ -290,7 +320,7 @@ automatically.
   cache card images, so a new og.png can take a while to show on links that were already shared.
 - JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/trades/backtest JSON).
   If you change the description or data files, keep it in sync and validate (e.g. https://validator.schema.org/).
-- `robots.txt`, `sitemap.xml`, `site.webmanifest` at the repo root, which is now the domain root (https://lumitrades.io/robots.txt), so crawlers
+- `robots.txt`, `sitemap.xml` (generated by build_pages.py), `site.webmanifest` at the repo root, which is now the domain root (https://lumitrades.io/robots.txt), so crawlers
   read them. Submit https://lumitrades.io/sitemap.xml in Google Search Console / Bing Webmaster Tools.
 - Headings: one `h1` (Lumi Trades) → `h2` per section → `h3` coin groups/subsections → `h4` coin names; every `<canvas>` has `role="img"` + `aria-label`;
   decorative SVGs are `aria-hidden`. A static "About Lumi Trades" section gives non-JS crawlers real text.
@@ -326,7 +356,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-20`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-21`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
