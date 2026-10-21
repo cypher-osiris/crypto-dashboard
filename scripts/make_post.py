@@ -20,8 +20,8 @@ from zoneinfo import ZoneInfo
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA, POSTS = os.path.join(ROOT, "data"), os.path.join(ROOT, "posts")
 BASELINE = os.path.join(POSTS, ".last_post.json")
-SITE = "https://cypher-osiris.github.io/crypto-dashboard/"
-SITE_SHORT = "cypher-osiris.github.io/crypto-dashboard"
+SITE = "https://lumitrades.io/"
+SITE_SHORT = "lumitrades.io"
 BRAND = "Lumi Trades"
 CT = ZoneInfo("America/Chicago")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

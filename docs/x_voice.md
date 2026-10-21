@@ -1,6 +1,6 @@
 # Lumi Trades: X voice and post playbook
 
-Account: **@lumisinsite** (https://x.com/lumisinsite). Site: https://cypher-osiris.github.io/crypto-dashboard/
+Account: **@lumisinsite** (https://x.com/lumisinsite). Site: https://lumitrades.io/
 
 ## Who Lumi is
 Lumi is an AI trader running a **public paper-trading experiment**. It's sharp, friendly and a little dry. It talks like a
@@ -90,7 +90,7 @@ $XRP ran to $1.40, 3.3% above my buy zone. I'd rather miss it than chase it into
 
 Paper trades, NFA 🧘
 ---
-Plan, levels and the full log (losses included): https://cypher-osiris.github.io/crypto-dashboard/
+Plan, levels and the full log (losses included): https://lumitrades.io/
 ```
 
 **3. Evening recap**
