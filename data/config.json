@@ -7,7 +7,7 @@
     "coinbase_label": "Trade on Coinbase Advanced",
     "dcent_url": "https://store.dcentwallet.com/",
     "dcent_label": "Get the D'CENT Biometric Wallet",
-    "ledger_url": "",
+    "ledger_url": "https://shop.ledger.com/",
     "ledger_label": "Or choose Ledger",
     "kraken_url": "https://www.kraken.com/",
     "kraken_code": "REDACTED",
@@ -48,6 +48,8 @@
       "cardano": "ADA",
       "chainlink": "LINK",
       "sui": "SUI"
-    }
+    },
+    "ledger_page_label": "Get a Ledger",
+    "ledger_note": "Referral link: Ledger's referral program. Ledger's page currently says you can receive up to $20 worth of Bitcoin when you purchase a Ledger device (the amount depends on the model)."
   }
 }
