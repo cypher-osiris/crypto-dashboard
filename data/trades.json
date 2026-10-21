@@ -16,7 +16,7 @@
       "opened_at": "2026-10-16T00:00:00-05:00",
       "status": "stopped",
       "move_stop_to_be": true,
-      "reasoning": "Seed trade (owner-specified): XRP long from the 1.33 area with a stop under 1.28 and targets at 1.40 / 1.42. (Opening time assumed to be the start of Oct 16, 2026 Central since no exact time was given.)",
+      "reasoning": "Seed trade: XRP long from the 1.33 area with a stop under 1.28 and targets at 1.40 / 1.42. (Opening time assumed to be the start of Oct 16, 2026 Central since no exact time was given.)",
       "source": "seed (user-specified)",
       "targets_hit": [],
       "closed_at": "2026-10-18T15:00:00Z",
@@ -42,7 +42,7 @@
       "reasoning": "SEED IDEA. Don't chase XRP at $1.38 into 1.42 resistance; instead bid a pullback to $1.35 (today's breakout/consolidation zone above the 1.33 pivot). Stop $1.305 sits under RoboForex's H4 support (1.309) and the Oct 19–20 range, so the idea is invalidated if the bounce fails. T1 $1.42 = H4/7-day resistance; T2 $1.47 = bull-case projection. Risk −3.3% (−10.0% at 3x) vs. +5.2% / +8.9% (+15.6% / +26.7% at 3x). [Originally posted at 5x; changed to 3x on Oct 21.] Limit order: cancels if not filled by Oct 23 11:05 AM CT. Risks: BTC losing $82.5K, Fed Oct 27–28. Entry zone 1.345–1.355 added Oct 21 for the slate model (centered on the original 1.35 limit, ≈ the 1h EMA20).",
       "source": "seed (Grok Bot setup)",
       "last_checked_ms": 1792623600000,
-      "leverage_note": "Leverage changed from 5x to 3x on Oct 21, 2026 (owner lowered paper-trade leverage going forward). Entry/stop/targets unchanged; P&L figures recomputed at 3x.",
+      "leverage_note": "Leverage changed from 5x to 3x on Oct 21, 2026 (paper-trade leverage lowered going forward). Entry/stop/targets unchanged; P&L figures recomputed at 3x.",
       "entry_zone": {
         "low": 1.345,
         "high": 1.355
@@ -264,7 +264,7 @@
         "ended_at": "2026-10-21T21:55:00Z",
         "void_reason": "main idea filled"
       },
-      "reasoning": "SPOT POSITION idea (1x, long only; Bobby holds XDC spot long term, and the main perp venues used here (Bitunix, Binance, OKX, Kraken Futures, Coinbase) list no XDC perpetual). Kraken candles: today's +11% move broke the Oct 15-20 lower highs (0.0352 to 0.0329) and is testing the 0.0355-0.0360 ceiling (Oct 9/10/12 highs 0.03587/0.03574/0.03569, today 0.03597), but it has not closed a 4H or daily candle above 0.0360. Volume is higher (Kraken ~1.6x its 10-day average, CoinGecko all-exchange ~$25.6M vs ~$8-18M/day) on the SBI/Shinhan yen-stablecoin MOU and this week's MoneyGram validator news. Price is stretched (4H above the upper Bollinger band, 1h RSI 80), so this is a pending buy on a retest of 0.0347-0.0352: the broken lower-high line (Oct 15 high 0.0352, Oct 16 0.0347) and today's 1-3 PM CT base (1h lows 0.0347-0.0350). Stop 0.0330 sits under today's 7 AM CT 4H low (0.0339) and the Oct 13 low (0.03318), near the daily EMA20 (0.0334). A close there means the breakout failed and the October floor (0.0318-0.0321) is in play. T1 0.0383 is under the Sep 29 high (0.0384, the 90-day high); T2 0.0440 is under the Jan 22-23 highs. R:R from the worst fill (0.0352): 1.4 to T1, 4.0 to T2, about 2.7 blended (equal halves; the stop moves to breakeven after T1). P&L is at 1x: T1 +8.8%, T2 +25%, stop -6.3% from 0.0352. The news is mostly MOUs and pilots with no disclosed numbers, so the idea rests on the levels, not on the headlines.",
+      "reasoning": "SPOT POSITION idea (1x, long only; a long-term spot holding idea, and the main perp venues used here (Bitunix, Binance, OKX, Kraken Futures, Coinbase) list no XDC perpetual). Kraken candles: today's +11% move broke the Oct 15-20 lower highs (0.0352 to 0.0329) and is testing the 0.0355-0.0360 ceiling (Oct 9/10/12 highs 0.03587/0.03574/0.03569, today 0.03597), but it has not closed a 4H or daily candle above 0.0360. Volume is higher (Kraken ~1.6x its 10-day average, CoinGecko all-exchange ~$25.6M vs ~$8-18M/day) on the SBI/Shinhan yen-stablecoin MOU and this week's MoneyGram validator news. Price is stretched (4H above the upper Bollinger band, 1h RSI 80), so this is a pending buy on a retest of 0.0347-0.0352: the broken lower-high line (Oct 15 high 0.0352, Oct 16 0.0347) and today's 1-3 PM CT base (1h lows 0.0347-0.0350). Stop 0.0330 sits under today's 7 AM CT 4H low (0.0339) and the Oct 13 low (0.03318), near the daily EMA20 (0.0334). A close there means the breakout failed and the October floor (0.0318-0.0321) is in play. T1 0.0383 is under the Sep 29 high (0.0384, the 90-day high); T2 0.0440 is under the Jan 22-23 highs. R:R from the worst fill (0.0352): 1.4 to T1, 4.0 to T2, about 2.7 blended (equal halves; the stop moves to breakeven after T1). P&L is at 1x: T1 +8.8%, T2 +25%, stop -6.3% from 0.0352. The news is mostly MOUs and pilots with no disclosed numbers, so the idea rests on the levels, not on the headlines.",
       "source": "analysis run (XDC first review, Oct 21 breakout check)",
       "last_checked_ms": 1792626000000,
       "last_checked": "2026-10-21T23:40:00Z",

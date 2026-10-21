@@ -129,7 +129,7 @@ Single engine used by the 30-min job and by `update_prices.py`. For each pending
 - **Spot ideas:** `"leverage": 1` plus `"market": "spot"` (long only; its `missed_plan` must also be leverage 1 and not a flip).
   The page shows `LONG SPOT` instead of `1x`, the calculator shows no liquidation for a 1x long, log lines say "spot", and
   `track_trades.py` warns (slate_warnings) if a spot idea is short or leveraged. Missed-it linked trades inherit `market`,
-  `timeframe` and `expires`. Use `"timeframe": "position"` for weeks-to-months spot holds (XDC T006 is the first; Bobby holds XDC spot).
+  `timeframe` and `expires`. Use `"timeframe": "position"` for weeks-to-months spot holds (XDC T006 is the first).
 - P&L % = price move × leverage, on margin, no fees/funding. Leverage: T001 was 5x; from Oct 21, 2026 new ideas are 3x.
 - Every run sets `last_checked` (ISO) / `last_checked_ms` per trade and `tracked_utc`, so it is **idempotent**: a
   re-run never double-counts a candle. `data/log.json` gets an entry **only when an event happens**.
@@ -216,7 +216,7 @@ information coefficient per component, first 70% in-sample / last 30% out-of-sam
 ```
 **Hardware-wallet pick (NOT geo-gated).** "Keep your crypto safe" section under the position calculator (`#wallet-pick`),
 shown to every visitor: short self-custody copy, "Lumi's pick: D'CENT Biometric Wallet" button (`dcent_url`/`dcent_label`)
-and the same "Affiliate link · disclosure" tag (it also reveals the footer disclosure). `ledger_url` = Bobby's Ledger referral
+and the same "Affiliate link · disclosure" tag (it also reveals the footer disclosure). `ledger_url` = the site's Ledger referral
 link (`https://shop.ledger.com/pages/referral-program?referral_code=GR4WE2W9HKCA1`, set Oct 21, 2026; loads 200, and Ledger's page
 says "Receive up to $20 worth of Bitcoin when you purchase your Ledger device", $5-$20 by model). When set it shows: "Or choose
 Ledger" in this section, the footer line "Holding long term? Self-custody with Ledger" (`#aff-ledger-foot`), and a
@@ -253,7 +253,7 @@ whose coin has a pair (for XDC and ZBCN, not on Coinbase, it replaces the missin
 button in the calculator. Never on short ideas, never leverage wording (US Kraken users get spot). Non-US visitors: only if
 `kraken_non_us` is `true` (default `false`: Kraken only credits referrals from the referrer's own country, or within the EEA).
 Empty `kraken_url` ⇒ no Kraken UI. Don't post the Kraken link on X.
-**Uphold (spot only; added Oct 21, 2026; Bobby buys his own XDC there).** `uphold_url` = Bobby's referral link, used exactly
+**Uphold (spot only; added Oct 21, 2026).** `uphold_url` = the site's referral link, used exactly
 as given (`wallet.uphold.com/signup?referral=af5cfbafad&campaign=uw_p_d_w_acq_raf&utm_source=raf&utm_medium=referafriend`;
 loads 200 with "You've been invited to try Uphold!", but the page shows that for any `referral=` value, so it can't confirm
 the code). `uphold_assets` maps coin id → Uphold code from `https://api.uphold.com/v0/assets` (paginated: send
