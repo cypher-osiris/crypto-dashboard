@@ -1,6 +1,8 @@
 {
   "affiliate": {
     "bitunix_url": "https://www.bitunix.site/u-link/referral/invitee?t_act=17&inviteCode=c_jS86c",
-    "label": "Trade on Bitunix"
+    "label": "Trade on Bitunix",
+    "coinbase_url": "",
+    "coinbase_label": "Trade on Coinbase"
   }
 }

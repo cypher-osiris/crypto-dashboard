@@ -14,7 +14,7 @@ assets/live.js        live prices in the browser: Coinbase websocket (coins with
 assets/signals.js     in-browser signals (Coinbase/Kraken candles, CoinGecko fallback), same math as scripts/signals.py
 assets/extras.js      market-context strip, track record ($100 margin/trade), position calculator
 assets/backtest.js    "Signal Backtest" section (renders data/backtest.json)
-assets/affiliate.js   affiliate buttons + disclosures, driven by data/config.json (hidden when the link is empty)
+assets/affiliate.js   affiliate buttons + disclosures, driven by data/config.json; geo-gated (Bitunix non-US only, Coinbase US)
 assets/markets.js     Global Markets panel: live TSE/HKEX/LSE/NYSE session clocks + 24h timeline (Intl/IANA, DST-safe; no holidays)
 data/prices.json      GENERATED  – quotes + 30-day ~hourly history (CoinGecko); compact JSON; has "groups"
 data/trades.json      HAND-EDITED ideas + GENERATED status/P&L/stats
@@ -195,8 +195,18 @@ information coefficient per component, first 70% in-sample / last 30% out-of-sam
 
 ## Affiliate link (data/config.json)
 ```json
-{ "affiliate": { "bitunix_url": "https://…your referral link…", "label": "Trade on Bitunix" } }
+{ "affiliate": { "bitunix_url": "https://…your referral link…", "label": "Trade on Bitunix",
+                "coinbase_url": "", "coinbase_label": "Trade on Coinbase" } }
 ```
+**Geo-gated (assets/affiliate.js).** Bitunix bans US users, so Bitunix links are shown only to visitors confirmed
+NON-US; US visitors (incl. PR/GU/VI/AS/MP/UM) get the Coinbase slot instead, which shows nothing while `coinbase_url`
+is empty. Country lookup, client-side: `https://api.country.is/` → `https://ipapi.co/country/` (2.5 s timeout each) →
+`Intl` time zone (US zones such as America/New_York, Chicago, Denver, Los_Angeles, Phoenix, Anchorage, Detroit, Boise,
+Indiana/*, Kentucky/*, Pacific/Honolulu ⇒ US). The result is cached in `sessionStorage` (`lumi_geo_v1`). Fail closed:
+everything stays hidden until the country is known, and if it can't be determined nothing is shown. Debug override:
+`?geo=US` / `?geo=DE` (not cached). `<html data-geo="us|non-us|unknown">` shows the decision.
+X posts (`make_post.py`) can't be geo-gated: keep Bitunix links out of posts aimed at a US audience.
+
 When `bitunix_url` is a non-empty `https://` URL the site shows a "Trade this setup on Bitunix" button on every
 active (pending/open) slate card, a button in the position calculator and a small CTA in the header. Every link has
 `rel="sponsored noopener" target="_blank"`. The disclosure ("Some links are affiliate links; we may earn a commission
@@ -254,7 +264,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-9`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-10`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
