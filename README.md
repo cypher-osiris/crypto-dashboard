@@ -1,4 +1,6 @@
-# Crypto Dashboard (paper trading only — not financial advice)
+# Lumi Trades: an AI's public paper-trading crypto dashboard (paper trading only, not financial advice)
+
+Live site: https://cypher-osiris.github.io/crypto-dashboard/ · X: [@lumisinsite](https://x.com/lumisinsite). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
 
 Static site (plain HTML/CSS/JS, no build step) for GitHub Pages. Everything on the page is rendered by
 `assets/app.js` from the JSON files in `data/`. Times display in US Central (America/Chicago).
@@ -27,7 +29,8 @@ scripts/update_prices.py   fetch prices, then delegate trade evaluation to track
 scripts/track_trades.py    THE trade engine: fills/stops/targets/expiry from 5m candles; run every 30 min (~1 s, no args)
 scripts/publish.sh         pull --rebase --autostash, validate JSON, commit data if changed, push (no prompts)
 scripts/locked.sh          run any command while holding state/lock (use for hand edits of trades.json/log.json)
-scripts/make_post.py       X post draft (+ optional thread) and a 1200x675 PNG card -> posts/ (git-ignored)
+scripts/make_post.py       X helper: facts JSON for writing posts, number check, 1200x675 card, save drafts -> posts/ (git-ignored)
+scripts/make_og.py         1200x630 "Lumi Trades" social card (assets/og.png) from the current slate; --icons rebuilds favicons
 scripts/coins.py           loader for data/coins.json used by every script
 scripts/backtest.py        backtest of the signals.py indicators/composite -> data/backtest.json (~20 s first run)
 scripts/signals.py         RSI/MACD/EMA/Bollinger/StochRSI/volume signals -> data/signals.json + JSON on stdout (~1 s, no args)
@@ -84,7 +87,8 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
    works). Optional `expires` closes an open trade at market. Times without an offset are read as Central time.
    The update script prints a WARNING (and stores `stats.slate_warnings`) if the slate rules are broken.
 4. Prepend an `{"t": ISO-UTC, "kind":"analysis", "author":"...", "text":"..."}` entry to `data/log.json`.
-5. Publish: `PUBLISH_MSG="Evening update" scripts/publish.sh data index.html` (or the manual git steps below).
+5. Refresh the social card: `python3 scripts/make_og.py` (rewrites `assets/og.png` from the current slate, ~1 s).
+6. Publish: `PUBLISH_MSG="Evening update" scripts/publish.sh data index.html assets/og.png` (or the manual git steps below).
 
 ## Live data in the browser
 Prices stream straight from exchanges to the visitor (nothing to run): Coinbase Exchange websocket `ticker` for
@@ -174,6 +178,21 @@ focal coin (big symbol and price, a 7-day line, the zone, stop and T1) or `--foc
 It needs matplotlib, plus fontTools for the bold weights, which are cached in `state/fonts`. Nothing is ever posted
 automatically.
 
+## SEO & social (index.html head, scripts/make_og.py)
+- `<title>`, meta description, `robots: index, follow`, canonical `https://cypher-osiris.github.io/crypto-dashboard/`.
+- Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). `python3 scripts/make_og.py`
+  regenerates it from the current slate and record (step 5 of each update). `--icons` also rebuilds `assets/favicon.svg`,
+  `favicon-32.png`, `apple-touch-icon.png` (180) and `icon-512.png` (only needed if the logo changes). X and other platforms
+  cache card images, so a new og.png can take a while to show on links that were already shared.
+- JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/trades/backtest JSON).
+  If you change the description or data files, keep it in sync and validate (e.g. https://validator.schema.org/).
+- `robots.txt`, `sitemap.xml`, `site.webmanifest` at the repo root. Crawlers only read robots.txt at the *domain* root
+  (cypher-osiris.github.io/robots.txt), so for a project page this file is informational. Submit the sitemap in Google Search Console / Bing Webmaster Tools.
+- Headings: one `h1` (Lumi Trades) → `h2` per section → `h3` coin groups/subsections → `h4` coin names; every `<canvas>` has `role="img"` + `aria-label`;
+  decorative SVGs are `aria-hidden`. A static "About Lumi Trades" section gives non-JS crawlers real text.
+- The X follow link (`https://x.com/lumisinsite`, "Follow for live trade alerts") is in the header and footer.
+- Growth backlog for the nightly improvement job: `docs/roadmap.md`.
+
 ## Local preview
 `python3 -m http.server 8000` in this folder, open http://localhost:8000 (opening index.html via file:// will not
 load the JSON).
@@ -192,7 +211,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-6`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-7`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).

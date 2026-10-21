@@ -51,7 +51,7 @@
     const up = ys[ys.length - 1] >= ys[0];
     const c = up ? "#22c55e" : "#f43f5e";
     const gid = "g" + Math.random().toString(36).slice(2, 8);
-    return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+    return `<svg focusable="false" class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
       <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".28"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
       <path d="${d}L${w} ${h}L0 ${h}Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
   }
@@ -219,7 +219,7 @@
         <div class="coin-head">
           <div class="coin-id">
             <div class="coin-mark" style="--c1:${c1 || "#334155"};--c2:${c2 || "#0f172a"}">${esc(a.symbol)}</div>
-            <div><div class="name">${esc(a.symbol)}<small>${esc(a.name)}${a.market_cap_rank ? " · rank #" + a.market_cap_rank : ""}</small></div>
+            <div><h4 class="name">${esc(a.symbol)}<small>${esc(a.name)}${a.market_cap_rank ? " · rank #" + a.market_cap_rank : ""}</small></h4>
               ${an.bias ? `<div class="bias">${esc(an.bias)}</div>` : ""}</div>
           </div>
           <div class="coin-right">
@@ -229,7 +229,7 @@
               <div class="src-tag" data-src="${id}">snapshot</div></div>
           </div>
         </div>
-        <div class="coin-chart"><canvas id="chart-${id}" aria-label="${esc(a.symbol)} 30 day chart"></canvas></div>
+        <div class="coin-chart"><canvas id="chart-${id}" role="img" aria-label="${esc(a.name)} (${esc(a.symbol)}) price, last 30 days, with support and resistance levels"></canvas></div>
         <div class="levels">
           <div class="lv sup"><small>Support</small><b>${(an.support || []).map(num).join(" / ") || "—"}</b></div>
           <div class="lv res"><small>Resistance</small><b>${(an.resistance || []).map(num).join(" / ") || "—"}</b></div>
