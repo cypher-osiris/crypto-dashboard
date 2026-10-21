@@ -41,8 +41,8 @@
       "move_stop_to_be": true,
       "reasoning": "SEED IDEA. Don't chase XRP at $1.38 into 1.42 resistance; instead bid a pullback to $1.35 (today's breakout/consolidation zone above the 1.33 pivot). Stop $1.305 sits under RoboForex's H4 support (1.309) and the Oct 19–20 range, so the idea is invalidated if the bounce fails. T1 $1.42 = H4/7-day resistance; T2 $1.47 = bull-case projection. Risk −3.3% (−10.0% at 3x) vs. +5.2% / +8.9% (+15.6% / +26.7% at 3x). [Originally posted at 5x; changed to 3x on Oct 21.] Limit order: cancels if not filled by Oct 23 11:05 AM CT. Risks: BTC losing $82.5K, Fed Oct 27–28. Entry zone 1.345–1.355 added Oct 21 for the slate model (centered on the original 1.35 limit, ≈ the 1h EMA20).",
       "source": "seed (Grok Bot setup)",
-      "last_checked_ms": 1792607400000,
-      "mark_price": 1.394,
+      "last_checked_ms": 1792608600000,
+      "mark_price": 1.3891,
       "leverage_note": "Leverage changed from 5x to 3x on Oct 21, 2026 (owner lowered paper-trade leverage going forward). Entry/stop/targets unchanged; P&L figures recomputed at 3x.",
       "entry_zone": {
         "low": 1.345,
@@ -53,7 +53,29 @@
         "max_entry": 1.365,
         "note": "Still worth entering up to $1.365 (≈1.1R to T1). Above that, skip — don't chase XRP into 1.42 resistance with 1h/4h RSI already overbought. Also skip if a 4h candle closes below 1.31 before the fill."
       },
-      "last_checked": "2026-10-21T18:30:00Z"
+      "last_checked": "2026-10-21T18:50:00Z",
+      "missed_plan": {
+        "type": "pullback",
+        "trigger": "Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368",
+        "trigger_rule": {
+          "tf": "1h",
+          "kind": "retest_hold"
+        },
+        "entry_zone": {
+          "low": 1.368,
+          "high": 1.375
+        },
+        "stop": 1.348,
+        "target": 1.42,
+        "leverage": 3,
+        "size_note": "Normal size: the stop is tighter than the original idea's.",
+        "reasoning": "XRP broke out of its 1.33–1.367 range in the 14:00 UTC candle (high 1.3879) and ran to 1.3982 without coming back to the 1.345–1.355 bid. The first real retest is the old range top: the Oct 21 09:00 UTC high 1.3673 plus the 15:00–17:00 UTC hourly lows (1.372–1.3758). Stop 1.348 sits below the 1h EMA20 (1.358) and the 13:00 UTC low (1.3508); a close there means the breakout failed. Target 1.42 = the H4/7-day resistance (same as T1). R:R 1.67 from 1.375 (worst fill), 2.6 from 1.368. Breakout chase rejected: buying a 1h close above 1.42 into the 1.47 projection / 1.50 resistance with a stop back under 1.40 is only ~1.1:1.",
+        "expiry": "2026-10-23T16:05:00Z",
+        "written_at": "2026-10-21T18:50:00Z",
+        "status": "watching",
+        "last_checked_ms": 1792609200000,
+        "last_checked": "2026-10-21T19:00:00Z"
+      }
     },
     {
       "id": "T003",
@@ -80,9 +102,21 @@
       },
       "reasoning": "SEED SLATE IDEA (3x short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895–0.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 ≈ the 1h EMA20/prior breakout; T2 0.1775 ≈ the Oct 17–19 support. From 0.1905: risk +2.6% (−7.9% at 3x) vs. −3.9% / −6.8% (+11.7% / +20.4% at 3x).",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792607400000,
-      "mark_price": 0.186465,
-      "last_checked": "2026-10-21T18:30:00Z"
+      "last_checked_ms": 1792608600000,
+      "mark_price": 0.1855,
+      "last_checked": "2026-10-21T18:50:00Z",
+      "missed_plan": {
+        "type": "none",
+        "trigger": null,
+        "entry_zone": null,
+        "stop": null,
+        "target": null,
+        "leverage": null,
+        "size_note": null,
+        "reasoning": "No good chase; wait for a new setup. If XLM rolls over without rallying into 0.1895–0.1915, a breakdown short (1h close below the Oct 21 0.1808 base / 4h EMA20 0.1809, stop above the 0.1842 Oct 21 08:00 UTC high) runs straight into the 0.177–0.1775 support: about 0.6:1 from 0.18. A flip long above the 0.1955 stop has the 0.203 resistance only ~3% higher with a stop back under 0.1915 (about 1.1:1 from 0.197). Neither clears 1.5:1, so the fade either fills in its zone or Lumi waits.",
+        "written_at": "2026-10-21T18:50:00Z",
+        "status": "n/a"
+      }
     },
     {
       "id": "T004",
@@ -109,9 +143,31 @@
       },
       "reasoning": "SEED SLATE IDEA (3x long, buy the pullback). ZBCN is the only coin with an uptrend on all three timeframes (price > EMA20 > EMA50 on 1h/4h/1d, above the daily EMA200 0.00227), but 1h/4h RSI is >70 after today's +13% breakout, so wait for a retest of the 0.0023 breakout area / 1h EMA20 (0.00233). Stop 0.00219 below the 4h EMA20/50 (~0.00222) and the daily EMA200. T1 0.00258 = early-Oct resistance; T2 0.00270 = bull projection. From 0.00232: risk −5.6% (−16.8% at 3x) vs. +11.2% / +16.4% (+33.6% / +49.1% at 3x). Small cap: wide swings, size down.",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792607400000,
-      "mark_price": 0.002405,
-      "last_checked": "2026-10-21T18:30:00Z"
+      "last_checked_ms": 1792608600000,
+      "mark_price": 0.002425,
+      "last_checked": "2026-10-21T18:50:00Z",
+      "missed_plan": {
+        "type": "pullback",
+        "trigger": "Range floor holds: a 1h candle dips into 0.002385–0.00241 and closes at or above 0.002385",
+        "trigger_rule": {
+          "tf": "1h",
+          "kind": "retest_hold"
+        },
+        "entry_zone": {
+          "low": 0.002385,
+          "high": 0.00241
+        },
+        "stop": 0.00231,
+        "target": 0.00258,
+        "leverage": 2,
+        "size_note": "Half size at 2x: a chase entry in a thin small-cap; the stop is only ~3–4% away and can get wicked.",
+        "reasoning": "ZBCN tagged 0.002482 (Oct 21 11:00 UTC) and has ranged since: the 12:00–18:00 UTC hourly lows sit at 0.002377–0.002403, so the range floor is ~0.00239. It never came back to the 0.0023–0.00234 bid. Missed-it move: buy a held retest of that floor. Stop 0.00231 is below the 1h EMA20 (0.002345) and the 07:00 UTC low (0.002327); losing it means the range broke down. Target 0.00258 = the resistance level (same as T1). R:R 1.7 from 0.00241 (worst fill), 2.6 from 0.002385. Breakout chase rejected: a 1h close above 0.0025 hits 0.00258 resistance within ~3%, about 0.7:1 with a stop back inside the range. Risk: the 1h MACD just crossed bearish on low volume (0.57x), so this can fail.",
+        "expiry": "2026-10-23T17:00:00Z",
+        "written_at": "2026-10-21T18:50:00Z",
+        "status": "watching",
+        "last_checked_ms": 1792609200000,
+        "last_checked": "2026-10-21T19:00:00Z"
+      }
     }
   ],
   "stats": {
@@ -185,5 +241,5 @@
       }
     }
   },
-  "tracked_utc": "2026-10-21T18:31:29.526000Z"
+  "tracked_utc": "2026-10-21T18:51:46.515000Z"
 }

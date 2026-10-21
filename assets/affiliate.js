@@ -17,7 +17,7 @@
       w.className = "aff-wrap";
       w.innerHTML = link("Trade this setup on Bitunix", "") + note();
       const a = w.querySelector("a"); if (sym) a.setAttribute("aria-label", `Trade this ${sym} setup on Bitunix (affiliate link, opens in a new tab)`);
-      const why = card.querySelector("details.why");
+      const why = card.querySelector(":scope > details.why");
       why ? card.insertBefore(w, why) : card.appendChild(w);
     });
   }

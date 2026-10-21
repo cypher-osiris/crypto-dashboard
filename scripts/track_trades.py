@@ -23,9 +23,21 @@ Fill / exit rules (conservative, documented in README):
   * pending past `expiry` (legacy `fill_by`) -> cancelled. open past optional `expires` -> closed at that candle's open.
   * Result: stop before any target = "stopped"; all targets = "won"; partial then stop/expiry = "won" if blended
     P&L > 0 else "lost". P&L % is on margin = price move x leverage (no fees/funding).
+Missed-it plans (optional `missed_plan` on a trade, see README "Missed-it plans"):
+  * type pullback|breakout|flip|none; `trigger_rule` {tf:"1h", kind:"retest_hold"|"close_above"|"close_below", level}
+    makes it machine-checkable (pullback defaults to retest_hold on its entry_zone). Triggers use COMPLETED 1h
+    candles aggregated from the 5m data, starting with the first full hour after the plan was written.
+  * status watching -> armed when the main idea is pending and a 5m close is past missed_it.max_entry (the chase
+    side), or when the main idea expired unfilled (flip: when the main idea was stopped, or a 1h close beyond its stop).
+  * armed + trigger -> a linked trade "<id>b" (parent_id, source "missed_plan of <id>") is created: open at the trigger
+    candle's close if that close is inside the plan zone, else pending in the zone until the plan expiry. A still-pending
+    main idea is cancelled ("superseded"), so the one-idea-per-coin rule holds. The linked trade is then tracked like any other.
+  * void if the main idea fills first (not for flip); invalidated on a 1h close beyond the plan stop while armed;
+    expired at missed_plan.expiry (default: the main idea's expiry).
 Idempotent: each trade stores last_checked (ISO) / last_checked_ms = end of the last processed candle; only candles
 ending after it are processed, so a second run processes nothing new. Concurrency: holds an exclusive flock on state/lock while reading/writing data files.
 """
+import copy
 import fcntl
 import json
 import os
@@ -258,6 +270,158 @@ def evaluate(t, candles, now_ms):
     return ev
 
 
+# ------------------------------------------------------------------ missed-it plans
+HOUR = 3600 * 1000
+LIVE_PLAN = ("watching", "armed")
+
+
+def plan_rr(plan, direction):
+    """(worst, best) reward:risk from the plan zone edges to its target. None if incomplete."""
+    z = plan.get("entry_zone") or {}
+    try:
+        lo, hi, stop, tgt = float(z["low"]), float(z["high"]), float(plan["stop"]), float(plan["target"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    worst, best = (hi, lo) if direction == "long" else (lo, hi)
+    f = lambda e: abs(tgt - e) / abs(e - stop) if e != stop else 0.0  # noqa: E731
+    return round(f(worst), 2), round(f(best), 2)
+
+
+def plan_direction(t, plan):
+    if plan.get("direction") in ("long", "short"):
+        return plan["direction"]
+    if plan.get("type") == "flip":
+        return "short" if t["direction"] == "long" else "long"
+    return t["direction"]
+
+
+def plan_rule(plan):
+    r = dict(plan.get("trigger_rule") or {})
+    if not r.get("kind") and plan.get("type") == "pullback":
+        r["kind"] = "retest_hold"
+    r.setdefault("tf", "1h")
+    return r if r.get("kind") in ("retest_hold", "close_above", "close_below") else None
+
+
+def plan_issues(t):
+    """Validation messages for one trade's missed_plan (used for slate_warnings)."""
+    plan = t.get("missed_plan")
+    if not plan:
+        return [] if t.get("parent_id") else [f"{t['id']}: no missed_plan"]
+    typ = plan.get("type")
+    if typ == "none":
+        return [] if plan.get("reasoning") else [f"{t['id']}: missed_plan type none needs a reasoning"]
+    out = []
+    if typ not in ("pullback", "breakout", "flip"):
+        return [f"{t['id']}: missed_plan.type must be pullback|breakout|flip|none"]
+    for k in ("trigger", "entry_zone", "stop", "target", "reasoning"):
+        if plan.get(k) in (None, "", {}):
+            out.append(f"{t['id']}: missed_plan.{k} missing")
+    rr = plan_rr(plan, plan_direction(t, plan))
+    if rr and rr[0] < 1.5:
+        out.append(f"{t['id']}: missed_plan R:R {rr[0]} < 1.5 from the worst entry - use type none")
+    if not plan_rule(plan):
+        out.append(f"{t['id']}: missed_plan has no machine-checkable trigger_rule (tracked manually)")
+    return out
+
+
+def hour_buckets(candles):
+    """Aggregate candles into complete 1h buckets: (start, end, o, h, l, c, [sub-candles])."""
+    if not candles:
+        return []
+    last_end = candles[-1][1]
+    b = {}
+    for c in candles:
+        b.setdefault(c[0] - c[0] % HOUR, []).append(c)
+    out = []
+    for hs in sorted(b):
+        cs = b[hs]
+        if hs + HOUR > last_end:  # hour not complete yet
+            continue
+        out.append((hs, hs + HOUR, cs[0][2], max(x[3] for x in cs), min(x[4] for x in cs), cs[-1][5], cs))
+    return out
+
+
+def scan_plan(t, plan, candles, now_ms, sim):
+    """Advance a live missed_plan through complete hours. `sim` = the main trade evaluated on the same candles
+    (a copy). Returns (events, trigger) where trigger = (end_ms, close) or None. Mutates plan."""
+    ev = []
+    typ, rule = plan.get("type"), plan_rule(plan)
+    pdir = plan_direction(t, plan)
+    long_main, long_plan = t["direction"] == "long", pdir == "long"
+    mi = (t.get("missed_it") or {}).get("max_entry")
+    z = plan["entry_zone"]
+    zlo, zhi, pstop = float(z["low"]), float(z["high"]), float(plan["stop"])
+    exp = plan.get("expiry") or t.get("expiry") or t.get("fill_by")
+    exp_ms = parse_ts(exp) if exp else None
+    fill_ms = parse_ts(sim["filled_at"]) if sim.get("filled_at") else None
+    cancel_ms = parse_ts(sim["closed_at"]) if sim.get("status") == "cancelled" and sim.get("closed_at") else None
+    stop_ms = parse_ts(sim["closed_at"]) if sim.get("status") in ("stopped", "lost") and sim.get("closed_at") else None
+    lc = plan.get("last_checked_ms") or 0
+
+    def note(kind, ms, **k):
+        ev.append({"type": kind, "time": iso(ms), **k})
+    for (hs, he, o, h, l, c, subs) in hour_buckets(candles):
+        if he <= lc:
+            continue
+        if exp_ms and hs >= exp_ms:
+            plan["status"], plan["ended_at"] = "expired", iso(exp_ms); note("missed_plan_expired", exp_ms); lc = he; break
+        if typ != "flip" and fill_ms is not None and fill_ms < he and plan["status"] in LIVE_PLAN:
+            plan["status"], plan["ended_at"] = "void", iso(fill_ms); plan["void_reason"] = "main idea filled"; note("missed_plan_void", fill_ms, reason="main idea filled"); lc = he; break
+        if plan["status"] == "watching":
+            arm_at = None
+            if typ == "flip":
+                if stop_ms is not None and stop_ms < he:
+                    arm_at = max(stop_ms, hs)
+                elif (c < t["stop"]) if long_main else (c > t["stop"]):
+                    arm_at = he
+            else:
+                if mi is not None:
+                    for sc in subs:
+                        if (sc[5] > mi) if long_main else (sc[5] < mi):
+                            arm_at = sc[1]; break
+                if arm_at is None and cancel_ms is not None and cancel_ms < he:
+                    arm_at = max(cancel_ms, hs)
+            if arm_at is not None:
+                plan["status"], plan["armed_at"] = "armed", iso(arm_at)
+                note("missed_plan_armed", arm_at, reason="main idea stopped" if typ == "flip" else ("main idea expired" if cancel_ms and cancel_ms <= arm_at else f"price past the missed-it limit {mi}"))
+        if plan["status"] == "armed" and rule:
+            if (c < pstop) if long_plan else (c > pstop):
+                plan["status"], plan["ended_at"] = "invalidated", iso(he); note("missed_plan_invalidated", he, price=sig(c)); lc = he; break
+            k = rule["kind"]
+            fired = (k == "close_above" and c > float(rule["level"])) or (k == "close_below" and c < float(rule["level"])) or \
+                    (k == "retest_hold" and ((l <= zhi and c >= zlo) if long_plan else (h >= zlo and c <= zhi)))
+            if fired:
+                lc = he
+                plan["last_checked_ms"], plan["last_checked"] = int(lc), iso(lc)
+                return ev, (he, c)
+        lc = he
+    if plan["status"] in LIVE_PLAN and exp_ms and now_ms >= exp_ms and lc >= exp_ms:
+        plan["status"], plan["ended_at"] = "expired", iso(exp_ms); note("missed_plan_expired", exp_ms)
+    if lc:
+        plan["last_checked_ms"], plan["last_checked"] = int(lc), iso(lc)
+    return ev, None
+
+
+def linked_trade(t, plan, trig_ms, close):
+    z = plan["entry_zone"]
+    zlo, zhi = float(z["low"]), float(z["high"])
+    pdir = plan_direction(t, plan)
+    lt = {
+        "id": plan.get("linked_id") or (t["id"] + "b"), "coin": t["coin"], "direction": pdir,
+        "leverage": plan.get("leverage", 3), "entry": sig((zlo + zhi) / 2), "entry_zone": {"low": zlo, "high": zhi},
+        "stop": plan["stop"], "targets": [plan["target"]], "opened_at": iso(trig_ms),
+        "expiry": plan.get("expiry") or t.get("expiry") or t.get("fill_by"), "status": "pending", "move_stop_to_be": False,
+        "parent_id": t["id"], "plan_type": plan.get("type"), "trigger": plan.get("trigger"), "size_note": plan.get("size_note"),
+        "reasoning": f"MISSED-IT PLAN of {t['id']} ({plan.get('type')}), triggered: {plan.get('trigger')}. {plan.get('reasoning', '')}",
+        "source": f"missed_plan of {t['id']} (auto-activated by track_trades.py)",
+        "last_checked_ms": int(trig_ms), "last_checked": iso(trig_ms),
+    }
+    if zlo <= close <= zhi:
+        lt.update(status="open", entry=sig(close), planned_entry=sig((zlo + zhi) / 2), filled_at=iso(trig_ms))
+    return lt
+
+
 def compute_stats(trades):
     closed = sorted([t for t in trades if t["status"] in ("won", "lost", "stopped")], key=lambda t: t["closed_at"])
     wins = sum(1 for t in closed if t["status"] == "won")
@@ -272,6 +436,8 @@ def compute_stats(trades):
     warn += [f"{c}: {len(v)} active ideas ({', '.join(v)}) - max 1 per coin" for c, v in per.items() if len(v) > 1]
     if len(active) > SLATE_MAX:
         warn.append(f"{len(active)} active ideas - max {SLATE_MAX}")
+    for t in active:
+        warn += plan_issues(t)
     return {
         "total": len(trades), "open": sum(1 for t in trades if t["status"] == "open"),
         "pending": sum(1 for t in trades if t["status"] == "pending"), "closed": len(closed), "won": wins,
@@ -291,7 +457,16 @@ def describe(e, t, sym):
     if k.startswith("target"):
         return f"{t['id']} {sym}: target {k[6]} hit at {e['price']}" + (" — stop moved to breakeven" if k == "target1_hit" and t.get("move_stop_to_be", True) else "")
     if k == "cancelled":
-        return f"{t['id']} {sym}: expired unfilled, cancelled"
+        return f"{t['id']} {sym}: " + (e.get("reason") or "expired unfilled") + ", cancelled"
+    if k.startswith("missed_plan_"):
+        p = t.get("missed_plan") or {}
+        what = {"armed": "missed-it plan ARMED (" + str(e.get("reason")) + "); watching: " + str(p.get("trigger")),
+                "triggered": f"missed-it plan TRIGGERED ({p.get('trigger')}) -> {e.get('linked_id')} "
+                             + ("opened at " + str(e.get("price")) if e.get("linked_status") == "open" else f"pending in {e.get('zone')}"),
+                "void": "missed-it plan void (" + str(e.get("reason")) + ")",
+                "invalidated": f"missed-it plan invalidated (1h close {e.get('price')} beyond its stop)",
+                "expired": "missed-it plan expired"}[k[12:]]
+        return f"{t['id']} {sym}: {what}"
     return f"{t['id']} {sym} closed {k.upper()} at {e['price']} ({e['pnl_pct']:+.2f}% at {lev}x)"
 
 
@@ -302,9 +477,24 @@ def run(lock_held=False, log_events=True):
             return run(lock_held=True, log_events=log_events)
     now_ms = int(time.time() * 1000)
     tdoc = load("trades.json", {"trades": []})
-    active = [t for t in tdoc["trades"] if t.get("status") in ("pending", "open")]
+    for t in tdoc["trades"]:  # initialise new missed plans: scanning starts at the first full hour after now
+        p = t.get("missed_plan")
+        if p and "status" not in p:
+            p["status"] = "n/a" if p.get("type") == "none" else "watching"
+            if p["status"] == "watching":
+                p["last_checked_ms"] = now_ms - now_ms % HOUR + HOUR
+                p["last_checked"] = iso(p["last_checked_ms"])
+    planned = [t for t in tdoc["trades"] if (t.get("missed_plan") or {}).get("status") in LIVE_PLAN]
+    planned_ids = {t["id"] for t in planned}
+    active = [t for t in tdoc["trades"] if t.get("status") in ("pending", "open") or t["id"] in planned_ids]
     coins = sorted({t["coin"] for t in active})
-    since = {c: min(t.get("last_checked_ms") or parse_ts(t["opened_at"]) for t in active if t["coin"] == c) for c in coins}
+
+    def since_of(t):
+        a = t.get("last_checked_ms") or parse_ts(t["opened_at"])
+        if t["id"] in planned_ids:
+            a = min(a, t["missed_plan"]["last_checked_ms"]) if t.get("status") in ("pending", "open") else t["missed_plan"]["last_checked_ms"]
+        return a
+    since = {c: min(since_of(t) for t in active if t["coin"] == c) for c in coins}
     fetched, errors = {}, {}
 
     def job(c):
@@ -320,14 +510,54 @@ def run(lock_held=False, log_events=True):
                 fetched[c] = res
     events = []
     sym = SYMBOLS
+    new_trades = []
+
+    def emit(t, evs, src):
+        for e in evs:
+            e.update(id=t["id"], coin=t["coin"], symbol=sym.get(t["coin"], t["coin"]), source=src)
+            e["text"] = describe(e, t, e["symbol"])
+            events.append(e)
     for t in active:
         if t["coin"] not in fetched:
             continue
         candles, src = fetched[t["coin"]]
-        for e in evaluate(t, candles, now_ms):
-            e.update(id=t["id"], coin=t["coin"], symbol=sym.get(t["coin"], t["coin"]), source=src)
-            e["text"] = describe(e, t, e["symbol"])
-            events.append(e)
+        plan = t.get("missed_plan") or {}
+        trig = None
+        if plan.get("status") in LIVE_PLAN and plan.get("type") != "none" and not plan_issues(t):  # invalid plans are never auto-activated
+            sim = copy.deepcopy(t)
+            if sim.get("status") in ("pending", "open"):
+                evaluate(sim, candles, now_ms)
+            pev, trig = scan_plan(t, plan, candles, now_ms, sim)
+            if trig:
+                trig_ms, close = trig
+                # main idea up to the trigger only, then superseded if it is still pending
+                if t.get("status") in ("pending", "open"):
+                    emit(t, evaluate(t, [c for c in candles if c[1] <= trig_ms], trig_ms), src)
+                if t.get("status") == "pending":
+                    t["status"], t["closed_at"], t["cancel_reason"] = "cancelled", iso(trig_ms), "superseded by missed-it plan"
+                    t.pop("mark_price", None)
+                    pev.append({"type": "cancelled", "time": iso(trig_ms), "reason": "superseded by its missed-it plan"})
+                if t.get("status") in ("pending", "open"):  # main filled in the trigger hour after all: keep it, void the plan
+                    plan["status"], plan["ended_at"] = "void", iso(trig_ms); plan["void_reason"] = "main idea filled"
+                    pev.append({"type": "missed_plan_void", "time": iso(trig_ms), "reason": "main idea filled"})
+                else:
+                    lt = linked_trade(t, plan, trig_ms, close)
+                    plan.update(status="triggered", triggered_at=iso(trig_ms), linked_id=lt["id"])
+                    pev.append({"type": "missed_plan_triggered", "time": iso(trig_ms), "linked_id": lt["id"], "linked_status": lt["status"],
+                                "price": sig(close), "zone": [lt["entry_zone"]["low"], lt["entry_zone"]["high"]]})
+                    new_trades.append(lt)
+                    sc = ((tdoc.get("slate") or {}).get("coins") or {}).get(t["coin"])
+                    if sc is not None and sc.get("trade_id") == t["id"]:
+                        sc["trade_id"] = lt["id"]
+            emit(t, pev, src)
+        if not trig and t.get("status") in ("pending", "open"):
+            emit(t, evaluate(t, candles, now_ms), src)
+    for lt in new_trades:
+        tdoc["trades"].append(lt)
+        candles, src = fetched[lt["coin"]]
+        emit(lt, evaluate(lt, candles, now_ms), src)
+        active.append(lt)
+    events.sort(key=lambda e: e.get("time") or "")
     tdoc["stats"] = compute_stats(tdoc["trades"])
     tdoc["tracked_utc"] = iso(now_ms)
     save("trades.json", tdoc)
@@ -338,7 +568,8 @@ def run(lock_held=False, log_events=True):
         save("log.json", log)
     return {"checked_utc": iso(now_ms), "events": events, "publish": bool(events),
             "active": [{"id": t["id"], "symbol": sym.get(t["coin"]), "status": t["status"], "mark": t.get("mark_price"),
-                        "unrealized_pnl_pct": t.get("unrealized_pnl_pct"), "last_checked": t.get("last_checked")} for t in active],
+                        "unrealized_pnl_pct": t.get("unrealized_pnl_pct"), "last_checked": t.get("last_checked"),
+                        "missed_plan": (t.get("missed_plan") or {}).get("status")} for t in active],
             "sources": {c: v[1] for c, v in fetched.items()}, "errors": errors,
             "slate_warnings": tdoc["stats"]["slate_warnings"]}
 

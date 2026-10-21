@@ -277,6 +277,84 @@
       ? { txt: `${base} — still within the missed-it limit (${num(mi)})`, cls: "ok" }
       : { txt: `${base} — past the missed-it limit (${num(mi)}): wait for the zone, don't chase`, cls: "missed" };
   }
+  /* ---------- missed-it plan (trade.missed_plan) ---------- */
+  const MP_STATE = { watching: "watching", armed: "armed: watching the trigger", triggered: "triggered", void: "void: main idea filled",
+    invalidated: "invalidated", expired: "expired", "n/a": "no chase" };
+  const mpUser = new Set(); // cards whose block the reader toggled by hand: never auto-open/close those
+  const pastLimit = (t, price) => {
+    const mi = t.missed_it && t.missed_it.max_entry;
+    if (mi == null || price == null) return false;
+    return t.direction === "short" ? price < mi : price > mi;
+  };
+  const mpDir = (t, p) => p.direction || (p.type === "flip" ? (t.direction === "long" ? "short" : "long") : t.direction);
+  function mpRR(t, p) {
+    const z = p.entry_zone; if (!z || p.stop == null || p.target == null) return null;
+    const long = mpDir(t, p) === "long", worst = long ? z.high : z.low, best = long ? z.low : z.high;
+    const f = (e) => Math.abs(p.target - e) / Math.abs(e - p.stop);
+    return [f(worst), f(best)];
+  }
+  function mpDistance(t, p, price) {
+    if (!p || p.type === "none" || price == null) return "";
+    const st = p.status || "watching";
+    if (!["watching", "armed"].includes(st)) return "";
+    const r = p.trigger_rule || {}, kind = r.kind || (p.type === "pullback" ? "retest_hold" : "");
+    const z = p.entry_zone || {};
+    const pc = (a, b) => `${Math.abs((a / b - 1) * 100).toFixed(1)}%`;
+    if (kind === "close_above" || kind === "close_below") {
+      const lv = r.level, past = kind === "close_above" ? price > lv : price < lv;
+      return past ? `Price ${fmtPrice(price)} is past the trigger ${num(lv)}: needs a 1h close ${kind === "close_above" ? "above" : "below"} it`
+        : `Price ${fmtPrice(price)} is ${pc(price, lv)} from the trigger ${num(lv)}`;
+    }
+    const long = mpDir(t, p) === "long";
+    if (price >= z.low && price <= z.high) return `Price ${fmtPrice(price)} is in the plan zone: needs a 1h close ${long ? "at or above " + num(z.low) : "at or below " + num(z.high)}`;
+    const edge = price > z.high ? z.high : z.low;
+    const toward = long ? price > z.high : price < z.low;
+    return `Price ${fmtPrice(price)} is ${pc(price, edge)} ${price > z.high ? "above" : "below"} the plan zone` + (toward ? " — waiting for the retest" : ` — on the stop side (plan stop ${num(p.stop)})`);
+  }
+  function missedBlock(t, price) {
+    const p = t.missed_plan, mi = t.missed_it;
+    if (!p && !mi) return "";
+    if (!p) return `<div class="missed"><span class="mi-ico">↯</span><div><b>Missed it?</b> ${mi.max_entry != null ? `Max entry <span class="mono">${num(mi.max_entry)}</span>. ` : ""}${esc(mi.note || "")}</div></div>`;
+    const st = p.status || (p.type === "none" ? "n/a" : "watching");
+    const limit = mi && mi.max_entry != null ? `<p class="mp-limit">Missed-it limit <span class="mono">${num(mi.max_entry)}</span>${mi.note ? `: ${esc(mi.note)}` : ""}</p>` : "";
+    if (p.type === "none") {
+      return `<details class="mplan none" data-mp="${esc(t.id)}"><summary><span class="mi-ico">↯</span><b>Missed it?</b> <span class="mp-head">No good chase</span><span class="mp-state s-na">wait for a new setup</span></summary>
+        <div class="mp-body"><p>${esc(p.reasoning || "")}</p>${limit}</div></details>`;
+    }
+    const rr = mpRR(t, p), L = p.leverage || 3, z = p.entry_zone || {};
+    const d = mpDir(t, p);
+    return `<details class="mplan" data-mp="${esc(t.id)}"><summary><span class="mi-ico">↯</span><b>Missed it?</b> <span class="mp-head">Here's the move</span>
+        <span class="mp-type">${esc(p.type)}</span><span class="mp-state s-${esc(st)}" data-mp-state>${esc(MP_STATE[st] || st)}${st === "triggered" && p.linked_id ? ` → ${esc(p.linked_id)}` : ""}</span></summary>
+      <div class="mp-body">
+        <p class="mp-trigger"><small>Trigger</small>${esc(p.trigger || "")}</p>
+        <div class="mp-grid">
+          <div><small>Entry zone</small>${num(z.low)} – ${num(z.high)}</div>
+          <div><small>Stop</small>${num(p.stop)}</div>
+          <div><small>Target</small>${num(p.target)}</div>
+          <div><small>${d === t.direction ? "" : esc(d) + " · "}Leverage</small>${L}x</div>
+          <div class="mp-rr"><small>R:R (worst / best fill)</small>${rr ? `${rr[0].toFixed(2)} / ${rr[1].toFixed(2)}` : "—"}</div>
+        </div>
+        ${p.size_note ? `<p class="mp-size">${esc(p.size_note)}</p>` : ""}
+        <p class="mp-dist" data-mp-dist>${esc(mpDistance(t, p, price))}</p>
+        ${limit}
+        <details class="why"><summary>Why this plan</summary><p>${esc(p.reasoning || "")}</p></details>
+      </div></details>`;
+  }
+  function updateMissed(el, t, price) {
+    const box = el.querySelector("[data-mp]"); if (!box) return;
+    const p = t.missed_plan || {};
+    const hot = t.status === "pending" && (pastLimit(t, price) || p.status === "armed");
+    box.classList.toggle("hot", hot);
+    box.querySelector("summary").dataset.hot = hot ? (pastLimit(t, price) ? "past the limit" : "plan armed") : "";
+    if (!mpUser.has(t.id) && box.open !== hot) { box.dataset.auto = "1"; box.open = hot; }
+    const dd = box.querySelector("[data-mp-dist]"); if (dd) dd.textContent = mpDistance(t, p, price);
+  }
+  document.addEventListener("toggle", (e) => {
+    const b = e.target; if (!(b instanceof HTMLElement) || !b.matches || !b.matches("details[data-mp]")) return;
+    if (b.dataset.auto === "1") { b.dataset.auto = ""; return; } // programmatic toggle
+    mpUser.add(b.dataset.mp);
+  }, true);
+
   function countdown(iso) {
     const ms = Date.parse(iso) - Date.now();
     if (!(ms > 0)) return "expired";
@@ -326,7 +404,8 @@
         ${tg}
         <div class="pnl-cell"><small>${closed ? "Result" : t.status === "open" ? "Unrealized P&L" : "If filled now"}</small><b class="mono" data-upnl>${closed && t.pnl_pct != null ? pct(t.pnl_pct) : "—"}</b></div>
       </div>
-      ${t.missed_it ? `<div class="missed"><span class="mi-ico">↯</span><div><b>Missed it?</b> ${t.missed_it.max_entry != null ? `Max entry <span class="mono">${num(t.missed_it.max_entry)}</span>. ` : ""}${esc(t.missed_it.note || "")}</div></div>` : ""}
+      ${t.parent_id ? `<p class="mp-linked">↯ Missed-it plan of <b class="mono">${esc(t.parent_id)}</b>${t.plan_type ? ` (${esc(t.plan_type)})` : ""}${t.trigger ? `: ${esc(t.trigger)}` : ""}${t.size_note ? `. ${esc(t.size_note)}` : ""}</p>` : ""}
+      ${closed ? "" : missedBlock(t, a.price)}
       ${t.leverage_note ? `<p class="meta">${esc(t.leverage_note)}</p>` : ""}
       <details class="why"><summary>Reasoning</summary><p>${esc(t.reasoning || "")}</p></details>
     </article>`;
@@ -337,6 +416,7 @@
       const t = (Dash.state.trades.trades || []).find((x) => x.id === el.dataset.slate);
       if (!t) return;
       const dist = el.querySelector("[data-dist]"), up = el.querySelector("[data-upnl]");
+      updateMissed(el, t, price);
       if (t.status === "pending") {
         const z = zoneDistance(t, price);
         dist.className = "slate-dist " + z.cls;

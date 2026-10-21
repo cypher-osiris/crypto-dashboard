@@ -64,6 +64,30 @@ def affiliate():
 
 
 # ---------------------------------------------------------------------------------------------- facts
+def missed_plan_facts(t, now_p):
+    """Compact view of a trade's missed_plan for writing posts (None if absent)."""
+    p = t.get("missed_plan")
+    if not p:
+        return None
+    if p.get("type") == "none":
+        return {"type": "none", "status": "no chase", "why": (p.get("reasoning") or "")[:220]}
+    z = p.get("entry_zone") or {}
+    lo, hi = z.get("low"), z.get("high")
+    d = p.get("direction") or ({"long": "short", "short": "long"}[t["direction"]] if p.get("type") == "flip" else t["direction"])
+    out = {"type": p.get("type"), "status": p.get("status", "watching"), "trigger": p.get("trigger"), "zone": [lo, hi],
+           "stop": p.get("stop"), "target": p.get("target"), "lev": p.get("leverage", 3), "size_note": p.get("size_note")}
+    if None not in (lo, hi, p.get("stop"), p.get("target")):
+        worst, best = (hi, lo) if d == "long" else (lo, hi)
+        f = lambda e: round(abs(p["target"] - e) / abs(e - p["stop"]), 2)  # noqa: E731
+        out["rr_worst_best"] = [f(worst), f(best)]
+        if now_p is not None and out["status"] in ("watching", "armed"):
+            out["now_vs_plan_zone"] = "in plan zone" if lo <= now_p <= hi else (
+                f"{(now_p / hi - 1) * 100:.1f}% above plan zone" if now_p > hi else f"{(1 - now_p / lo) * 100:.1f}% below plan zone")
+    if p.get("linked_id"):
+        out["linked_id"] = p["linked_id"]
+    return out
+
+
 def gather(now=None):
     now = now or datetime.now(timezone.utc)
     P, TD = load("prices.json"), load("trades.json")
@@ -99,6 +123,11 @@ def gather(now=None):
                 row["past_missed_it"] = (now_p > mx) if long_ else (now_p < mx)
         else:
             row["entry"] = t["entry"]; row["unrealized_pct"] = t.get("unrealized_pnl_pct")
+        if t.get("parent_id"):
+            row["missed_plan_of"] = t["parent_id"]; row["plan_type"] = t.get("plan_type"); row["size_note"] = t.get("size_note")
+        mp = missed_plan_facts(t, now_p)
+        if mp:
+            row["missed_plan"] = mp
         slate.append(row)
 
     # trade events (from trades.json timestamps) since the baseline / last 24h
@@ -112,7 +141,15 @@ def gather(now=None):
             if h.get("at") and ts(h["at"]) > since:
                 events.append({"at": ctfmt(ts(h["at"])), "id": t["id"], "sym": s_, "type": f"T{k + 1} hit", "price": h["price"]})
         if t.get("closed_at") and ts(t["closed_at"]) > since and t["status"] not in ("pending", "open"):
-            events.append({"at": ctfmt(ts(t["closed_at"])), "id": t["id"], "sym": s_, "type": t["status"], "price": t.get("exit_price"), "pnl_pct": t.get("pnl_pct")})
+            ev = {"at": ctfmt(ts(t["closed_at"])), "id": t["id"], "sym": s_, "type": t["status"], "price": t.get("exit_price"), "pnl_pct": t.get("pnl_pct")}
+            if t.get("cancel_reason"): ev["reason"] = t["cancel_reason"]
+            events.append(ev)
+        mp = t.get("missed_plan") or {}
+        for k, typ in (("armed_at", "missed_plan armed"), ("triggered_at", "missed_plan triggered"), ("ended_at", f"missed_plan {mp.get('status')}")):
+            if mp.get(k) and ts(mp[k]) > since:
+                ev = {"at": ctfmt(ts(mp[k])), "id": t["id"], "sym": s_, "type": typ, "plan": mp.get("type"), "trigger": mp.get("trigger")}
+                if k == "triggered_at": ev["linked_id"] = mp.get("linked_id")
+                events.append(ev)
     # new ideas since baseline
     new_ideas = [r["id"] for r in slate if base and r["id"] not in base.get("slate_ids", [])]
 
@@ -168,7 +205,7 @@ def gather(now=None):
         "movers_24h": movers, "record": record, "news": news, "signals": sigs,
         "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous")} if fg else None,
         "links": {"site": SITE, "affiliate": affiliate()},
-        "post_kinds": ["morning", "midday", "evening", "event", "news", "weekly"],
+        "post_kinds": ["morning", "midday", "evening", "event", "news", "weekly", "missed"],
         "voice": "docs/x_voice.md",
     }
 
@@ -201,7 +238,7 @@ def allowed_values():
 def check_text(text):
     """Each number must equal a data value at the precision written (e.g. '84.7K' ok for 84657; '1.39' for 1.3904)."""
     t = re.sub(r"https?://\S+", " ", text)
-    t = re.sub(r"\b(T\d{3}|T[12])\b", " ", t)                                   # trade ids / T1 T2
+    t = re.sub(r"\b(T\d{3}[a-z]?|T[12])\b", " ", t)                                   # trade ids / T1 T2
     t = re.sub(r"\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\w*\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\w* \d{1,2}(\s?[-–]\s?\d{1,2})?\b", " ", t)
     t = re.sub(r"\b\d{1,2}(:\d{2})?\s?(am|pm|AM|PM)\b|\b\d{1,2}:\d{2}\b", " ", t)  # times
     t = re.sub(r"\b\d+(h|d|w)\b|\b\d+-day\b|\b\d+x\b|\b20\d\d\b|\b\d+/\d+\b", " ", t)  # timeframes, leverage, years, x/y counts
