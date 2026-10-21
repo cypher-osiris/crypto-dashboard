@@ -37,7 +37,7 @@ To change coins edit `COINS` in the script and add a matching block under `coins
    through `entry`; it becomes `cancelled` if unfilled by `fill_by`. Optional `"expires"` closes an open trade at
    market at that time. Timestamps without an offset are read as Central time.
 4. Prepend an `{"t": ISO-UTC, "kind":"analysis", "author":"...", "text":"..."}` entry to `data/log.json`.
-5. Commit and push `data/` (GitHub Pages serves the new JSON; the page fetches with cache-busting).
+5. Publish (see below). GitHub Pages serves the new JSON; the page fetches it with cache-busting.
 
 ## Trade evaluation rules (script)
 Walks the ~hourly price points after `opened_at`/`filled_at` (incrementally via `last_checked_ms`):
@@ -49,3 +49,18 @@ so results are approximate. Stats: win rate = won / closed; cumulative P&L = sim
 ## Local preview
 `python3 -m http.server 8000` in this folder, open http://localhost:8000 (opening index.html via file:// will not
 load the JSON).
+
+## Publishing (GitHub Pages)
+Live site: https://cypher-osiris.github.io/crypto-dashboard/ · repo: https://github.com/cypher-osiris/crypto-dashboard
+(Pages builds from `main`, folder `/`; `.nojekyll` disables Jekyll processing.)
+
+```sh
+cd crypto-dashboard
+python3 scripts/update_prices.py        # then hand-edit analysis/trades/log as needed
+git add -A
+git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
+git push                                # non-interactive via gh credential helper (gh auth setup-git)
+```
+A Pages rebuild usually takes under a minute; check with
+`gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
+Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
