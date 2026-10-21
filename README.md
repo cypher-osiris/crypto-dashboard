@@ -87,6 +87,8 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
       "expiry":"2026-10-24T08:00:00-05:00"},
     "reasoning":"levels + signals behind it","source":"analysis run"}
    ```
+   Optional `"timeframe":"swing"` (plus `timeframe_note`, shown as a tooltip) marks a multi-day swing/range idea; the slate card shows it
+   as a small badge next to LONG/SHORT. Omit it for normal short-term ideas.
    **Every new idea must carry a `missed_plan`** ("Missed it? Here's the move", see "Missed-it plans" below). Write it
    from real levels only, with R:R >= 1.5 from the WORST fill in its zone. If no such move exists, write
    `{"type":"none","reasoning":"no good chase; wait for a new setup: <why, with the levels>"}`. After editing, run
@@ -273,7 +275,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-13`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-14`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).

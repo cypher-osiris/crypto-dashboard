@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "t": "2026-10-21T20:31:02Z",
+      "kind": "analysis",
+      "author": "Lumi (AXL range review)",
+      "text": "Added T005 AXL long 3x, a SWING / range trade: pending limit 0.0518-0.0530 at the rising inner shelf (6 lows 0.0516-0.0535 since Oct 13), stop 0.0505, T1 0.0583, T2 0.0620 (under the 0.0625-0.0647 rejection wicks), expires Nov 7. Channel since Sep 22 (Coinbase daily/4H): floor 0.0475-0.0505 (6 touches), ceiling 0.0600-0.0647 (4 rejections), legs of 15-32%. Missed it: no chase above 0.0560 (mid-channel). Previous AXL slate entry was 'no setup'; nothing removed (slate now 4 of 6)."
+    },
+    {
       "t": "2026-10-21T20:23:17.907000Z",
       "kind": "auto",
       "author": "track_trades.py",

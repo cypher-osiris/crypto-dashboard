@@ -395,7 +395,7 @@
     const tg = t.targets.map((x, i) => `<div><small>T${i + 1}${(t.targets_hit || [])[i] ? " ✓" : ""}</small>${num(x)} <span class="up">+${(movePct(t, x, ref) * L).toFixed(1)}%</span></div>`).join("");
     return `<article class="slate-card ${t.status}" data-slate="${esc(t.id)}" data-coin="${id}">
       ${head(`<span class="status s-${esc(t.status)}">${esc(t.status)}</span>`)}
-      <div class="slate-sub">${side} <span class="muted mono">${esc(t.id)}</span>${t.expiry && t.status === "pending" ? ` <span class="muted">· expires in <b class="mono" data-exp="${esc(t.expiry)}">${countdown(t.expiry)}</b></span>` : ""}</div>
+      <div class="slate-sub">${side}${t.timeframe ? ` <span class="tf-badge" title="${esc(t.timeframe_note || "")}">${esc(String(t.timeframe).charAt(0).toUpperCase() + String(t.timeframe).slice(1))}</span>` : ""} <span class="muted mono">${esc(t.id)}</span>${t.expiry && t.status === "pending" ? ` <span class="muted">· expires in <b class="mono" data-exp="${esc(t.expiry)}">${countdown(t.expiry)}</b></span>` : ""}</div>
       ${priceRow}
       <div class="slate-dist" data-dist>${closed ? `closed ${ct(t.closed_at)}` : "—"}</div>
       <div class="slate-grid">

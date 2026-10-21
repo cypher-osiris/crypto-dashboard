@@ -272,6 +272,7 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .slate-sub{font-size:.78rem}
 .side{font-size:.68rem;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:6px}
 .side.long{background:var(--green-s);color:var(--green)} .side.short{background:var(--red-s);color:var(--red)}
+.tf-badge{font-size:.68rem;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:6px;border:1px solid rgba(129,140,248,.4);color:#a5b4fc;background:rgba(99,102,241,.12)}
 .slate-live{display:flex;align-items:center;gap:8px;font-size:.85rem}
 .slate-live b{font-size:1.05rem;font-weight:600}
 .slate-dist{font-family:var(--mono);font-size:.8rem;padding:5px 9px;border-radius:8px;background:rgba(148,163,184,.08);color:var(--muted)}

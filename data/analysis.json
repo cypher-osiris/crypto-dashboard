@@ -202,26 +202,56 @@
       "sources": []
     },
     "axelar": {
-      "bias": "weak, range-bound",
+      "bias": "range-bound (swing): buy the floor, fade the ceiling",
       "support": [
-        0.0522,
-        0.048
+        0.0525,
+        0.0505,
+        0.0475
       ],
       "resistance": [
-        0.0584,
-        0.064
+        0.0583,
+        0.062,
+        0.0647
       ],
       "projection": {
-        "horizon_days": 7,
-        "bull": 0.059,
-        "base": 0.0545,
-        "bear": 0.05
+        "horizon_days": 14,
+        "bull": 0.062,
+        "base": 0.0555,
+        "bear": 0.0495
       },
-      "commentary": "AXL (~$0.054, flat 24h, \u221210% 7d) gave back its Oct 14 spike to \u2248$0.064 and is drifting mid-range ($0.048\u20130.064 over 30 days). It is lagging today's broad bounce, which is a relative-weakness tell. Background (not new): Circle's Dec 2025 deal took the Interop Labs team and IP, while the Axelar network, foundation and AXL token stay independent with Common Prefix taking over Interop Labs' role. Note: some recent sites re-headline that deal as October 2026 news \u2014 it isn't. Noon: flat ~$0.054 while the market bounces; signals neutral (4h Sell vs. 1h/1d Buy). No new Axelar announcements found.",
+      "commentary": "Range review Oct 21 ~3:30 PM CT (Coinbase daily + 4H candles, 90 days). Since Sep 22 AXL has traded a clean channel: floor 0.0475-0.0505 (6 swing lows: 0.0488, 0.0501, 0.0493, 0.0505, 0.0490, 0.0475; the Oct 7-8 dip under 0.050 was reclaimed within a day), a rising inner shelf at 0.0516-0.0535 (6 lows since Oct 13, latest 0.0528 and 0.0525), and a ceiling at 0.0600-0.0647 (4 rejections: 0.0600 Sep 27, 0.0629 Oct 12, 0.0647 Oct 14, 0.0642 Oct 18; highest 4H close 0.0621, no daily close above 0.0603). Mid-channel is about 0.056, with lower highs stacking at 0.0581-0.0591. Swings have been 15-32% per leg and take 1-4 days, which looks like the range being worked from both sides. At ~0.0545 price sits just above the shelf, so the slate idea (T005, swing) is a pending buy at 0.0518-0.0530, stop 0.0505, targets 0.0583 / 0.0620. A 4H close under 0.0505 breaks the October shelf and puts the 0.0475-0.050 floor in play; acceptance above 0.0621 (no close there yet) would be a breakout, not a range. Signals: 1h/1d Buy (above daily EMA50/EMA200, daily StochRSI oversold), 4h Sell. News: CoinDCX notes the Oct 14 spike had no Axelar announcement behind it and came on volume equal to 78% of market cap. Lookonchain tied the Oct 12 move to a sector-wide interoperability rally (W, ZRO, AXL, STG). Background (not new): Circle's Dec 2025 deal took the Interop Labs team and IP; the Axelar network, foundation and AXL token stay independent, with Common Prefix taking over Interop Labs' role.",
       "sources": [
+        {
+          "title": "Coinbase Exchange AXL-USD daily and 1h candles (4H resampled), Jul-Oct 2026",
+          "url": "https://api.exchange.coinbase.com/products/AXL-USD/candles?granularity=86400"
+        },
+        {
+          "title": "CoinDCX: Axelar (AXL) gains 10% as volume jumps 636% (Oct 15 2026)",
+          "url": "https://coindcx.com/blog/crypto-news-global/axelar-axl-crypto-gains-10-as-volume-jumps-636-heres-what-traders-need-to-know"
+        },
+        {
+          "title": "Lookonchain: cross-chain interoperability sector rallies (W, ZRO, AXL, STG), Oct 12 2026",
+          "url": "https://www.lookonchain.com/feeds/76379"
+        },
         {
           "title": "Circle: agreement to acquire Interop Labs team & IP (Dec 15 2025)",
           "url": "https://www.circle.com/blog/circle-signs-agreement-to-acquire-interop-labs-team-intellectual-property"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-10-15",
+          "kind": "news",
+          "text": "CoinDCX: AXL's Oct 14 spike had no Axelar announcement behind it; volume hit 78% of market cap, and the piece warns of sharp retracements once volume normalizes.",
+          "source": "CoinDCX, Oct 15 2026",
+          "url": "https://coindcx.com/blog/crypto-news-global/axelar-axl-crypto-gains-10-as-volume-jumps-636-heres-what-traders-need-to-know"
+        },
+        {
+          "date": "2026-10-12",
+          "kind": "news",
+          "text": "Interoperability tokens rallied together (W led; ZRO, AXL, STG followed), and AXL briefly crossed $0.06.",
+          "source": "Lookonchain, Oct 12 2026",
+          "url": "https://www.lookonchain.com/feeds/76379"
         }
       ]
     },
