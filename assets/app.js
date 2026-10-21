@@ -55,7 +55,21 @@
       <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".28"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
       <path d="${d}L${w} ${h}L0 ${h}Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
   }
+  // fallback colors; data/coins.json "colors" override/extend these at load time
   const COIN_COLORS = { HBAR: ["#3a3a3a", "#0b0b0b"], XLM: ["#5b6cff", "#1b1f4a"], XRP: ["#2d3748", "#0a0f17"], ZBCN: ["#06b6d4", "#0e3a52"], AXL: ["#6366f1", "#111827"], BTC: ["#f7931a", "#7a3e00"] };
+  const uniq = (a) => [...new Set(a)];
+  // groups: [{id,label,coins:[ids]}] from prices.json (written from data/coins.json) or coins.json; fallback one group
+  function groupsOf(prices) {
+    const cfg = Dash.state.coincfg;
+    let g = prices.groups && prices.groups.length ? prices.groups : null;
+    if (!g && cfg && cfg.groups) g = cfg.groups.map((x) => ({ ...x, coins: cfg.coins.filter((c) => c.group === x.id).map((c) => c.id) }));
+    if (!g) g = [{ id: "all", label: "Coins", coins: prices.coins }];
+    g = g.map((x) => ({ ...x, coins: x.coins.filter((id) => prices.assets[id]) })).filter((x) => x.coins.length);
+    const seen = new Set(g.flatMap((x) => x.coins)), rest = prices.coins.filter((id) => !seen.has(id) && prices.assets[id]);
+    if (rest.length) g.push({ id: "other", label: "Other", coins: rest });
+    return g;
+  }
+  const allIds = (prices) => groupsOf(prices).flatMap((g) => g.coins);
   const shortDate = (ms) => new Date(ms).toLocaleDateString("en-US", { timeZone: TZ, month: "short", day: "numeric" });
   // Day-aligned ticks (~CT midnight, 05:00 UTC) so labels never repeat.
   function dayTicks(scale) {
@@ -68,7 +82,7 @@
   }
 
   const Dash = (window.Dash = window.Dash || {});
-  Object.assign(Dash, { fmtPrice, num, pct, chip, ct, esc, spark, COLORS, COIN_COLORS, dayTicks, shortDate, charts: {}, state: {} });
+  Object.assign(Dash, { fmtPrice, num, pct, chip, ct, esc, spark, COLORS, COIN_COLORS, dayTicks, shortDate, groupsOf, allIds, charts: {}, state: {} });
   let readyResolve; Dash.ready = new Promise((r) => (readyResolve = r));
 
   async function getJSON(name, optional) {
@@ -137,10 +151,10 @@
 
   /* ---------- sections ---------- */
   function renderTicker(prices) {
-    const ids = [prices.backdrop, ...prices.coins];
+    const ids = uniq([...allIds(prices), prices.backdrop]).filter((id) => prices.assets[id]);
     const item = (id, dup) => {
       const a = prices.assets[id];
-      return `<a class="tk${dup ? " dup" : ""}" href="#${id === prices.backdrop ? "market" : "coin-" + id}"${dup ? ' aria-hidden="true" tabindex="-1"' : ""}>
+      return `<a class="tk${dup ? " dup" : ""}" href="#${document.getElementById("coin-" + id) || prices.coins.includes(id) ? "coin-" + id : "market"}"${dup ? ' aria-hidden="true" tabindex="-1"' : ""}>
         <span class="s">${esc(a.symbol)}</span><span class="p" data-lp="${id}">${fmtPrice(a.price)}</span><span data-lc="${id}">${chip(a.change_24h)}</span>${spark(a.history, 56, 18, 72)}</a>`;
     };
     $("ticker").innerHTML = ids.map((i) => item(i, false)).join("") + ids.map((i) => item(i, true)).join("");
@@ -168,13 +182,31 @@
     if (an.bias) $("btc-chg").insertAdjacentHTML("afterend", `<div class="bias">${esc(an.bias)}</div>`);
     $("btc-commentary").textContent = an.commentary || "";
     $("btc-sources").innerHTML = sourcesHTML(an.sources);
-    Dash.charts[prices.backdrop] = priceChart($("chart-bitcoin"), b, an);
+    Dash.charts["__backdrop"] = priceChart($("chart-bitcoin"), b, an);
   }
 
+  // charts below the fold are created only when their card approaches the viewport (keeps 12+ cards fast)
+  let chartIO = null;
+  const pendingCharts = new Map();
+  function lazyChart(el, make) {
+    if (!("IntersectionObserver" in window)) { make(); return; }
+    if (!chartIO) chartIO = new IntersectionObserver((ents) => ents.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const f = pendingCharts.get(e.target); pendingCharts.delete(e.target); chartIO.unobserve(e.target); if (f) f();
+    }), { rootMargin: "400px 0px" });
+    pendingCharts.set(el, make); chartIO.observe(el);
+  }
   function renderCoins(prices, analysis, trades) {
-    const grid = $("coin-grid");
-    grid.innerHTML = "";
-    for (const id of prices.coins) {
+    const root = $("coin-grid");
+    root.innerHTML = "";
+    const groups = groupsOf(prices);
+    const tabs = $("coin-tabs");
+    if (tabs) tabs.innerHTML = groups.length > 1 ? groups.map((g) => `<a href="#grp-${esc(g.id)}" class="grp-link">${esc(g.label)} <small>${g.coins.length}</small></a>`).join("") : "";
+    for (const g of groups) {
+    const sec = document.createElement("div"); sec.className = "coin-group"; sec.id = `grp-${g.id}`;
+    if (groups.length > 1) sec.innerHTML = `<h3 class="grp-h">${esc(g.label)}</h3>`;
+    const grid = document.createElement("div"); grid.className = "coin-grid-inner"; sec.appendChild(grid); root.appendChild(sec);
+    for (const id of g.coins) {
       const a = prices.assets[id];
       const an = (analysis.coins || {})[id] || {};
       const pr = an.projection;
@@ -212,7 +244,9 @@
         id: `entry-${t.id}`, type: "point", xValue: Date.parse(t.filled_at || t.opened_at), yValue: t.entry, radius: 4,
         backgroundColor: t.status === "won" ? COLORS.sup : t.status === "open" ? COLORS.line : COLORS.res, borderColor: "#fff", borderWidth: 1,
       }));
-      Dash.charts[id] = priceChart(el.querySelector("canvas"), a, an, { markers });
+      const cv = el.querySelector("canvas");
+      lazyChart(el.querySelector(".coin-chart"), () => { Dash.charts[id] = priceChart(cv, a, an, { markers }); });
+    }
     }
   }
 
@@ -253,7 +287,7 @@
   function buildSlate(prices, trades) {
     const all = trades.trades || [];
     const slate = trades.slate && trades.slate.coins ? trades.slate.coins : null;
-    return prices.coins.map((id) => {
+    return allIds(prices).map((id) => {
       let entry = slate ? slate[id] : null;
       if (!slate) {
         const t = all.find((x) => x.id === trades.current_idea_id && x.coin === id);
@@ -326,9 +360,15 @@
     const sym = (id) => prices.assets[id]?.symbol || id;
     const slate = buildSlate(prices, trades);
     const active = slate.filter((s) => s.trade && ["pending", "open"].includes(s.trade.status)).length;
-    $("slate-meta").textContent = `${active} active idea${active === 1 ? "" : "s"} · ${slate.filter((s) => !s.trade).length} coins with no setup · max one per coin, five total` + (trades.slate?.as_of ? ` · slate as of ${ct(trades.slate.as_of)}` : "");
-    $("slate-grid").innerHTML = slate.map((s) => slateCard(prices, s)).join("");
-    slate.forEach((s) => updateSlateLive(s.id, prices.assets[s.id].price));
+    const cap = Dash.state.coincfg?.slate_max || 6;
+    const shown = slate.filter((s) => s.trade), none = slate.filter((s) => !s.trade);
+    $("slate-meta").textContent = `${active} active idea${active === 1 ? "" : "s"} · ${none.length} coins with no setup · max one per coin, ${cap} total` + (trades.slate?.as_of ? ` · slate as of ${ct(trades.slate.as_of)}` : "");
+    $("slate-grid").innerHTML = `<div class="slate-grid-cards">${shown.map((s) => slateCard(prices, s)).join("") || '<p class="meta">No active ideas right now.</p>'}</div>` +
+      (none.length ? `<div class="slate-none"><h3 class="sub-h">No setup right now <small class="muted">(tap for why)</small></h3><div class="slate-none-list">${none.map((s) => {
+        const a = prices.assets[s.id];
+        return `<details class="none-item"><summary><b>${esc(a.symbol)}</b> <span class="mono" data-lp="${s.id}">${fmtPrice(a.price)}</span> <span data-lc="${s.id}">${chip(a.change_24h)}</span></summary><p>${esc(s.note || "No setup right now.")}</p></details>`;
+      }).join("")}</div></div>` : "");
+    shown.forEach((s) => updateSlateLive(s.id, prices.assets[s.id].price));
 
     const rows = [...all].sort((a, b) => Date.parse(b.opened_at) - Date.parse(a.opened_at));
     $("trades-body").innerHTML = rows.map((t) => {
@@ -366,6 +406,7 @@
       const td = document.querySelector(`[data-row-pnl="${x.id}"]`); if (td) td.innerHTML = pct(livePnl(x, t.price)) + ' <small class="meta">live</small>';
     });
     updateChart(t.id, t.price);
+    if (t.id === st.backdrop) updateChart("__backdrop", t.price);
     document.dispatchEvent(new CustomEvent("live:tick", { detail: t }));
   }
   const chartTimer = {};
@@ -375,7 +416,7 @@
     chartTimer[id] = setTimeout(() => {
       chartTimer[id] = null;
       const data = ch.data.datasets[0].data, lastPt = data[data.length - 1], now = Date.now();
-      const p = Dash.state.live[id]?.price ?? price;
+      const p = Dash.state.live[id === "__backdrop" ? Dash.state.prices.backdrop : id]?.price ?? price;
       if (lastPt.live && now - lastPt.start < 15 * 60000) { lastPt.x = now; lastPt.y = p; }
       else data.push({ x: now, y: p, live: true, start: now });
       if (now > ch.options.scales.x.max) ch.options.scales.x.max = now;
@@ -404,7 +445,11 @@
     try {
       const [prices, analysis, trades, log] = await Promise.all(["prices.json", "analysis.json", "trades.json", "log.json"].map((n) => getJSON(n)));
       const [signals, context] = await Promise.all([getJSON("signals.json", true).catch(() => null), getJSON("context.json", true).catch(() => null)]);
-      Object.assign(Dash.state, { prices, analysis, trades, log, signals, context, live: {} });
+      const coincfg = await getJSON("coins.json", true).catch(() => null);
+      Object.assign(Dash.state, { prices, analysis, trades, log, signals, context, coincfg, live: {} });
+      if (coincfg && coincfg.coins) for (const c of coincfg.coins) if (c.colors) COIN_COLORS[c.symbol] = c.colors;
+      // coins present in prices.json but not yet in coins.json still render; feeds come from coins.json
+      const feedList = (coincfg?.coins || []).filter((c) => prices.assets[c.id]);
       if (window.Chart && window["chartjs-plugin-annotation"]) Chart.register(window["chartjs-plugin-annotation"]);
       if (window.Chart) {
         Chart.defaults.font.family = "Inter, system-ui, sans-serif";
@@ -420,8 +465,8 @@
       renderLog(log);
       reveal();
       readyResolve(Dash.state);
-      if (window.Live) { Live.on(onTick); Live.onStatus(liveIndicator); liveIndicator(Live.status()); Live.start(); }
-      if (window.Signals) Signals.start(signals);
+      if (window.Live) { if (feedList.length) Live.configure(feedList); Live.on(onTick); Live.onStatus(liveIndicator); liveIndicator(Live.status()); Live.start(); }
+      if (window.Signals) Signals.start(signals, feedList.length ? feedList : null);
       setInterval(() => window.Live && liveIndicator(Live.status()), 5000);
       document.body.dataset.ready = "1";
     } catch (err) {

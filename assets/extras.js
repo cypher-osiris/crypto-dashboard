@@ -92,7 +92,7 @@
     const D = window.Dash;
     const f = $("calc");
     if (!f) return;
-    const ids = [st.prices.backdrop, ...st.prices.coins];
+    const ids = [...new Set([...(D.allIds ? D.allIds(st.prices) : st.prices.coins), st.prices.backdrop])].filter((id) => st.prices.assets[id]);
     f.coin.innerHTML = ids.map((id) => `<option value="${id}">${D.esc(st.prices.assets[id].symbol)} — ${D.esc(st.prices.assets[id].name)}</option>`).join("");
     f.coin.value = "ripple";
     const livePrice = (id) => st.live[id]?.price ?? st.prices.assets[id].price;

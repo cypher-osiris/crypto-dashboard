@@ -11,16 +11,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261021-5">
+<link rel="stylesheet" href="assets/style.css?v=20261021-6">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
-<script src="assets/markets.js?v=20261021-5" defer></script>
-<script src="assets/live.js?v=20261021-5" defer></script>
-<script src="assets/signals.js?v=20261021-5" defer></script>
-<script src="assets/app.js?v=20261021-5" defer></script>
-<script src="assets/extras.js?v=20261021-5" defer></script>
-<script src="assets/backtest.js?v=20261021-5" defer></script>
-<script src="assets/affiliate.js?v=20261021-5" defer></script>
+<script src="assets/markets.js?v=20261021-6" defer></script>
+<script src="assets/live.js?v=20261021-6" defer></script>
+<script src="assets/signals.js?v=20261021-6" defer></script>
+<script src="assets/app.js?v=20261021-6" defer></script>
+<script src="assets/extras.js?v=20261021-6" defer></script>
+<script src="assets/backtest.js?v=20261021-6" defer></script>
+<script src="assets/affiliate.js?v=20261021-6" defer></script>
 </head>
 <body>
 <div class="bg-glow" aria-hidden="true"></div>
@@ -31,7 +31,7 @@
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 22 L11 14 L16 18 L24 8 L28 12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div>
         <h1>Crypto Dashboard</h1>
-        <p class="tagline">HBAR · XLM · XRP · ZBCN · AXL — levels, projections &amp; paper trades</p>
+        <p class="tagline">HBAR · XLM · XRP · ZBCN · AXL + BTC, ETH, SOL &amp; more — levels, signals &amp; paper trades</p>
       </div>
     </div>
     <div class="hero-right">
@@ -104,7 +104,8 @@
 
   <section id="coins">
     <div class="section-head reveal"><h2>Coins</h2><span class="kicker">30-day price · support/resistance · 7-day projection band</span></div>
-    <div id="coin-grid" class="coin-grid"></div>
+    <nav class="grp-tabs" id="coin-tabs" aria-label="Coin groups"></nav>
+    <div id="coin-grid" class="coin-groups"></div>
   </section>
 
   <section id="track" class="card reveal">

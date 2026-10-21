@@ -20,7 +20,17 @@ SITE_SHORT = "cypher-osiris.github.io/crypto-dashboard"
 CT = ZoneInfo("America/Chicago")
 LIMIT = 280
 URL_WEIGHT = 23  # X counts any URL as 23 characters
-ORDER = ["ripple", "stellar", "zebec-network", "hedera-hashgraph", "axelar"]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import coins as coincfg  # noqa: E402  (coin list + groups: data/coins.json)
+ORDER = [c["id"] for c in coincfg.coins()]
+WATCH = [c["id"] for c in coincfg.coins() if c.get("group") == "watchlist"]
+MAX_PRICE_ROWS = 8
+
+
+def price_ids(A, active, backdrop="bitcoin"):
+    """BTC + coins on the slate + the watchlist, max 8 (keeps the card and the prices reply readable)."""
+    ids = [backdrop] + [t["coin"] for t in active] + WATCH
+    return [i for i in dict.fromkeys(ids) if i in A][:MAX_PRICE_ROWS]
 
 
 def load(name):
@@ -158,13 +168,16 @@ def build(now):
             t1 = "Levels:\n" + "\n".join(re.sub(r"; skip past [^.;]+", "", re.sub(r"; expires [^.;]+", "", r)) for r in rows)
         thread.append(t1)
     # prices + no-setup
-    pr = [f"${a['symbol']} {p(a['price'])} ({pct(a['change_24h'])})" for cid, a in A.items() if a.get("price") is not None]
+    pr = [f"${A[c]['symbol']} {p(A[c]['price'])} ({pct(A[c]['change_24h'])})" for c in price_ids(A, active, prices.get("backdrop", "bitcoin")) if A[c].get("price") is not None]
     pt = parse_ts(prices.get("updated_utc"))
     t2 = f"Prices ({pt.astimezone(CT).strftime('%b %-d %-I:%M %p %Z') if pt else 'snapshot'}; 24h change):\n" + "\n".join(pr)
-    if nosetup:
-        t2 += "\nNo setup: " + ", ".join(f"${sym(c)}" for c in nosetup) + " — waiting for cleaner levels rather than forcing trades."
+    ns = [c for c in nosetup if c in WATCH] or nosetup
+    if ns:
+        t2 += "\nNo setup: " + ", ".join(f"${sym(c)}" for c in ns) + " — waiting for cleaner levels rather than forcing trades."
     if len(t2) > LIMIT:
         t2 = t2.split("\nNo setup:")[0]
+    while len(t2) > LIMIT and t2.count("\n") > 2:
+        t2 = t2.rsplit("\n", 1)[0]
     thread.append(t2)
     # honest record
     if closed:
@@ -356,15 +369,16 @@ def card(path, d, now):
     px0 = 830
     box(px0, 108, 330, 452)
     T(px0 + 20, 132, "PRICES · 24H", fontsize=10, color=DIM, weight="bold", va="center")
-    order = [c for c in ["bitcoin"] + ORDER if c in A]
+    order = price_ids(A, active, d["prices"].get("backdrop", "bitcoin"))
+    step = 34 if len(order) <= 6 else 28
     for j, cid in enumerate(order):
-        a = A[cid]; yy = 168 + j * 34
+        a = A[cid]; yy = 168 + j * step
         T(px0 + 20, yy, a["symbol"], fontsize=12.5, weight="bold", va="center")
         T(px0 + 205, yy, p(a["price"]), fontsize=12, va="center", ha="right", family=mono)
         ch = a.get("change_24h") or 0
         T(px0 + 310, yy, pct(ch), fontsize=11, va="center", ha="right", family=mono, color=GREEN if ch > 0 else RED if ch < 0 else MUTED)
     st = d["tdoc"].get("stats", {})
-    yy = 168 + len(order) * 34 + 14
+    yy = 168 + len(order) * step + 6
     fig.add_artist(matplotlib.lines.Line2D([(px0 + 20) / W, (px0 + 310) / W], [1 - yy / H] * 2, color=LINE, lw=1))
     T(px0 + 20, yy + 24, "TRACK RECORD (CLOSED)", fontsize=10, color=DIM, weight="bold", va="center")
     if st.get("closed"):
@@ -374,8 +388,11 @@ def card(path, d, now):
         T(px0 + 20, yy + 76, "sum of % on margin · losses included", fontsize=9, color=DIM, va="center")
     else:
         T(px0 + 20, yy + 52, "no closed trades yet", fontsize=12, color=MUTED, va="center")
-    if d["nosetup"]:
-        T(px0 + 20, yy + 100, "No setup: " + ", ".join(A[c]["symbol"] for c in d["nosetup"]), fontsize=10, color=MUTED, va="center")
+    ns = [A[c]["symbol"] for c in d["nosetup"]]
+    if ns:
+        line1 = "No setup: " + ", ".join(ns[:6]); line2 = ", ".join(ns[6:])
+        T(px0 + 20, yy + 100, line1 + ("," if line2 else ""), fontsize=10, color=MUTED, va="center")
+        if line2: T(px0 + 20, yy + 118, line2, fontsize=10, color=MUTED, va="center")
     # footer
     fig.add_artist(matplotlib.lines.Line2D([40 / W, 1160 / W], [1 - 600 / H] * 2, color=LINE, lw=1))
     T(40, 630, SITE_SHORT, fontsize=13, color=CYAN, va="center", weight="bold")

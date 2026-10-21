@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "t": "2026-10-21T18:13:00Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84657 (+2.5%), HBAR 0.085855 (+3.1%), XLM 0.186211 (+3.7%), XRP 1.39 (+4.8%), ZBCN 0.00241042 (+12.3%), AXL 0.054493 (+1.3%), ETH 2513.89 (+2.8%), SOL 108.56 (+2.1%), DOGE 0.083346 (+2.7%), ADA 0.229108 (+3.3%), LINK 12.7 (+4.1%), SUI 1.047 (+2.8%). Open trades: 0; pending: 3; closed: 1; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-21T17:08:18Z",
       "kind": "auto",
       "author": "update_prices.py",

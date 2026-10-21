@@ -1,8 +1,8 @@
 /* Client-side signals: same indicators & scoring as scripts/signals.py (keep in sync).
-   Candles: Coinbase Exchange REST (BTC/XRP/XLM/HBAR/AXL), Kraken OHLC (ZBCN); CoinGecko market_chart fallback. */
+   Candles: Coinbase Exchange REST / Kraken OHLC per data/coins.json (passed to start()); CoinGecko market_chart fallback. */
 (() => {
   "use strict";
-  const COINS = [
+  let COINS = [  // fallback list; replaced by start(snapshot, coins) from data/coins.json
     ["bitcoin", "BTC", "coinbase", "BTC-USD"], ["hedera-hashgraph", "HBAR", "coinbase", "HBAR-USD"],
     ["stellar", "XLM", "coinbase", "XLM-USD"], ["ripple", "XRP", "coinbase", "XRP-USD"],
     ["zebec-network", "ZBCN", "kraken", "ZBCNUSD"], ["axelar", "AXL", "coinbase", "AXL-USD"],
@@ -11,7 +11,21 @@
   const REFRESH_MS = 3 * 60000;
   const label = (s) => (s == null ? "n/a" : s >= 0.5 ? "Strong Buy" : s >= 0.15 ? "Buy" : s > -0.15 ? "Neutral" : s > -0.5 ? "Sell" : "Strong Sell");
 
-  const getJ = async (u) => { const r = await fetch(u); if (!r.ok) throw new Error(`${r.status} ${u}`); return r.json(); };
+  // small request pool (Coinbase public REST allows ~10 req/s per IP) with one retry on 429/5xx
+  let inflight = 0; const queue = [];
+  const slot = () => new Promise((res) => { if (inflight < 4) { inflight++; res(); } else queue.push(res); });
+  const release = () => { const n = queue.shift(); if (n) n(); else inflight--; };
+  let nextStart = 0;  // pace request starts (~6/s) so a 12-coin refresh stays under Coinbase's public limit
+  const pace = async () => { const now = Date.now(), at = Math.max(now, nextStart); nextStart = at + 170; if (at > now) await new Promise((z) => setTimeout(z, at - now)); };
+  async function getJ(u, tries = 2) {
+    let r;
+    await slot();
+    await pace();
+    try { r = await fetch(u); } finally { release(); }
+    if ((r.status === 429 || r.status >= 500) && tries > 1) { await new Promise((z) => setTimeout(z, 800)); return getJ(u, tries - 1); }
+    if (!r.ok) throw new Error(`${r.status} ${u}`);
+    return r.json();
+  }
   const coinbase = async (p, g) => (await getJ(`https://api.exchange.coinbase.com/products/${p}/candles?granularity=${g}`)).map((r) => [r[0], r[3], r[2], r[1], r[4], r[5]]).sort((a, b) => a[0] - b[0]);
   async function kraken(pair, iv) {
     const d = await getJ(`https://api.kraken.com/0/public/OHLC?pair=${pair}&interval=${iv}`);
@@ -203,7 +217,8 @@
     const D = window.Dash; const esc = D.esc;
     const el = document.getElementById("signals-grid"); if (!el) return;
     const ids = COINS.map((c) => c[0]);
-    el.innerHTML = ids.map((id) => {
+    const groups = D.groupsOf && D.state.prices ? D.groupsOf(D.state.prices).map((g) => ({ ...g, coins: g.coins.filter((id) => ids.includes(id)) })).filter((g) => g.coins.length) : [{ id: "all", coins: ids }];
+    const card = (id) => {
       const s = doc.coins?.[id];
       if (!s) return "";
       if (s.error) return `<div class="sig-card"><div class="sig-head"><b>${esc(s.symbol)}</b><span class="sig-label n">n/a</span></div><p class="meta">Could not compute: ${esc(s.error)}</p></div>`;
@@ -223,7 +238,8 @@
         <table class="sig-table"><thead><tr><th></th>${tfs.map((tf) => `<th>${tf}</th>`).join("")}</tr></thead><tbody>${rows}
           <tr class="tf-score"><th scope="row">TF score</th>${tfs.map((tf) => { const t = s.timeframes[tf]; return `<td class="${t ? cls(t.score) : ""}" title="${t ? esc(t.label) : ""}">${t ? (t.score > 0 ? "+" : "") + fmt(t.score, 2) : "—"}</td>`; }).join("")}</tr>
         </tbody></table></div>`;
-    }).join("");
+    };
+    el.innerHTML = groups.map((g) => (groups.length > 1 ? `<h3 class="grp-h sig-grp">${esc(g.label)}</h3>` : "") + g.coins.map(card).join("")).join("");
     const meta = document.getElementById("signals-meta");
     if (meta) meta.textContent = origin === "browser" ? `Computed in your browser ${D.ct(doc.generated_utc)} · refreshes every 3 min` : `Snapshot from the scheduled run ${D.ct(doc.generated_utc)} · live computation pending…`;
     window.Signals.latest = doc;
@@ -235,5 +251,8 @@
     catch (e) { console.warn("signals refresh failed", e); }
   }
   window.Signals = { analyze, computeAll, label, TF_WEIGHTS, latest: null,
-    start(snapshot) { if (snapshot && snapshot.coins) render(snapshot, "snapshot"); refresh(); setInterval(refresh, REFRESH_MS); } };
+    start(snapshot, coins) {
+      if (Array.isArray(coins) && coins.length) COINS = coins.map((c) => c.coinbase ? [c.id, c.symbol, "coinbase", c.coinbase] : c.kraken ? [c.id, c.symbol, "kraken", c.kraken.replace("/", "")] : [c.id, c.symbol, "coingecko", c.id]);
+      if (snapshot && snapshot.coins) render(snapshot, "snapshot"); refresh(); setInterval(refresh, REFRESH_MS);
+    } };
 })();

@@ -6,7 +6,7 @@ Mechanical technical-indicator signals for the dashboard coins.
   python3 scripts/signals.py --quiet  # write file only (prints a one-line summary to stderr)
 
 Standalone (stdlib only), fast (~2-5 s: all candle requests run in parallel, 10 s timeouts).
-Candles: Coinbase Exchange (BTC, XRP, XLM, HBAR, AXL) and Kraken (ZBCN); CoinGecko market_chart fallback.
+Candles: Coinbase Exchange (coinbase pairs in data/coins.json) and Kraken (kraken pairs, e.g. ZBCN); CoinGecko market_chart fallback.
 Timeframes: 1h, 4h (built from 1h on Coinbase, native on Kraken), 1d.
 Indicators: RSI(14), MACD(12,26,9), EMA20/50 (+EMA200 on 1d), Bollinger(20,2) %B + squeeze,
 volume vs 20-period average (last CLOSED candle), Stochastic RSI(14,14,3,3).
@@ -18,6 +18,7 @@ import math
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -26,21 +27,22 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "signals.json")
 UA = {"User-Agent": "crypto-dashboard-signals/1.0", "Accept": "application/json"}
 
-COINS = [  # id, symbol, source, product
-    ("bitcoin", "BTC", "coinbase", "BTC-USD"),
-    ("hedera-hashgraph", "HBAR", "coinbase", "HBAR-USD"),
-    ("stellar", "XLM", "coinbase", "XLM-USD"),
-    ("ripple", "XRP", "coinbase", "XRP-USD"),
-    ("zebec-network", "ZBCN", "kraken", "ZBCNUSD"),
-    ("axelar", "AXL", "coinbase", "AXL-USD"),
-]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import coins as coincfg  # noqa: E402  (coin list: data/coins.json)
+COINS = [(c["id"], c["symbol"]) + coincfg.source(c) for c in coincfg.coins()]  # id, symbol, source, product
 TF_WEIGHTS = {"1h": 0.25, "4h": 0.35, "1d": 0.40}
 LABELS = [(0.5, "Strong Buy"), (0.15, "Buy"), (-0.15, "Neutral"), (-0.5, "Sell")]  # else Strong Sell
 
 
-def get(url, timeout=10):
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
-        return json.loads(r.read().decode())
+def get(url, timeout=10, retries=3):
+    for i in range(retries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+                return json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:  # public rate limits (Coinbase ~10 req/s): brief backoff
+            if e.code not in (429, 500, 502, 503, 504) or i == retries - 1:
+                raise
+            time.sleep(0.6 * (i + 1))
 
 
 # ---------------------------------------------------------------- candles

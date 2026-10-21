@@ -1,5 +1,6 @@
 /* Live prices in the visitor's browser.
-   Coinbase Exchange websocket (ticker+heartbeat) for BTC/XRP/XLM/HBAR/AXL, Kraken v2 websocket for ZBCN.
+   Coinbase Exchange websocket (ticker+heartbeat) for coins with a "coinbase" product in data/coins.json,
+   Kraken v2 websocket for coins with a "kraken" pair (ZBCN). Live.configure(coins) sets the list before start().
    CoinGecko simple/price polling (60s) as a fallback for any coin without a recent websocket tick.
    Emits ticks via Live.on(cb): {id, price, change24, source, ts}. */
 (() => {
@@ -74,7 +75,7 @@
   async function poll() {
     const now = Date.now();
     // poll a coin if it never got a websocket tick, or its websocket is not currently live
-    const wsOf = (id) => (FEEDS[id].coinbase ? "coinbase" : "kraken");
+    const wsOf = (id) => (FEEDS[id].coinbase ? "coinbase" : FEEDS[id].kraken ? "kraken" : "none");
     const need = Object.keys(FEEDS).filter((id) => !last[id] || conn[wsOf(id)] !== "live" || (last[id].source === "coingecko" && now - last[id].ts > STALE_MS));
     if (!need.length) { setConn("coingecko", "idle"); return; }
     try {
@@ -101,6 +102,11 @@
 
   window.Live = {
     FEEDS, SOURCE_LABEL,
+    configure(list) {
+      if (this.started || !Array.isArray(list)) return;
+      for (const k of Object.keys(FEEDS)) delete FEEDS[k];
+      for (const c of list) { if (c.coinbase) FEEDS[c.id] = { coinbase: c.coinbase }; else if (c.kraken) FEEDS[c.id] = { kraken: c.kraken }; else FEEDS[c.id] = {}; }
+    },
     on: (f) => listeners.push(f),
     onStatus: (f) => statusListeners.push(f),
     status, last,

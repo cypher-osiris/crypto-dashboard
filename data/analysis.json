@@ -1,188 +1,361 @@
 {
- "_readme": "Hand-edited by the analysis run. Prices are NOT stored here (see prices.json). levels: arrays of numbers drawn as horizontal lines. projection: bull/base/bear price targets at horizon_days ahead, drawn as a band from the latest price.",
- "as_of": "2026-10-21T17:15:00Z",
- "author": "Lumi (noon update)",
- "label": "Noon update, Oct 21 2026 ~12:15 PM CT. Levels/projections derived from the 30-day CoinGecko hourly history plus the cited sources.",
- "backdrop": {
-  "coin": "bitcoin",
-  "bias": "neutral-to-bullish",
-  "support": [
-   82500,
-   80000
-  ],
-  "resistance": [
-   86000,
-   87450
-  ],
-  "projection": {
-   "horizon_days": 7,
-   "bull": 87500,
-   "base": 84500,
-   "bear": 80000
+  "_readme": "Hand-edited by the analysis run. Prices are NOT stored here (see prices.json). levels: arrays of numbers drawn as horizontal lines. projection: bull/base/bear price targets at horizon_days ahead, drawn as a band from the latest price.",
+  "as_of": "2026-10-21T17:15:00Z",
+  "author": "Lumi (noon update)",
+  "label": "Noon update, Oct 21 2026 ~12:15 PM CT. Levels/projections derived from the 30-day CoinGecko hourly history plus the cited sources.",
+  "backdrop": {
+    "coin": "bitcoin",
+    "bias": "neutral-to-bullish",
+    "support": [
+      82500,
+      80000
+    ],
+    "resistance": [
+      86000,
+      87450
+    ],
+    "projection": {
+      "horizon_days": 7,
+      "bull": 87500,
+      "base": 84500,
+      "bear": 80000
+    },
+    "commentary": "BTC is back around $84.5K (+2\u20133% on the day) after holding above $80K through the mid-October dip (30-day low \u2248 $80.1K on Oct 15). CoinDesk quotes XS.com calling $82,500 the key support, with a sustained break opening a path toward $70K, and a move back above $84K taking that scenario off the table \u2014 price is right at that line now. Economic Times reports $526.6M of spot-ETF inflows, the largest since Sept 22, and cites $86K as the next resistance. The Fed meets Oct 27\u201328 (hike odds reported at ~15\u201317%), so expect headline-driven chop into next week; alts are taking their cue from BTC holding $82.5K. Noon check: BTC is holding ~$84.4\u201384.6K near the day's high (Investing.com day range $82.5K\u2013$84.7K). The 4h is stretched above its upper Bollinger band with 1h RSI ~75, so a pause or retest of $83\u201383.5K would be normal before any push at $86K. Fear & Greed is 63 (Greed, up from 55) and OKX BTC perp funding is a modest ~0.004%, so leverage isn't overheated yet. FXStreet cites CME FedWatch at 85% hold / 15% hike for next week's Fed meeting.",
+    "sources": [
+      {
+        "title": "CoinDesk live updates, Oct 21 2026 (BTC $82.5K support / $84K level, per XS.com)",
+        "url": "https://www.coindesk.com/markets/2026/10/21/live-updates-bitcoin-clings-to-usd82-500-as-spacex-results-lift-stock-futures"
+      },
+      {
+        "title": "Economic Times, Oct 21 2026 (spot BTC ETF inflows $526.6M; $86K resistance / $80K support per Mudrex)",
+        "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
+      },
+      {
+        "title": "RoboForex weekly outlook 19-23 Oct 2026 (Fed meeting Oct 27-28; XRP H4 levels 1.309 / 1.419)",
+        "url": "https://roboforex.com/beginners/analytics/forex-forecast/cryptocurrency/cryptocurrencies-forecast-2026-10-19/"
+      },
+      {
+        "title": "Investing.com BTC real-time (BRTI) daily history, Oct 21 2026",
+        "url": "https://www.investing.com/indices/bitcoin-real-time-historical-data"
+      },
+      {
+        "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026; FedWatch 85% hold)",
+        "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
+      }
+    ]
   },
-  "commentary": "BTC is back around $84.5K (+2–3% on the day) after holding above $80K through the mid-October dip (30-day low ≈ $80.1K on Oct 15). CoinDesk quotes XS.com calling $82,500 the key support, with a sustained break opening a path toward $70K, and a move back above $84K taking that scenario off the table — price is right at that line now. Economic Times reports $526.6M of spot-ETF inflows, the largest since Sept 22, and cites $86K as the next resistance. The Fed meets Oct 27–28 (hike odds reported at ~15–17%), so expect headline-driven chop into next week; alts are taking their cue from BTC holding $82.5K. Noon check: BTC is holding ~$84.4–84.6K near the day's high (Investing.com day range $82.5K–$84.7K). The 4h is stretched above its upper Bollinger band with 1h RSI ~75, so a pause or retest of $83–83.5K would be normal before any push at $86K. Fear & Greed is 63 (Greed, up from 55) and OKX BTC perp funding is a modest ~0.004%, so leverage isn't overheated yet. FXStreet cites CME FedWatch at 85% hold / 15% hike for next week's Fed meeting.",
-  "sources": [
-   {
-    "title": "CoinDesk live updates, Oct 21 2026 (BTC $82.5K support / $84K level, per XS.com)",
-    "url": "https://www.coindesk.com/markets/2026/10/21/live-updates-bitcoin-clings-to-usd82-500-as-spacex-results-lift-stock-futures"
-   },
-   {
-    "title": "Economic Times, Oct 21 2026 (spot BTC ETF inflows $526.6M; $86K resistance / $80K support per Mudrex)",
-    "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
-   },
-   {
-    "title": "RoboForex weekly outlook 19-23 Oct 2026 (Fed meeting Oct 27-28; XRP H4 levels 1.309 / 1.419)",
-    "url": "https://roboforex.com/beginners/analytics/forex-forecast/cryptocurrency/cryptocurrencies-forecast-2026-10-19/"
-   },
-   {
-    "title": "Investing.com BTC real-time (BRTI) daily history, Oct 21 2026",
-    "url": "https://www.investing.com/indices/bitcoin-real-time-historical-data"
-   },
-   {
-    "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026; FedWatch 85% hold)",
-    "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
-   }
-  ]
- },
- "coins": {
-  "ripple": {
-   "bias": "bullish short-term, at resistance",
-   "support": [
-    1.33,
-    1.26
-   ],
-   "resistance": [
-    1.42,
-    1.5
-   ],
-   "projection": {
-    "horizon_days": 7,
-    "bull": 1.47,
-    "base": 1.39,
-    "bear": 1.29
-   },
-   "commentary": "XRP leads the majors today (~+4.4% to $1.38) and is pressing the top of its 7-day range. The Oct 18 flush to ≈$1.26 (30-day low) is what stopped out the seed long at $1.28 before this bounce — a classic stop-run. RoboForex's H4 map has resistance at 1.419 and support at 1.309, which lines up with the hourly data: 1.42 is the level to clear; 1.33 is the reclaimed pivot. Still −8% over 30 days, so this is a bounce inside a downtrend until 1.50 is reclaimed. Noon: XRP ~$1.377, sitting right on the daily 50/200 EMA cluster (~$1.38 per FXStreet), with the 100-day EMA ~$1.34 as support — that lines up with the pending T002 bid zone. Perp open interest is up to 2.23B XRP (from 2.12B Sunday) but still below the Sept peak. Dated event: the XRPL fixCleanup3_4_0 security-fix amendment is on course to activate Friday Oct 23, while the native lending amendments are still ~10 validator votes short (no activation date). Ripple says it's working on a fix after a brief burst of slow ledger closes on Oct 20 (back to normal ~3.9s).",
-   "sources": [
-    {
-     "title": "RoboForex weekly outlook 19-23 Oct 2026 (Fed meeting Oct 27-28; XRP H4 levels 1.309 / 1.419)",
-     "url": "https://roboforex.com/beginners/analytics/forex-forecast/cryptocurrency/cryptocurrencies-forecast-2026-10-19/"
+  "coins": {
+    "ripple": {
+      "bias": "bullish short-term, at resistance",
+      "support": [
+        1.33,
+        1.26
+      ],
+      "resistance": [
+        1.42,
+        1.5
+      ],
+      "projection": {
+        "horizon_days": 7,
+        "bull": 1.47,
+        "base": 1.39,
+        "bear": 1.29
+      },
+      "commentary": "XRP leads the majors today (~+4.4% to $1.38) and is pressing the top of its 7-day range. The Oct 18 flush to \u2248$1.26 (30-day low) is what stopped out the seed long at $1.28 before this bounce \u2014 a classic stop-run. RoboForex's H4 map has resistance at 1.419 and support at 1.309, which lines up with the hourly data: 1.42 is the level to clear; 1.33 is the reclaimed pivot. Still \u22128% over 30 days, so this is a bounce inside a downtrend until 1.50 is reclaimed. Noon: XRP ~$1.377, sitting right on the daily 50/200 EMA cluster (~$1.38 per FXStreet), with the 100-day EMA ~$1.34 as support \u2014 that lines up with the pending T002 bid zone. Perp open interest is up to 2.23B XRP (from 2.12B Sunday) but still below the Sept peak. Dated event: the XRPL fixCleanup3_4_0 security-fix amendment is on course to activate Friday Oct 23, while the native lending amendments are still ~10 validator votes short (no activation date). Ripple says it's working on a fix after a brief burst of slow ledger closes on Oct 20 (back to normal ~3.9s).",
+      "sources": [
+        {
+          "title": "RoboForex weekly outlook 19-23 Oct 2026 (Fed meeting Oct 27-28; XRP H4 levels 1.309 / 1.419)",
+          "url": "https://roboforex.com/beginners/analytics/forex-forecast/cryptocurrency/cryptocurrencies-forecast-2026-10-19/"
+        },
+        {
+          "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026)",
+          "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
+        },
+        {
+          "title": "Coinpaper: XRPL lending still 10 votes short as Oct 23 fix nears activation",
+          "url": "https://coinpaper.com/37652/xrp-ledger-lending-protocol-remains-10-votes-short-as-october-23-bug-fix-nears-activation"
+        },
+        {
+          "title": "ICOBench: XRP Ledger close-time slowdown on Oct 20",
+          "url": "https://icobench.com/news/xrp-news-ledger-close-slowdown/"
+        },
+        {
+          "title": "CoinDesk: Ripple Prime 24/7 swaps with RLUSD collateral; HSBC warns of thin books (Oct 21 2026)",
+          "url": "https://www.coindesk.com/markets/2026/10/21/ripple-brings-wall-street-into-24-7-stock-bets-but-hsbc-warns-markets-are-still-thin"
+        }
+      ]
     },
-    {
-     "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026)",
-     "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
+    "hedera-hashgraph": {
+      "bias": "neutral, basing",
+      "support": [
+        0.082,
+        0.0806
+      ],
+      "resistance": [
+        0.0887,
+        0.093
+      ],
+      "projection": {
+        "horizon_days": 7,
+        "bull": 0.093,
+        "base": 0.087,
+        "bear": 0.081
+      },
+      "commentary": "HBAR (~$0.086, +3% 24h) is bouncing off a base at $0.081\u20130.082 (30-day low \u2248 $0.0806 on Oct 15) but remains ~6% lower over 30 days and well below the early-October $0.10 area. The 7-day high near $0.0887 is the first hurdle. Fundamentals news is incremental: Hedera announced Agent Accounts (testnet for partners in Q4 2026, mainnet targeted Q2 2027), and mainnet moved to v0.78.1 on Oct 16 with the Cross-Ledger Protocol code shipped but still disabled behind a feature flag. Neither is a near-term price catalyst. Noon: ~$0.0859; no fresh HBAR news found. Signals still conflict (1h Strong Buy vs. daily Sell), so no trade yet.",
+      "sources": [
+        {
+          "title": "Hedera blog: Introducing Hedera Agent Accounts (Oct 8 2026)",
+          "url": "https://hedera.com/blog/introducing-hedera-agent-accounts/"
+        },
+        {
+          "title": "Coinburn: Hedera deploys v0.78.1 with CLPR still behind a feature flag (Oct 18 2026)",
+          "url": "https://coinburn.com/news/hedera-v0781-clpr-code-disabled"
+        }
+      ]
     },
-    {
-     "title": "Coinpaper: XRPL lending still 10 votes short as Oct 23 fix nears activation",
-     "url": "https://coinpaper.com/37652/xrp-ledger-lending-protocol-remains-10-votes-short-as-october-23-bug-fix-nears-activation"
+    "stellar": {
+      "bias": "neutral, recovering",
+      "support": [
+        0.177,
+        0.172
+      ],
+      "resistance": [
+        0.191,
+        0.203
+      ],
+      "projection": {
+        "horizon_days": 7,
+        "bull": 0.198,
+        "base": 0.187,
+        "bear": 0.175
+      },
+      "commentary": "XLM (~$0.186, +3.6% 24h) bounced from a 30-day low of \u2248$0.172 on Oct 18 and is now at the top of its weekly range, but is still ~12% down over 30 days. Prior support near $0.19\u20130.20 should act as resistance. Event calendar: SDF's Bell (Protocol 30) upgrade \u2014 muxed contract addresses, post-quantum signature verification, millisecond ledger timing \u2014 goes to a testnet vote Nov 3 and mainnet vote Nov 23; Meridian is Oct 28\u201329. Upgrade narratives can help sentiment but don't change XLM tokenomics. Noon: XLM ~$0.1853. FXStreet puts the 50/100/200-day EMAs at ~$0.190\u20130.1946 and SuperTrend resistance at $0.206, with RSI ~44 \u2014 still a bounce inside a downtrend, which is why the pending T003 short waits for a tag of $0.1895\u20130.1915. Futures OI rose to 1.22B XLM (from 1.12B Monday), so the bounce is partly leveraged.",
+      "sources": [
+        {
+          "title": "Stellar Development Foundation: Introducing Bell, Protocol 30",
+          "url": "https://stellar.org/blog/developers/introducing-bell-protocol-30-on-stellar"
+        },
+        {
+          "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026)",
+          "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
+        }
+      ]
     },
-    {
-     "title": "ICOBench: XRP Ledger close-time slowdown on Oct 20",
-     "url": "https://icobench.com/news/xrp-news-ledger-close-slowdown/"
+    "zebec-network": {
+      "bias": "momentum, high volatility",
+      "support": [
+        0.00222,
+        0.00202
+      ],
+      "resistance": [
+        0.00258,
+        0.00282
+      ],
+      "projection": {
+        "horizon_days": 7,
+        "bull": 0.0027,
+        "base": 0.0024,
+        "bear": 0.00215
+      },
+      "commentary": "ZBCN is the day's outlier at \u2248$0.00242 (+13% 24h, +10% 7d, +17% 30d), breaking out of a $0.0020\u20130.0023 range. Small cap (rank ~167) and thin, so moves overshoot both ways; the early-October high near $0.0026\u20130.0028 is the obvious overhead supply, and a fade back into $0.0022 would not be surprising. No verified fresh catalyst found for today's move \u2014 treat as momentum, not news. Noon: holding ~$0.00243 after the breakout; still no verified news behind it. Buy signal on every timeframe, but 1h is overbought \u2014 the pending T004 waits for a dip to $0.0023\u20130.00234.",
+      "sources": []
     },
-    {
-     "title": "CoinDesk: Ripple Prime 24/7 swaps with RLUSD collateral; HSBC warns of thin books (Oct 21 2026)",
-     "url": "https://www.coindesk.com/markets/2026/10/21/ripple-brings-wall-street-into-24-7-stock-bets-but-hsbc-warns-markets-are-still-thin"
+    "axelar": {
+      "bias": "weak, range-bound",
+      "support": [
+        0.0522,
+        0.048
+      ],
+      "resistance": [
+        0.0584,
+        0.064
+      ],
+      "projection": {
+        "horizon_days": 7,
+        "bull": 0.059,
+        "base": 0.0545,
+        "bear": 0.05
+      },
+      "commentary": "AXL (~$0.054, flat 24h, \u221210% 7d) gave back its Oct 14 spike to \u2248$0.064 and is drifting mid-range ($0.048\u20130.064 over 30 days). It is lagging today's broad bounce, which is a relative-weakness tell. Background (not new): Circle's Dec 2025 deal took the Interop Labs team and IP, while the Axelar network, foundation and AXL token stay independent with Common Prefix taking over Interop Labs' role. Note: some recent sites re-headline that deal as October 2026 news \u2014 it isn't. Noon: flat ~$0.054 while the market bounces; signals neutral (4h Sell vs. 1h/1d Buy). No new Axelar announcements found.",
+      "sources": [
+        {
+          "title": "Circle: agreement to acquire Interop Labs team & IP (Dec 15 2025)",
+          "url": "https://www.circle.com/blog/circle-signs-agreement-to-acquire-interop-labs-team-intellectual-property"
+        }
+      ]
+    },
+    "ethereum": {
+      "coin": "ethereum",
+      "bias": "daily uptrend (initial read)",
+      "support": [
+        2340.0
+      ],
+      "resistance": [
+        2510.0,
+        2780.0
+      ],
+      "commentary": "ETH ~$2,510 (+2.8% 24h, +2.8% 7d, -8.7% 30d; market-cap rank #2). 30-day range \u2248 $2,340\u2013$2,780; past 7 days $2,340\u2013$2,510 (CoinGecko hourly). Daily candles (Coinbase): price above EMA20 $2,500, above EMA50 $2,480, above EMA200 $2,320; daily RSI 50. Composite signal Buy (+0.27). Levels shown are simply the 7- and 30-day lows/highs. Added to the dashboard Oct 21 with no slate idea yet \u2014 first full review at the next scheduled update.",
+      "sources": [
+        {
+          "title": "CoinGecko API: coins/markets + 30-day market_chart (ETH)",
+          "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ethereum"
+        },
+        {
+          "title": "Coinbase Exchange API: ETH-USD daily candles",
+          "url": "https://api.exchange.coinbase.com/products/ETH-USD/candles?granularity=86400"
+        }
+      ]
+    },
+    "solana": {
+      "coin": "solana",
+      "bias": "mixed daily trend (initial read)",
+      "support": [
+        100.8
+      ],
+      "resistance": [
+        108.6,
+        124.4
+      ],
+      "commentary": "SOL ~$108.6 (+2.1% 24h, +3.5% 7d, -7.6% 30d; market-cap rank #7). 30-day range \u2248 $100.8\u2013$124.4; past 7 days $100.8\u2013$108.6 (CoinGecko hourly). Daily candles (Coinbase): price below EMA20 $108.7, above EMA50 $106.8, above EMA200 $97.69; daily RSI 49. Composite signal Buy (+0.20). Levels shown are simply the 7- and 30-day lows/highs. Added to the dashboard Oct 21 with no slate idea yet \u2014 first full review at the next scheduled update.",
+      "sources": [
+        {
+          "title": "CoinGecko API: coins/markets + 30-day market_chart (SOL)",
+          "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=solana"
+        },
+        {
+          "title": "Coinbase Exchange API: SOL-USD daily candles",
+          "url": "https://api.exchange.coinbase.com/products/SOL-USD/candles?granularity=86400"
+        }
+      ]
+    },
+    "dogecoin": {
+      "coin": "dogecoin",
+      "bias": "daily downtrend (initial read)",
+      "support": [
+        0.07633
+      ],
+      "resistance": [
+        0.08341,
+        0.1039
+      ],
+      "commentary": "DOGE ~$0.08335 (+2.7% 24h, +0.4% 7d, -13.8% 30d; market-cap rank #12). 30-day range \u2248 $0.07633\u2013$0.1039; past 7 days $0.07633\u2013$0.08341 (CoinGecko hourly). Daily candles (Coinbase): price below EMA20 $0.08456, below EMA50 $0.08577, below EMA200 $0.09055; daily RSI 46. Composite signal Neutral (-0.03). Levels shown are simply the 7- and 30-day lows/highs. Added to the dashboard Oct 21 with no slate idea yet \u2014 first full review at the next scheduled update.",
+      "sources": [
+        {
+          "title": "CoinGecko API: coins/markets + 30-day market_chart (DOGE)",
+          "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=dogecoin"
+        },
+        {
+          "title": "Coinbase Exchange API: DOGE-USD daily candles",
+          "url": "https://api.exchange.coinbase.com/products/DOGE-USD/candles?granularity=86400"
+        }
+      ]
+    },
+    "cardano": {
+      "coin": "cardano",
+      "bias": "mixed daily trend (initial read)",
+      "support": [
+        0.2118
+      ],
+      "resistance": [
+        0.2316,
+        0.2794
+      ],
+      "commentary": "ADA ~$0.2291 (+3.3% 24h, -0.8% 7d, -6.4% 30d; market-cap rank #17). 30-day range \u2248 $0.2118\u2013$0.2794; past 7 days $0.2118\u2013$0.2316 (CoinGecko hourly). Daily candles (Coinbase): price below EMA20 $0.2329, above EMA50 $0.2285, below EMA200 $0.2342; daily RSI 48. Composite signal Buy (+0.17). Levels shown are simply the 7- and 30-day lows/highs. Added to the dashboard Oct 21 with no slate idea yet \u2014 first full review at the next scheduled update.",
+      "sources": [
+        {
+          "title": "CoinGecko API: coins/markets + 30-day market_chart (ADA)",
+          "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=cardano"
+        },
+        {
+          "title": "Coinbase Exchange API: ADA-USD daily candles",
+          "url": "https://api.exchange.coinbase.com/products/ADA-USD/candles?granularity=86400"
+        }
+      ]
+    },
+    "chainlink": {
+      "coin": "chainlink",
+      "bias": "mixed daily trend (initial read)",
+      "support": [
+        11.56
+      ],
+      "resistance": [
+        12.7,
+        15.46
+      ],
+      "commentary": "LINK ~$12.7 (+4.1% 24h, +0.8% 7d, -2.4% 30d; market-cap rank #16). 30-day range \u2248 $11.56\u2013$15.46; past 7 days $11.56\u2013$12.7 (CoinGecko hourly). Daily candles (Coinbase): price below EMA20 $12.72, above EMA50 $12.42, above EMA200 $10.88; daily RSI 50. Composite signal Buy (+0.17). Levels shown are simply the 7- and 30-day lows/highs. Added to the dashboard Oct 21 with no slate idea yet \u2014 first full review at the next scheduled update.",
+      "sources": [
+        {
+          "title": "CoinGecko API: coins/markets + 30-day market_chart (LINK)",
+          "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=chainlink"
+        },
+        {
+          "title": "Coinbase Exchange API: LINK-USD daily candles",
+          "url": "https://api.exchange.coinbase.com/products/LINK-USD/candles?granularity=86400"
+        }
+      ]
+    },
+    "sui": {
+      "coin": "sui",
+      "bias": "daily uptrend (initial read)",
+      "support": [
+        0.9411
+      ],
+      "resistance": [
+        1.052,
+        1.277
+      ],
+      "commentary": "SUI ~$1.047 (+2.8% 24h, +1.5% 7d, +3.1% 30d; market-cap rank #29). 30-day range \u2248 $0.9411\u2013$1.277; past 7 days $0.9411\u2013$1.052 (CoinGecko hourly). Daily candles (Coinbase): price above EMA20 $1.045, above EMA50 $0.9859, above EMA200 $0.9491; daily RSI 51. Composite signal Buy (+0.40). Levels shown are simply the 7- and 30-day lows/highs. Added to the dashboard Oct 21 with no slate idea yet \u2014 first full review at the next scheduled update.",
+      "sources": [
+        {
+          "title": "CoinGecko API: coins/markets + 30-day market_chart (SUI)",
+          "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=sui"
+        },
+        {
+          "title": "Coinbase Exchange API: SUI-USD daily candles",
+          "url": "https://api.exchange.coinbase.com/products/SUI-USD/candles?granularity=86400"
+        }
+      ]
+    },
+    "bitcoin": {
+      "coin": "bitcoin",
+      "bias": "neutral-to-bullish",
+      "support": [
+        82500,
+        80000
+      ],
+      "resistance": [
+        86000,
+        87450
+      ],
+      "projection": {
+        "horizon_days": 7,
+        "bull": 87500,
+        "base": 84500,
+        "bear": 80000
+      },
+      "commentary": "Bitcoin is also the market backdrop \u2014 the full read (levels, ETF flows, macro) is in the Market section at the top. Same levels and 7-day projection shown here.",
+      "sources": [
+        {
+          "title": "CoinDesk live updates, Oct 21 2026 (BTC $82.5K support / $84K level, per XS.com)",
+          "url": "https://www.coindesk.com/markets/2026/10/21/live-updates-bitcoin-clings-to-usd82-500-as-spacex-results-lift-stock-futures"
+        },
+        {
+          "title": "Economic Times, Oct 21 2026 (spot BTC ETF inflows $526.6M; $86K resistance / $80K support per Mudrex)",
+          "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
+        },
+        {
+          "title": "RoboForex weekly outlook 19-23 Oct 2026 (Fed meeting Oct 27-28; XRP H4 levels 1.309 / 1.419)",
+          "url": "https://roboforex.com/beginners/analytics/forex-forecast/cryptocurrency/cryptocurrencies-forecast-2026-10-19/"
+        },
+        {
+          "title": "Investing.com BTC real-time (BRTI) daily history, Oct 21 2026",
+          "url": "https://www.investing.com/indices/bitcoin-real-time-historical-data"
+        },
+        {
+          "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026; FedWatch 85% hold)",
+          "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
+        }
+      ]
     }
-   ]
-  },
-  "hedera-hashgraph": {
-   "bias": "neutral, basing",
-   "support": [
-    0.082,
-    0.0806
-   ],
-   "resistance": [
-    0.0887,
-    0.093
-   ],
-   "projection": {
-    "horizon_days": 7,
-    "bull": 0.093,
-    "base": 0.087,
-    "bear": 0.081
-   },
-   "commentary": "HBAR (~$0.086, +3% 24h) is bouncing off a base at $0.081–0.082 (30-day low ≈ $0.0806 on Oct 15) but remains ~6% lower over 30 days and well below the early-October $0.10 area. The 7-day high near $0.0887 is the first hurdle. Fundamentals news is incremental: Hedera announced Agent Accounts (testnet for partners in Q4 2026, mainnet targeted Q2 2027), and mainnet moved to v0.78.1 on Oct 16 with the Cross-Ledger Protocol code shipped but still disabled behind a feature flag. Neither is a near-term price catalyst. Noon: ~$0.0859; no fresh HBAR news found. Signals still conflict (1h Strong Buy vs. daily Sell), so no trade yet.",
-   "sources": [
-    {
-     "title": "Hedera blog: Introducing Hedera Agent Accounts (Oct 8 2026)",
-     "url": "https://hedera.com/blog/introducing-hedera-agent-accounts/"
-    },
-    {
-     "title": "Coinburn: Hedera deploys v0.78.1 with CLPR still behind a feature flag (Oct 18 2026)",
-     "url": "https://coinburn.com/news/hedera-v0781-clpr-code-disabled"
-    }
-   ]
-  },
-  "stellar": {
-   "bias": "neutral, recovering",
-   "support": [
-    0.177,
-    0.172
-   ],
-   "resistance": [
-    0.191,
-    0.203
-   ],
-   "projection": {
-    "horizon_days": 7,
-    "bull": 0.198,
-    "base": 0.187,
-    "bear": 0.175
-   },
-   "commentary": "XLM (~$0.186, +3.6% 24h) bounced from a 30-day low of ≈$0.172 on Oct 18 and is now at the top of its weekly range, but is still ~12% down over 30 days. Prior support near $0.19–0.20 should act as resistance. Event calendar: SDF's Bell (Protocol 30) upgrade — muxed contract addresses, post-quantum signature verification, millisecond ledger timing — goes to a testnet vote Nov 3 and mainnet vote Nov 23; Meridian is Oct 28–29. Upgrade narratives can help sentiment but don't change XLM tokenomics. Noon: XLM ~$0.1853. FXStreet puts the 50/100/200-day EMAs at ~$0.190–0.1946 and SuperTrend resistance at $0.206, with RSI ~44 — still a bounce inside a downtrend, which is why the pending T003 short waits for a tag of $0.1895–0.1915. Futures OI rose to 1.22B XLM (from 1.12B Monday), so the bounce is partly leveraged.",
-   "sources": [
-    {
-     "title": "Stellar Development Foundation: Introducing Bell, Protocol 30",
-     "url": "https://stellar.org/blog/developers/introducing-bell-protocol-30-on-stellar"
-    },
-    {
-     "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026)",
-     "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
-    }
-   ]
-  },
-  "zebec-network": {
-   "bias": "momentum, high volatility",
-   "support": [
-    0.00222,
-    0.00202
-   ],
-   "resistance": [
-    0.00258,
-    0.00282
-   ],
-   "projection": {
-    "horizon_days": 7,
-    "bull": 0.0027,
-    "base": 0.0024,
-    "bear": 0.00215
-   },
-   "commentary": "ZBCN is the day's outlier at ≈$0.00242 (+13% 24h, +10% 7d, +17% 30d), breaking out of a $0.0020–0.0023 range. Small cap (rank ~167) and thin, so moves overshoot both ways; the early-October high near $0.0026–0.0028 is the obvious overhead supply, and a fade back into $0.0022 would not be surprising. No verified fresh catalyst found for today's move — treat as momentum, not news. Noon: holding ~$0.00243 after the breakout; still no verified news behind it. Buy signal on every timeframe, but 1h is overbought — the pending T004 waits for a dip to $0.0023–0.00234.",
-   "sources": []
-  },
-  "axelar": {
-   "bias": "weak, range-bound",
-   "support": [
-    0.0522,
-    0.048
-   ],
-   "resistance": [
-    0.0584,
-    0.064
-   ],
-   "projection": {
-    "horizon_days": 7,
-    "bull": 0.059,
-    "base": 0.0545,
-    "bear": 0.05
-   },
-   "commentary": "AXL (~$0.054, flat 24h, −10% 7d) gave back its Oct 14 spike to ≈$0.064 and is drifting mid-range ($0.048–0.064 over 30 days). It is lagging today's broad bounce, which is a relative-weakness tell. Background (not new): Circle's Dec 2025 deal took the Interop Labs team and IP, while the Axelar network, foundation and AXL token stay independent with Common Prefix taking over Interop Labs' role. Note: some recent sites re-headline that deal as October 2026 news — it isn't. Noon: flat ~$0.054 while the market bounces; signals neutral (4h Sell vs. 1h/1d Buy). No new Axelar announcements found.",
-   "sources": [
-    {
-     "title": "Circle: agreement to acquire Interop Labs team & IP (Dec 15 2025)",
-     "url": "https://www.circle.com/blog/circle-signs-agreement-to-acquire-interop-labs-team-intellectual-property"
-    }
-   ]
   }
- }
 }

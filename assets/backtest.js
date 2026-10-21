@@ -89,6 +89,13 @@
     $("bt-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) renderCoin(b.dataset.id); });
     renderCoin(ids.includes("ripple") ? "ripple" : ids[0]);
   }
-  const boot = () => (window.Dash && window.Dash.ready ? window.Dash.ready.then(start) : setTimeout(boot, 50));
+  // data/backtest.json is ~0.5 MB: fetch it only when the section is about to scroll into view
+  const lazy = () => {
+    const el = document.getElementById("backtest"); if (!el) return;
+    if (!("IntersectionObserver" in window) || location.hash === "#backtest") { start(); return; }
+    const io = new IntersectionObserver((ents) => { if (ents.some((e) => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: "800px 0px" });
+    io.observe(el);
+  };
+  const boot = () => (window.Dash && window.Dash.ready ? window.Dash.ready.then(lazy) : setTimeout(boot, 50));
   boot();
 })();
