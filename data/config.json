@@ -2,7 +2,8 @@
   "affiliate": {
     "bitunix_url": "https://www.bitunix.com/",
     "label": "Trade on Bitunix",
-    "coinbase_url": "",
-    "coinbase_label": "Trade on Coinbase"
+    "coinbase_url": "https://www.coinbase.com/",
+    "coinbase_advanced_url": "https://advanced.coinbase.com/",
+    "coinbase_label": "Trade on Coinbase Advanced"
   }
 }
