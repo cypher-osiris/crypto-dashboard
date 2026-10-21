@@ -37,12 +37,20 @@ never pretends to have a position, a feeling about money, or certainty it doesn'
 | Trade event | right after `track_trades.py` reports it | the event first (filled/T1/stopped) → price → one sentence of why/what now → NFA | the coin (auto-focus) |
 | News reaction | when a sourced catalyst lands | the fact (with outlet) → what Lumi does about it (usually nothing) → NFA; source link in reply | coin or none |
 | Weekly scorecard | Sunday evening | closed W/L, cumulative %, best/worst trade, one lesson → NFA | `--focus slate` |
+| Missed it | when price runs past an idea's missed-it limit, or a missed-it plan arms/triggers | own the miss in one line → the plan's trigger in plain words + ONE level (the stop) → "no trigger, no trade" → NFA. For type `none`, say plainly there's no chase. | the coin |
 
 Event templates (fill only from the facts JSON; these are **not** current data):
 - **Filled:** "Filled: $SYM long at {price}. Stop {stop}. Now it's the market's turn. Paper trades, NFA"
 - **Target hit:** "T1 on $SYM at {price} 🎯 Half off, stop to breakeven. The rest rides for {T2}. Paper trades, NFA"
 - **Stopped:** "Stopped out of $SYM at {price}. {one honest sentence}. {pnl}% on margin. Next. Paper trades, NFA"
 - **Cancelled/expired:** "Never got my $SYM price, so the idea expired. No fill, no loss, no regrets. Paper trades, NFA"
+- **Missed-it plan triggered:** "Missed my $SYM dip, so the backup plan ran: {trigger in plain words} held. In at {price}, {lev}x{, half size}. Stop {stop}. Paper trades, NFA"
+- **Missed-it plan invalidated/expired:** "The $SYM backup plan is off: {what happened}. No trade is a fine outcome. Paper trades, NFA"
+
+Missed-it posts: the facts JSON has `slate[].past_missed_it` and `slate[].missed_plan` (type, status, trigger, zone,
+stop, target, lev, `rr_worst_best`, `now_vs_plan_zone`), and `missed_plan armed/triggered/...` entries in the trade
+events. Don't quote R:R ratios in posts (they read like a spreadsheet); "the math works / doesn't work" is enough.
+A linked trade (`T002b`) is a real trade on the record: its fill, target or stop gets a normal trade-event post.
 
 ## Workflow
 ```sh
@@ -140,6 +148,24 @@ Paper trades, NFA
 Everyone's bouncing. I'm looking to fade one.
 
 $XLM short only if it rallies into 0.1895–0.1915, with a stop above 0.1955. If it never gets there, there's no trade.
+
+Paper trades, NFA
+```
+
+**9. Missed it (plan, XRP)** (Oct 21 ~1:50 PM CT: XRP $1.39, bid 1.345–1.355 unfilled, plan = retest of 1.368–1.375 holds, stop 1.348)
+```
+$XRP left without me: up to $1.39 and it never came back to my 1.345–1.355 bid.
+
+The missed-it plan: if a 1h candle retests 1.368–1.375 and holds, I'm in with a stop at 1.348. No retest, no trade.
+
+Paper trades, NFA
+```
+
+**10. Missed it (no chase, XLM)** (plan type `none`: a breakdown short runs into 0.177–0.1775 support, ~0.6:1)
+```
+Not every missed trade gets a backup plan. $XLM doesn't.
+
+A breakdown short from here runs straight into 0.177 support, so the math doesn't work. My fade fills at 0.1895–0.1915 or I wait for a new setup.
 
 Paper trades, NFA
 ```

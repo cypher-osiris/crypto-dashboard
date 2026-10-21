@@ -80,8 +80,17 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
     "entry":0.18,"entry_zone":{"low":0.179,"high":0.181},"stop":0.174,"targets":[0.19,0.198],
     "opened_at":"2026-10-22T08:00:00-05:00","expiry":"2026-10-24T08:00:00-05:00","status":"pending",
     "missed_it":{"max_entry":0.183,"note":"furthest price still worth entering, and when to skip"},
+    "missed_plan":{"type":"pullback","trigger":"Retest of 0.1835–0.185 holds: a 1h candle trades into it and closes at or above 0.1835",
+      "trigger_rule":{"tf":"1h","kind":"retest_hold"},"entry_zone":{"low":0.1835,"high":0.185},"stop":0.1805,"target":0.19,
+      "leverage":3,"size_note":"normal size","reasoning":"which levels make the retest real, and why R:R >= 1.5",
+      "expiry":"2026-10-24T08:00:00-05:00"},
     "reasoning":"levels + signals behind it","source":"analysis run"}
    ```
+   **Every new idea must carry a `missed_plan`** ("Missed it? Here's the move", see "Missed-it plans" below). Write it
+   from real levels only, with R:R >= 1.5 from the WORST fill in its zone. If no such move exists, write
+   `{"type":"none","reasoning":"no good chase; wait for a new setup: <why, with the levels>"}`. After editing, run
+   `python3 scripts/track_trades.py` and check `slate_warnings` (it flags a missing plan, missing fields, R:R < 1.5,
+   or a non-machine-checkable trigger).
    `status: "open"` = entered at `entry` immediately. `pending` fills when price trades into `entry_zone` (fill price
    replaces `entry`, the plan is kept in `planned_entry`) and becomes `cancelled` at `expiry` (legacy `fill_by` also
    works). Optional `expires` closes an open trade at market. Times without an offset are read as Central time.
@@ -115,6 +124,38 @@ Single engine used by the 30-min job and by `update_prices.py`. For each pending
 - Prints `{"checked_utc","events":[...],"publish":bool,"active":[...],"sources","errors","slate_warnings"}`.
   Event types: `filled`, `target1_hit`/`target2_hit`, `stopped`, `won`, `lost`, `cancelled`.
 - Stats: win rate = won / closed; cumulative P&L = simple sum of closed trades' P&L %.
+
+### Missed-it plans (`missed_plan` on a trade)
+Backward compatible: trades without it work as before; `missed_it` (`max_entry` + note) stays and defines when the idea counts as missed.
+
+| field | meaning |
+|---|---|
+| `type` | `pullback` (retest of a level after the run), `breakout` (close through a level), `flip` (opposite side after the idea is invalidated), `none` (no good chase) |
+| `trigger` | the condition in words, e.g. "1h close above 1.42" or "retest of 1.38–1.385 holds" |
+| `trigger_rule` | machine version: `{"tf":"1h","kind":"retest_hold"}` (uses `entry_zone`: long = 1h low <= zone.high and close >= zone.low; short mirrored), `{"tf":"1h","kind":"close_above","level":x}`, `{"tf":"1h","kind":"close_below","level":x}`. Pullback defaults to retest_hold. Without a rule the plan is shown but not auto-tracked (warning). |
+| `entry_zone` `{low,high}`, `stop`, `target` | the plan trade (one target) |
+| `leverage` | default 3; **2 for chase entries** |
+| `size_note` | e.g. "half size: worse R:R" |
+| `reasoning` | the level-based rationale (and, for `none`, why no chase works) |
+| `expiry` | optional; default = the main idea's expiry |
+| `direction` | optional; default = same as the idea (`flip` = opposite) |
+| `status`, `armed_at`, `triggered_at`, `linked_id`, `ended_at`, `last_checked(_ms)` | written by the tracker; don't hand-edit |
+
+Rules: a real level-based rationale and **R:R >= 1.5 from the worst fill** (long: zone.high, short: zone.low), else `type: none`.
+Tracker (`track_trades.py`, every 30 min): `watching` → `armed` when the idea is still pending and a 5m close is past
+`missed_it.max_entry`, or the idea expired unfilled (flip: when the idea is stopped, or a 1h close beyond its stop).
+`armed` + trigger on a completed 1h candle → **linked trade `<id>b`** (`parent_id`, `plan_type`, `source: "missed_plan of <id>"`):
+open at the trigger close if it is inside the plan zone, else pending in the zone until the plan expiry. A still-pending
+main idea is cancelled with `cancel_reason: "superseded by missed-it plan"` and `slate.coins[coin].trade_id` moves to the
+linked trade, so one idea per coin holds. The linked trade is then tracked like any other trade and counts in the record.
+Other outcomes: `void` (the idea filled first), `invalidated` (1h close beyond the plan stop while armed), `expired`.
+Every transition is a trade event (`missed_plan_armed` / `_triggered` / `_void` / `_invalidated` / `_expired`, plus
+`cancelled` for the superseded idea), so the 30-min job publishes it and log.json records it. Plans that fail validation
+are never auto-activated. Plan scanning starts at the first full hour after the plan was written (no back-dating).
+
+The slate card shows a collapsible "Missed it?" block (trigger, zone, stop, target, leverage, R:R worst/best, size note,
+live distance to the plan zone or trigger, and the reasoning). It highlights and opens itself while price is past the
+missed-it limit or the plan is armed, unless the reader has toggled it.
 
 ### Locking
 `track_trades.py`, `update_prices.py`, `publish.sh` and `locked.sh` all take an exclusive `flock` on `state/lock`
@@ -211,7 +252,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-7`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-8`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
