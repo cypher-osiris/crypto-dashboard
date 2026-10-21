@@ -67,12 +67,15 @@
     scale.ticks = ticks;
   }
 
-  async function getJSON(name) {
+  const Dash = (window.Dash = window.Dash || {});
+  Object.assign(Dash, { fmtPrice, num, pct, chip, ct, esc, spark, COLORS, COIN_COLORS, dayTicks, shortDate, charts: {}, state: {} });
+  let readyResolve; Dash.ready = new Promise((r) => (readyResolve = r));
+
+  async function getJSON(name, optional) {
     const r = await fetch(`data/${name}?v=${Date.now()}`, { cache: "no-store" });
-    if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
+    if (!r.ok) { if (optional) return null; throw new Error(`${name}: HTTP ${r.status}`); }
     return r.json();
   }
-
   function sourcesHTML(list) {
     if (!list || !list.length) return "";
     return "Sources:<ul>" + list.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join("") + "</ul>";
@@ -138,7 +141,7 @@
     const item = (id, dup) => {
       const a = prices.assets[id];
       return `<a class="tk${dup ? " dup" : ""}" href="#${id === prices.backdrop ? "market" : "coin-" + id}"${dup ? ' aria-hidden="true" tabindex="-1"' : ""}>
-        <span class="s">${esc(a.symbol)}</span><span class="p">${fmtPrice(a.price)}</span>${chip(a.change_24h)}${spark(a.history, 56, 18, 72)}</a>`;
+        <span class="s">${esc(a.symbol)}</span><span class="p" data-lp="${id}">${fmtPrice(a.price)}</span><span data-lc="${id}">${chip(a.change_24h)}</span>${spark(a.history, 56, 18, 72)}</a>`;
     };
     $("ticker").innerHTML = ids.map((i) => item(i, false)).join("") + ids.map((i) => item(i, true)).join("");
   }
@@ -160,11 +163,12 @@
     const b = prices.assets[prices.backdrop];
     const an = analysis.backdrop || {};
     $("btc-price").textContent = fmtPrice(b.price);
-    $("btc-chg").innerHTML = chip(b.change_24h, "24h") + chip(b.change_7d, "7d") + chip(b.change_30d, "30d");
+    $("btc-price").dataset.lp = prices.backdrop;
+    $("btc-chg").innerHTML = `<span data-lc="${prices.backdrop}" data-lbl="24h">${chip(b.change_24h, "24h")}</span>` + chip(b.change_7d, "7d") + chip(b.change_30d, "30d");
     if (an.bias) $("btc-chg").insertAdjacentHTML("afterend", `<div class="bias">${esc(an.bias)}</div>`);
     $("btc-commentary").textContent = an.commentary || "";
     $("btc-sources").innerHTML = sourcesHTML(an.sources);
-    priceChart($("chart-bitcoin"), b, an);
+    Dash.charts[prices.backdrop] = priceChart($("chart-bitcoin"), b, an);
   }
 
   function renderCoins(prices, analysis, trades) {
@@ -188,8 +192,9 @@
           </div>
           <div class="coin-right">
             ${spark(a.history)}
-            <div><div class="price">${fmtPrice(a.price)}</div>
-              <div class="chg">${chip(a.change_24h, "24h")}${chip(a.change_7d, "7d")}</div></div>
+            <div><div class="price" data-lp="${id}">${fmtPrice(a.price)}</div>
+              <div class="chg"><span data-lc="${id}" data-lbl="24h">${chip(a.change_24h, "24h")}</span>${chip(a.change_7d, "7d")}</div>
+              <div class="src-tag" data-src="${id}">snapshot</div></div>
           </div>
         </div>
         <div class="coin-chart"><canvas id="chart-${id}" aria-label="${esc(a.symbol)} 30 day chart"></canvas></div>
@@ -207,79 +212,186 @@
         id: `entry-${t.id}`, type: "point", xValue: Date.parse(t.filled_at || t.opened_at), yValue: t.entry, radius: 4,
         backgroundColor: t.status === "won" ? COLORS.sup : t.status === "open" ? COLORS.line : COLORS.res, borderColor: "#fff", borderWidth: 1,
       }));
-      priceChart(el.querySelector("canvas"), a, an, { markers });
+      Dash.charts[id] = priceChart(el.querySelector("canvas"), a, an, { markers });
     }
   }
 
-  function tradePnl(t) {
-    if (t.pnl_pct != null) return pct(t.pnl_pct);
-    if (t.unrealized_pnl_pct != null) return pct(t.unrealized_pnl_pct) + ' <small class="meta">(open)</small>';
-    return "—";
+  /* ---------- trades: slate + table ---------- */
+  const dirSign = (t) => (t.direction === "short" ? -1 : 1);
+  const lev = (t) => t.leverage || 3;
+  const movePct = (t, p, from = t.entry) => (dirSign(t) * (p - from) / from) * 100;
+  function livePnl(t, price) {
+    // blended across targets, same rule as the update script (targets already hit are locked in)
+    const n = t.targets.length, hits = (t.targets_hit || []).map((h) => h.price);
+    const legs = hits.concat(Array(Math.max(0, n - hits.length)).fill(price));
+    return legs.reduce((a, p) => a + movePct(t, p) * lev(t), 0) / n;
+  }
+  function zoneOf(t) { const z = t.entry_zone || {}; return { lo: z.low ?? t.entry, hi: z.high ?? t.entry }; }
+  function zoneDistance(t, price) {
+    const { lo, hi } = zoneOf(t);
+    if (price >= lo && price <= hi) return { txt: "in zone — fill area", cls: "in" };
+    const above = price > hi;
+    const d = above ? (price / hi - 1) * 100 : (1 - price / lo) * 100;
+    const base = `${d.toFixed(1)}% ${above ? "above" : "below"} zone`;
+    const mi = t.missed_it && t.missed_it.max_entry;
+    // The "chase" side is the side the trade profits on: above the zone for longs, below it for shorts.
+    const chaseSide = t.direction === "short" ? !above : above;
+    if (!chaseSide) return { txt: `${base} — moving toward the stop side`, cls: "away" };
+    if (mi == null) return { txt: `${base} — waiting for a pullback into the zone`, cls: "away" };
+    const within = t.direction === "short" ? price >= mi : price <= mi;
+    return within
+      ? { txt: `${base} — still within the missed-it limit (${num(mi)})`, cls: "ok" }
+      : { txt: `${base} — past the missed-it limit (${num(mi)}): wait for the zone, don't chase`, cls: "missed" };
+  }
+  function countdown(iso) {
+    const ms = Date.parse(iso) - Date.now();
+    if (!(ms > 0)) return "expired";
+    const h = Math.floor(ms / 36e5), m = Math.floor((ms % 36e5) / 6e4);
+    return h >= 24 ? `${Math.floor(h / 24)}d ${h % 24}h` : `${h}h ${m}m`;
+  }
+
+  function buildSlate(prices, trades) {
+    const all = trades.trades || [];
+    const slate = trades.slate && trades.slate.coins ? trades.slate.coins : null;
+    return prices.coins.map((id) => {
+      let entry = slate ? slate[id] : null;
+      if (!slate) {
+        const t = all.find((x) => x.id === trades.current_idea_id && x.coin === id);
+        entry = t ? { trade_id: t.id } : null;
+      }
+      const t = entry && entry.trade_id ? all.find((x) => x.id === entry.trade_id) : null;
+      return { id, trade: t, note: entry && entry.note };
+    });
+  }
+
+  function slateCard(prices, { id, trade: t, note }) {
+    const a = prices.assets[id];
+    const [c1, c2] = COIN_COLORS[a.symbol] || [];
+    const head = (badge) => `<div class="slate-head"><div class="coin-id"><div class="coin-mark sm" style="--c1:${c1 || "#334155"};--c2:${c2 || "#0f172a"}">${esc(a.symbol)}</div>
+      <div><b>${esc(a.symbol)}</b><small class="muted"> ${esc(a.name)}</small></div></div>${badge}</div>`;
+    const priceRow = `<div class="slate-live"><span class="muted">Live</span> <b class="mono" data-lp="${id}">${fmtPrice(a.price)}</b> <span data-lc="${id}">${chip(a.change_24h)}</span></div>`;
+    if (!t) {
+      return `<article class="slate-card none">${head('<span class="status s-none">no setup</span>')}${priceRow}
+        <p class="slate-note">${esc(note || "No setup right now.")}</p></article>`;
+    }
+    const L = lev(t);
+    const { lo, hi } = zoneOf(t);
+    const zoneTxt = lo === hi ? num(lo) : `${num(lo)} – ${num(hi)}`;
+    const closed = !["pending", "open"].includes(t.status);
+    const side = `<span class="side ${t.direction}">${t.direction === "short" ? "SHORT" : "LONG"} ${L}x</span>`;
+    const ref = t.status === "open" ? t.entry : (lo + hi) / 2;
+    const tg = t.targets.map((x, i) => `<div><small>T${i + 1}${(t.targets_hit || [])[i] ? " ✓" : ""}</small>${num(x)} <span class="up">+${(movePct(t, x, ref) * L).toFixed(1)}%</span></div>`).join("");
+    return `<article class="slate-card ${t.status}" data-slate="${esc(t.id)}" data-coin="${id}">
+      ${head(`<span class="status s-${esc(t.status)}">${esc(t.status)}</span>`)}
+      <div class="slate-sub">${side} <span class="muted mono">${esc(t.id)}</span>${t.expiry && t.status === "pending" ? ` <span class="muted">· expires in <b class="mono" data-exp="${esc(t.expiry)}">${countdown(t.expiry)}</b></span>` : ""}</div>
+      ${priceRow}
+      <div class="slate-dist" data-dist>${closed ? `closed ${ct(t.closed_at)}` : "—"}</div>
+      <div class="slate-grid">
+        <div><small>${t.status === "open" ? "Filled" : "Entry zone"}</small>${t.status === "open" ? num(t.entry) : zoneTxt}</div>
+        <div><small>Stop</small>${num(t.current_stop ?? t.stop)} <span class="down">${(movePct(t, t.current_stop ?? t.stop, ref) * L).toFixed(1)}%</span></div>
+        ${tg}
+        <div class="pnl-cell"><small>${closed ? "Result" : t.status === "open" ? "Unrealized P&L" : "If filled now"}</small><b class="mono" data-upnl>${closed && t.pnl_pct != null ? pct(t.pnl_pct) : "—"}</b></div>
+      </div>
+      ${t.missed_it ? `<div class="missed"><span class="mi-ico">↯</span><div><b>Missed it?</b> ${t.missed_it.max_entry != null ? `Max entry <span class="mono">${num(t.missed_it.max_entry)}</span>. ` : ""}${esc(t.missed_it.note || "")}</div></div>` : ""}
+      ${t.leverage_note ? `<p class="meta">${esc(t.leverage_note)}</p>` : ""}
+      <details class="why"><summary>Reasoning</summary><p>${esc(t.reasoning || "")}</p></details>
+    </article>`;
+  }
+
+  function updateSlateLive(id, price) {
+    document.querySelectorAll(`.slate-card[data-coin="${id}"]`).forEach((el) => {
+      const t = (Dash.state.trades.trades || []).find((x) => x.id === el.dataset.slate);
+      if (!t) return;
+      const dist = el.querySelector("[data-dist]"), up = el.querySelector("[data-upnl]");
+      if (t.status === "pending") {
+        const z = zoneDistance(t, price);
+        dist.className = "slate-dist " + z.cls;
+        dist.textContent = z.txt;
+        // hypothetical P&L is meaningless before a fill: show R:R from the zone midpoint instead
+        const { lo, hi } = zoneOf(t), mid = (lo + hi) / 2;
+        const rr = Math.abs(t.targets[0] - mid) / Math.abs(mid - t.stop);
+        up.innerHTML = `<span class="muted">R:R to T1 ${rr.toFixed(2)}</span>`;
+      } else if (t.status === "open") {
+        const v = livePnl(t, price);
+        dist.className = "slate-dist " + (v >= 0 ? "in" : "away");
+        dist.textContent = `${(movePct(t, price) >= 0 ? "+" : "")}${movePct(t, price).toFixed(2)}% from fill`;
+        up.innerHTML = pct(v);
+      }
+    });
+    document.querySelectorAll("[data-exp]").forEach((e) => (e.textContent = countdown(e.dataset.exp)));
   }
 
   function renderTrades(prices, trades) {
     const all = trades.trades || [];
     const sym = (id) => prices.assets[id]?.symbol || id;
-    const idea = all.find((t) => t.id === trades.current_idea_id);
-    const ideaEl = $("idea");
-    if (idea) {
-      const lev = idea.leverage || 5;
-      const move = (p) => ((idea.direction === "short" ? -1 : 1) * (p - idea.entry) / idea.entry) * 100;
-      const mark = prices.assets[idea.coin]?.price;
-      ideaEl.innerHTML = `
-        <h3>Today's trade idea · ${esc(idea.id)} — ${esc(sym(idea.coin))} ${esc(idea.direction.toUpperCase())} ${lev}x
-          <span class="status s-${esc(idea.status)}">${esc(idea.status)}</span></h3>
-        <div class="grid">
-          <div><small>Entry</small>${num(idea.entry)}</div>
-          <div><small>Stop</small>${num(idea.stop)} <span class="down">(${(move(idea.stop) * lev).toFixed(1)}%)</span></div>
-          ${idea.targets.map((x, i) => `<div><small>Target ${i + 1}</small>${num(x)} <span class="up">(+${(move(x) * lev).toFixed(1)}%)</span></div>`).join("")}
-          <div><small>Now</small>${num(mark)}</div>
-          <div><small>Posted</small>${esc(ct(idea.opened_at))}</div>
-          ${idea.fill_by ? `<div><small>Fill by</small>${esc(ct(idea.fill_by))}</div>` : ""}
-        </div>
-        <p>${esc(idea.reasoning)}</p>`;
-    } else {
-      ideaEl.innerHTML = "<h3>Today's trade idea</h3><p>No idea posted for today — sitting on hands is a position too.</p>";
-    }
-
-    const s = trades.stats || {};
-    $("stats").innerHTML = [
-      ["Win rate", s.win_rate_pct == null ? "n/a" : `<span class="${s.win_rate_pct >= 50 ? "up" : "down"}">${s.win_rate_pct}%</span>`],
-      ["Cumulative P&L", s.cumulative_pnl_pct == null ? "n/a" : pct(s.cumulative_pnl_pct)],
-      ["Closed", `${s.closed ?? 0} <small class="meta">(${s.won ?? 0}W / ${s.lost_or_stopped ?? 0}L)</small>`],
-      ["Open / pending", `${s.open ?? 0} / ${s.pending ?? 0}`],
-    ].map(([k, v]) => `<div class="stat"><small>${k}</small><b>${v}</b></div>`).join("");
+    const slate = buildSlate(prices, trades);
+    const active = slate.filter((s) => s.trade && ["pending", "open"].includes(s.trade.status)).length;
+    $("slate-meta").textContent = `${active} active idea${active === 1 ? "" : "s"} · ${slate.filter((s) => !s.trade).length} coins with no setup · max one per coin, five total` + (trades.slate?.as_of ? ` · slate as of ${ct(trades.slate.as_of)}` : "");
+    $("slate-grid").innerHTML = slate.map((s) => slateCard(prices, s)).join("");
+    slate.forEach((s) => updateSlateLive(s.id, prices.assets[s.id].price));
 
     const rows = [...all].sort((a, b) => Date.parse(b.opened_at) - Date.parse(a.opened_at));
-    $("trades-body").innerHTML = rows.map((t) => `
-      <tr title="${esc(t.reasoning)}">
-        <td>${esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(t.direction)} ${t.leverage || 5}x</td>
-        <td>${esc(ct(t.opened_at))}</td><td>${num(t.entry)}</td><td>${num(t.stop)}</td>
+    $("trades-body").innerHTML = rows.map((t) => {
+      const z = t.entry_zone;
+      return `<tr title="${esc(t.reasoning)}">
+        <td>${esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(t.direction)} ${lev(t)}x</td>
+        <td>${esc(ct(t.opened_at))}</td><td>${t.status === "pending" && z ? `${num(z.low)}–${num(z.high)}` : num(t.entry)}</td><td>${num(t.stop)}</td>
         <td>${t.targets.map((x, i) => (t.targets_hit || [])[i] ? `<b class="up">${num(x)}✓</b>` : num(x)).join(" / ")}</td>
         <td><span class="status s-${esc(t.status)}">${esc(t.status)}</span>${t.closed_at ? `<br><small class="meta">${esc(ct(t.closed_at))}</small>` : ""}</td>
-        <td>${t.exit_price != null ? num(t.exit_price) : t.mark_price != null ? `<small class="meta">mark ${num(t.mark_price)}</small>` : "—"}</td>
-        <td>${tradePnl(t)}</td>
-      </tr>`).join("") || '<tr><td colspan="10">No trades yet.</td></tr>';
+        <td>${t.exit_price != null ? num(t.exit_price) : t.mark_price != null ? `<small class="meta">mark <span data-lp="${t.coin}">${num(t.mark_price)}</span></small>` : "—"}</td>
+        <td data-row-pnl="${esc(t.id)}">${t.pnl_pct != null ? pct(t.pnl_pct) : t.status === "open" && t.unrealized_pnl_pct != null ? pct(t.unrealized_pnl_pct) : "—"}</td>
+      </tr>`;
+    }).join("") || '<tr><td colspan="10">No trades yet.</td></tr>';
+  }
 
-    if (window.Chart) {
-      const curve = (s.equity_curve || []).map((p) => ({ x: Date.parse(p.t), y: p.cum_pnl_pct, id: p.trade_id }));
-      const first = all.length ? Math.min(...all.map((t) => Date.parse(t.opened_at))) : Date.now();
-      const pts = [{ x: first, y: 0, id: "start" }, ...curve];
-      const lastPt = pts[pts.length - 1];
-      if (Date.now() > lastPt.x) pts.push({ x: Date.now(), y: lastPt.y, id: "now" });
-      new Chart($("chart-pnl"), {
-        type: "line",
-        data: { datasets: [{ label: "Cumulative P&L % (5x)", data: pts, stepped: true, borderColor: COLORS.base, borderWidth: 2, pointRadius: 3, fill: { target: { value: 0 }, above: "rgba(63,185,80,0.15)", below: "rgba(248,81,73,0.15)" } }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, animation: false, parsing: false,
-          scales: {
-            x: { type: "linear", min: pts[0].x, max: Math.max(Date.now(), pts[pts.length - 1].x), afterBuildTicks: dayTicks, grid: { color: COLORS.grid }, ticks: { color: COLORS.tick, callback: (v) => shortDate(v) } },
-            y: { grid: { color: COLORS.grid }, ticks: { color: COLORS.tick, callback: (v) => v + "%" } },
-          },
-          plugins: { legend: { labels: { color: COLORS.tick } }, tooltip: { callbacks: { title: (it) => ct(it[0].parsed.x), label: (it) => `${it.raw.id}: ${it.parsed.y.toFixed(2)}%` } } },
-        },
-      });
-    }
+  /* ---------- live wiring ---------- */
+  const lastDom = {};
+  function onTick(t) {
+    const st = Dash.state.prices; if (!st || !st.assets[t.id]) return;
+    const prev = Dash.state.live[t.id]?.price ?? st.assets[t.id].price;
+    Dash.state.live[t.id] = t;
+    const now = performance.now();
+    if (lastDom[t.id] && now - lastDom[t.id] < 250) return; // throttle DOM work per coin
+    lastDom[t.id] = now;
+    const dir = t.price > prev ? "flash-up" : t.price < prev ? "flash-down" : "";
+    document.querySelectorAll(`[data-lp="${t.id}"]`).forEach((e) => {
+      e.textContent = fmtPrice(t.price);
+      if (dir) { e.classList.remove("flash-up", "flash-down"); void e.offsetWidth; e.classList.add(dir); }
+    });
+    if (t.change24 != null) document.querySelectorAll(`[data-lc="${t.id}"]`).forEach((e) => (e.innerHTML = chip(t.change24, e.dataset.lbl)));
+    document.querySelectorAll(`[data-src="${t.id}"]`).forEach((e) => { e.textContent = `${window.Live?.SOURCE_LABEL[t.source] || t.source} ${t.source === "coingecko" ? "· 60s poll" : "· live"}`; e.className = "src-tag " + (t.source === "coingecko" ? "poll" : "ws"); });
+    updateSlateLive(t.id, t.price);
+    // open-trade rows in the table
+    (Dash.state.trades.trades || []).filter((x) => x.coin === t.id && x.status === "open").forEach((x) => {
+      const td = document.querySelector(`[data-row-pnl="${x.id}"]`); if (td) td.innerHTML = pct(livePnl(x, t.price)) + ' <small class="meta">live</small>';
+    });
+    updateChart(t.id, t.price);
+    document.dispatchEvent(new CustomEvent("live:tick", { detail: t }));
+  }
+  const chartTimer = {};
+  function updateChart(id, price) {
+    const ch = Dash.charts[id]; if (!ch) return;
+    if (chartTimer[id]) return;
+    chartTimer[id] = setTimeout(() => {
+      chartTimer[id] = null;
+      const data = ch.data.datasets[0].data, lastPt = data[data.length - 1], now = Date.now();
+      const p = Dash.state.live[id]?.price ?? price;
+      if (lastPt.live && now - lastPt.start < 15 * 60000) { lastPt.x = now; lastPt.y = p; }
+      else data.push({ x: now, y: p, live: true, start: now });
+      if (now > ch.options.scales.x.max) ch.options.scales.x.max = now;
+      const ds = ch.data.datasets[0];
+      ds.pointRadius = data.map((d, i) => (i === data.length - 1 ? 3 : 0));
+      ds.pointBackgroundColor = "#fff";
+      ch.update("none");
+    }, 1500);
+  }
+  function liveIndicator(s) {
+    const el = $("live-ind"); if (!el) return;
+    const m = s.mode;
+    el.className = "live-ind " + m;
+    el.querySelector("b").textContent = m === "live" ? "LIVE" : m === "delayed" ? "DELAYED" : "SNAPSHOT";
+    el.title = `Coinbase websocket: ${s.conn.coinbase} · Kraken websocket: ${s.conn.kraken} · CoinGecko poll: ${s.conn.coingecko}`;
+    $("live-sub").textContent = m === "live" ? "streaming" : m === "delayed" ? "polling 60s" : "connecting…";
   }
 
   function renderLog(log) {
@@ -290,7 +402,9 @@
 
   async function main() {
     try {
-      const [prices, analysis, trades, log] = await Promise.all(["prices.json", "analysis.json", "trades.json", "log.json"].map(getJSON));
+      const [prices, analysis, trades, log] = await Promise.all(["prices.json", "analysis.json", "trades.json", "log.json"].map((n) => getJSON(n)));
+      const [signals, context] = await Promise.all([getJSON("signals.json", true).catch(() => null), getJSON("context.json", true).catch(() => null)]);
+      Object.assign(Dash.state, { prices, analysis, trades, log, signals, context, live: {} });
       if (window.Chart && window["chartjs-plugin-annotation"]) Chart.register(window["chartjs-plugin-annotation"]);
       if (window.Chart) {
         Chart.defaults.font.family = "Inter, system-ui, sans-serif";
@@ -305,6 +419,10 @@
       renderTrades(prices, trades);
       renderLog(log);
       reveal();
+      readyResolve(Dash.state);
+      if (window.Live) { Live.on(onTick); Live.onStatus(liveIndicator); liveIndicator(Live.status()); Live.start(); }
+      if (window.Signals) Signals.start(signals);
+      setInterval(() => window.Live && liveIndicator(Live.status()), 5000);
       document.body.dataset.ready = "1";
     } catch (err) {
       console.error(err);

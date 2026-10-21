@@ -11,11 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261021-2">
+<link rel="stylesheet" href="assets/style.css?v=20261021-3">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
-<script src="assets/markets.js?v=20261021-2" defer></script>
-<script src="assets/app.js?v=20261021-2" defer></script>
+<script src="assets/markets.js?v=20261021-3" defer></script>
+<script src="assets/live.js?v=20261021-3" defer></script>
+<script src="assets/signals.js?v=20261021-3" defer></script>
+<script src="assets/app.js?v=20261021-3" defer></script>
+<script src="assets/extras.js?v=20261021-3" defer></script>
 </head>
 <body>
 <div class="bg-glow" aria-hidden="true"></div>
@@ -29,18 +32,19 @@
         <p class="tagline">HBAR · XLM · XRP · ZBCN · AXL — levels, projections &amp; paper trades</p>
       </div>
     </div>
-    <div class="hero-meta">
-      <div class="live-dot" aria-hidden="true"></div>
-      <div><span class="label">Last updated</span><strong id="updated" class="mono">loading…</strong></div>
+    <div class="hero-right">
+      <div class="live-ind snapshot" id="live-ind" role="status" aria-live="polite"><span class="live-dot" aria-hidden="true"></span><div><b>SNAPSHOT</b><span id="live-sub">connecting…</span></div></div>
+      <div class="hero-meta"><div><span class="label">Snapshot / analysis</span><strong id="updated" class="mono">loading…</strong></div></div>
     </div>
   </div>
-  <div class="wrap"><div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Not financial advice — paper trading only.</strong> Hobby notes; no real money is traded. 5x leverage magnifies losses as much as gains.</span></div></div>
+  <div class="wrap"><div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Not financial advice — paper trading only.</strong> Hobby notes; no real money is traded. Leverage (3x for new ideas) magnifies losses as much as gains.</span></div></div>
   <div class="ticker" aria-label="Price ticker"><div class="ticker-track" id="ticker"></div></div>
+  <div class="wrap"><div class="context" id="context" aria-label="Market context"></div></div>
 </header>
 
 <nav class="nav" aria-label="Sections">
   <div class="wrap nav-inner">
-    <a href="#market">Market</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="#trades">Paper trades</a><a href="#log">Log</a>
+    <a href="#market">Market</a><a href="#trades">Slate</a><a href="#signals">Signals</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="#track">Track record</a><a href="#calc-sec">Calculator</a><a href="#log">Log</a>
   </div>
 </nav>
 
@@ -62,6 +66,26 @@
     <p class="meta" id="analysis-meta"></p>
   </section>
 
+  <section id="trades" class="card reveal">
+    <div class="card-head"><h2>Today's Trade Slate</h2><span class="pill warn">3x · paper only</span></div>
+    <p class="note" id="slate-meta"></p>
+    <div class="slate-grid-wrap" id="slate-grid"></div>
+    <h3 class="sub-h">All paper trades</h3>
+    <div class="table-wrap">
+      <table class="trades-table">
+        <thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Opened (CT)</th><th>Entry</th><th>Stop</th><th>Targets</th><th>Status</th><th>Exit</th><th>P&amp;L @lev</th></tr></thead>
+        <tbody id="trades-body"></tbody>
+      </table>
+    </div>
+    <p class="meta">P&amp;L % is on margin (price move × leverage), split equally across targets; after target 1 fills the stop moves to breakeven. Pending ideas fill when price trades into the entry zone; they cancel at expiry. Status is evaluated 3× a day on ~hourly prices; live P&amp;L on open trades updates in your browser.</p>
+  </section>
+
+  <section id="signals" class="card reveal">
+    <div class="card-head"><h2>Signals</h2><span class="kicker" id="signals-meta">loading…</span></div>
+    <p class="disclaimer-sm">Mechanical indicator readings only — not predictions or advice. Hover or tap an indicator name for what it measures. Composite = weighted 1h 25% · 4h 35% · 1d 40%.</p>
+    <div class="signals-grid" id="signals-grid"></div>
+  </section>
+
   <section id="sessions" class="card reveal">
     <div class="card-head"><h2>Global Markets</h2><span class="pill mono" id="mkt-pill">—</span></div>
     <p class="note">Crypto trades 24/7 — these equity sessions show <em>where</em> liquidity and volatility tend to come from as each region wakes up.</p>
@@ -80,18 +104,31 @@
     <div id="coin-grid" class="coin-grid"></div>
   </section>
 
-  <section id="trades" class="card reveal">
-    <div class="card-head"><h2>Paper trades</h2><span class="pill warn">5x · paper only</span></div>
-    <div id="idea" class="idea"></div>
-    <div class="stats" id="stats"></div>
-    <div class="pnl-chart"><canvas id="chart-pnl" aria-label="Cumulative paper P&amp;L"></canvas></div>
+  <section id="track" class="card reveal">
+    <div class="card-head"><h2>Track record</h2><span class="kicker">computed from trades.json in your browser</span></div>
+    <div class="stats" id="track-stats"></div>
+    <div class="pnl-chart"><canvas id="chart-track" aria-label="Cumulative paper P&amp;L in dollars"></canvas></div>
     <div class="table-wrap">
-      <table class="trades-table">
-        <thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Opened (CT)</th><th>Entry</th><th>Stop</th><th>Targets</th><th>Status</th><th>Exit</th><th>P&amp;L @lev</th></tr></thead>
-        <tbody id="trades-body"></tbody>
-      </table>
+      <table><thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Entry</th><th>Exit</th><th>Result</th><th>% on margin</th><th>$ ($100)</th><th>Held (CT)</th></tr></thead><tbody id="track-body"></tbody></table>
     </div>
-    <p class="meta">P&amp;L % = price move × leverage, position split equally across targets; after target 1 fills the stop moves to breakeven. Evaluated on CoinGecko ~hourly prices, so brief wicks can be missed.</p>
+    <p class="honest" id="track-note"></p>
+  </section>
+
+  <section id="calc-sec" class="card reveal">
+    <div class="card-head"><h2>Position calculator</h2><span class="kicker">live price: <b class="mono" id="calc-livep">—</b></span></div>
+    <form id="calc" class="calc" autocomplete="off">
+      <label>Coin<select name="coin"></select></label>
+      <label>Side<select name="side"><option value="long">Long</option><option value="short">Short</option></select></label>
+      <label>Margin ($)<input name="margin" type="number" inputmode="decimal" min="1" step="any" value="100"></label>
+      <label class="lev">Leverage <span class="lev-row"><input name="lev" type="range" min="1" max="20" step="1" value="3"><input name="levn" type="number" min="1" max="20" step="1" value="3" aria-label="Leverage value"><span>x</span></span></label>
+      <label>Entry<input name="entry" type="number" inputmode="decimal" step="any"></label>
+      <label>Target<input name="tgt" type="number" inputmode="decimal" step="any"></label>
+      <label>Stop<input name="stp" type="number" inputmode="decimal" step="any"></label>
+      <div class="calc-btns"><button type="button" id="calc-live">Use live price</button><button type="button" id="calc-slate" class="ghost">Load slate idea</button></div>
+    </form>
+    <p class="meta" id="calc-src"></p>
+    <div class="calc-out" id="calc-out"></div>
+    <p class="footnote">Liquidation price is approximate (isolated margin: entry × (1 ∓ 1/leverage)); it ignores fees, funding and maintenance margin, so real exchanges liquidate somewhat earlier. Paper trading only.</p>
   </section>
 
   <section id="log" class="card reveal">
