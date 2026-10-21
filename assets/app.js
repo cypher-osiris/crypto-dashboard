@@ -3,7 +3,14 @@
   "use strict";
   const TZ = "America/Chicago";
   const DAY = 864e5;
-  const COLORS = { line: "#58a6ff", sup: "#3fb950", res: "#f85149", bull: "#3fb950", base: "#d29922", bear: "#f85149", grid: "#222b38", tick: "#8b98a9" };
+  const COLORS = { line: "#60a5fa", sup: "#22c55e", res: "#f43f5e", bull: "#22c55e", base: "#f5b041", bear: "#f43f5e", grid: "rgba(148,163,184,0.08)", tick: "#7d8ba0" };
+  const areaFill = (ctx) => {
+    const { chart } = ctx; const { ctx: c, chartArea } = chart;
+    if (!chartArea) return "rgba(96,165,250,0.08)";
+    const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+    g.addColorStop(0, "rgba(96,165,250,0.28)"); g.addColorStop(1, "rgba(96,165,250,0)");
+    return g;
+  };
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -27,6 +34,28 @@
     if (withTime) Object.assign(opts, { hour: "numeric", minute: "2-digit", timeZoneName: "short" });
     return d.toLocaleString("en-US", opts);
   }
+  function chip(v, label) {
+    const cls = v == null || isNaN(v) ? "flat" : v > 0 ? "up" : v < 0 ? "down" : "flat";
+    const txt = v == null || isNaN(v) ? "n/a" : `${v > 0 ? "+" : ""}${Number(v).toFixed(2)}%`;
+    return `<span class="chip ${cls}">${label ? `<span class="lbl">${label}</span>` : ""}${txt}</span>`;
+  }
+  // Inline SVG sparkline from [[ts, price], ...]
+  function spark(history, w = 84, h = 26, points = 168) {
+    const pts = history.slice(-points).map((p) => p[1]);
+    if (pts.length < 2) return "";
+    const step = Math.max(1, Math.floor(pts.length / 60));
+    const ys = pts.filter((_, i) => i % step === 0 || i === pts.length - 1);
+    const lo = Math.min(...ys), hi = Math.max(...ys), rng = hi - lo || 1;
+    const xy = ys.map((v, i) => [(i / (ys.length - 1)) * w, h - 2 - ((v - lo) / rng) * (h - 4)]);
+    const d = xy.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join("");
+    const up = ys[ys.length - 1] >= ys[0];
+    const c = up ? "#22c55e" : "#f43f5e";
+    const gid = "g" + Math.random().toString(36).slice(2, 8);
+    return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".28"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${d}L${w} ${h}L0 ${h}Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+  }
+  const COIN_COLORS = { HBAR: ["#3a3a3a", "#0b0b0b"], XLM: ["#5b6cff", "#1b1f4a"], XRP: ["#2d3748", "#0a0f17"], ZBCN: ["#06b6d4", "#0e3a52"], AXL: ["#6366f1", "#111827"], BTC: ["#f7931a", "#7a3e00"] };
   const shortDate = (ms) => new Date(ms).toLocaleDateString("en-US", { timeZone: TZ, month: "short", day: "numeric" });
   // Day-aligned ticks (~CT midnight, 05:00 UTC) so labels never repeat.
   function dayTicks(scale) {
@@ -56,7 +85,7 @@
     const last = hist[hist.length - 1];
     const datasets = [{
       label: asset.symbol, data: hist, borderColor: COLORS.line, borderWidth: 1.6, pointRadius: 0,
-      tension: 0.15, fill: { target: "origin", above: "rgba(88,166,255,0.06)" }, order: 1,
+      tension: 0.15, fill: "start", backgroundColor: areaFill, order: 1,
     }];
     let xMax = last.x;
     const pr = an && an.projection;
@@ -104,6 +133,23 @@
   }
 
   /* ---------- sections ---------- */
+  function renderTicker(prices) {
+    const ids = [prices.backdrop, ...prices.coins];
+    const item = (id, dup) => {
+      const a = prices.assets[id];
+      return `<a class="tk${dup ? " dup" : ""}" href="#${id === prices.backdrop ? "market" : "coin-" + id}"${dup ? ' aria-hidden="true" tabindex="-1"' : ""}>
+        <span class="s">${esc(a.symbol)}</span><span class="p">${fmtPrice(a.price)}</span>${chip(a.change_24h)}${spark(a.history, 56, 18, 72)}</a>`;
+    };
+    $("ticker").innerHTML = ids.map((i) => item(i, false)).join("") + ids.map((i) => item(i, true)).join("");
+  }
+
+  function reveal() {
+    const els = document.querySelectorAll(".reveal:not(.in)");
+    if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) { els.forEach((e) => e.classList.add("in")); return; }
+    const io = new IntersectionObserver((ents) => ents.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -40px 0px" });
+    els.forEach((e) => io.observe(e));
+  }
+
   function renderHeader(prices, analysis) {
     $("updated").textContent = ct(prices.updated_utc);
     $("analysis-meta").innerHTML = `Commentary as of ${esc(ct(analysis.as_of))} · ${esc(analysis.author || "")}` +
@@ -114,8 +160,8 @@
     const b = prices.assets[prices.backdrop];
     const an = analysis.backdrop || {};
     $("btc-price").textContent = fmtPrice(b.price);
-    $("btc-chg").innerHTML = `<span>24h ${pct(b.change_24h)}</span><span>7d ${pct(b.change_7d)}</span><span>30d ${pct(b.change_30d)}</span>` +
-      (an.bias ? `<div class="bias">${esc(an.bias)}</div>` : "");
+    $("btc-chg").innerHTML = chip(b.change_24h, "24h") + chip(b.change_7d, "7d") + chip(b.change_30d, "30d");
+    if (an.bias) $("btc-chg").insertAdjacentHTML("afterend", `<div class="bias">${esc(an.bias)}</div>`);
     $("btc-commentary").textContent = an.commentary || "";
     $("btc-sources").innerHTML = sourcesHTML(an.sources);
     priceChart($("chart-bitcoin"), b, an);
@@ -129,21 +175,29 @@
       const an = (analysis.coins || {})[id] || {};
       const pr = an.projection;
       const el = document.createElement("article");
-      el.className = "coin";
+      const dir = (a.change_24h || 0) >= 0 ? "is-up" : "is-down";
+      const [c1, c2] = COIN_COLORS[a.symbol] || [];
+      el.className = `coin reveal ${dir}`;
       el.id = `coin-${id}`;
       el.innerHTML = `
         <div class="coin-head">
-          <div><div class="name">${esc(a.symbol)}<small>${esc(a.name)}${a.market_cap_rank ? " · #" + a.market_cap_rank : ""}</small></div>
-            ${an.bias ? `<div class="bias">${esc(an.bias)}</div>` : ""}</div>
-          <div><div class="price">${fmtPrice(a.price)}</div>
-            <div class="chg">24h ${pct(a.change_24h)} &nbsp; 7d ${pct(a.change_7d)}</div></div>
+          <div class="coin-id">
+            <div class="coin-mark" style="--c1:${c1 || "#334155"};--c2:${c2 || "#0f172a"}">${esc(a.symbol)}</div>
+            <div><div class="name">${esc(a.symbol)}<small>${esc(a.name)}${a.market_cap_rank ? " · rank #" + a.market_cap_rank : ""}</small></div>
+              ${an.bias ? `<div class="bias">${esc(an.bias)}</div>` : ""}</div>
+          </div>
+          <div class="coin-right">
+            ${spark(a.history)}
+            <div><div class="price">${fmtPrice(a.price)}</div>
+              <div class="chg">${chip(a.change_24h, "24h")}${chip(a.change_7d, "7d")}</div></div>
+          </div>
         </div>
         <div class="coin-chart"><canvas id="chart-${id}" aria-label="${esc(a.symbol)} 30 day chart"></canvas></div>
         <div class="levels">
-          <span><i class="legend-dot" style="background:${COLORS.sup}"></i>Support <b>${(an.support || []).map(num).join(" / ") || "—"}</b></span>
-          <span><i class="legend-dot" style="background:${COLORS.res}"></i>Resistance <b>${(an.resistance || []).map(num).join(" / ") || "—"}</b></span>
-          ${pr ? `<span>${pr.horizon_days || 7}d targets: bull <b class="up">${num(pr.bull)}</b> · base <b>${num(pr.base)}</b> · bear <b class="down">${num(pr.bear)}</b></span>` : ""}
-          <span>24h range <b>${num(a.low_24h)}–${num(a.high_24h)}</b></span>
+          <div class="lv sup"><small>Support</small><b>${(an.support || []).map(num).join(" / ") || "—"}</b></div>
+          <div class="lv res"><small>Resistance</small><b>${(an.resistance || []).map(num).join(" / ") || "—"}</b></div>
+          ${pr ? `<div class="lv proj"><small>${pr.horizon_days || 7}d bull / base / bear</small><b><span class="up">${num(pr.bull)}</span> / ${num(pr.base)} / <span class="down">${num(pr.bear)}</span></b></div>` : ""}
+          <div class="lv"><small>24h range</small><b>${num(a.low_24h)} – ${num(a.high_24h)}</b></div>
         </div>
         <p class="commentary">${esc(an.commentary || "No commentary yet.")}</p>
         <div class="sources">${sourcesHTML(an.sources)}</div>`;
@@ -190,7 +244,7 @@
 
     const s = trades.stats || {};
     $("stats").innerHTML = [
-      ["Win rate", s.win_rate_pct == null ? "n/a" : `${s.win_rate_pct}%`],
+      ["Win rate", s.win_rate_pct == null ? "n/a" : `<span class="${s.win_rate_pct >= 50 ? "up" : "down"}">${s.win_rate_pct}%</span>`],
       ["Cumulative P&L", s.cumulative_pnl_pct == null ? "n/a" : pct(s.cumulative_pnl_pct)],
       ["Closed", `${s.closed ?? 0} <small class="meta">(${s.won ?? 0}W / ${s.lost_or_stopped ?? 0}L)</small>`],
       ["Open / pending", `${s.open ?? 0} / ${s.pending ?? 0}`],
@@ -238,15 +292,23 @@
     try {
       const [prices, analysis, trades, log] = await Promise.all(["prices.json", "analysis.json", "trades.json", "log.json"].map(getJSON));
       if (window.Chart && window["chartjs-plugin-annotation"]) Chart.register(window["chartjs-plugin-annotation"]);
+      if (window.Chart) {
+        Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+        Chart.defaults.color = COLORS.tick;
+        Object.assign(Chart.defaults.plugins.tooltip, { backgroundColor: "rgba(11,16,25,.95)", borderColor: "rgba(148,163,184,.25)", borderWidth: 1, padding: 10, cornerRadius: 8, titleFont: { family: "JetBrains Mono, monospace", size: 11 }, bodyFont: { family: "JetBrains Mono, monospace", size: 11 } });
+      }
       if (!window.Chart) { const e = $("error"); e.hidden = false; e.textContent = "Chart library failed to load (offline or CDN blocked) — numbers below are still current."; }
+      renderTicker(prices);
       renderHeader(prices, analysis);
       renderBackdrop(prices, analysis);
       renderCoins(prices, analysis, trades);
       renderTrades(prices, trades);
       renderLog(log);
+      reveal();
       document.body.dataset.ready = "1";
     } catch (err) {
       console.error(err);
+      document.querySelectorAll(".reveal").forEach((e) => e.classList.add("in"));
       const e = $("error"); e.hidden = false;
       e.textContent = "Could not load dashboard data: " + err.message + (location.protocol === "file:" ? " (open via a web server, not file://)" : "");
     }

@@ -4,9 +4,10 @@ Static site (plain HTML/CSS/JS, no build step) for GitHub Pages. Everything on t
 `assets/app.js` from the JSON files in `data/`. Times display in US Central (America/Chicago).
 
 ```
-index.html            page shell (Chart.js 4 + chartjs-plugin-annotation 3 from jsDelivr CDN)
+index.html            page shell (Chart.js 4 + chartjs-plugin-annotation 3 from jsDelivr; Inter + JetBrains Mono from Google Fonts)
 assets/style.css      dark, mobile-friendly theme
-assets/app.js         renders all sections from data/*.json
+assets/app.js         renders all sections from data/*.json (ticker, cards, charts, trades, log)
+assets/markets.js     Global Markets panel: live TSE/HKEX/LSE/NYSE session clocks + 24h timeline (Intl/IANA, DST-safe; no holidays)
 data/prices.json      GENERATED  – quotes + 30-day ~hourly history (CoinGecko)
 data/trades.json      HAND-EDITED ideas + GENERATED status/P&L/stats
 data/analysis.json    HAND-EDITED commentary, support/resistance, bull/base/bear projections
@@ -61,6 +62,8 @@ git add -A
 git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
+Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
+`?v=` version on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
