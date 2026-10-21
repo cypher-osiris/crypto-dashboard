@@ -41,11 +41,13 @@ scripts/context.py         total mcap, BTC dominance, Fear & Greed, OKX BTC fund
 ### Coins: `data/coins.json` is the single list
 Two groups, shown in this order everywhere (ticker, coin cards, signals, slate, calculator):
 - **Lumi's Watchlist** (featured): `hedera-hashgraph` HBAR, `stellar` XLM, `ripple` XRP, `zebec-network` ZBCN,
-  `axelar` AXL (**not** `axelar-network`).
+  `axelar` AXL (**not** `axelar-network`), `xdce-crowd-sale` XDC (XDC Network; added Oct 21, 2026).
 - **Majors**: `bitcoin` BTC, `ethereum` ETH, `solana` SOL, `dogecoin` DOGE, `cardano` ADA, `chainlink` LINK, `sui` SUI.
 BTC is a full coin and is also the Market backdrop (`"backdrop": "bitcoin"`). Verified 2026-10-21: every CoinGecko id
 resolves to the right asset, and every `coinbase` product is online on Coinbase Exchange (websocket + candles). ZBCN
-isn't on Coinbase, so it uses Kraken (`"kraken": "ZBCN/USD"`; REST pair `ZBCNUSD`).
+isn't on Coinbase, so it uses Kraken (`"kraken": "ZBCN/USD"`; REST pair `ZBCNUSD`). XDC isn't on Coinbase either
+(XDC-USD is NotFound on Coinbase Exchange and Advanced, checked Oct 21, 2026), so it uses Kraken too (`"kraken": "XDC/USD"`; REST `XDCUSD`,
+status online): Kraken websocket for live prices, Kraken OHLC for signals and the 5m trade tracker, CoinGecko for the snapshot.
 
 To add or remove a coin, edit `data/coins.json` (`id`, `symbol`, `name`, `group`, `coinbase` *or* `kraken`, `colors`),
 run `update_prices.py` and `signals.py`, then add a block under `coins` in `analysis.json` and an entry under
@@ -65,7 +67,7 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
    `signals.py` with no arguments prints the full JSON to stdout (for the 30-min alert job) and writes the file.
 2. Edit `data/analysis.json`: bump `as_of` and `author`; update `commentary`, `bias`, `support`/`resistance`,
    `projection` (`horizon_days`, `bull`, `base`, `bear`) and `sources` (`[{title,url}]`, only things actually read).
-   With 12 coins, prioritize the watchlist (full write-up every run). For majors, a short data-based update is fine
+   With 13 coins, prioritize the watchlist (full write-up every run). For majors, a short data-based update is fine
    (price, range, EMA/RSI from signals.json); `projection` is optional and the card hides it when absent. The majors
    were seeded Oct 21 with data-only commentary, levels = 7-/30-day lows/highs, and no projection; replace them with a
    real read on the first full review. Keep `coins.bitcoin` consistent with `backdrop`.
@@ -73,7 +75,7 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
    `scripts/locked.sh python3 my_edit.py`, or keep edits quick and run `scripts/publish.sh` right after) in `data/trades.json` (rules: max one active pending/open idea per coin, max **6** total (`slate_max` in `data/coins.json`), long or
    short, "no setup" allowed; new trades are **3x**). Append new trades to `trades` and point `slate.coins[<coin id>]`
    at them; for a coin without a setup use `{"trade_id": null, "note": "why not"}`. Bump `slate.as_of`. Never edit
-   generated fields of closed trades. `current_idea_id` is kept for backward compatibility. Review all 12 coins
+   generated fields of closed trades. `current_idea_id` is kept for backward compatibility. Review all 13 coins
    but only post real setups. The 7 majors start as "not reviewed yet" no-setup entries (Oct 21), and the page lists
    no-setup coins compactly under the active cards. New trade template:
    ```json
@@ -104,7 +106,7 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
 
 ## Live data in the browser
 Prices stream straight from exchanges to the visitor (nothing to run): Coinbase Exchange websocket `ticker` for
-every `coinbase` product in data/coins.json; Kraken v2 websocket for ZBCN/USD (not listed on Coinbase); CoinGecko
+every `coinbase` product in data/coins.json; Kraken v2 websocket for ZBCN/USD and XDC/USD (not listed on Coinbase); CoinGecko
 `simple/price` every 60 s for any coin whose socket is down. Signals refresh every 3 min, market context every 5 min
 (CoinGecko /global, alternative.me Fear & Greed, OKX public funding/open interest). If a source fails, the JSON
 snapshot stays on screen. Binance/Bybit are not used (geo-blocked in the US).
@@ -121,6 +123,10 @@ Single engine used by the 30-min job and by `update_prices.py`. For each pending
   the fill price from the next candle on (`"move_stop_to_be": false` disables). All targets → **won**; partial then
   stop → **won** if blended P&L > 0 else **lost**. Pending past `expiry` (or legacy `fill_by`) → **cancelled**;
   optional `expires` closes an open trade at market.
+- **Spot ideas:** `"leverage": 1` plus `"market": "spot"` (long only; its `missed_plan` must also be leverage 1 and not a flip).
+  The page shows `LONG SPOT` instead of `1x`, the calculator shows no liquidation for a 1x long, log lines say "spot", and
+  `track_trades.py` warns (slate_warnings) if a spot idea is short or leveraged. Missed-it linked trades inherit `market`,
+  `timeframe` and `expires`. Use `"timeframe": "position"` for weeks-to-months spot holds (XDC T006 is the first).
 - P&L % = price move × leverage, on margin, no fees/funding. Leverage: T001 was 5x; from Oct 21, 2026 new ideas are 3x.
 - Every run sets `last_checked` (ISO) / `last_checked_ms` per trade and `tracked_utc`, so it is **idempotent**: a
   re-run never double-counts a candle. `data/log.json` gets an entry **only when an event happens**.
@@ -216,6 +222,16 @@ language, since most US users can't trade perps there), plus a small "New to cry
 Indiana/*, Kentucky/*, Pacific/Honolulu ⇒ US). The result is cached in `sessionStorage` (`lumi_geo_v1`). Fail closed:
 everything stays hidden until the country is known, and if it can't be determined nothing is shown. Debug override:
 `?geo=US` / `?geo=DE` (not cached). `<html data-geo="us|non-us|unknown">` shows the decision.
+**Coinbase buttons = referral join links, used exactly as configured.** No coin path/query is ever appended (that would
+drop the referral). Checked Oct 21, 2026 (headless Chrome, desktop and Android UA, `?geo=US`): every button opens ONE new tab,
+`advanced.coinbase.com/join/REDACTED` → 302 `coinbase.com/join/REDACTED?origin=advanced` → 302 `www.coinbase.com/join/REDACTED?origin=advanced`
+→ 200 "Sign up to activate your referral" (Sign up / Already have an account?). That is normal: a join link is a sign-up page,
+not a trade screen, and an existing member (including the referrer, who can't use his own code) just sees sign-up / sign-in.
+On Android with the Coinbase app installed, the link may open the app instead. So each per-trade Coinbase button carries a note
+("Referral sign-up link (new Coinbase accounts). Already have one? Sign in at Coinbase Advanced and open XRP-USD."), and
+**coins with no `coinbase` product (ZBCN, XDC) get no Coinbase trade button**, only "<SYM> isn't listed on Coinbase…".
+The slate card exposes `data-sym`, `data-lev` and `data-cb` for this. Bitunix always uses the general referral link. Spot ideas
+(`data-lev="1"`) are labelled "Buy <SYM> spot on Bitunix" (XDC: Bitunix lists XDC/USDT spot, no XDC perpetual).
 X posts (`make_post.py`) can't be geo-gated: keep Bitunix links out of posts aimed at a US audience.
 
 When `bitunix_url` is a non-empty `https://` URL the site shows a "Trade this setup on Bitunix" button on every
@@ -275,7 +291,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-14`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-15`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).

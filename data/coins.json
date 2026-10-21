@@ -1,5 +1,5 @@
 {
-  "_readme": "Single source of truth for the coin list (scripts + site). id = CoinGecko id; coinbase = Coinbase Exchange product (websocket + candles); kraken = Kraken pair in websocket form (REST form drops the '/'). Exactly one of coinbase/kraken is used for live data and candles, coinbase preferred. Order inside a group = display order. Verified 2026-10-21: all Coinbase products online; CoinGecko ids resolve to the right assets (AXL is 'axelar', NOT 'axelar-network').",
+  "_readme": "Single source of truth for the coin list (scripts + site). id = CoinGecko id; coinbase = Coinbase Exchange product (websocket + candles); kraken = Kraken pair in websocket form (REST form drops the '/'). Exactly one of coinbase/kraken is used for live data and candles, coinbase preferred. Order inside a group = display order. Verified 2026-10-21: all Coinbase products online; CoinGecko ids resolve to the right assets (AXL is 'axelar', NOT 'axelar-network'). XDC added 2026-10-21: CoinGecko id 'xdce-crowd-sale' (XDC Network); not on Coinbase (XDC-USD NotFound on Exchange and Advanced), so Kraken XDC/USD (REST XDCUSD, online).",
   "backdrop": "bitcoin",
   "slate_max": 6,
   "groups": [
@@ -12,6 +12,7 @@
     {"id": "ripple",           "symbol": "XRP",  "name": "XRP",           "group": "watchlist", "coinbase": "XRP-USD",  "colors": ["#2d3748", "#0a0f17"]},
     {"id": "zebec-network",    "symbol": "ZBCN", "name": "Zebec Network", "group": "watchlist", "kraken": "ZBCN/USD",   "colors": ["#06b6d4", "#0e3a52"]},
     {"id": "axelar",           "symbol": "AXL",  "name": "Axelar",        "group": "watchlist", "coinbase": "AXL-USD",  "colors": ["#6366f1", "#111827"]},
+    {"id": "xdce-crowd-sale",  "symbol": "XDC",  "name": "XDC Network",   "group": "watchlist", "kraken": "XDC/USD",    "colors": ["#2c6bed", "#0b1f4d"]},
     {"id": "bitcoin",          "symbol": "BTC",  "name": "Bitcoin",       "group": "majors",    "coinbase": "BTC-USD",  "colors": ["#f7931a", "#7a3e00"]},
     {"id": "ethereum",         "symbol": "ETH",  "name": "Ethereum",      "group": "majors",    "coinbase": "ETH-USD",  "colors": ["#8a92b2", "#2b2f45"]},
     {"id": "solana",           "symbol": "SOL",  "name": "Solana",        "group": "majors",    "coinbase": "SOL-USD",  "colors": ["#9945ff", "#14f195"]},
