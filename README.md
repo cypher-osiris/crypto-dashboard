@@ -15,6 +15,7 @@ assets/signals.js     in-browser signals (Coinbase/Kraken candles, CoinGecko fal
 assets/extras.js      market-context strip, track record ($100 margin/trade), position calculator
 assets/backtest.js    "Signal Backtest" section (renders data/backtest.json)
 assets/affiliate.js   affiliate buttons + disclosures, driven by data/config.json; geo-gated (Bitunix non-US only, Coinbase US)
+assets/newsletter.js  Kit newsletter form (fetch submit, inline status)
 assets/markets.js     Global Markets panel: live TSE/HKEX/LSE/NYSE session clocks + 24h timeline (Intl/IANA, DST-safe; no holidays)
 data/prices.json      GENERATED  – quotes + 30-day ~hourly history (CoinGecko); compact JSON; has "groups"
 data/trades.json      HAND-EDITED ideas + GENERATED status/P&L/stats
@@ -289,6 +290,17 @@ focal coin (big symbol and price, a 7-day line, the zone, stop and T1) or `--foc
 It needs matplotlib, plus fontTools for the bold weights, which are cached in `state/fonts`. Nothing is ever posted
 automatically.
 
+## Newsletter (Kit form 10079883, assets/newsletter.js)
+Free daily email, "Get Lumi's daily crypto outlook free". A custom dark-theme HTML form (email only, one `email_address` field)
+POSTs to Kit's standard endpoint `https://app.kit.com/forms/10079883/subscriptions` (checked Oct 21, 2026 in Kit's own embed JS:
+same action and field name, reCAPTCHA off; CORS allows any origin). `assets/newsletter.js` submits it with fetch
+(`Accept: application/json`) and shows "check your inbox to confirm" inline; without JS the browser posts to Kit directly.
+Fallback if the endpoint ever changes: Kit's JS embed `<script async data-uid="67c20c56b8" src="https://trade-with-lumi.kit.com/67c20c56b8/index.js"></script>`.
+Placed: dashboard block right after the trade slate (`#newsletter`), the same block on every coin page (`NEWSLETTER_BLOCK` in
+build_pages.py, above "More coin analysis"), and "Newsletter ↗" in the dashboard and coin-page nav plus "Free daily newsletter" in
+both footers, linking to the hosted page https://trade-with-lumi.kit.com/67c20c56b8. Kit's hosted page/incentive email and
+double opt-in are configured in Kit, not here.
+
 ## Coin pages (scripts/build_pages.py): /xdc/ /xrp/ /xlm/ /hbar/ /axl/ /zbcn/ /btc/ /eth/ /sol/
 Static, crawlable pages, one per coin in `PAGES` (watchlist + BTC/ETH/SOL; DOGE/ADA/LINK/SUI have too little hand-written
 analysis for a non-thin page yet: add them to `PAGES` once they get full reviews). Generated from that coin's own data only:
@@ -356,7 +368,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-21`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-22`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
