@@ -207,7 +207,9 @@ information coefficient per component, first 70% in-sample / last 30% out-of-sam
                 "coinbase_url": "https://coinbase.com/join/…", "coinbase_advanced_url": "https://advanced.coinbase.com/join/…",
                 "coinbase_label": "Trade on Coinbase Advanced",
                 "dcent_url": "https://store.dcentwallet.com/…referral…", "dcent_label": "Get the D'CENT Biometric Wallet",
-                "ledger_url": "", "ledger_label": "Or choose Ledger" } }
+                "ledger_url": "", "ledger_label": "Or choose Ledger",
+                "kraken_url": "https://www.kraken.com/sign-up?inviteCode=…", "kraken_code": "…", "kraken_label": "Buy spot on Kraken",
+                "kraken_non_us": false, "kraken_pairs": { "xdce-crowd-sale": "XDC/USD", "…": "…" } } }
 ```
 **Hardware-wallet pick (NOT geo-gated).** "Keep your crypto safe" section under the position calculator (`#wallet-pick`),
 shown to every visitor: short self-custody copy, "Lumi's pick: D'CENT Biometric Wallet" button (`dcent_url`/`dcent_label`)
@@ -232,6 +234,17 @@ On Android with the Coinbase app installed, the link may open the app instead. S
 **coins with no `coinbase` product (ZBCN, XDC) get no Coinbase trade button**, only "<SYM> isn't listed on Coinbase…".
 The slate card exposes `data-sym`, `data-lev` and `data-cb` for this. Bitunix always uses the general referral link. Spot ideas
 (`data-lev="1"`) are labelled "Buy <SYM> spot on Bitunix" (XDC: Bitunix lists XDC/USDT spot, no XDC perpetual).
+**Kraken (secondary, spot only; added Oct 21, 2026).** `kraken_url` = `https://www.kraken.com/`
+(Kraken's own share links land on `www.kraken.com/sign-up?...&inviteCode=<code>`; checked in headless Chrome: the sign-up form
+shows "Invite code applied: REDACTED", while an invalid code just shows the empty "Invite Code (optional)" field). `kraken_code`
+is printed in the button note ("Referral code: REDACTED") because Kraken's referral bonus requires signing up in the Kraken
+app, where the code can be typed in. `kraken_pairs` maps coin id → Kraken USD spot pair, checked against
+`https://api.kraken.com/0/public/AssetPairs` (all 13 coins listed; AXL trades as `WAXL/USD`, DOGE is `XDG/USD` in the API).
+US visitors: a "Buy <SYM> spot on Kraken" button + note under the Coinbase button on every active **long** slate card
+whose coin has a pair (for XDC and ZBCN, not on Coinbase, it replaces the missing Coinbase button), plus a "Buy spot on Kraken"
+button in the calculator. Never on short ideas, never leverage wording (US Kraken users get spot). Non-US visitors: only if
+`kraken_non_us` is `true` (default `false`: Kraken only credits referrals from the referrer's own country, or within the EEA).
+Empty `kraken_url` ⇒ no Kraken UI. Don't post the Kraken link on X.
 X posts (`make_post.py`) can't be geo-gated: keep Bitunix links out of posts aimed at a US audience.
 
 When `bitunix_url` is a non-empty `https://` URL the site shows a "Trade this setup on Bitunix" button on every
@@ -300,7 +313,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-16`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-17`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
