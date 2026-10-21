@@ -197,8 +197,14 @@ information coefficient per component, first 70% in-sample / last 30% out-of-sam
 ```json
 { "affiliate": { "bitunix_url": "https://…your referral link…", "label": "Trade on Bitunix",
                 "coinbase_url": "https://coinbase.com/join/…", "coinbase_advanced_url": "https://advanced.coinbase.com/join/…",
-                "coinbase_label": "Trade on Coinbase Advanced" } }
+                "coinbase_label": "Trade on Coinbase Advanced",
+                "dcent_url": "https://store.dcentwallet.com/…referral…", "dcent_label": "Get the D'CENT Biometric Wallet",
+                "ledger_url": "", "ledger_label": "Or choose Ledger" } }
 ```
+**Hardware-wallet pick (NOT geo-gated).** "Keep your crypto safe" section under the position calculator (`#wallet-pick`),
+shown to every visitor: short self-custody copy, "Lumi's pick: D'CENT Biometric Wallet" button (`dcent_url`/`dcent_label`)
+and the same "Affiliate link · disclosure" tag (it also reveals the footer disclosure). `ledger_url` is a placeholder:
+while empty the Ledger button is hidden; fill it in to show Ledger as a second option. Empty `dcent_url` ⇒ section hidden.
 **Geo-gated (assets/affiliate.js).** Bitunix bans US users, so Bitunix links are shown only to visitors confirmed
 NON-US. US visitors (incl. PR/GU/VI/AS/MP/UM) get Coinbase in the same places instead: "Trade on Coinbase Advanced"
 (`coinbase_advanced_url`) as the header button, calculator button and per-trade button (neutral wording, no "setup"/leverage
@@ -267,7 +273,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-11`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-13`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
