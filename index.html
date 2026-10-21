@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto Dashboard</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <div class="title-row">
+      <h1>Crypto Dashboard</h1>
+      <div class="updated">Last updated: <strong id="updated">loading…</strong></div>
+    </div>
+    <div class="disclaimer" role="note">⚠️ <strong>Not financial advice — paper trading only.</strong> Hobby notes; no real money is traded. Leverage (5x) magnifies losses as much as gains.</div>
+    <nav class="nav">
+      <a href="#market">Market</a><a href="#coins">Coins</a><a href="#trades">Paper trades</a><a href="#log">Update log</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="error" class="error" hidden></div>
+
+  <section id="market" class="card">
+    <h2>Market backdrop</h2>
+    <div class="backdrop">
+      <div class="btc-quote">
+        <div class="sym">BTC</div>
+        <div class="price" id="btc-price">—</div>
+        <div class="chg" id="btc-chg"></div>
+      </div>
+      <div class="btc-chart"><canvas id="chart-bitcoin" aria-label="Bitcoin 30 day chart"></canvas></div>
+    </div>
+    <p id="btc-commentary" class="commentary"></p>
+    <div id="btc-sources" class="sources"></div>
+    <p class="meta" id="analysis-meta"></p>
+  </section>
+
+  <section id="coins">
+    <h2 class="section-title">Coins</h2>
+    <div id="coin-grid" class="coin-grid"></div>
+  </section>
+
+  <section id="trades" class="card">
+    <h2>Paper trades <span class="tag">5x · paper only</span></h2>
+    <div id="idea" class="idea"></div>
+    <div class="stats" id="stats"></div>
+    <div class="pnl-chart"><canvas id="chart-pnl" aria-label="Cumulative paper P&L"></canvas></div>
+    <div class="table-wrap">
+      <table class="trades-table">
+        <thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Opened (CT)</th><th>Entry</th><th>Stop</th><th>Targets</th><th>Status</th><th>Exit</th><th>P&amp;L @lev</th></tr></thead>
+        <tbody id="trades-body"></tbody>
+      </table>
+    </div>
+    <p class="meta">P&amp;L % = price move × leverage, position split equally across targets; after target 1 fills the stop moves to breakeven. Evaluated on CoinGecko ~hourly prices, so brief wicks can be missed.</p>
+  </section>
+
+  <section id="log" class="card">
+    <h2>Update log</h2>
+    <ol id="log-list" class="log-list"></ol>
+  </section>
+</main>
+
+<footer class="wrap footer">
+  Data: <a href="https://www.coingecko.com/" rel="noopener">CoinGecko</a> public API. Charts: Chart.js. Times shown in US Central. Not financial advice.
+</footer>
+</body>
+</html>
