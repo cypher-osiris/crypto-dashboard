@@ -42,6 +42,22 @@
         "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026; FedWatch 85% hold)",
         "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
       }
+    ],
+    "catalysts": [
+      {
+        "date": "2026-10-21",
+        "kind": "news",
+        "text": "US spot bitcoin ETFs took in $526.6M, the most since Sept 22; Mudrex flags $86K as resistance and $80K as support.",
+        "source": "Economic Times, Oct 21 2026",
+        "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
+      },
+      {
+        "date": "2026-10-27",
+        "kind": "event",
+        "text": "Fed meets Oct 27-28; hike odds reported at 15-17%.",
+        "source": "Economic Times, Oct 21 2026 (odds); RoboForex weekly outlook (dates)",
+        "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
+      }
     ]
   },
   "coins": {
@@ -82,6 +98,15 @@
         {
           "title": "CoinDesk: Ripple Prime 24/7 swaps with RLUSD collateral; HSBC warns of thin books (Oct 21 2026)",
           "url": "https://www.coindesk.com/markets/2026/10/21/ripple-brings-wall-street-into-24-7-stock-bets-but-hsbc-warns-markets-are-still-thin"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-10-23",
+          "kind": "event",
+          "text": "XRPL fixCleanup3_4_0 security-fix amendment is on course to activate Friday Oct 23; the native lending amendments are still 10 validator votes short (19 of 29).",
+          "source": "Coinpaper, Oct 21 2026",
+          "url": "https://coinpaper.com/37652/xrp-ledger-lending-protocol-remains-10-votes-short-as-october-23-bug-fix-nears-activation"
         }
       ]
     },
@@ -138,6 +163,22 @@
         {
           "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026)",
           "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-10-28",
+          "kind": "event",
+          "text": "Stellar's Meridian conference runs Oct 28-29 in Lisbon.",
+          "source": "stellar.org",
+          "url": "https://stellar.org/blog/developers/introducing-bell-protocol-30-on-stellar"
+        },
+        {
+          "date": "2026-11-03",
+          "kind": "event",
+          "text": "Stellar's Bell (Protocol 30) upgrade: testnet vote Nov 3, mainnet vote Nov 23 (muxed contract addresses, post-quantum signature checks, millisecond ledger clock).",
+          "source": "Stellar Development Foundation",
+          "url": "https://stellar.org/blog/developers/introducing-bell-protocol-30-on-stellar"
         }
       ]
     },
@@ -355,7 +396,24 @@
           "title": "FXStreet: XRP and XLM regain momentum as derivatives activity picks up (Oct 21 2026; FedWatch 85% hold)",
           "url": "https://www.fxstreet.com/cryptocurrencies/news/ripple-and-stellar-outlook-xrp-and-xlm-regain-momentum-as-derivatives-activity-picks-up-202610211700"
         }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-10-21",
+          "kind": "news",
+          "text": "US spot bitcoin ETFs took in $526.6M, the most since Sept 22; Mudrex flags $86K as resistance and $80K as support.",
+          "source": "Economic Times, Oct 21 2026",
+          "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
+        },
+        {
+          "date": "2026-10-27",
+          "kind": "event",
+          "text": "Fed meets Oct 27-28; hike odds reported at 15-17%.",
+          "source": "Economic Times, Oct 21 2026 (odds); RoboForex weekly outlook (dates)",
+          "url": "https://economictimes.indiatimes.com/markets/cryptocurrency/crypto-news/bitcoin-rebounds-above-83000-as-strong-us-earnings-and-falling-oil-prices-lift-risk-appetite/articleshow/135091348.cms"
+        }
       ]
     }
-  }
+  },
+  "_readme_catalysts": "Optional per-coin (and backdrop) 'catalysts': [{date: YYYY-MM-DD (news date or upcoming event date), kind: 'news'|'event', text: one plain sentence, source: publisher + date, url}] \u2014 only items actually read; scripts/make_post.py surfaces the freshest 1-2."
 }
