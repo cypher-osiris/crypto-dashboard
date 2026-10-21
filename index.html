@@ -11,14 +11,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261021-3">
+<link rel="stylesheet" href="assets/style.css?v=20261021-4">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
-<script src="assets/markets.js?v=20261021-3" defer></script>
-<script src="assets/live.js?v=20261021-3" defer></script>
-<script src="assets/signals.js?v=20261021-3" defer></script>
-<script src="assets/app.js?v=20261021-3" defer></script>
-<script src="assets/extras.js?v=20261021-3" defer></script>
+<script src="assets/markets.js?v=20261021-4" defer></script>
+<script src="assets/live.js?v=20261021-4" defer></script>
+<script src="assets/signals.js?v=20261021-4" defer></script>
+<script src="assets/app.js?v=20261021-4" defer></script>
+<script src="assets/extras.js?v=20261021-4" defer></script>
+<script src="assets/backtest.js?v=20261021-4" defer></script>
 </head>
 <body>
 <div class="bg-glow" aria-hidden="true"></div>
@@ -44,7 +45,7 @@
 
 <nav class="nav" aria-label="Sections">
   <div class="wrap nav-inner">
-    <a href="#market">Market</a><a href="#trades">Slate</a><a href="#signals">Signals</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="#track">Track record</a><a href="#calc-sec">Calculator</a><a href="#log">Log</a>
+    <a href="#market">Market</a><a href="#trades">Slate</a><a href="#signals">Signals</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="#track">Track record</a><a href="#backtest">Backtest</a><a href="#calc-sec">Calculator</a><a href="#log">Log</a>
   </div>
 </nav>
 
@@ -112,6 +113,16 @@
       <table><thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Entry</th><th>Exit</th><th>Result</th><th>% on margin</th><th>$ ($100)</th><th>Held (CT)</th></tr></thead><tbody id="track-body"></tbody></table>
     </div>
     <p class="honest" id="track-note"></p>
+  </section>
+
+  <section id="backtest" class="card reveal">
+    <div class="card-head"><h2>Signal Backtest</h2><span class="kicker" id="bt-meta">loading…</span></div>
+    <div class="bt-summary" id="bt-summary"></div>
+    <p class="meta" id="bt-assume"></p>
+    <div class="bt-tabs" id="bt-tabs" role="tablist" aria-label="Coin"></div>
+    <div id="bt-coin"></div>
+    <h3 class="sub-h">Indicator weights — proposal only (not applied)</h3>
+    <div id="bt-weights"></div>
   </section>
 
   <section id="calc-sec" class="card reveal">

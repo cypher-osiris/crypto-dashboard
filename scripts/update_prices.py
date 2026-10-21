@@ -152,141 +152,9 @@ def fetch_prices():
 
 
 # ---------------------------------------------------------- trade evaluation
-def pnl_pct(direction, entry, exit_price, leverage):
-    move = (exit_price - entry) / entry
-    if direction == "short":
-        move = -move
-    return round(move * leverage * 100, 2)
-
-
-def evaluate_trade(t, history, now_ms):
-    """
-    Walk the price history from the trade's open time (or last check) forward.
-    Rules (documented in README):
-      * Position is split equally across targets (scale-out).
-      * Stop hit before any target            -> status "stopped" (loss at stop).
-      * After target 1 fills, stop moves to entry (breakeven) unless move_stop_to_be is false.
-      * All targets hit                       -> status "won".
-      * Some targets hit, then (BE) stop hit  -> status "won" if blended P&L > 0, else "lost".
-      * Optional "expires" timestamp: at expiry, remaining size closes at market -> won/lost by P&L sign.
-    Uses CoinGecko hourly points, so intrahour wicks are not seen (conservative + approximate).
-    """
-    if t.get("status") == "pending":
-        # Pending idea: fills the first time price trades into entry_zone {low, high}
-        # (or through `entry` if no zone). Fill price = the touching price, clamped to the zone
-        # edge nearest the previous price. Cancels at `expiry` (alias: legacy `fill_by`).
-        start = max(parse_ts(t["opened_at"]), t.get("last_checked_ms", 0))
-        deadline = t.get("expiry") or t.get("fill_by")
-        cancel = parse_ts(deadline) if deadline else None
-        z = t.get("entry_zone") or {}
-        zlo, zhi = z.get("low", t["entry"]), z.get("high", t["entry"])
-        prev = None
-        for ts, price in history:
-            if ts <= start:
-                prev = price
-                continue
-            if cancel and ts > cancel:
-                t.update(status="cancelled", closed_at=iso(cancel))
-                return True
-            lo, hi = (min(prev, price), max(prev, price)) if prev is not None else (price, price)
-            if lo <= zhi and hi >= zlo:  # path touched the zone
-                if zlo <= price <= zhi:
-                    fill = price
-                elif prev is not None:
-                    fill = zhi if prev > zhi else zlo if prev < zlo else prev
-                else:
-                    fill = min(max(price, zlo), zhi)
-                t.setdefault("planned_entry", t["entry"])
-                t.update(status="open", filled_at=iso(ts), entry=sig(fill), last_checked_ms=ts - 1)
-                break
-            prev = price
-        else:
-            if history:
-                t["last_checked_ms"] = int(history[-1][0])
-            if cancel and now_ms > cancel:
-                t.update(status="cancelled", closed_at=iso(cancel))
-                return True
-            if history:
-                t["mark_price"] = sig(history[-1][1])
-            return False
-        # fall through: evaluate the freshly opened trade from its fill time
-    if t.get("status") != "open":
-        return False
-    d, lev = t["direction"], t.get("leverage", 3)
-    entry, targets = t["entry"], sorted(t["targets"], reverse=(t["direction"] == "short"))
-    n = len(targets)
-    hits = t.setdefault("targets_hit", [])
-    stop = t.get("current_stop", t["stop"])
-    start = max(parse_ts(t.get("filled_at") or t["opened_at"]), t.get("last_checked_ms", 0))
-    expires = parse_ts(t["expires"]) if t.get("expires") else None
-    changed = False
-
-    def close(status, ts, last_exit):
-        legs = [h["price"] for h in hits] + [last_exit] * (n - len(hits))
-        pnl = round(sum(pnl_pct(d, entry, p, lev) for p in legs) / n, 2)
-        if status is None:
-            status = "won" if pnl > 0 else "lost"
-        t.update(status=status, closed_at=iso(ts), exit_price=sig(last_exit), pnl_pct=pnl)
-
-    for ts, price in history:
-        if ts <= start:
-            continue
-        if expires and ts > expires:
-            close(None, expires, price)
-            changed = True
-            break
-        stop_hit = price <= stop if d == "long" else price >= stop
-        if stop_hit:
-            close("stopped" if not hits else None, ts, stop)
-            changed = True
-            break
-        while len(hits) < n:
-            tgt = targets[len(hits)]
-            if (price >= tgt) if d == "long" else (price <= tgt):
-                hits.append({"price": tgt, "at": iso(ts)})
-                changed = True
-                if t.get("move_stop_to_be", True):
-                    stop = entry
-                    t["current_stop"] = entry
-            else:
-                break
-        if len(hits) == n:
-            close("won", ts, targets[-1])
-            break
-
-    if history:
-        t["last_checked_ms"] = int(history[-1][0])
-    if t["status"] == "open" and history:
-        last = history[-1][1]
-        legs = [h["price"] for h in hits] + [last] * (n - len(hits))
-        t["unrealized_pnl_pct"] = round(sum(pnl_pct(d, entry, p, lev) for p in legs) / n, 2)
-        t["mark_price"] = sig(last)
-    else:
-        t.pop("unrealized_pnl_pct", None)
-        t.pop("mark_price", None)
-    return changed
-
-
-def compute_stats(trades):
-    closed = sorted([t for t in trades if t["status"] in ("won", "lost", "stopped")],
-                    key=lambda t: t["closed_at"])
-    wins = sum(1 for t in closed if t["status"] == "won")
-    cum, curve = 0.0, []
-    for t in closed:
-        cum += t["pnl_pct"]
-        curve.append({"t": t["closed_at"], "trade_id": t["id"], "cum_pnl_pct": round(cum, 2)})
-    return {
-        "total": len(trades),
-        "open": sum(1 for t in trades if t["status"] == "open"),
-        "pending": sum(1 for t in trades if t["status"] == "pending"),
-        "closed": len(closed),
-        "won": wins,
-        "lost_or_stopped": len(closed) - wins,
-        "win_rate_pct": round(100 * wins / len(closed), 1) if closed else None,
-        "cumulative_pnl_pct": round(cum, 2),
-        "note": "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).",
-        "equity_curve": curve,
-    }
+# Delegated to scripts/track_trades.py (single engine, fine-grained candles) so results never conflict.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import track_trades  # noqa: E402
 
 
 def main():
@@ -303,61 +171,31 @@ def main():
         save("prices.json", prices)
         print("Wrote data/prices.json")
 
-    tdoc = load("trades.json", {"trades": []})
-    now_ms = int(time.time() * 1000)
-    notes = []
-    sym = {k: v["symbol"] for k, v in prices["assets"].items()}
-    for t in tdoc["trades"]:
-        a = prices["assets"].get(t["coin"])
-        if not a:
-            notes.append(f"{t['id']}: no price data for {t['coin']}")
-            continue
-        before = (t["status"], len(t.get("targets_hit", [])))
-        evaluate_trade(t, a["history"], now_ms)
-        after = (t["status"], len(t.get("targets_hit", [])))
-        if after != before:
-            if before[0] == "pending" and t["status"] == "open":
-                notes.append(f"{t['id']} ({sym[t['coin']]}): entry {t['entry']} filled")
-            elif t["status"] == "cancelled":
-                notes.append(f"{t['id']} ({sym[t['coin']]}): not filled in time, cancelled")
-            elif t["status"] == "open":
-                notes.append(f"{t['id']} ({sym[t['coin']]}): target {after[1]} hit")
-            else:
-                notes.append(f"{t['id']} ({sym[t['coin']]}) closed as {t['status'].upper()} "
-                             f"at {t['exit_price']} ({t['pnl_pct']:+.2f}% at {t.get('leverage', 3)}x)")
-    tdoc["stats"] = compute_stats(tdoc["trades"])
-    # Slate rules: max one active (pending/open) idea per coin, max 5 active overall.
-    active = [t for t in tdoc["trades"] if t["status"] in ("pending", "open")]
-    warn = []
-    per = {}
-    for t in active:
-        per.setdefault(t["coin"], []).append(t["id"])
-    warn += [f"{c}: {len(v)} active ideas ({', '.join(v)}) - max 1 per coin" for c, v in per.items() if len(v) > 1]
-    if len(active) > 5:
-        warn.append(f"{len(active)} active ideas - max 5")
-    tdoc["stats"]["slate_warnings"] = warn
-    for w in warn:
-        print("WARNING:", w, file=sys.stderr)
-    tdoc["evaluated_utc"] = prices["updated_utc"]
-    save("trades.json", tdoc)
-    print("Wrote data/trades.json")
-
-    log = load("log.json", {"entries": []})
-    quotes = ", ".join(
-        f"{prices['assets'][i]['symbol']} {prices['assets'][i]['price']:.6g} ({prices['assets'][i]['change_24h'] or 0:+.1f}%)"
-        for i in [prices["backdrop"]] + prices["coins"])
-    s = tdoc["stats"]
-    msg = (f"Re-evaluated trades on existing data (no fetch); prices as of {prices['updated_central']}: {quotes}." if args.no_fetch
-           else f"Prices refreshed: {quotes}.")
-    if notes:
-        msg += " Trades: " + "; ".join(notes) + "."
-    msg += f" Open trades: {s['open']}; pending: {s['pending']}; closed: {s['closed']}; win rate: " + \
-           (f"{s['win_rate_pct']}%" if s["win_rate_pct"] is not None else "n/a") + "."
-    log["entries"].insert(0, {"t": prices["updated_utc"], "kind": "auto", "author": "update_prices.py", "text": msg})
-    log["entries"] = log["entries"][:LOG_MAX]
-    save("log.json", log)
-    print("Wrote data/log.json")
-    print(msg)
+    with track_trades.file_lock():
+        res = track_trades.run(lock_held=True, log_events=True)
+        tdoc = load("trades.json", {"trades": []})
+        notes = [e["text"] for e in res["events"]]
+        if res["errors"]:
+            notes.append("tracking errors: " + "; ".join(f"{k}: {v}" for k, v in res["errors"].items()))
+        for w in tdoc["stats"].get("slate_warnings", []):
+            print("WARNING:", w, file=sys.stderr)
+        print("Trades evaluated by track_trades.py")
+        log = load("log.json", {"entries": []})
+        quotes = ", ".join(
+            f"{prices['assets'][i]['symbol']} {prices['assets'][i]['price']:.6g} ({prices['assets'][i]['change_24h'] or 0:+.1f}%)"
+            for i in [prices["backdrop"]] + prices["coins"])
+        s = tdoc["stats"]
+        msg = (f"Re-evaluated trades on existing data (no fetch); prices as of {prices['updated_central']}: {quotes}." if args.no_fetch
+               else f"Prices refreshed: {quotes}.")
+        if notes:
+            msg += " Trades: " + "; ".join(notes) + "."
+        msg += f" Open trades: {s['open']}; pending: {s['pending']}; closed: {s['closed']}; win rate: " + \
+               (f"{s['win_rate_pct']}%" if s["win_rate_pct"] is not None else "n/a") + "."
+        log["entries"].insert(0, {"t": prices["updated_utc"], "kind": "auto", "author": "update_prices.py", "text": msg})
+        log["entries"] = log["entries"][:LOG_MAX]
+        save("log.json", log)
+        print("Wrote data/log.json")
+        print(msg)
 
 
 if __name__ == "__main__":

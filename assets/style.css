@@ -342,6 +342,21 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .co span{font-size:.74rem;color:var(--muted)}
 .calc-warn{grid-column:1/-1;margin:0;font-size:.8rem;color:#fda4af;padding:8px 10px;border-radius:9px;background:var(--red-s);border:1px solid rgba(244,63,94,.3)}
 
+/* backtest */
+.bt-summary{padding:14px 16px;border-radius:12px;border:1px solid rgba(245,176,65,.25);background:linear-gradient(135deg,rgba(245,176,65,.08),rgba(10,15,24,.5));font-size:.88rem;color:#d3dbe6}
+.bt-summary ul{margin:6px 0 0;padding-left:18px}
+.bt-summary li{margin:4px 0}
+.bt-verdict{margin:0;font-size:.98rem}
+.bt-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 6px}
+.bt-tabs button{font:600 .8rem var(--sans);color:var(--muted);background:rgba(10,15,24,.6);border:1px solid var(--line2);border-radius:999px;padding:6px 14px;cursor:pointer}
+.bt-tabs button.on{color:#06121f;background:linear-gradient(135deg,var(--cyan),var(--blue));border-color:transparent}
+.bt-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.bt-chart{height:260px;position:relative;min-width:0;padding:8px;border-radius:12px;border:1px solid var(--line);background:rgba(8,12,19,.5)}
+.bt-rank{max-height:420px;overflow:auto}
+.bt-rank tr.dim td{opacity:.55}
+.small-n{font-family:var(--sans);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);background:rgba(245,176,65,.12);padding:1px 6px;border-radius:5px}
+.ruin{font-family:var(--sans);font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--red);background:var(--red-s);padding:1px 6px;border-radius:5px}
+@media (max-width:720px){ .bt-charts{grid-template-columns:minmax(0,1fr)} .bt-chart{height:230px} }
 @media (max-width:1060px){ .context{grid-template-columns:repeat(3,minmax(0,1fr))} .calc{grid-template-columns:repeat(2,minmax(0,1fr))} .calc-out{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:720px){
   .hero-right{width:100%} .live-ind,.hero-right .hero-meta{flex:1 1 0;width:auto}

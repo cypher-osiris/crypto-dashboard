@@ -39,10 +39,10 @@
       "fill_by": "2026-10-23T16:05:00Z",
       "status": "pending",
       "move_stop_to_be": true,
-      "reasoning": "SEED IDEA. Don't chase XRP at $1.38 into 1.42 resistance; instead bid a pullback to $1.35 (today's breakout/consolidation zone above the 1.33 pivot). Stop $1.305 sits under RoboForex's H4 support (1.309) and the Oct 19\u201320 range, so the idea is invalidated if the bounce fails. T1 $1.42 = H4/7-day resistance; T2 $1.47 = bull-case projection. Risk \u22123.3% (\u221210.0% at 3x) vs. +5.2% / +8.9% (+15.6% / +26.7% at 3x). [Originally posted at 5x; changed to 3x on Oct 21.] Limit order: cancels if not filled by Oct 23 11:05 AM CT. Risks: BTC losing $82.5K, Fed Oct 27\u201328. Entry zone 1.345\u20131.355 added Oct 21 for the slate model (centered on the original 1.35 limit, \u2248 the 1h EMA20).",
+      "reasoning": "SEED IDEA. Don't chase XRP at $1.38 into 1.42 resistance; instead bid a pullback to $1.35 (today's breakout/consolidation zone above the 1.33 pivot). Stop $1.305 sits under RoboForex's H4 support (1.309) and the Oct 19–20 range, so the idea is invalidated if the bounce fails. T1 $1.42 = H4/7-day resistance; T2 $1.47 = bull-case projection. Risk −3.3% (−10.0% at 3x) vs. +5.2% / +8.9% (+15.6% / +26.7% at 3x). [Originally posted at 5x; changed to 3x on Oct 21.] Limit order: cancels if not filled by Oct 23 11:05 AM CT. Risks: BTC losing $82.5K, Fed Oct 27–28. Entry zone 1.345–1.355 added Oct 21 for the slate model (centered on the original 1.35 limit, ≈ the 1h EMA20).",
       "source": "seed (Grok Bot setup)",
-      "last_checked_ms": 1792602380000,
-      "mark_price": 1.3768,
+      "last_checked_ms": 1792603200000,
+      "mark_price": 1.3804,
       "leverage_note": "Leverage changed from 5x to 3x on Oct 21, 2026 (owner lowered paper-trade leverage going forward). Entry/stop/targets unchanged; P&L figures recomputed at 3x.",
       "entry_zone": {
         "low": 1.345,
@@ -51,8 +51,9 @@
       "expiry": "2026-10-23T16:05:00Z",
       "missed_it": {
         "max_entry": 1.365,
-        "note": "Still worth entering up to $1.365 (\u22481.1R to T1). Above that, skip \u2014 don't chase XRP into 1.42 resistance with 1h/4h RSI already overbought. Also skip if a 4h candle closes below 1.31 before the fill."
-      }
+        "note": "Still worth entering up to $1.365 (≈1.1R to T1). Above that, skip — don't chase XRP into 1.42 resistance with 1h/4h RSI already overbought. Also skip if a 4h candle closes below 1.31 before the fill."
+      },
+      "last_checked": "2026-10-21T17:20:00Z"
     },
     {
       "id": "T003",
@@ -77,10 +78,11 @@
         "max_entry": 0.1885,
         "note": "Only short INTO the zone. If XLM rolls over below $0.1885 without tagging it, skip (reward to T1 too small). Skip entirely if it reclaims and holds above the daily EMA50 (~$0.1935)."
       },
-      "reasoning": "SEED SLATE IDEA (3x short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895\u20130.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 \u2248 the 1h EMA20/prior breakout; T2 0.1775 \u2248 the Oct 17\u201319 support. From 0.1905: risk +2.6% (\u22127.9% at 3x) vs. \u22123.9% / \u22126.8% (+11.7% / +20.4% at 3x).",
+      "reasoning": "SEED SLATE IDEA (3x short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895–0.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 ≈ the 1h EMA20/prior breakout; T2 0.1775 ≈ the Oct 17–19 support. From 0.1905: risk +2.6% (−7.9% at 3x) vs. −3.9% / −6.8% (+11.7% / +20.4% at 3x).",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792602380000,
-      "mark_price": 0.185422
+      "last_checked_ms": 1792603200000,
+      "mark_price": 0.185166,
+      "last_checked": "2026-10-21T17:20:00Z"
     },
     {
       "id": "T004",
@@ -103,12 +105,13 @@
       "move_stop_to_be": true,
       "missed_it": {
         "max_entry": 0.00238,
-        "note": "Worth entering up to $0.00238; above that skip \u2014 chasing a +13% day in a thin small-cap. Skip if price loses $0.00222 (4h EMA20/50) before filling."
+        "note": "Worth entering up to $0.00238; above that skip — chasing a +13% day in a thin small-cap. Skip if price loses $0.00222 (4h EMA20/50) before filling."
       },
-      "reasoning": "SEED SLATE IDEA (3x long, buy the pullback). ZBCN is the only coin with an uptrend on all three timeframes (price > EMA20 > EMA50 on 1h/4h/1d, above the daily EMA200 0.00227), but 1h/4h RSI is >70 after today's +13% breakout, so wait for a retest of the 0.0023 breakout area / 1h EMA20 (0.00233). Stop 0.00219 below the 4h EMA20/50 (~0.00222) and the daily EMA200. T1 0.00258 = early-Oct resistance; T2 0.00270 = bull projection. From 0.00232: risk \u22125.6% (\u221216.8% at 3x) vs. +11.2% / +16.4% (+33.6% / +49.1% at 3x). Small cap: wide swings, size down.",
+      "reasoning": "SEED SLATE IDEA (3x long, buy the pullback). ZBCN is the only coin with an uptrend on all three timeframes (price > EMA20 > EMA50 on 1h/4h/1d, above the daily EMA200 0.00227), but 1h/4h RSI is >70 after today's +13% breakout, so wait for a retest of the 0.0023 breakout area / 1h EMA20 (0.00233). Stop 0.00219 below the 4h EMA20/50 (~0.00222) and the daily EMA200. T1 0.00258 = early-Oct resistance; T2 0.00270 = bull projection. From 0.00232: risk −5.6% (−16.8% at 3x) vs. +11.2% / +16.4% (+33.6% / +49.1% at 3x). Small cap: wide swings, size down.",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792602410000,
-      "mark_price": 0.00242309
+      "last_checked_ms": 1792603200000,
+      "mark_price": 0.002395,
+      "last_checked": "2026-10-21T17:20:00Z"
     }
   ],
   "stats": {
@@ -146,12 +149,13 @@
       },
       "hedera-hashgraph": {
         "trade_id": null,
-        "note": "No setup (re-checked noon Oct 21). 1h Strong Buy but daily still Sell and below its EMA20/50/200 (~0.087\u20130.0886). Wait for a pullback that holds ~0.084 or a clean rejection at 0.087\u20130.0887."
+        "note": "No setup (re-checked noon Oct 21). 1h Strong Buy but daily still Sell and below its EMA20/50/200 (~0.087–0.0886). Wait for a pullback that holds ~0.084 or a clean rejection at 0.087–0.0887."
       },
       "axelar": {
         "trade_id": null,
         "note": "No setup (re-checked noon Oct 21). Composite neutral; 4h downtrend vs. 1h/1d Buy. Watch 0.0525 (break = bearish) and 0.0558 (reclaim = bullish)."
       }
     }
-  }
+  },
+  "tracked_utc": "2026-10-21T17:24:43.169000Z"
 }
