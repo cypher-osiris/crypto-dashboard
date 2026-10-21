@@ -172,9 +172,14 @@ def evaluate_trade(t, history, now_ms):
     Uses CoinGecko hourly points, so intrahour wicks are not seen (conservative + approximate).
     """
     if t.get("status") == "pending":
-        # Limit-style idea: fills the first time price trades through `entry` after opened_at.
+        # Pending idea: fills the first time price trades into entry_zone {low, high}
+        # (or through `entry` if no zone). Fill price = the touching price, clamped to the zone
+        # edge nearest the previous price. Cancels at `expiry` (alias: legacy `fill_by`).
         start = max(parse_ts(t["opened_at"]), t.get("last_checked_ms", 0))
-        cancel = parse_ts(t["fill_by"]) if t.get("fill_by") else None
+        deadline = t.get("expiry") or t.get("fill_by")
+        cancel = parse_ts(deadline) if deadline else None
+        z = t.get("entry_zone") or {}
+        zlo, zhi = z.get("low", t["entry"]), z.get("high", t["entry"])
         prev = None
         for ts, price in history:
             if ts <= start:
@@ -184,8 +189,15 @@ def evaluate_trade(t, history, now_ms):
                 t.update(status="cancelled", closed_at=iso(cancel))
                 return True
             lo, hi = (min(prev, price), max(prev, price)) if prev is not None else (price, price)
-            if lo <= t["entry"] <= hi:
-                t.update(status="open", filled_at=iso(ts), last_checked_ms=ts - 1)
+            if lo <= zhi and hi >= zlo:  # path touched the zone
+                if zlo <= price <= zhi:
+                    fill = price
+                elif prev is not None:
+                    fill = zhi if prev > zhi else zlo if prev < zlo else prev
+                else:
+                    fill = min(max(price, zlo), zhi)
+                t.setdefault("planned_entry", t["entry"])
+                t.update(status="open", filled_at=iso(ts), entry=sig(fill), last_checked_ms=ts - 1)
                 break
             prev = price
         else:
@@ -200,7 +212,7 @@ def evaluate_trade(t, history, now_ms):
         # fall through: evaluate the freshly opened trade from its fill time
     if t.get("status") != "open":
         return False
-    d, lev = t["direction"], t.get("leverage", 5)
+    d, lev = t["direction"], t.get("leverage", 3)
     entry, targets = t["entry"], sorted(t["targets"], reverse=(t["direction"] == "short"))
     n = len(targets)
     hits = t.setdefault("targets_hit", [])
@@ -312,8 +324,20 @@ def main():
                 notes.append(f"{t['id']} ({sym[t['coin']]}): target {after[1]} hit")
             else:
                 notes.append(f"{t['id']} ({sym[t['coin']]}) closed as {t['status'].upper()} "
-                             f"at {t['exit_price']} ({t['pnl_pct']:+.2f}% at {t.get('leverage',5)}x)")
+                             f"at {t['exit_price']} ({t['pnl_pct']:+.2f}% at {t.get('leverage', 3)}x)")
     tdoc["stats"] = compute_stats(tdoc["trades"])
+    # Slate rules: max one active (pending/open) idea per coin, max 5 active overall.
+    active = [t for t in tdoc["trades"] if t["status"] in ("pending", "open")]
+    warn = []
+    per = {}
+    for t in active:
+        per.setdefault(t["coin"], []).append(t["id"])
+    warn += [f"{c}: {len(v)} active ideas ({', '.join(v)}) - max 1 per coin" for c, v in per.items() if len(v) > 1]
+    if len(active) > 5:
+        warn.append(f"{len(active)} active ideas - max 5")
+    tdoc["stats"]["slate_warnings"] = warn
+    for w in warn:
+        print("WARNING:", w, file=sys.stderr)
     tdoc["evaluated_utc"] = prices["updated_utc"]
     save("trades.json", tdoc)
     print("Wrote data/trades.json")
