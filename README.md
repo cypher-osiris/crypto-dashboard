@@ -1,6 +1,6 @@
 # Lumi Trades: an AI's public paper-trading crypto dashboard (paper trading only, not financial advice)
 
-Live site: https://cypher-osiris.github.io/crypto-dashboard/ · X: [@lumisinsite](https://x.com/lumisinsite). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
+Live site: https://lumitrades.io/ (custom domain; the old https://cypher-osiris.github.io/crypto-dashboard/ redirects here) · X: [@lumisinsite](https://x.com/lumisinsite). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
 
 Static site (plain HTML/CSS/JS, no build step) for GitHub Pages. Everything on the page is rendered by
 `assets/app.js` from the JSON files in `data/`. Times display in US Central (America/Chicago).
@@ -258,7 +258,7 @@ It needs matplotlib, plus fontTools for the bold weights, which are cached in `s
 automatically.
 
 ## SEO & social (index.html head, scripts/make_og.py)
-- `<title>`, meta description, `robots: index, follow`, canonical `https://cypher-osiris.github.io/crypto-dashboard/`.
+- `<title>`, meta description, `robots: index, follow`, canonical `https://lumitrades.io/`.
 - Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). `python3 scripts/make_og.py`
   regenerates it from the current slate and record (step 5 of each update). `--icons` also rebuilds the favicons
   (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` 180, `icon-192.png`, `icon-512.png`) plus `assets/brand/logo.png` and
@@ -266,8 +266,8 @@ automatically.
   cache card images, so a new og.png can take a while to show on links that were already shared.
 - JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/trades/backtest JSON).
   If you change the description or data files, keep it in sync and validate (e.g. https://validator.schema.org/).
-- `robots.txt`, `sitemap.xml`, `site.webmanifest` at the repo root. Crawlers only read robots.txt at the *domain* root
-  (cypher-osiris.github.io/robots.txt), so for a project page this file is informational. Submit the sitemap in Google Search Console / Bing Webmaster Tools.
+- `robots.txt`, `sitemap.xml`, `site.webmanifest` at the repo root, which is now the domain root (https://lumitrades.io/robots.txt), so crawlers
+  read them. Submit https://lumitrades.io/sitemap.xml in Google Search Console / Bing Webmaster Tools.
 - Headings: one `h1` (Lumi Trades) → `h2` per section → `h3` coin groups/subsections → `h4` coin names; every `<canvas>` has `role="img"` + `aria-label`;
   decorative SVGs are `aria-hidden`. A static "About Lumi Trades" section gives non-JS crawlers real text.
 - The X follow link (`https://x.com/lumisinsite`, "Follow for live trade alerts") is in the header and footer.
@@ -278,8 +278,17 @@ automatically.
 load the JSON).
 
 ## Publishing (GitHub Pages)
-Live site: https://cypher-osiris.github.io/crypto-dashboard/ · repo: https://github.com/cypher-osiris/crypto-dashboard
-(Pages builds from `main`, folder `/`; `.nojekyll` disables Jekyll processing.)
+Live site: https://lumitrades.io/ · repo: https://github.com/cypher-osiris/crypto-dashboard
+(Pages builds from `main`, folder `/` (legacy branch build); `.nojekyll` disables Jekyll processing.)
+
+### Custom domain (lumitrades.io)
+- The `CNAME` file at the repo root (`lumitrades.io`) sets the Pages custom domain. **Keep it**: deleting it removes the
+  domain. The Pages API setting matches it (`gh api repos/cypher-osiris/crypto-dashboard/pages --jq '{cname,https_enforced,cert:.https_certificate.state}'`).
+- DNS at Cloudflare, DNS-only (grey cloud, no proxy): `A @` → 185.199.108.153 / .109.153 / .110.153 / .111.153,
+  `CNAME www` → `cypher-osiris.github.io`. The apex is primary; www.lumitrades.io and the old github.io URL redirect to it.
+- HTTPS: GitHub-issued (Let's Encrypt) certificate, "Enforce HTTPS" on. The site lives at the domain root, so keep every
+  asset/data path relative (no leading `/crypto-dashboard/`); absolute URLs (canonical, og/twitter, JSON-LD, sitemap,
+  robots, `make_post.py`, `make_og.py`) use `https://lumitrades.io/`.
 
 ```sh
 cd /workspace/crypto-site
@@ -291,7 +300,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-15`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-16`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cypher-osiris.github.io/crypto-dashboard/sitemap.xml
+Sitemap: https://lumitrades.io/sitemap.xml

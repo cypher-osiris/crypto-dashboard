@@ -56,7 +56,7 @@ def og(path):
         y += 66
     rec = F["record"]
     T(64, H - 56, f"Record {rec['won']}W/{rec['lost']}L · paper trades · not financial advice", fontsize=14, color=mp.AMBER)
-    T(W - 64, H - 56, "cypher-osiris.github.io/crypto-dashboard  ·  @lumisinsite", fontsize=14, color=mp.DIM, ha="right")
+    T(W - 64, H - 56, "lumitrades.io  ·  @lumisinsite", fontsize=14, color=mp.DIM, ha="right")
     fig.savefig(path, dpi=100, facecolor=mp.BG)
     plt.close(fig)
 
