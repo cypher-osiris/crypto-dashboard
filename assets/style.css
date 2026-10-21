@@ -31,9 +31,7 @@ h2{margin:0;font-size:1.12rem;font-weight:700}
   background:linear-gradient(180deg,rgba(13,20,33,.85),rgba(7,10,16,.4))}
 .hero-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
-.logo{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:#06121f;
-  background:linear-gradient(135deg,var(--cyan),var(--blue) 55%,var(--violet));box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 8px 28px -6px rgba(96,165,250,.55)}
-.logo svg{width:26px;height:26px}
+.logo{width:52px;height:52px;flex:none;display:block;object-fit:contain;filter:drop-shadow(0 6px 18px rgba(96,165,250,.35))}
 h1{margin:0;font-size:clamp(1.35rem,2.6vw,1.75rem);font-weight:800;
   background:linear-gradient(90deg,#fff,#b9c7da);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tagline{margin:2px 0 0;color:var(--muted);font-size:.9rem}

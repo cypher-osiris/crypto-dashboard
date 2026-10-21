@@ -31,6 +31,7 @@ scripts/publish.sh         pull --rebase --autostash, validate JSON, commit data
 scripts/locked.sh          run any command while holding state/lock (use for hand edits of trades.json/log.json)
 scripts/make_post.py       X helper: facts JSON for writing posts, number check, 1200x675 card, save drafts -> posts/ (git-ignored)
 scripts/make_og.py         1200x630 "Lumi Trades" social card (assets/og.png) from the current slate; --icons rebuilds favicons
+scripts/make_brand.py      logo mark (assets/brand/logo.png), favicons/favicon.ico and X avatar from assets/brand/logo-source.jpg
 scripts/coins.py           loader for data/coins.json used by every script
 scripts/backtest.py        backtest of the signals.py indicators/composite -> data/backtest.json (~20 s first run)
 scripts/signals.py         RSI/MACD/EMA/Bollinger/StochRSI/volume signals -> data/signals.json + JSON on stdout (~1 s, no args)
@@ -222,8 +223,9 @@ automatically.
 ## SEO & social (index.html head, scripts/make_og.py)
 - `<title>`, meta description, `robots: index, follow`, canonical `https://cypher-osiris.github.io/crypto-dashboard/`.
 - Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). `python3 scripts/make_og.py`
-  regenerates it from the current slate and record (step 5 of each update). `--icons` also rebuilds `assets/favicon.svg`,
-  `favicon-32.png`, `apple-touch-icon.png` (180) and `icon-512.png` (only needed if the logo changes). X and other platforms
+  regenerates it from the current slate and record (step 5 of each update). `--icons` also rebuilds the favicons
+  (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` 180, `icon-192.png`, `icon-512.png`) plus `assets/brand/logo.png` and
+  `x_avatar.png` from `assets/brand/logo-source.jpg` via `scripts/make_brand.py` (only needed if the logo changes). X and other platforms
   cache card images, so a new og.png can take a while to show on links that were already shared.
 - JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/trades/backtest JSON).
   If you change the description or data files, keep it in sync and validate (e.g. https://validator.schema.org/).
@@ -252,7 +254,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-8`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-9`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
