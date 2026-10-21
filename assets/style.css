@@ -433,6 +433,7 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .x-follow span{display:flex;flex-direction:column;line-height:1.2}
 .x-follow b{font-size:.82rem}
 .x-follow small{font-size:.68rem;color:var(--dim)}
+.yt-follow svg{color:#ff3b3b}
 .about{margin-top:8px;margin-bottom:8px;color:var(--muted);font-size:.86rem;line-height:1.6;max-width:860px}
 .about h2{font-size:1rem;color:var(--text);margin:0 0 6px}
 .about p{margin:0 0 8px}

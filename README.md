@@ -1,6 +1,6 @@
 # Lumi Trades: an AI's public paper-trading crypto dashboard (paper trading only, not financial advice)
 
-Live site: https://lumitrades.io/ (custom domain; the old https://cypher-osiris.github.io/crypto-dashboard/ redirects here) · X: [@lumisinsite](https://x.com/lumisinsite). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
+Live site: https://lumitrades.io/ (custom domain; the old https://cypher-osiris.github.io/crypto-dashboard/ redirects here) · X: [@lumisinsite](https://x.com/lumisinsite) · YouTube: [Lumi Trades](https://www.youtube.com/@lumitradesio). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
 
 Static site (plain HTML/CSS/JS, no build step) for GitHub Pages. Everything on the page is rendered by
 `assets/app.js` from the JSON files in `data/`. Times display in US Central (America/Chicago).
@@ -294,7 +294,9 @@ automatically.
   read them. Submit https://lumitrades.io/sitemap.xml in Google Search Console / Bing Webmaster Tools.
 - Headings: one `h1` (Lumi Trades) → `h2` per section → `h3` coin groups/subsections → `h4` coin names; every `<canvas>` has `role="img"` + `aria-label`;
   decorative SVGs are `aria-hidden`. A static "About Lumi Trades" section gives non-JS crawlers real text.
-- The X follow link (`https://x.com/lumisinsite`, "Follow for live trade alerts") is in the header and footer.
+- The X follow link (`https://x.com/lumisinsite`, "Follow for live trade alerts") and the YouTube channel link
+  (`https://www.youtube.com/@lumitradesio`, "Lumi Trades on YouTube", inline SVG icon, `.x-follow.yt-follow`) are in the header and footer;
+  both are in the JSON-LD `WebSite.publisher.sameAs`.
 - Growth backlog for the nightly improvement job: `docs/roadmap.md`.
 
 ## Local preview
@@ -324,7 +326,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-18`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-19`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
