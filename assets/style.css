@@ -387,6 +387,15 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .aff-wrap .aff-extra{text-align:left}
 .aff-note{margin:0;font-size:.7rem;line-height:1.4;color:var(--dim)}
 .aff-foot{margin:8px auto 0;max-width:640px;font-size:.74rem;color:var(--dim)}
+/* hardware-wallet pick (all visitors, no geo gate) */
+.wallet-pick{margin-top:16px;padding:14px 16px;border:1px solid var(--line2);border-radius:12px;background:linear-gradient(135deg,rgba(167,139,250,.07),rgba(34,211,238,.05));display:flex;gap:14px;align-items:flex-start}
+.wallet-pick .w-ico{flex:0 0 auto;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);font-size:1rem}
+.wallet-pick h3{margin:0 0 4px;font:600 .92rem var(--sans);color:var(--text)}
+.wallet-pick p.w-copy{margin:0 0 10px;font-size:.8rem;line-height:1.45;color:var(--muted)}
+.wallet-pick p.w-copy b{color:var(--text);font-weight:600}
+.wallet-pick .w-btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wallet-pick .aff-tag{text-align:left}
+@media (max-width:720px){ .wallet-pick .w-btns .aff-btn{width:100%} }
 @media (max-width:720px){ .aff-cta{flex:1 1 100%} .aff-cta .aff-btn{width:100%} .aff-wrap .aff-btn{width:100%} }
 @media (prefers-reduced-motion:reduce){ .aff-btn{transition:none} }
 
