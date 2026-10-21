@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "t": "2026-10-21T20:23:17.907000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T002 XRP: missed-it plan ARMED (price past the missed-it limit 1.365); watching: Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368; T004 ZBCN: missed-it plan void (main idea filled)."
+    },
+    {
+      "t": "2026-10-21T19:58:04Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84483 (+2.4%), HBAR 0.085695 (+2.9%), XLM 0.185791 (+3.4%), XRP 1.39 (+4.7%), ZBCN 0.00231968 (+10.0%), AXL 0.054815 (+2.6%), ETH 2495.13 (+2.4%), SOL 108.24 (+2.1%), DOGE 0.083032 (+2.1%), ADA 0.228263 (+3.1%), LINK 12.69 (+4.2%), SUI 1.043 (+2.6%). Open trades: 1; pending: 2; closed: 1; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-21T19:29:06.748000Z",
       "kind": "auto",
       "author": "track_trades.py",
