@@ -527,3 +527,22 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .cp-others a:hover{border-color:var(--line2);text-decoration:none}
 @media (max-width:720px){ .cp-stats{grid-template-columns:repeat(2,minmax(0,1fr))} .cp-cols{grid-template-columns:1fr} .cp-chart{height:190px} .cp-dash{font-size:.74rem} .cp-sec{padding:14px} }
 .ledger-foot{color:var(--muted)} .ledger-foot a{color:var(--cyan)} .aff-note-inline{color:var(--dim);font-size:.72rem}
+
+/* ---------- newsletter (Kit form 10079883, assets/newsletter.js) ---------- */
+.nl{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding:16px 18px;margin:14px 0;
+  border:1px solid rgba(34,211,238,.22);border-radius:var(--radius);background:linear-gradient(135deg,rgba(34,211,238,.07),rgba(96,165,250,.04) 60%,rgba(15,20,30,.5))}
+.nl-copy{flex:1 1 300px;min-width:0}
+.nl h2{font-size:1.02rem;margin:0 0 4px}
+.nl-sub{margin:0;color:var(--muted);font-size:.84rem;line-height:1.5}
+.nl-form{flex:1 1 320px;display:flex;flex-wrap:wrap;gap:8px;margin:0}
+.nl-form label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.nl-form input[type=email]{flex:1 1 200px;min-width:0;font:500 .9rem var(--sans);color:var(--text);background:rgba(7,10,16,.75);
+  border:1px solid var(--line2);border-radius:10px;padding:10px 12px}
+.nl-form input[type=email]:focus{outline:none;border-color:rgba(34,211,238,.7)}
+.nl-form button{font:700 .86rem var(--sans);color:#06131a;background:linear-gradient(135deg,#22d3ee,#60a5fa);border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+.nl-form button:hover{filter:brightness(1.08)} .nl-form button:disabled{opacity:.6;cursor:wait}
+.nl-fine{flex-basis:100%;margin:0;font-size:.7rem;color:var(--dim)}
+.nl-msg{flex-basis:100%;margin:0;font-size:.8rem;color:var(--muted)} .nl-msg:empty{display:none}
+.nl-msg.ok{color:var(--green)} .nl-msg.err{color:#fda4af}
+.nl-done input,.nl-done button{display:none}
+@media (max-width:720px){ .nl-form button{flex:1 1 100%} }
