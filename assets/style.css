@@ -382,6 +382,8 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .aff-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;font:600 .82rem var(--sans);color:#e6edf6;text-decoration:none;padding:8px 14px;border-radius:10px;border:1px solid rgba(34,211,238,.35);background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(96,165,250,.10));transition:border-color .2s,background .2s}
 .aff-btn:hover,.aff-btn:focus-visible{border-color:rgba(34,211,238,.7);background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(96,165,250,.16))}
 .aff-btn.sm{font-size:.76rem;padding:7px 12px}
+.aff-btn.aff-kraken{border-color:rgba(124,92,255,.55);background:linear-gradient(135deg,rgba(124,92,255,.16),rgba(96,165,250,.08))}
+.aff-btn.aff-kraken:hover,.aff-btn.aff-kraken:focus-visible{border-color:rgba(124,92,255,.9);background:linear-gradient(135deg,rgba(124,92,255,.28),rgba(96,165,250,.14))}
 .aff-wrap{margin-top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .aff-extra{font-size:.72rem;color:var(--muted);text-decoration:none;text-align:center}
 .aff-extra:hover,.aff-extra:focus-visible{color:var(--cyan);text-decoration:underline}

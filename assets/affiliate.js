@@ -12,6 +12,12 @@
  *   data/coins.json (ZBCN, XDC: card data-cb="") get NO Coinbase trade button, only a short "not listed on Coinbase" note.
  * Bitunix: always the general referral link (no per-pair URL). Spot ideas (leverage 1, card data-lev="1") are labelled
  *   "Buy <SYM> spot on Bitunix" (XDC has no Bitunix perpetual; XDC/USDT spot is listed).
+ * Kraken (affiliate.kraken_url = sign-up link with ?inviteCode=, affiliate.kraken_code shown in the note): a SECONDARY
+ *   "Buy <SYM> spot on Kraken" button on LONG slate cards whose coin has a pair in affiliate.kraken_pairs
+ *   (coin id -> Kraken spot pair, checked against Kraken's public AssetPairs), plus one in the calculator.
+ *   US visitors: always (it's the only US option for XDC/ZBCN, which Coinbase doesn't list). Non-US visitors: only when
+ *   affiliate.kraken_non_us is true (off by default: Kraken credits referrals only within the referrer's country/EEA).
+ *   Spot only: no leverage/"setup" wording, never on short ideas (spot can't short). Empty kraken_url => nothing shown.
  * Hardware-wallet pick (#wallet-pick, under the calculator): shown to ALL visitors, no geo gate.
  *   affiliate.dcent_url (+ dcent_label) = main button; affiliate.ledger_url (+ ledger_label) = second option, hidden while empty. */
 (() => {
@@ -33,6 +39,7 @@
   const okUrl = (u) => /^https:\/\/[^\s"'<>]+$/i.test(u);
   const cc = (s) => { const c = String(s || "").trim().toUpperCase(); return /^[A-Z]{2}$/.test(c) ? c : ""; };
   let P = null; // active program: { name, url, label, slate, aria, extra: {url, text} | null }
+  let K = null; // Kraken secondary: { url, code, label, pairs: {coinId: "XDC/USD"} } | null
 
   // ---- geo ---------------------------------------------------------------------------------------
   async function fetchCountry(url, pick, ms) {
@@ -67,6 +74,19 @@
   const link = (text, cls) => `<a class="aff-btn ${cls || ""}" href="${esc(P.url)}" rel="sponsored noopener" target="_blank">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
   const extra = () => P.extra ? `<a class="aff-extra" href="${esc(P.extra.url)}" rel="sponsored noopener" target="_blank">${esc(P.extra.text)}<span aria-hidden="true"> ↗</span></a>` : "";
   const note = () => `<p class="aff-note">${esc(DISCLOSURE)}</p>`;
+  const kbtn = (text, aria) => `<a class="aff-btn aff-kraken" href="${esc(K.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(aria)} (referral link, opens in a new tab)">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
+  const kcode = () => K.code ? ` Referral code: ${K.code}.` : "";
+  /* Kraken block for one slate card ("" when the coin has no Kraken pair or the idea isn't a long) */
+  function krakenFor(card, sym) {
+    if (!K || card.dataset.dir === "short") return "";
+    const pair = K.pairs[card.dataset.coin || ""];
+    if (!pair) return "";
+    const base = pair.split("/")[0];
+    const listed = base !== sym ? ` (Kraken's ticker for ${sym})` : "";
+    return kbtn(`Buy ${sym} spot on Kraken`, `Buy ${sym} spot on Kraken`) +
+      `<p class="aff-note">Referral link; new Kraken accounts.${esc(kcode())} Spot only, no leverage: ${esc(pair)}${esc(listed)}. ` +
+      `Already have an account? Sign in and open ${esc(pair)}. Availability varies by state/country.</p>`;
+  }
 
   function decorateSlate() {
     document.querySelectorAll(".slate-card[data-slate]").forEach((card) => {
@@ -76,13 +96,16 @@
       const spot = card.dataset.lev === "1";
       const w = document.createElement("div");
       w.className = "aff-wrap";
+      const kr = krakenFor(card, sym);
       if (P.key === "coinbase" && card.dataset.cb === "") {
-        // not listed on Coinbase => a Coinbase "trade" button would lead nowhere useful
-        w.innerHTML = `<p class="aff-note">${esc(sym)} isn't listed on Coinbase, so there's no Coinbase button for this idea.</p>`;
+        // not listed on Coinbase => a Coinbase "trade" button would lead nowhere useful; Kraken (if listed) takes its place
+        w.innerHTML = kr
+          ? `<p class="aff-note">${esc(sym)} isn't listed on Coinbase; Kraken lists it for spot.</p>` + kr + note()
+          : `<p class="aff-note">${esc(sym)} isn't listed on Coinbase, so there's no Coinbase button for this idea.</p>`;
       } else {
         const lbl = P.key === "bitunix" && spot ? `Buy ${sym} spot on Bitunix` : P.slate;
         const hint = P.key === "coinbase" ? `<p class="aff-note">Referral sign-up link (new Coinbase accounts). Already have one? Sign in at Coinbase Advanced and open ${esc(card.dataset.cb || sym)}.</p>` : "";
-        w.innerHTML = link(lbl, "") + hint + note();
+        w.innerHTML = link(lbl, "") + hint + kr + note();
         const a = w.querySelector("a");
         if (sym) a.setAttribute("aria-label", `${P.key === "bitunix" && spot ? lbl : P.aria(sym)} (affiliate link, opens in a new tab)`);
       }
@@ -96,7 +119,8 @@
     if (cta) { cta.innerHTML = link(P.label, "sm") + extra() + `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a>`; cta.hidden = false; }
     const calc = document.getElementById("aff-calc");
     const cbHint = P.key === "coinbase" ? `<p class="aff-note">Coinbase referral sign-up page. Existing members: sign in on Coinbase as usual.</p>` : "";
-    if (calc) { calc.innerHTML = link(P.label, "") + extra() + cbHint + note(); calc.hidden = false; }
+    const kCalc = K ? kbtn(K.label, K.label) + `<p class="aff-note">Kraken referral link; new Kraken accounts.${esc(kcode())} Spot only, no leverage.</p>` : "";
+    if (calc) { calc.innerHTML = link(P.label, "") + extra() + cbHint + kCalc + note(); calc.hidden = false; }
     const foot = document.getElementById("aff-foot");
     if (foot) { foot.textContent = DISCLOSURE; foot.hidden = false; }
     decorateSlate();
@@ -139,6 +163,13 @@
         const lbl = cbAdv ? String(a.coinbase_label || "Trade on Coinbase Advanced") : "Get started on Coinbase";
         P = { key: "coinbase", url: cbAdv || cbJoin, label: lbl, slate: lbl, aria: (sym) => `${lbl} (${sym})`,
               extra: cbAdv && cbJoin ? { url: cbJoin, text: "New to crypto? Get started on Coinbase" } : null };
+      }
+      const kUrl = s("kraken_url");
+      const kPairs = (a.kraken_pairs && typeof a.kraken_pairs === "object") ? a.kraken_pairs : {};
+      if (P && kUrl && (g.us === true || (g.us === false && a.kraken_non_us === true))) {
+        const code = String(a.kraken_code || "").trim();
+        K = { url: kUrl, code: /^[A-Za-z0-9]{4,32}$/.test(code) ? code : "", label: String(a.kraken_label || "Buy spot on Kraken"),
+              pairs: Object.fromEntries(Object.entries(kPairs).filter(([, v]) => /^[A-Z0-9]{2,12}\/USD[A-Z]?$/.test(String(v)))) };
       }
       if (!P) return; // unknown country, or no link for this region => keep everything hidden
       document.documentElement.classList.add("has-aff", "aff-" + P.key);
