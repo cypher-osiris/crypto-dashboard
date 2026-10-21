@@ -1,6 +1,24 @@
 {
   "entries": [
     {
+      "t": "2026-10-21T17:08:18Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Re-evaluated trades on existing data (no fetch); prices as of 2026-10-21 12:08 PM CDT: BTC 84389 (+2.0%), HBAR 0.085894 (+2.4%), XLM 0.185422 (+2.7%), XRP 1.38 (+3.5%), ZBCN 0.00242321 (+12.9%), AXL 0.053974 (-0.9%). Open trades: 0; pending: 3; closed: 1; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-21T17:15:00Z",
+      "kind": "analysis",
+      "author": "Lumi (noon update)",
+      "text": "Noon update: prices, signals and market context refreshed (BTC ~$84.4K, Fear & Greed 63). No fills, targets or stops: T002 XRP long (bid 1.345\u20131.355), T003 XLM short (0.1895\u20130.1915) and T004 ZBCN long (0.0023\u20130.00234) all still pending and valid; HBAR and AXL stay 'no setup'. Added XRPL Oct 23 amendment, ledger-slowdown and derivatives-OI notes with sources."
+    },
+    {
+      "t": "2026-10-21T17:08:18Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84389 (+2.0%), HBAR 0.085894 (+2.4%), XLM 0.185422 (+2.7%), XRP 1.38 (+3.5%), ZBCN 0.00242321 (+12.9%), AXL 0.053974 (-0.9%). Open trades: 0; pending: 3; closed: 1; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-21T16:58:06Z",
       "kind": "auto",
       "author": "update_prices.py",
