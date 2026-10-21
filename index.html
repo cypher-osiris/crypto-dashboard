@@ -4,36 +4,55 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crypto Dashboard</title>
+<meta name="description" content="Crypto watchlist dashboard: HBAR, XLM, XRP, ZBCN, AXL with levels, projections and paper trades. Not financial advice.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#070a10">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=20261021-2">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
-<script src="assets/app.js" defer></script>
+<script src="assets/markets.js?v=20261021-2" defer></script>
+<script src="assets/app.js?v=20261021-2" defer></script>
 </head>
 <body>
-<header class="site-header">
-  <div class="wrap">
-    <div class="title-row">
-      <h1>Crypto Dashboard</h1>
-      <div class="updated">Last updated: <strong id="updated">loading…</strong></div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 22 L11 14 L16 18 L24 8 L28 12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div>
+        <h1>Crypto Dashboard</h1>
+        <p class="tagline">HBAR · XLM · XRP · ZBCN · AXL — levels, projections &amp; paper trades</p>
+      </div>
     </div>
-    <div class="disclaimer" role="note">⚠️ <strong>Not financial advice — paper trading only.</strong> Hobby notes; no real money is traded. Leverage (5x) magnifies losses as much as gains.</div>
-    <nav class="nav">
-      <a href="#market">Market</a><a href="#coins">Coins</a><a href="#trades">Paper trades</a><a href="#log">Update log</a>
-    </nav>
+    <div class="hero-meta">
+      <div class="live-dot" aria-hidden="true"></div>
+      <div><span class="label">Last updated</span><strong id="updated" class="mono">loading…</strong></div>
+    </div>
   </div>
+  <div class="wrap"><div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Not financial advice — paper trading only.</strong> Hobby notes; no real money is traded. 5x leverage magnifies losses as much as gains.</span></div></div>
+  <div class="ticker" aria-label="Price ticker"><div class="ticker-track" id="ticker"></div></div>
 </header>
+
+<nav class="nav" aria-label="Sections">
+  <div class="wrap nav-inner">
+    <a href="#market">Market</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="#trades">Paper trades</a><a href="#log">Log</a>
+  </div>
+</nav>
 
 <main class="wrap">
   <div id="error" class="error" hidden></div>
 
-  <section id="market" class="card">
-    <h2>Market backdrop</h2>
+  <section id="market" class="card reveal">
+    <div class="card-head"><h2>Market backdrop</h2><span class="kicker">Bitcoin sets the tone</span></div>
     <div class="backdrop">
       <div class="btc-quote">
-        <div class="sym">BTC</div>
-        <div class="price" id="btc-price">—</div>
+        <div class="sym">BTC <small>Bitcoin</small></div>
+        <div class="price mono" id="btc-price">—</div>
         <div class="chg" id="btc-chg"></div>
       </div>
       <div class="btc-chart"><canvas id="chart-bitcoin" aria-label="Bitcoin 30 day chart"></canvas></div>
@@ -43,16 +62,29 @@
     <p class="meta" id="analysis-meta"></p>
   </section>
 
+  <section id="sessions" class="card reveal">
+    <div class="card-head"><h2>Global Markets</h2><span class="pill mono" id="mkt-pill">—</span></div>
+    <p class="note">Crypto trades 24/7 — these equity sessions show <em>where</em> liquidity and volatility tend to come from as each region wakes up.</p>
+    <div class="clocks" id="mkt-clocks"></div>
+    <div class="timeline-wrap">
+      <div class="timeline-head"><span>Today on a 24h Central-time axis</span>
+        <span class="legend"><i class="lg r-asia"></i>Asia <i class="lg r-europe"></i>Europe <i class="lg r-us"></i>US <i class="lg r-ovl key"></i>Overlap</span></div>
+      <div class="timeline" id="mkt-timeline"></div>
+      <p class="overlap-note" id="mkt-overlap"></p>
+    </div>
+    <p class="footnote">Regular cash-session hours only (TSE 9:00–11:30 &amp; 12:30–15:30 JST; HKEX 9:30–12:00 &amp; 13:00–16:00 HKT; LSE 8:00–16:30 UK; NYSE 9:30–16:00 ET). Weekends handled; exchange holidays and half-days are <strong>not</strong>. DST is automatic via IANA time zones.</p>
+  </section>
+
   <section id="coins">
-    <h2 class="section-title">Coins</h2>
+    <div class="section-head reveal"><h2>Coins</h2><span class="kicker">30-day price · support/resistance · 7-day projection band</span></div>
     <div id="coin-grid" class="coin-grid"></div>
   </section>
 
-  <section id="trades" class="card">
-    <h2>Paper trades <span class="tag">5x · paper only</span></h2>
+  <section id="trades" class="card reveal">
+    <div class="card-head"><h2>Paper trades</h2><span class="pill warn">5x · paper only</span></div>
     <div id="idea" class="idea"></div>
     <div class="stats" id="stats"></div>
-    <div class="pnl-chart"><canvas id="chart-pnl" aria-label="Cumulative paper P&L"></canvas></div>
+    <div class="pnl-chart"><canvas id="chart-pnl" aria-label="Cumulative paper P&amp;L"></canvas></div>
     <div class="table-wrap">
       <table class="trades-table">
         <thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Opened (CT)</th><th>Entry</th><th>Stop</th><th>Targets</th><th>Status</th><th>Exit</th><th>P&amp;L @lev</th></tr></thead>
@@ -62,14 +94,14 @@
     <p class="meta">P&amp;L % = price move × leverage, position split equally across targets; after target 1 fills the stop moves to breakeven. Evaluated on CoinGecko ~hourly prices, so brief wicks can be missed.</p>
   </section>
 
-  <section id="log" class="card">
-    <h2>Update log</h2>
+  <section id="log" class="card reveal">
+    <div class="card-head"><h2>Update log</h2><span class="kicker">newest first</span></div>
     <ol id="log-list" class="log-list"></ol>
   </section>
 </main>
 
 <footer class="wrap footer">
-  Data: <a href="https://www.coingecko.com/" rel="noopener">CoinGecko</a> public API. Charts: Chart.js. Times shown in US Central. Not financial advice.
+  Data: <a href="https://www.coingecko.com/" rel="noopener">CoinGecko</a> public API · Charts: Chart.js · Times in US Central · Not financial advice.
 </footer>
 </body>
 </html>
