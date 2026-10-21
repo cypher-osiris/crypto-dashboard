@@ -18,6 +18,11 @@
  *   US visitors: always (it's the only US option for XDC/ZBCN, which Coinbase doesn't list). Non-US visitors: only when
  *   affiliate.kraken_non_us is true (off by default: Kraken credits referrals only within the referrer's country/EEA).
  *   Spot only: no leverage/"setup" wording, never on short ideas (spot can't short). Empty kraken_url => nothing shown.
+ * Uphold (affiliate.uphold_url, used exactly as given): "Buy <SYM> on Uphold" on LONG slate cards whose coin is in
+ *   affiliate.uphold_assets (coin id -> Uphold code, from api.uphold.com/v0/assets) AND has no Coinbase product
+ *   (data-cb="": XDC, ZBCN), so cards stay at <= 2-3 links. Coins in affiliate.uphold_first (XDC: Bobby's own venue) get
+ *   Uphold first, then Kraken; otherwise Kraken first. US only: country "US" (not territories: Uphold doesn't serve
+ *   USVI/UM and opens no new accounts in PR/GU/AS/MP); non-US only if affiliate.uphold_non_us is true (default false).
  * Hardware-wallet pick (#wallet-pick, under the calculator): shown to ALL visitors, no geo gate.
  *   affiliate.dcent_url (+ dcent_label) = main button; affiliate.ledger_url (+ ledger_label) = second option, hidden while empty. */
 (() => {
@@ -39,6 +44,7 @@
   const okUrl = (u) => /^https:\/\/[^\s"'<>]+$/i.test(u);
   const cc = (s) => { const c = String(s || "").trim().toUpperCase(); return /^[A-Z]{2}$/.test(c) ? c : ""; };
   let P = null; // active program: { name, url, label, slate, aria, extra: {url, text} | null }
+  let U = null; // Uphold: { url, label, assets: {coinId: code}, first: Set(coinId) } | null
   let K = null; // Kraken secondary: { url, code, label, pairs: {coinId: "XDC/USD"} } | null
 
   // ---- geo ---------------------------------------------------------------------------------------
@@ -77,6 +83,13 @@
   const kbtn = (text, aria) => `<a class="aff-btn aff-kraken" href="${esc(K.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(aria)} (referral link, opens in a new tab)">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
   const kcode = () => K.code ? ` Referral code: ${K.code}.` : "";
   /* Kraken block for one slate card ("" when the coin has no Kraken pair or the idea isn't a long) */
+  function upholdFor(card, sym) {
+    if (!U || card.dataset.dir === "short" || card.dataset.cb !== "") return "";
+    if (!U.assets[card.dataset.coin || ""]) return "";
+    const t = U.label.replace("{SYM}", sym);
+    return `<a class="aff-btn aff-uphold" href="${esc(U.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(t)} (referral link, opens in a new tab)">${esc(t)}<span aria-hidden="true"> ↗</span></a>` +
+      `<p class="aff-note">Referral link; new Uphold accounts. Spot only. Availability varies by state/country (not available in New York).</p>`;
+  }
   function krakenFor(card, sym) {
     if (!K || card.dataset.dir === "short") return "";
     const pair = K.pairs[card.dataset.coin || ""];
@@ -96,11 +109,14 @@
       const spot = card.dataset.lev === "1";
       const w = document.createElement("div");
       w.className = "aff-wrap";
-      const kr = krakenFor(card, sym);
+      const kr = krakenFor(card, sym), up = upholdFor(card, sym);
       if (P.key === "coinbase" && card.dataset.cb === "") {
-        // not listed on Coinbase => a Coinbase "trade" button would lead nowhere useful; Kraken (if listed) takes its place
-        w.innerHTML = kr
-          ? `<p class="aff-note">${esc(sym)} isn't listed on Coinbase; Kraken lists it for spot.</p>` + kr + note()
+        // not listed on Coinbase => a Coinbase "trade" button would lead nowhere useful; Uphold/Kraken (if listed) take its place
+        const venues = [up && "Uphold", kr && "Kraken"].filter(Boolean);
+        const spot = U && U.first.has(card.dataset.coin) ? up + kr : kr + up;
+        if (venues.length && !(U && U.first.has(card.dataset.coin))) venues.reverse();
+        w.innerHTML = spot
+          ? `<p class="aff-note">${esc(sym)} isn't listed on Coinbase; ${venues.join(" and ")} ${venues.length > 1 ? "list" : "lists"} it for spot.</p>` + spot + note()
           : `<p class="aff-note">${esc(sym)} isn't listed on Coinbase, so there's no Coinbase button for this idea.</p>`;
       } else {
         const lbl = P.key === "bitunix" && spot ? `Buy ${sym} spot on Bitunix` : P.slate;
@@ -170,6 +186,13 @@
         const code = String(a.kraken_code || "").trim();
         K = { url: kUrl, code: /^[A-Za-z0-9]{4,32}$/.test(code) ? code : "", label: String(a.kraken_label || "Buy spot on Kraken"),
               pairs: Object.fromEntries(Object.entries(kPairs).filter(([, v]) => /^[A-Z0-9]{2,12}\/USD[A-Z]?$/.test(String(v)))) };
+      }
+      const uUrl = s("uphold_url");
+      const uAssets = (a.uphold_assets && typeof a.uphold_assets === "object") ? a.uphold_assets : {};
+      if (P && uUrl && (g.country === "US" || g.country === "US?" || (g.us === false && a.uphold_non_us === true))) {
+        U = { url: uUrl, label: String(a.uphold_label || "Buy {SYM} on Uphold"),
+              assets: Object.fromEntries(Object.entries(uAssets).filter(([, v]) => /^[A-Z0-9]{2,12}$/.test(String(v)))),
+              first: new Set(Array.isArray(a.uphold_first) ? a.uphold_first.map(String) : []) };
       }
       if (!P) return; // unknown country, or no link for this region => keep everything hidden
       document.documentElement.classList.add("has-aff", "aff-" + P.key);

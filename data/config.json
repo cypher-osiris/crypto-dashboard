@@ -27,6 +27,27 @@
       "cardano": "ADA/USD",
       "chainlink": "LINK/USD",
       "sui": "SUI/USD"
+    },
+    "uphold_url": "https://wallet.uphold.com/signup?referral=af5cfbafad&campaign=uw_p_d_w_acq_raf&utm_source=raf&utm_medium=referafriend",
+    "uphold_label": "Buy {SYM} on Uphold",
+    "uphold_non_us": false,
+    "uphold_first": [
+      "xdce-crowd-sale"
+    ],
+    "uphold_assets": {
+      "hedera-hashgraph": "HBAR",
+      "stellar": "XLM",
+      "ripple": "XRP",
+      "zebec-network": "ZBCN",
+      "axelar": "AXL",
+      "xdce-crowd-sale": "XDC",
+      "bitcoin": "BTC",
+      "ethereum": "ETH",
+      "solana": "SOL",
+      "dogecoin": "DOGE",
+      "cardano": "ADA",
+      "chainlink": "LINK",
+      "sui": "SUI"
     }
   }
 }
