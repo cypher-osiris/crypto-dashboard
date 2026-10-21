@@ -4,7 +4,9 @@
  *     affiliate.coinbase_url = small "New to crypto? Get started on Coinbase" link. Both empty => nothing is shown.
  * Fail closed: all affiliate UI stays hidden until the country is known. Lookup order:
  *   ?geo=XX debug override -> sessionStorage cache -> api.country.is -> ipapi.co/country -> Intl timeZone (US zones => US).
- * If everything fails (no country, no time zone) nothing is shown. */
+ * If everything fails (no country, no time zone) nothing is shown.
+ * Hardware-wallet card (#aff-wallet, under the calculator): shown to ALL visitors, no geo gate.
+ *   affiliate.dcent_url (+ dcent_label) = main button; affiliate.ledger_url (+ ledger_label) = second option, hidden while empty. */
 (() => {
   "use strict";
   const DISCLOSURE = "Some links are affiliate links; we may earn a commission at no cost to you. Paper trades, not financial advice.";
@@ -85,12 +87,29 @@
     if (grid) new MutationObserver(decorateSlate).observe(grid, { childList: true, subtree: true });
   }
 
+  function renderWallet(a, s) {
+    const box = document.getElementById("aff-wallet");
+    const dcent = s("dcent_url"), ledger = s("ledger_url");
+    if (!box || !dcent) return;
+    const btn = (u, t, cls) => `<a class="aff-btn ${cls}" href="${esc(u)}" rel="sponsored noopener" target="_blank">${esc(t)}<span aria-hidden="true"> ↗</span></a>`;
+    box.innerHTML = `<div class="w-ico" aria-hidden="true">🔐</div><div><h3>Keep your crypto safe</h3>` +
+      `<p class="w-copy">Don't leave long-term holdings on an exchange. A hardware wallet keeps your keys offline. Lumi's pick: <b>D'CENT Biometric Wallet</b>.</p>` +
+      `<div class="w-btns">${btn(dcent, String(a.dcent_label || "Get the D'CENT Biometric Wallet"), "sm")}` +
+      (ledger ? btn(ledger, String(a.ledger_label || "Or choose Ledger"), "sm") : "") +
+      `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a></div></div>`;
+    box.hidden = false;
+    const foot = document.getElementById("aff-foot");
+    if (foot) { foot.textContent = DISCLOSURE; foot.hidden = false; }
+    document.documentElement.classList.add("has-wallet-aff");
+  }
+
   async function start() {
     try {
       const r = await fetch(`data/config.json?v=${Date.now()}`, { cache: "no-store" });
       if (!r.ok) return;
       const a = ((await r.json()) || {}).affiliate || {};
       const s = (k) => { const u = String(a[k] || "").trim(); return okUrl(u) ? u : ""; };
+      renderWallet(a, s); // all visitors, before any geo lookup
       const bitunix = s("bitunix_url"), cbAdv = s("coinbase_advanced_url"), cbJoin = s("coinbase_url");
       if (!bitunix && !cbAdv && !cbJoin) return; // nothing configured => no lookup, no UI
       const g = await geo();

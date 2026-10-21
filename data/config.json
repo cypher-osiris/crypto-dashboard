@@ -4,6 +4,10 @@
     "label": "Trade on Bitunix",
     "coinbase_url": "https://coinbase.com/join/95D6QQZ",
     "coinbase_advanced_url": "https://advanced.coinbase.com/join/HFB77TN",
-    "coinbase_label": "Trade on Coinbase Advanced"
+    "coinbase_label": "Trade on Coinbase Advanced",
+    "dcent_url": "https://store.dcentwallet.com/products/biometric-wallet-referral?bg_ref=nRUPTg6NFg",
+    "dcent_label": "Get the D'CENT Biometric Wallet",
+    "ledger_url": "",
+    "ledger_label": "Or choose Ledger"
   }
 }
