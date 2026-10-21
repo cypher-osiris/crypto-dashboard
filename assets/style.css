@@ -374,3 +374,17 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
   .ticker-track{transform:none}
   .coin:hover{transform:none}
 }
+
+/* affiliate (only rendered when data/config.json has a link) */
+[hidden]{display:none !important}
+.aff-cta{display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:3px}
+.aff-tag{font-size:.64rem;color:var(--dim);text-align:center;text-decoration:none}
+.aff-tag:hover{text-decoration:underline}
+.aff-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;font:600 .82rem var(--sans);color:#e6edf6;text-decoration:none;padding:8px 14px;border-radius:10px;border:1px solid rgba(34,211,238,.35);background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(96,165,250,.10));transition:border-color .2s,background .2s}
+.aff-btn:hover,.aff-btn:focus-visible{border-color:rgba(34,211,238,.7);background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(96,165,250,.16))}
+.aff-btn.sm{font-size:.76rem;padding:7px 12px}
+.aff-wrap{margin-top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.aff-note{margin:0;font-size:.7rem;line-height:1.4;color:var(--dim)}
+.aff-foot{margin:8px auto 0;max-width:640px;font-size:.74rem;color:var(--dim)}
+@media (max-width:720px){ .aff-cta{flex:1 1 100%} .aff-cta .aff-btn{width:100%} .aff-wrap .aff-btn{width:100%} }
+@media (prefers-reduced-motion:reduce){ .aff-btn{transition:none} }

@@ -14,3 +14,4 @@ node_modules/
 *.png.tmp
 
 state/
+posts/
