@@ -82,7 +82,7 @@
   }
 
   const Dash = (window.Dash = window.Dash || {});
-  Object.assign(Dash, { fmtPrice, num, pct, chip, ct, esc, spark, COLORS, COIN_COLORS, dayTicks, shortDate, groupsOf, allIds, charts: {}, state: {} });
+  Object.assign(Dash, { fmtPrice, num, pct, chip, ct, esc, spark, COLORS, COIN_COLORS, levTxt: (L) => (+L === 1 ? "SPOT" : `${L}x`), dayTicks, shortDate, groupsOf, allIds, charts: {}, state: {} });
   let readyResolve; Dash.ready = new Promise((r) => (readyResolve = r));
 
   async function getJSON(name, optional) {
@@ -253,6 +253,7 @@
   /* ---------- trades: slate + table ---------- */
   const dirSign = (t) => (t.direction === "short" ? -1 : 1);
   const lev = (t) => t.leverage || 3;
+  const levTxt = (L) => (+L === 1 ? "SPOT" : `${L}x`); // 1x = spot (no leverage, long only)
   const movePct = (t, p, from = t.entry) => (dirSign(t) * (p - from) / from) * 100;
   function livePnl(t, price) {
     // blended across targets, same rule as the update script (targets already hit are locked in)
@@ -331,7 +332,7 @@
           <div><small>Entry zone</small>${num(z.low)} – ${num(z.high)}</div>
           <div><small>Stop</small>${num(p.stop)}</div>
           <div><small>Target</small>${num(p.target)}</div>
-          <div><small>${d === t.direction ? "" : esc(d) + " · "}Leverage</small>${L}x</div>
+          <div><small>${d === t.direction ? "" : esc(d) + " · "}Leverage</small>${+L === 1 ? "spot (1x)" : L + "x"}</div>
           <div class="mp-rr"><small>R:R (worst / best fill)</small>${rr ? `${rr[0].toFixed(2)} / ${rr[1].toFixed(2)}` : "—"}</div>
         </div>
         ${p.size_note ? `<p class="mp-size">${esc(p.size_note)}</p>` : ""}
@@ -376,6 +377,8 @@
     });
   }
 
+  // Coinbase product for a coin from data/coins.json ("" = not listed on Coinbase, e.g. ZBCN, XDC)
+  const cbProduct = (id) => { const c = ((Dash.state.coincfg || {}).coins || []).find((x) => x.id === id); return (c && c.coinbase) || ""; };
   function slateCard(prices, { id, trade: t, note }) {
     const a = prices.assets[id];
     const [c1, c2] = COIN_COLORS[a.symbol] || [];
@@ -390,10 +393,10 @@
     const { lo, hi } = zoneOf(t);
     const zoneTxt = lo === hi ? num(lo) : `${num(lo)} – ${num(hi)}`;
     const closed = !["pending", "open"].includes(t.status);
-    const side = `<span class="side ${t.direction}">${t.direction === "short" ? "SHORT" : "LONG"} ${L}x</span>`;
+    const side = `<span class="side ${t.direction}">${t.direction === "short" ? "SHORT" : "LONG"} ${levTxt(L)}</span>`;
     const ref = t.status === "open" ? t.entry : (lo + hi) / 2;
     const tg = t.targets.map((x, i) => `<div><small>T${i + 1}${(t.targets_hit || [])[i] ? " ✓" : ""}</small>${num(x)} <span class="up">+${(movePct(t, x, ref) * L).toFixed(1)}%</span></div>`).join("");
-    return `<article class="slate-card ${t.status}" data-slate="${esc(t.id)}" data-coin="${id}">
+    return `<article class="slate-card ${t.status}" data-slate="${esc(t.id)}" data-coin="${id}" data-sym="${esc(a.symbol)}" data-lev="${L}" data-cb="${esc(cbProduct(id))}">
       ${head(`<span class="status s-${esc(t.status)}">${esc(t.status)}</span>`)}
       <div class="slate-sub">${side}${t.timeframe ? ` <span class="tf-badge" title="${esc(t.timeframe_note || "")}">${esc(String(t.timeframe).charAt(0).toUpperCase() + String(t.timeframe).slice(1))}</span>` : ""} <span class="muted mono">${esc(t.id)}</span>${t.expiry && t.status === "pending" ? ` <span class="muted">· expires in <b class="mono" data-exp="${esc(t.expiry)}">${countdown(t.expiry)}</b></span>` : ""}</div>
       ${priceRow}
@@ -454,7 +457,7 @@
     $("trades-body").innerHTML = rows.map((t) => {
       const z = t.entry_zone;
       return `<tr title="${esc(t.reasoning)}">
-        <td>${esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(t.direction)} ${lev(t)}x</td>
+        <td>${esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(t.direction)} ${levTxt(lev(t))}</td>
         <td>${esc(ct(t.opened_at))}</td><td>${t.status === "pending" && z ? `${num(z.low)}–${num(z.high)}` : num(t.entry)}</td><td>${num(t.stop)}</td>
         <td>${t.targets.map((x, i) => (t.targets_hit || [])[i] ? `<b class="up">${num(x)}✓</b>` : num(x)).join(" / ")}</td>
         <td><span class="status s-${esc(t.status)}">${esc(t.status)}</span>${t.closed_at ? `<br><small class="meta">${esc(ct(t.closed_at))}</small>` : ""}</td>

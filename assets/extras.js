@@ -62,7 +62,7 @@
     ];
     $("track-stats").innerHTML = tiles.map(([k, v, s]) => `<div class="stat"><small>${k}</small><b>${v}</b>${s ? `<span class="stat-sub">${s}</span>` : ""}</div>`).join("");
     $("track-body").innerHTML = closed.slice().reverse().map((t) => `<tr>
-      <td>${D.esc(t.id)}</td><td>${D.esc(st.prices.assets[t.coin]?.symbol || t.coin)}</td><td>${D.esc(t.direction)} ${t.leverage || 3}x</td>
+      <td>${D.esc(t.id)}</td><td>${D.esc(st.prices.assets[t.coin]?.symbol || t.coin)}</td><td>${D.esc(t.direction)} ${D.levTxt(t.leverage || 3)}</td>
       <td>${D.num(t.entry)}</td><td>${D.num(t.exit_price)}</td><td><span class="status s-${D.esc(t.status)}">${D.esc(t.status)}</span></td>
       <td>${D.pct(t.pnl_pct)}</td><td>${money(usd(t))}</td><td>${D.esc(D.ct(t.opened_at, false))} → ${D.esc(D.ct(t.closed_at, false))}</td></tr>`).join("") || '<tr><td colspan="9">No closed trades yet.</td></tr>';
     const openN = all.filter((t) => t.status === "open").length, pendN = all.filter((t) => t.status === "pending").length;
@@ -122,7 +122,7 @@
       const liq = long ? e * (1 - 1 / L) : e * (1 + 1 / L);
       const rr = Math.abs(tg - e) / Math.abs(e - sp);
       const badSide = long ? (tg <= e || sp >= e) : (tg >= e || sp <= e);
-      const stopPastLiq = long ? sp <= liq : sp >= liq;
+      const stopPastLiq = long ? (L > 1 && sp <= liq) : sp >= liq;
       const money = (v) => `<span class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v < 0 ? "−" : "+"}$${Math.abs(v).toFixed(2)}</span>`;
       const cell = (k, v, sub) => `<div class="co"><small>${k}</small><b class="mono">${v}</b>${sub ? `<span>${sub}</span>` : ""}</div>`;
       out.innerHTML = [
@@ -130,7 +130,7 @@
         cell("At target", money(pnlT), D.pct((pnlT / m) * 100) + " of margin"),
         cell("At stop", money(pnlS), D.pct((pnlS / m) * 100) + " of margin"),
         cell("Risk / reward", isFinite(rr) ? `1 : ${rr.toFixed(2)}` : "—", rr >= 2 ? '<span class="up">good</span>' : rr >= 1 ? "ok" : '<span class="down">poor</span>'),
-        cell("Approx. liquidation", D.fmtPrice(liq), `${(((liq - e) / e) * 100).toFixed(1)}% from entry`),
+        long && L === 1 ? cell("Approx. liquidation", "none", "spot (1x long): no liquidation") : cell("Approx. liquidation", D.fmtPrice(liq), `${(((liq - e) / e) * 100).toFixed(1)}% from entry`),
       ].join("") + (badSide ? `<p class="calc-warn">Check the side: for a ${long ? "long" : "short"}, the target should be ${long ? "above" : "below"} entry and the stop ${long ? "below" : "above"} it.</p>` : "")
         + (stopPastLiq ? `<p class="calc-warn">Your stop is at or beyond the approximate liquidation price — you would likely be liquidated first. Lower the leverage or tighten the stop.</p>` : "");
     }

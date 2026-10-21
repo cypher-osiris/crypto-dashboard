@@ -391,7 +391,7 @@ def card(path, focus=None):
         T(139, 326, f"{c24:+.1f}% 24h", fontsize=15, weight="bold", color=col, ha="center", family=mono)
         if r:
             lo, hi = r["zone"]; long_ = r["side"] == "long"
-            head = f"{'Long' if long_ else 'Short'} idea · {r['lev']}x"
+            head = f"{'Long' if long_ else 'Short'} idea · " + ("spot" if r['lev'] == 1 else f"{r['lev']}x")
             sub = (f"waiting for {lvl(lo)}–{lvl(hi)}" if r["status"] == "pending" else f"in at {lvl(r['entry'])}")
             T(64, 410, head, fontsize=21, weight="bold", color=GREEN if long_ else RED)
             T(64, 446, sub, fontsize=19, color=MUTED)

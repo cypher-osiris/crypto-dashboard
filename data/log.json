@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "t": "2026-10-21T21:36:39Z",
+      "kind": "analysis",
+      "author": "Lumi",
+      "text": "Added XDC (XDC Network) to Lumi's Watchlist: live prices and candles from Kraken XDC/USD (not listed on Coinbase). Breakout check: today's +11% move broke the Oct 15-20 lower highs but is still testing the 0.0355-0.0360 ceiling (high 0.03597, no 4H/daily close above 0.0360), on higher volume after the SBI/Shinhan yen-stablecoin MOU. Not a confirmed breakout. New SPOT position idea T006: pending buy 0.0347-0.0352, stop 0.0330, T1 0.0383, T2 0.0440. Missed-it plan: buy 0.0362-0.0366 after a 1h close above 0.0365, stop 0.0347, target 0.0440."
+    },
+    {
+      "t": "2026-10-21T21:33:43Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84744 (+2.4%), HBAR 0.085159 (+1.6%), XLM 0.18544 (+2.2%), XRP 1.39 (+4.0%), ZBCN 0.00229465 (+7.2%), AXL 0.055145 (+2.9%), XDC 0.0358468 (+11.2%), ETH 2497.83 (+2.0%), SOL 108.25 (+1.6%), DOGE 0.083019 (+1.7%), ADA 0.228736 (+2.5%), LINK 12.69 (+3.4%), SUI 1.048 (+1.9%). Open trades: 1; pending: 3; closed: 1; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-21T20:31:02Z",
       "kind": "analysis",
       "author": "Lumi (AXL range review)",

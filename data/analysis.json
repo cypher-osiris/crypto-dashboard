@@ -255,6 +255,78 @@
         }
       ]
     },
+    "xdce-crowd-sale": {
+      "bias": "breakout attempt at the 0.0355-0.0360 ceiling: unconfirmed, extended short-term",
+      "support": [
+        0.0347,
+        0.0339,
+        0.033,
+        0.0318
+      ],
+      "resistance": [
+        0.036,
+        0.0364,
+        0.0384,
+        0.044
+      ],
+      "projection": {
+        "horizon_days": 60,
+        "bull": 0.044,
+        "base": 0.036,
+        "bear": 0.03
+      },
+      "commentary": "First review Oct 21 ~4:40 PM CT (Kraken XDC/USD daily, 4H and 1h candles, 415 days; XDC is not listed on Coinbase). Today XDC rose about 11% (0.0323 open to ~0.0358, high 0.03597) and broke the Oct 15-20 run of lower highs (0.0352, 0.0347, 0.0339, 0.0338, 0.0336, 0.0329). The bigger test is the 0.0355-0.0360 ceiling: the Oct 9 high 0.03587, Oct 10 0.03574 and Oct 12 0.03569 all stalled there. As of this read, price is sitting on that ceiling, not clearly above it. The first 1h close above 0.0355 came at 3 PM CT (0.03565), the 4H candles from 7 AM and 11 AM CT closed at 0.03536 and 0.03528, just under it, and there is no daily or 4H close above 0.0360 yet. Volume is up but the day isn't closed: Kraken traded 26.2M XDC (~1.6x the prior 10-day average of 16.4M, about equal to the 20-day average, which includes the Sep 28-Oct 6 spike). CoinGecko's all-exchange 24h volume is ~$25.6M vs roughly $8-18M a day over the prior two weeks. So far this is a breakout attempt into resistance, not a confirmed range breakout. Confirmation would be a daily close above 0.0360 and then a 1h close above 0.0365, which clears the Sep 28 high of 0.03643. Next resistance: 0.0361-0.0364 (Oct 1 / Sep 28 highs), 0.0384 (Sep 29 high, the 90-day high), 0.0395-0.0400 (Jan 25-Feb 2 highs) and 0.044 (Jan 22-23 highs). Support: 0.0347-0.0352 (Oct 15-16 highs plus today's afternoon base), 0.0339 (today's 7 AM CT 4H low), 0.0330-0.0334 (Oct 13 low, daily EMA20 0.0334), then 0.0318-0.0321 (Oct 20-21 lows, the October floor). Signals: 1h Buy but RSI 80. 4h Neutral, RSI 73 and above the upper Bollinger band (stretched). 1d Buy: above EMA20/50/200, MACD still under its signal. Short-term it's extended, so don't chase. News: the move came hours after SBI XDC Network APAC and SBI VC Trade announced an MOU with Shinhan Card (signed Oct 20, published Oct 21). It covers yen-stablecoin card and wallet payments and cross-border trade settlement, and it says Shinhan will consider joining the XDC node ecosystem. It is a proof of concept with no launch date. Also this week: MoneyGram said (Oct 15, press release Oct 19-20) it is joining XDC as an institutional validator, with no node count, stake or start date disclosed. Concordium became the identity layer for XDC's AI agent marketplace (Oct 14). XDC launched on Robinhood (Oct 4-10 weekly). XDC's own materials describe the chain as ISO 20022-compliant, built for trade finance, payments and RWAs. These are real partnership headlines, but most are MOUs and pilots, and none comes with a disclosed volume or revenue figure. Slate: spot-only position idea T006 (Bobby holds XDC spot, long term). It's a pending buy on a retest of 0.0347-0.0352, not a chase at the ceiling.",
+      "sources": [
+        {
+          "title": "Kraken XDC/USD OHLC (daily, 4H, 1h), Sep 2025-Oct 2026",
+          "url": "https://api.kraken.com/0/public/OHLC?pair=XDCUSD&interval=1440"
+        },
+        {
+          "title": "CoinGecko: XDC Network market data (price, 24h volume, rank)",
+          "url": "https://www.coingecko.com/en/coins/xdc-network"
+        },
+        {
+          "title": "SBI Group: SBI XDC Network APAC and SBI VC Trade sign MOU with Shinhan Card (Oct 21 2026)",
+          "url": "https://www.sbigroup.co.jp/english/news/pdf/2026/1021_a_en.pdf"
+        },
+        {
+          "title": "Yonhap: Shinhan Card tests yen stablecoin payments with SBI Group (Oct 21 2026)",
+          "url": "https://www.yna.co.kr/view/AKR20261021082900002"
+        },
+        {
+          "title": "crypto.news: MoneyGram joins XDC Network as institutional validator (Oct 20 2026)",
+          "url": "https://crypto.news/moneygram-joins-xdc-network-as-institutional-validator/"
+        },
+        {
+          "title": "XDC Watch: MoneyGram validator, what has and hasn't been disclosed (Oct 15 2026)",
+          "url": "https://xdcnetwork.org/moneygram-xdc-validator/"
+        },
+        {
+          "title": "XDC Weekly Oct 11-17 2026 (Concordium KYA, CNBC Brazil)",
+          "url": "https://xdc.org/articles/xdc-weekly-oct-11"
+        },
+        {
+          "title": "XDC Weekly Oct 4-10 2026 (Robinhood support)",
+          "url": "https://xdc.org/articles/xdc-weekly-oct-4"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-10-21",
+          "kind": "news",
+          "text": "SBI XDC Network APAC, SBI VC Trade and Shinhan Card signed an MOU to test yen-stablecoin card/wallet payments and cross-border trade settlement; Shinhan will consider joining the XDC node ecosystem. Proof of concept, no launch date.",
+          "source": "SBI Group press release, Oct 21 2026",
+          "url": "https://www.sbigroup.co.jp/english/news/pdf/2026/1021_a_en.pdf"
+        },
+        {
+          "date": "2026-10-20",
+          "kind": "news",
+          "text": "MoneyGram is joining XDC Network as an institutional validator (announced Oct 15). No node count, stake or start date disclosed.",
+          "source": "crypto.news, Oct 20 2026",
+          "url": "https://crypto.news/moneygram-joins-xdc-network-as-institutional-validator/"
+        }
+      ]
+    },
     "ethereum": {
       "coin": "ethereum",
       "bias": "daily uptrend (initial read)",

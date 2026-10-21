@@ -41,8 +41,8 @@
       "move_stop_to_be": true,
       "reasoning": "SEED IDEA. Don't chase XRP at $1.38 into 1.42 resistance; instead bid a pullback to $1.35 (today's breakout/consolidation zone above the 1.33 pivot). Stop $1.305 sits under RoboForex's H4 support (1.309) and the Oct 19–20 range, so the idea is invalidated if the bounce fails. T1 $1.42 = H4/7-day resistance; T2 $1.47 = bull-case projection. Risk −3.3% (−10.0% at 3x) vs. +5.2% / +8.9% (+15.6% / +26.7% at 3x). [Originally posted at 5x; changed to 3x on Oct 21.] Limit order: cancels if not filled by Oct 23 11:05 AM CT. Risks: BTC losing $82.5K, Fed Oct 27–28. Entry zone 1.345–1.355 added Oct 21 for the slate model (centered on the original 1.35 limit, ≈ the 1h EMA20).",
       "source": "seed (Grok Bot setup)",
-      "last_checked_ms": 1792614600000,
-      "mark_price": 1.389,
+      "last_checked_ms": 1792618500000,
+      "mark_price": 1.3854,
       "leverage_note": "Leverage changed from 5x to 3x on Oct 21, 2026 (owner lowered paper-trade leverage going forward). Entry/stop/targets unchanged; P&L figures recomputed at 3x.",
       "entry_zone": {
         "low": 1.345,
@@ -53,7 +53,7 @@
         "max_entry": 1.365,
         "note": "Still worth entering up to $1.365 (≈1.1R to T1). Above that, skip — don't chase XRP into 1.42 resistance with 1h/4h RSI already overbought. Also skip if a 4h candle closes below 1.31 before the fill."
       },
-      "last_checked": "2026-10-21T20:30:00Z",
+      "last_checked": "2026-10-21T21:35:00Z",
       "missed_plan": {
         "type": "pullback",
         "trigger": "Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368",
@@ -73,8 +73,8 @@
         "expiry": "2026-10-23T16:05:00Z",
         "written_at": "2026-10-21T18:50:00Z",
         "status": "armed",
-        "last_checked_ms": 1792612800000,
-        "last_checked": "2026-10-21T20:00:00Z",
+        "last_checked_ms": 1792616400000,
+        "last_checked": "2026-10-21T21:00:00Z",
         "armed_at": "2026-10-21T19:05:00Z"
       }
     },
@@ -103,9 +103,9 @@
       },
       "reasoning": "SEED SLATE IDEA (3x short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895–0.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 ≈ the 1h EMA20/prior breakout; T2 0.1775 ≈ the Oct 17–19 support. From 0.1905: risk +2.6% (−7.9% at 3x) vs. −3.9% / −6.8% (+11.7% / +20.4% at 3x).",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792614600000,
-      "mark_price": 0.185264,
-      "last_checked": "2026-10-21T20:30:00Z",
+      "last_checked_ms": 1792618500000,
+      "mark_price": 0.185441,
+      "last_checked": "2026-10-21T21:35:00Z",
       "missed_plan": {
         "type": "none",
         "trigger": null,
@@ -144,9 +144,9 @@
       },
       "reasoning": "SEED SLATE IDEA (3x long, buy the pullback). ZBCN is the only coin with an uptrend on all three timeframes (price > EMA20 > EMA50 on 1h/4h/1d, above the daily EMA200 0.00227), but 1h/4h RSI is >70 after today's +13% breakout, so wait for a retest of the 0.0023 breakout area / 1h EMA20 (0.00233). Stop 0.00219 below the 4h EMA20/50 (~0.00222) and the daily EMA200. T1 0.00258 = early-Oct resistance; T2 0.00270 = bull projection. From 0.00232: risk −5.6% (−16.8% at 3x) vs. +11.2% / +16.4% (+33.6% / +49.1% at 3x). Small cap: wide swings, size down.",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792614600000,
-      "mark_price": 0.002315,
-      "last_checked": "2026-10-21T20:30:00Z",
+      "last_checked_ms": 1792618500000,
+      "mark_price": 0.002291,
+      "last_checked": "2026-10-21T21:35:00Z",
       "missed_plan": {
         "type": "pullback",
         "trigger": "Range floor holds: a 1h candle dips into 0.002385–0.00241 and closes at or above 0.002385",
@@ -174,7 +174,7 @@
       "planned_entry": 0.00232,
       "filled_at": "2026-10-21T19:10:00Z",
       "targets_hit": [],
-      "unrealized_pnl_pct": -3.21
+      "unrealized_pnl_pct": -6.28
     },
     {
       "id": "T005",
@@ -207,14 +207,68 @@
       },
       "reasoning": "SWING / RANGE trade (multi-day). AXL has been range-trading in a channel since Sep 22 (Coinbase daily + 4H candles): outer floor 0.0475-0.0505 (6 swing lows: 0.0488 Sep 24, 0.0501 Sep 29, 0.0493 Oct 1, 0.0505 Oct 2, 0.0490 Oct 7, 0.0475 Oct 8; only three 4H closes under 0.050, reclaimed within a day), a rising inner shelf at 0.0516-0.0535 (6 lows since Oct 13: 0.0533, 0.0516, 0.0535, 0.0532, 0.0528, 0.0525) and a ceiling at 0.0600-0.0647 (4 rejections: 0.0600 Sep 27, 0.0629 Oct 12, 0.0647 Oct 14, 0.0642 Oct 18; highest 4H close 0.0621, no daily close above 0.0603). Floor-to-ceiling legs have run +21-32% and ceiling-to-floor drops -15-20%, usually in 1-4 days. Price (~0.0545) sits just above the shelf, below mid-channel (~0.056), so this is a pending limit at the shelf, not a chase. Stop 0.0505 is under the 0.0516 shelf low: a break there means the October floor failed and price likely rotates to 0.0475-0.050 (a stop under 0.0475 from a 0.053 fill would risk about 35% of margin at 3x for a sub-1.5 R:R to T2). T1 0.0583 sits under the 0.0581-0.0591 lower-high cluster; T2 0.0620 sits under the 0.0625-0.0647 rejection wicks. R:R from the worst fill (0.0530): 2.1 to T1, 3.6 to T2. Signals: 1h Buy, 1d Buy (above EMA50/EMA200, daily StochRSI oversold), 4h Sell (below EMA20/50), so wait for the floor. Context: CoinDCX (Oct 15) reports the Oct 14 spike came with no Axelar announcement, on volume equal to 78% of market cap, and warns of sharp retracements once volume normalizes. That fits wick-and-fade range behaviour more than a breakout. Mirror trade: after T2, a rejection at 0.0615-0.0645 is the short back toward the shelf.",
       "source": "analysis run (AXL range review)",
-      "last_checked_ms": 1792614662000,
-      "last_checked": "2026-10-21T20:31:02Z"
+      "last_checked_ms": 1792617900000,
+      "last_checked": "2026-10-21T21:25:00Z",
+      "mark_price": 0.0553
+    },
+    {
+      "id": "T006",
+      "coin": "xdce-crowd-sale",
+      "direction": "long",
+      "leverage": 1,
+      "market": "spot",
+      "entry": 0.03495,
+      "entry_zone": {
+        "low": 0.0347,
+        "high": 0.0352
+      },
+      "stop": 0.033,
+      "targets": [
+        0.0383,
+        0.044
+      ],
+      "opened_at": "2026-10-21T21:36:39Z",
+      "expiry": "2026-11-04T23:00:00Z",
+      "expires": "2026-12-21T23:00:00Z",
+      "status": "pending",
+      "timeframe": "position",
+      "timeframe_note": "Spot position idea (1x, no leverage, long only): up to 2 weeks to fill, then held for weeks to about 2 months (time stop Dec 21)",
+      "missed_it": {
+        "max_entry": 0.0356,
+        "note": "Above 0.0356 price is up against the 0.0355-0.0360 ceiling with 1h/4h RSI stretched, and buying there leaves about 7% to T1 against a stop under 0.0330. Don't chase: wait for the 0.0347-0.0352 retest, or for the confirmed breakout plan below."
+      },
+      "missed_plan": {
+        "type": "breakout",
+        "trigger": "1h close above 0.0365 (clears the 0.0355-0.0360 ceiling and the Sep 28 high 0.03643)",
+        "trigger_rule": {
+          "tf": "1h",
+          "kind": "close_above",
+          "level": 0.0365
+        },
+        "entry_zone": {
+          "low": 0.0362,
+          "high": 0.0366
+        },
+        "stop": 0.0347,
+        "target": 0.044,
+        "leverage": 1,
+        "size_note": "spot, half the normal size: a breakout entry after an 11%+ day",
+        "reasoning": "If XDC accepts above the October ceiling (0.0355-0.0360) and the Sep 28 high (0.03643), the old ceiling should act as support. Buy 0.0362-0.0366 after a 1h close above 0.0365, with the stop at 0.0347, back inside the old range and under the 0.0347-0.0352 shelf. The target is 0.0440, under the Jan 22-23 highs (0.0443-0.0444); 0.0384 (Sep 29 high) and 0.0395-0.0400 (Jan/Feb highs) are resistance along the way. R:R from the worst fill (0.0366): 0.0074 / 0.0019 = 3.9.",
+        "expiry": "2026-11-04T23:00:00Z",
+        "status": "watching",
+        "last_checked_ms": 1792620000000,
+        "last_checked": "2026-10-21T22:00:00Z"
+      },
+      "reasoning": "SPOT POSITION idea (1x, long only; Bobby holds XDC spot long term, and the main perp venues used here (Bitunix, Binance, OKX, Kraken Futures, Coinbase) list no XDC perpetual). Kraken candles: today's +11% move broke the Oct 15-20 lower highs (0.0352 to 0.0329) and is testing the 0.0355-0.0360 ceiling (Oct 9/10/12 highs 0.03587/0.03574/0.03569, today 0.03597), but it has not closed a 4H or daily candle above 0.0360. Volume is higher (Kraken ~1.6x its 10-day average, CoinGecko all-exchange ~$25.6M vs ~$8-18M/day) on the SBI/Shinhan yen-stablecoin MOU and this week's MoneyGram validator news. Price is stretched (4H above the upper Bollinger band, 1h RSI 80), so this is a pending buy on a retest of 0.0347-0.0352: the broken lower-high line (Oct 15 high 0.0352, Oct 16 0.0347) and today's 1-3 PM CT base (1h lows 0.0347-0.0350). Stop 0.0330 sits under today's 7 AM CT 4H low (0.0339) and the Oct 13 low (0.03318), near the daily EMA20 (0.0334). A close there means the breakout failed and the October floor (0.0318-0.0321) is in play. T1 0.0383 is under the Sep 29 high (0.0384, the 90-day high); T2 0.0440 is under the Jan 22-23 highs. R:R from the worst fill (0.0352): 1.4 to T1, 4.0 to T2, about 2.7 blended (equal halves; the stop moves to breakeven after T1). P&L is at 1x: T1 +8.8%, T2 +25%, stop -6.3% from 0.0352. The news is mostly MOUs and pilots with no disclosed numbers, so the idea rests on the levels, not on the headlines.",
+      "source": "analysis run (XDC first review, Oct 21 breakout check)",
+      "last_checked_ms": 1792618599000,
+      "last_checked": "2026-10-21T21:36:39Z"
     }
   ],
   "stats": {
-    "total": 5,
+    "total": 6,
     "open": 1,
-    "pending": 3,
+    "pending": 4,
     "closed": 1,
     "won": 0,
     "lost_or_stopped": 1,
@@ -232,7 +286,7 @@
   },
   "evaluated_utc": "2026-10-21T17:08:18Z",
   "slate": {
-    "as_of": "2026-10-21T20:31:02Z",
+    "as_of": "2026-10-21T21:36:39Z",
     "rules": "Max one active (pending/open) idea per coin, max 6 at once; long or short; 'no setup' is allowed. New trades default to 3x.",
     "coins": {
       "ripple": {
@@ -278,8 +332,11 @@
       "bitcoin": {
         "trade_id": null,
         "note": "Newly added as a full coin Oct 21 — not reviewed for a setup yet (signals: Buy +0.33). First slate review at the next scheduled update."
+      },
+      "xdce-crowd-sale": {
+        "trade_id": "T006"
       }
     }
   },
-  "tracked_utc": "2026-10-21T20:31:02.120000Z"
+  "tracked_utc": "2026-10-21T21:36:39.644000Z"
 }

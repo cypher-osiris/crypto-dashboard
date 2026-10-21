@@ -417,6 +417,9 @@ def linked_trade(t, plan, trig_ms, close):
         "source": f"missed_plan of {t['id']} (auto-activated by track_trades.py)",
         "last_checked_ms": int(trig_ms), "last_checked": iso(trig_ms),
     }
+    for k in ("market", "timeframe", "timeframe_note", "expires"):  # spot/position ideas keep their nature
+        if t.get(k):
+            lt[k] = t[k]
     if zlo <= close <= zhi:
         lt.update(status="open", entry=sig(close), planned_entry=sig((zlo + zhi) / 2), filled_at=iso(trig_ms))
     return lt
@@ -438,6 +441,12 @@ def compute_stats(trades):
         warn.append(f"{len(active)} active ideas - max {SLATE_MAX}")
     for t in active:
         warn += plan_issues(t)
+        if t.get("market") == "spot" or t.get("leverage") == 1:  # spot = 1x, long only
+            if t.get("direction") != "long" or t.get("leverage", 3) != 1:
+                warn.append(f"{t['id']}: spot ideas must be long at leverage 1")
+            mp = t.get("missed_plan") or {}
+            if mp.get("type") not in (None, "none") and (mp.get("leverage", 3) != 1 or mp.get("type") == "flip"):
+                warn.append(f"{t['id']}: spot idea's missed_plan must be leverage 1 and not a flip (no shorts)")
     return {
         "total": len(trades), "open": sum(1 for t in trades if t["status"] == "open"),
         "pending": sum(1 for t in trades if t["status"] == "pending"), "closed": len(closed), "won": wins,
@@ -449,11 +458,16 @@ def compute_stats(trades):
     }
 
 
+def lev_txt(lev):
+    """'spot' for 1x (no leverage, long only), else '3x' etc."""
+    return "spot" if lev == 1 else f"{lev}x"
+
+
 def describe(e, t, sym):
     lev = t.get("leverage", 3)
     k = e["type"]
     if k == "filled":
-        return f"{t['id']} {sym} {t['direction']} {lev}x FILLED at {e['price']} (zone {e['zone'][0]}–{e['zone'][1]})"
+        return f"{t['id']} {sym} {t['direction']} {lev_txt(lev)} FILLED at {e['price']} (zone {e['zone'][0]}–{e['zone'][1]})"
     if k.startswith("target"):
         return f"{t['id']} {sym}: target {k[6]} hit at {e['price']}" + (" — stop moved to breakeven" if k == "target1_hit" and t.get("move_stop_to_be", True) else "")
     if k == "cancelled":
@@ -467,7 +481,7 @@ def describe(e, t, sym):
                 "invalidated": f"missed-it plan invalidated (1h close {e.get('price')} beyond its stop)",
                 "expired": "missed-it plan expired"}[k[12:]]
         return f"{t['id']} {sym}: {what}"
-    return f"{t['id']} {sym} closed {k.upper()} at {e['price']} ({e['pnl_pct']:+.2f}% at {lev}x)"
+    return f"{t['id']} {sym} closed {k.upper()} at {e['price']} ({e['pnl_pct']:+.2f}% at {lev_txt(lev)})"
 
 
 def run(lock_held=False, log_events=True):

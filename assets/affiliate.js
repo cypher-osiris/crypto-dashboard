@@ -5,6 +5,13 @@
  * Fail closed: all affiliate UI stays hidden until the country is known. Lookup order:
  *   ?geo=XX debug override -> sessionStorage cache -> api.country.is -> ipapi.co/country -> Intl timeZone (US zones => US).
  * If everything fails (no country, no time zone) nothing is shown.
+ * Coinbase links are referral JOIN links used exactly as configured (no per-coin path/query is ever appended, so the
+ *   referral code is never dropped). They open Coinbase's "Sign up to activate your referral" page; an existing member
+ *   (e.g. the referrer himself) only sees that page plus "Already have an account?". So every Coinbase per-trade button
+ *   carries a one-line note saying so and naming the pair to open after signing in. Coins with no Coinbase product in
+ *   data/coins.json (ZBCN, XDC: card data-cb="") get NO Coinbase trade button, only a short "not listed on Coinbase" note.
+ * Bitunix: always the general referral link (no per-pair URL). Spot ideas (leverage 1, card data-lev="1") are labelled
+ *   "Buy <SYM> spot on Bitunix" (XDC has no Bitunix perpetual; XDC/USDT spot is listed).
  * Hardware-wallet pick (#wallet-pick, under the calculator): shown to ALL visitors, no geo gate.
  *   affiliate.dcent_url (+ dcent_label) = main button; affiliate.ledger_url (+ ledger_label) = second option, hidden while empty. */
 (() => {
@@ -65,11 +72,20 @@
     document.querySelectorAll(".slate-card[data-slate]").forEach((card) => {
       if (card.querySelector(".aff-wrap")) return;
       if (!(card.classList.contains("pending") || card.classList.contains("open"))) return; // active ideas only
-      const sym = (card.querySelector(".coin-mark") || {}).textContent || "";
+      const sym = card.dataset.sym || (card.querySelector(".coin-mark") || {}).textContent || "";
+      const spot = card.dataset.lev === "1";
       const w = document.createElement("div");
       w.className = "aff-wrap";
-      w.innerHTML = link(P.slate, "") + note();
-      const a = w.querySelector("a"); if (sym) a.setAttribute("aria-label", `${P.aria(sym)} (affiliate link, opens in a new tab)`);
+      if (P.key === "coinbase" && card.dataset.cb === "") {
+        // not listed on Coinbase => a Coinbase "trade" button would lead nowhere useful
+        w.innerHTML = `<p class="aff-note">${esc(sym)} isn't listed on Coinbase, so there's no Coinbase button for this idea.</p>`;
+      } else {
+        const lbl = P.key === "bitunix" && spot ? `Buy ${sym} spot on Bitunix` : P.slate;
+        const hint = P.key === "coinbase" ? `<p class="aff-note">Referral sign-up link (new Coinbase accounts). Already have one? Sign in at Coinbase Advanced and open ${esc(card.dataset.cb || sym)}.</p>` : "";
+        w.innerHTML = link(lbl, "") + hint + note();
+        const a = w.querySelector("a");
+        if (sym) a.setAttribute("aria-label", `${P.key === "bitunix" && spot ? lbl : P.aria(sym)} (affiliate link, opens in a new tab)`);
+      }
       const why = card.querySelector(":scope > details.why");
       why ? card.insertBefore(w, why) : card.appendChild(w);
     });
@@ -79,7 +95,8 @@
     const cta = document.getElementById("aff-cta");
     if (cta) { cta.innerHTML = link(P.label, "sm") + extra() + `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a>`; cta.hidden = false; }
     const calc = document.getElementById("aff-calc");
-    if (calc) { calc.innerHTML = link(P.label, "") + extra() + note(); calc.hidden = false; }
+    const cbHint = P.key === "coinbase" ? `<p class="aff-note">Coinbase referral sign-up page. Existing members: sign in on Coinbase as usual.</p>` : "";
+    if (calc) { calc.innerHTML = link(P.label, "") + extra() + cbHint + note(); calc.hidden = false; }
     const foot = document.getElementById("aff-foot");
     if (foot) { foot.textContent = DISCLOSURE; foot.hidden = false; }
     decorateSlate();
