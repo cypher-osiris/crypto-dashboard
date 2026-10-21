@@ -2,7 +2,8 @@
   "affiliate": {
     "bitunix_url": "https://www.bitunix.site/u-link/referral/invitee?t_act=17&inviteCode=c_jS86c",
     "label": "Trade on Bitunix",
-    "coinbase_url": "",
-    "coinbase_label": "Trade on Coinbase"
+    "coinbase_url": "https://coinbase.com/join/95D6QQZ",
+    "coinbase_advanced_url": "https://advanced.coinbase.com/join/HFB77TN",
+    "coinbase_label": "Trade on Coinbase Advanced"
   }
 }

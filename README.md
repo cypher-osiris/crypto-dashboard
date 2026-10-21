@@ -196,11 +196,14 @@ information coefficient per component, first 70% in-sample / last 30% out-of-sam
 ## Affiliate link (data/config.json)
 ```json
 { "affiliate": { "bitunix_url": "https://…your referral link…", "label": "Trade on Bitunix",
-                "coinbase_url": "", "coinbase_label": "Trade on Coinbase" } }
+                "coinbase_url": "https://coinbase.com/join/…", "coinbase_advanced_url": "https://advanced.coinbase.com/join/…",
+                "coinbase_label": "Trade on Coinbase Advanced" } }
 ```
 **Geo-gated (assets/affiliate.js).** Bitunix bans US users, so Bitunix links are shown only to visitors confirmed
-NON-US; US visitors (incl. PR/GU/VI/AS/MP/UM) get the Coinbase slot instead, which shows nothing while `coinbase_url`
-is empty. Country lookup, client-side: `https://api.country.is/` → `https://ipapi.co/country/` (2.5 s timeout each) →
+NON-US. US visitors (incl. PR/GU/VI/AS/MP/UM) get Coinbase in the same places instead: "Trade on Coinbase Advanced"
+(`coinbase_advanced_url`) as the header button, calculator button and per-trade button (neutral wording, no "setup"/leverage
+language, since most US users can't trade perps there), plus a small "New to crypto? Get started on Coinbase" link
+(`coinbase_url`) under the header and calculator buttons. Both empty ⇒ nothing shown for US visitors. Country lookup, client-side: `https://api.country.is/` → `https://ipapi.co/country/` (2.5 s timeout each) →
 `Intl` time zone (US zones such as America/New_York, Chicago, Denver, Los_Angeles, Phoenix, Anchorage, Detroit, Boise,
 Indiana/*, Kentucky/*, Pacific/Honolulu ⇒ US). The result is cached in `sessionStorage` (`lumi_geo_v1`). Fail closed:
 everything stays hidden until the country is known, and if it can't be determined nothing is shown. Debug override:
@@ -264,7 +267,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-10`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-11`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).

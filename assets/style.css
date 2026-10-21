@@ -382,6 +382,9 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .aff-btn:hover,.aff-btn:focus-visible{border-color:rgba(34,211,238,.7);background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(96,165,250,.16))}
 .aff-btn.sm{font-size:.76rem;padding:7px 12px}
 .aff-wrap{margin-top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.aff-extra{font-size:.72rem;color:var(--muted);text-decoration:none;text-align:center}
+.aff-extra:hover,.aff-extra:focus-visible{color:var(--cyan);text-decoration:underline}
+.aff-wrap .aff-extra{text-align:left}
 .aff-note{margin:0;font-size:.7rem;line-height:1.4;color:var(--dim)}
 .aff-foot{margin:8px auto 0;max-width:640px;font-size:.74rem;color:var(--dim)}
 @media (max-width:720px){ .aff-cta{flex:1 1 100%} .aff-cta .aff-btn{width:100%} .aff-wrap .aff-btn{width:100%} }

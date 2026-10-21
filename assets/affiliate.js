@@ -1,6 +1,7 @@
 /* Affiliate links — driven by data/config.json, geo-gated client-side.
  *   Bitunix (affiliate.bitunix_url)   NON-US visitors only (Bitunix bans US users).
- *   Coinbase (affiliate.coinbase_url) US visitors only; empty => nothing is shown.
+ *   Coinbase (US visitors only): affiliate.coinbase_advanced_url = main "Trade on Coinbase Advanced" buttons,
+ *     affiliate.coinbase_url = small "New to crypto? Get started on Coinbase" link. Both empty => nothing is shown.
  * Fail closed: all affiliate UI stays hidden until the country is known. Lookup order:
  *   ?geo=XX debug override -> sessionStorage cache -> api.country.is -> ipapi.co/country -> Intl timeZone (US zones => US).
  * If everything fails (no country, no time zone) nothing is shown. */
@@ -22,7 +23,7 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const okUrl = (u) => /^https:\/\/[^\s"'<>]+$/i.test(u);
   const cc = (s) => { const c = String(s || "").trim().toUpperCase(); return /^[A-Z]{2}$/.test(c) ? c : ""; };
-  let P = null; // active program: { name, url, label }
+  let P = null; // active program: { name, url, label, slate, aria, extra: {url, text} | null }
 
   // ---- geo ---------------------------------------------------------------------------------------
   async function fetchCountry(url, pick, ms) {
@@ -55,6 +56,7 @@
 
   // ---- render ------------------------------------------------------------------------------------
   const link = (text, cls) => `<a class="aff-btn ${cls || ""}" href="${esc(P.url)}" rel="sponsored noopener" target="_blank">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
+  const extra = () => P.extra ? `<a class="aff-extra" href="${esc(P.extra.url)}" rel="sponsored noopener" target="_blank">${esc(P.extra.text)}<span aria-hidden="true"> ↗</span></a>` : "";
   const note = () => `<p class="aff-note">${esc(DISCLOSURE)}</p>`;
 
   function decorateSlate() {
@@ -64,8 +66,8 @@
       const sym = (card.querySelector(".coin-mark") || {}).textContent || "";
       const w = document.createElement("div");
       w.className = "aff-wrap";
-      w.innerHTML = link(`Trade this setup on ${P.name}`, "") + note();
-      const a = w.querySelector("a"); if (sym) a.setAttribute("aria-label", `Trade this ${sym} setup on ${P.name} (affiliate link, opens in a new tab)`);
+      w.innerHTML = link(P.slate, "") + note();
+      const a = w.querySelector("a"); if (sym) a.setAttribute("aria-label", `${P.aria(sym)} (affiliate link, opens in a new tab)`);
       const why = card.querySelector(":scope > details.why");
       why ? card.insertBefore(w, why) : card.appendChild(w);
     });
@@ -73,9 +75,9 @@
 
   function apply() {
     const cta = document.getElementById("aff-cta");
-    if (cta) { cta.innerHTML = link(P.label, "sm") + `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a>`; cta.hidden = false; }
+    if (cta) { cta.innerHTML = link(P.label, "sm") + extra() + `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a>`; cta.hidden = false; }
     const calc = document.getElementById("aff-calc");
-    if (calc) { calc.innerHTML = link(P.label, "") + note(); calc.hidden = false; }
+    if (calc) { calc.innerHTML = link(P.label, "") + extra() + note(); calc.hidden = false; }
     const foot = document.getElementById("aff-foot");
     if (foot) { foot.textContent = DISCLOSURE; foot.hidden = false; }
     decorateSlate();
@@ -88,14 +90,22 @@
       const r = await fetch(`data/config.json?v=${Date.now()}`, { cache: "no-store" });
       if (!r.ok) return;
       const a = ((await r.json()) || {}).affiliate || {};
-      const bitunix = String(a.bitunix_url || "").trim(), coinbase = String(a.coinbase_url || "").trim();
-      if (!okUrl(bitunix) && !okUrl(coinbase)) return; // nothing configured => no lookup, no UI
+      const s = (k) => { const u = String(a[k] || "").trim(); return okUrl(u) ? u : ""; };
+      const bitunix = s("bitunix_url"), cbAdv = s("coinbase_advanced_url"), cbJoin = s("coinbase_url");
+      if (!bitunix && !cbAdv && !cbJoin) return; // nothing configured => no lookup, no UI
       const g = await geo();
       document.documentElement.dataset.geo = g.us === null ? "unknown" : (g.us ? "us" : "non-us");
-      if (g.us === false && okUrl(bitunix)) P = { name: "Bitunix", url: bitunix, label: String(a.label || "Trade on Bitunix") };
-      else if (g.us === true && okUrl(coinbase)) P = { name: "Coinbase", url: coinbase, label: String(a.coinbase_label || "Trade on Coinbase") };
+      if (g.us === false && bitunix) {
+        P = { key: "bitunix", url: bitunix, label: String(a.label || "Trade on Bitunix"), slate: "Trade this setup on Bitunix",
+              aria: (sym) => `Trade this ${sym} setup on Bitunix`, extra: null };
+      } else if (g.us === true && (cbAdv || cbJoin)) {
+        // US: no leveraged perps on Coinbase for most users => neutral wording, no "setup" language
+        const lbl = cbAdv ? String(a.coinbase_label || "Trade on Coinbase Advanced") : "Get started on Coinbase";
+        P = { key: "coinbase", url: cbAdv || cbJoin, label: lbl, slate: lbl, aria: (sym) => `${lbl} (${sym})`,
+              extra: cbAdv && cbJoin ? { url: cbJoin, text: "New to crypto? Get started on Coinbase" } : null };
+      }
       if (!P) return; // unknown country, or no link for this region => keep everything hidden
-      document.documentElement.classList.add("has-aff", "aff-" + P.name.toLowerCase());
+      document.documentElement.classList.add("has-aff", "aff-" + P.key);
       apply();
     } catch (e) { /* config missing/invalid => no affiliate UI */ }
   }
