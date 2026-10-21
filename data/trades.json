@@ -1,0 +1,67 @@
+{
+  "_readme": "Hand-edited trade ideas + script-evaluated status. To add a trade: append an object with status 'open'; set current_idea_id to it. Script fills targets_hit/closed_at/exit_price/pnl_pct. Times are ISO-8601; a time without offset is read as US Central.",
+  "current_idea_id": "T002",
+  "trades": [
+    {
+      "id": "T001",
+      "coin": "ripple",
+      "direction": "long",
+      "leverage": 5,
+      "entry": 1.33,
+      "stop": 1.28,
+      "targets": [
+        1.4,
+        1.42
+      ],
+      "opened_at": "2026-10-16T00:00:00-05:00",
+      "status": "stopped",
+      "move_stop_to_be": true,
+      "reasoning": "Seed trade (owner-specified): XRP long from the 1.33 area with a stop under 1.28 and targets at 1.40 / 1.42. (Opening time assumed to be the start of Oct 16, 2026 Central since no exact time was given.)",
+      "source": "seed (user-specified)",
+      "targets_hit": [],
+      "closed_at": "2026-10-18T15:00:00Z",
+      "exit_price": 1.28,
+      "pnl_pct": -18.8,
+      "last_checked_ms": 1792598380000
+    },
+    {
+      "id": "T002",
+      "coin": "ripple",
+      "direction": "long",
+      "leverage": 5,
+      "entry": 1.35,
+      "stop": 1.305,
+      "targets": [
+        1.42,
+        1.47
+      ],
+      "opened_at": "2026-10-21T16:05:00Z",
+      "fill_by": "2026-10-23T16:05:00Z",
+      "status": "pending",
+      "move_stop_to_be": true,
+      "reasoning": "SEED IDEA. Don't chase XRP at $1.38 into 1.42 resistance; instead bid a pullback to $1.35 (today's breakout/consolidation zone above the 1.33 pivot). Stop $1.305 sits under RoboForex's H4 support (1.309) and the Oct 19\u201320 range, so the idea is invalidated if the bounce fails. T1 $1.42 = H4/7-day resistance; T2 $1.47 = bull-case projection. Risk \u22123.3% (\u221216.7% at 5x) vs. +5.2% / +8.9% (+25.9% / +44.4% at 5x). Limit order: cancels if not filled by Oct 23 11:05 AM CT. Risks: BTC losing $82.5K, Fed Oct 27\u201328.",
+      "source": "seed (Grok Bot setup)",
+      "last_checked_ms": 1792598380000,
+      "mark_price": 1.38015
+    }
+  ],
+  "stats": {
+    "total": 2,
+    "open": 0,
+    "pending": 1,
+    "closed": 1,
+    "won": 0,
+    "lost_or_stopped": 1,
+    "win_rate_pct": 0.0,
+    "cumulative_pnl_pct": -18.8,
+    "note": "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).",
+    "equity_curve": [
+      {
+        "t": "2026-10-18T15:00:00Z",
+        "trade_id": "T001",
+        "cum_pnl_pct": -18.8
+      }
+    ]
+  },
+  "evaluated_utc": "2026-10-21T16:01:23Z"
+}

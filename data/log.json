@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "t": "2026-10-21T16:06:00Z",
+      "kind": "analysis",
+      "author": "Initial seed (Grok Bot setup)",
+      "text": "Dashboard created. Fixed AXL CoinGecko id (it is 'axelar'; 'axelar-network' resolves to an unrelated ~$1 asset). Seed XRP long (entry 1.33 / stop 1.28 / targets 1.40, 1.42, opened Oct 16) evaluated against hourly history: STOPPED on Oct 18 when XRP traded to ≈1.26 (−18.8% at 5x) — it never reached 1.40 before or after. New idea T002: XRP 5x long limit at 1.35, stop 1.305, targets 1.42 / 1.47, valid 48h. Seeded commentary, levels and 7-day projections for BTC and all five coins."
+    },
+    {
+      "t": "2026-10-21T16:01:23Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 84470 (+2.3%), HBAR 0.08593 (+3.0%), XLM 0.185923 (+3.6%), XRP 1.38 (+4.4%), ZBCN 0.00242226 (+13.3%), AXL 0.054046 (+0.1%). Trades: T001 (XRP) closed as STOPPED at 1.28 (-18.80% at 5x). Open trades: 0; closed: 1; win rate: 0.0%."
+    }
+  ]
+}
