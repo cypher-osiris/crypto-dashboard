@@ -158,21 +158,21 @@ at no cost to you. Paper trades, not financial advice.") appears under each butt
 to hide all of it, including the disclosure. Edit, commit and push: no `?v=` bump is needed, because the config is
 fetched without the cache. The URL is HTML-escaped when rendered (`&` → `&amp;`), so paste it exactly as given.
 
-## X post drafts (scripts/make_post.py)
+## X posts (scripts/make_post.py + docs/x_voice.md)
+`make_post.py` is a **data helper**. It supplies facts, checks numbers and draws the card; the post text is written with
+judgment following `docs/x_voice.md` (the Lumi voice, formats, rules and examples).
 ```sh
-python3 scripts/make_post.py              # posts/YYYY-MM-DD-HHMM.txt (Central time) + matching .png, prints JSON
-python3 scripts/make_post.py --no-image   # text only;  --no-thread for the main post only
+python3 scripts/make_post.py facts --pretty   # compact JSON: slate (+distance to zone), changes since last post, trade events,
+                                              # movers, BTC levels, record, 1-2 sourced catalysts, sentiment, links
+python3 scripts/make_post.py check post.txt   # every number must exist in the data at the precision written; X lengths
+python3 scripts/make_post.py save post.txt --kind midday --focus XRP   # posts/YYYY-MM-DD-HHMM.txt + .png, sets the baseline
+python3 scripts/make_post.py card --focus slate --out /tmp/card.png    # 1200x675 "Lumi Trades" card only
 ```
-It reads only `data/trades.json`, `data/prices.json` and `data/config.json`, so run `update_prices.py` and
-`track_trades.py` first for fresh numbers. The main post is kept to 280 characters or fewer by plain character
-count, which is stricter than X's count of 23 per URL. It contains the slate (zones and stops), the honest closed
-record with losses, "Paper trades, NFA", cashtags and the site URL. The optional thread has 2–4 replies covering
-levels, prices and no-setup coins, the track record, and a disclaimer. The affiliate link goes only in the last
-reply, marked "(affiliate…)". There is one link per post and no account handle is hardcoded.
-A built-in check fails (exit 1, listed under "number check" in the file) if any number in the text isn't found in the
-data files. The PNG is 1200×675 with the dark theme: the slate as price ladders (entry zone, stop, targets, current
-price), prices, the record, and the site URL. It needs matplotlib, plus fontTools for the bold Inter and JetBrains
-Mono weights, which are cut once into `state/fonts`. Drafts are never posted automatically; review them first.
+Thread replies go in the same file, separated by a line containing only `---`. News comes from optional `catalysts`
+arrays in `analysis.json` (`{date, kind: news|event, text, source, url}`, only items actually read). The card has a
+focal coin (big symbol and price, a 7-day line, the zone, stop and T1) or `--focus slate`. Brand and URL are small.
+It needs matplotlib, plus fontTools for the bold weights, which are cached in `state/fonts`. Nothing is ever posted
+automatically.
 
 ## Local preview
 `python3 -m http.server 8000` in this folder, open http://localhost:8000 (opening index.html via file:// will not
