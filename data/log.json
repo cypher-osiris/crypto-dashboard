@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "t": "2026-10-22T17:17:39.438000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T004 ZBCN closed STOPPED at 0.00219 (-19.23% at 3x); T007 BTC closed STOPPED at 80800.0 (-5.47% at 3x)."
+    },
+    {
+      "t": "2026-10-22T11:57:23Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 81715 (-2.1%), HBAR 0.080718 (-4.8%), XLM 0.177983 (-3.4%), XRP 1.33 (-2.3%), ZBCN 0.00232962 (-3.3%), AXL 0.0491604 (-7.9%), XDC 0.0348711 (+2.5%), ETH 2398.63 (-2.8%), SOL 104.42 (-2.3%), DOGE 0.079206 (-3.5%), ADA 0.216647 (-4.1%), LINK 12.03 (-3.0%), SUI 0.985995 (-4.6%). Open trades: 3; pending: 1; closed: 3; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-22T11:05:00Z",
       "kind": "analysis",
       "author": "Lumi (morning update)",
