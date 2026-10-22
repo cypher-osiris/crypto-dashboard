@@ -544,9 +544,13 @@
   }
 
   // log entries without trade results or win/loss stats (same filter as dash.js)
-  const BAD = [/\bT\d+\w*\b[^.;]*\b(?:stopped|won|lost|closed (?:WON|LOST|STOPPED))\b/i, /\b(?:win rate|track record|scorecard|cumulative (?:paper )?P&L)\b/i, /\b\d+W\s*\/\s*\d+L\b/, /[+-]\d+(?:\.\d+)?% at \d+x/];
+  // same rules as scripts/privacy.py (which already scrubs the data files; this is a backstop)
+  const TID = String.raw`\bT\d{3}[a-z]?\b`, RES = String.raw`(?:stopped|stop(?:ped)?\s+out|took\s+out|taken\s+out|won(?!['’]t)|lost|closed\s+(?:as\s+)?(?:WON|LOST|STOPPED|EXPIRED|CLOSED)|hit\s+(?:its|the)\s+stop|realized|result(?:s|ed)?)`;
+  const BAD = [new RegExp(TID + String.raw`[^()]{0,90}?\b` + RES + String.raw`\b`, "i"), new RegExp(String.raw`\b` + RES + String.raw`\b[^()]{0,70}?` + TID, "i"),
+    new RegExp(TID + String.raw`.{0,120}?\b(?:stopped|won(?!['’]t)|lost)\b.{0,40}?[+\-−]\d`, "i"), /\b(?:win\s*rate|track\s+record|scorecard|cumulative\s+(?:paper\s+)?P&L|equity\s+curve|hit\s+rate)\b/i,
+    /\b(?:stopped|won(?!['’]t)|lost|closed)\b.{0,80}?[+\-−]\d+(?:\.\d+)?%\s*(?:at\s*\d+x|on\s+margin)/i, /\b\d+\s*W\s*\/\s*\d+\s*L\b/, /^\W*closed:\s*\d+/i, /\bstays?\s+as\s+recorded\b/i];
   const noRecord = (t) => String(t || "")
-    .replace(/\b(T\d+\w*) (\w+)(?: (?:long|short) [\d.]+x)? closed (?:WON|LOST|STOPPED|EXPIRED|CLOSED)\b[^;]*?(?=;|\.(?:\s|$)|$)/g, "$1 $2 idea closed")
+    .replace(/\b(T\d{3}[a-z]?) \(?(\w+)\)?(?: (?:long|short) (?:[\d.]+x|spot))? closed (?:as )?(?:WON|LOST|STOPPED|EXPIRED|CLOSED)\b[^;]*?(?=;|\.(?:\s|$)|$)/g, "$1 $2 idea closed")
     .replace(/;?\s*\bclosed: \d+(?=[;.])/g, "")
     .split(/(?<=[.;])\s+/).filter((seg) => !BAD.some((re) => re.test(seg))).join(" ").replace(/^Trade events:\s*\.?$/, "").replace(/;$/, ".").trim();
   function renderLog(log) {

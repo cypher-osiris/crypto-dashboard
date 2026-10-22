@@ -2,7 +2,8 @@
 """
 Market-context snapshot -> data/context.json (fallback for the in-browser live fetch).
   python3 scripts/context.py
-Sources (all free, no keys): CoinGecko /global (total mcap, BTC dominance), CoinMarketCap Fear & Greed (alternative.me fallback),
+Sources (all free, no keys): CoinGecko /global (total mcap, BTC dominance), CoinMarketCap Fear & Greed (the ONLY
+Fear & Greed source: if it fails, the last CoinMarketCap value is kept and marked stale, else it is shown as unavailable),
 OKX public API (BTC-USDT perpetual funding rate + open interest), Yahoo Finance chart API (USD/JPY + Nikkei 225 for the yen /
 carry-trade watch). Each source is optional; failures are recorded.
 Afterwards it runs scripts/brief.py (data/brief.json + data/events.json for the Lumi API); a brief failure never breaks context.
@@ -53,20 +54,27 @@ def fng_cmc():
             "timestamp": _iso(cur["timestamp"]), "source": "CoinMarketCap"}
 
 
-def fng_alt():
-    d = get("https://api.alternative.me/fng/?limit=2")["data"]
-    return {"value": int(d[0]["value"]), "classification": d[0]["value_classification"],
-            "previous": int(d[1]["value"]) if len(d) > 1 else None,
-            "timestamp": _iso(d[0]["timestamp"]), "source": "alternative.me"}
+def _last_cmc():
+    """The previous snapshot's CoinMarketCap reading (data/context.json), or None."""
+    try:
+        with open(OUT) as fh:
+            prev = json.load(fh).get("fear_greed") or {}
+    except (OSError, ValueError):
+        return None
+    return prev if prev.get("source") == "CoinMarketCap" and prev.get("value") is not None else None
 
 
 def fng():
-    """Primary: CoinMarketCap Fear & Greed (intraday). Fallback: alternative.me (daily)."""
+    """CoinMarketCap Fear & Greed only (no other index, ever). On failure: the last cached CoinMarketCap value marked
+    stale (with the time it was taken), else {"error": ..., "source": "CoinMarketCap"} = shown as unavailable."""
     try:
         return fng_cmc()
     except Exception as e:
-        out = fng_alt(); out["primary_error"] = f"CoinMarketCap: {e}"
-        return out
+        last = _last_cmc()
+        if last:
+            return {**{k: v for k, v in last.items() if k not in ("stale", "error")}, "stale": True,
+                    "stale_reason": f"CoinMarketCap unavailable: {e}"}
+        return {"error": f"CoinMarketCap unavailable: {e}", "source": "CoinMarketCap"}
 
 
 def okx():

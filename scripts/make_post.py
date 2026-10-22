@@ -193,6 +193,8 @@ def gather(now=None):
 
     btc = A.get("bitcoin", {}); bd = AN.get("backdrop", {})
     fg = (CX or {}).get("fear_greed") or {}
+    if fg.get("source") != "CoinMarketCap" or fg.get("value") is None:  # Fear & Greed: CoinMarketCap only
+        fg = {}
     return {
         "now": ctfmt(now), "data_as_of": {"prices": ctfmt(ts(P.get("updated_utc"))), "slate": ctfmt(ts((TD.get("slate") or {}).get("as_of"))),
                                            "tracked": ctfmt(ts(TD.get("tracked_utc"))), "analysis": ctfmt(ts(AN.get("as_of")))},
@@ -202,7 +204,7 @@ def gather(now=None):
         "slate": slate, "no_setup": [n["sym"] for n in no_setup], "no_setup_notes_watchlist": [n for n in no_setup if n["watchlist"]],
         "btc": {"price": sig(btc.get("price"), 5), "pct_24h": round(btc.get("change_24h") or 0, 1), "support": bd.get("support"), "resistance": bd.get("resistance")},
         "movers_24h": movers, "news": news, "signals": sigs,
-        "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous"), "source": fg.get("source")} if fg else None,
+        "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous"), "source": fg.get("source"), "stale": bool(fg.get("stale"))} if fg else None,
         "links": {"site": SITE, "affiliate": affiliate()},
         "post_kinds": ["morning", "midday", "evening", "event", "news", "weekly", "missed"],
         "voice": "docs/x_voice.md",

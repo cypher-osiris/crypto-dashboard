@@ -15,7 +15,8 @@
       g ? item("Total market cap", big(g.total_mcap_usd), g.mcap_change_24h_pct != null ? D.chip(g.mcap_change_24h_pct) : "", `CoinGecko /global · ${ctx.src.global}`) : "",
       g ? item("BTC dominance", `${g.btc_dominance_pct.toFixed(1)}%`, g.eth_dominance_pct != null ? `<span class="muted">ETH ${g.eth_dominance_pct.toFixed(1)}%</span>` : "", `CoinGecko /global · ${ctx.src.global}`) : "",
       g ? item("24h volume", big(g.total_volume_usd), "", `CoinGecko /global · ${ctx.src.global}`) : "",
-      f && f.source !== "alternative.me" ? item("Fear & Greed", `${f.value}`, `<span class="fng ${fngClass(f.value)}">${D.esc(f.classification)}</span>${f.previous != null ? `<span class="muted"> prev ${f.previous}</span>` : ""}`, `CoinMarketCap Fear & Greed Index · ${ctx.src.fear_greed}`) : "",
+      f && f.source === "CoinMarketCap" && f.value != null ? item("Fear & Greed", `${f.value}`, `<span class="fng ${fngClass(f.value)}">${D.esc(f.classification)}</span>${f.stale ? `<span class="muted"> stale, ${D.esc(D.ct(f.timestamp))}</span>` : f.previous != null ? `<span class="muted"> prev ${f.previous}</span>` : ""}`, `CoinMarketCap Fear & Greed Index · ${ctx.src.fear_greed}${f.stale ? " · stale: CoinMarketCap was unavailable at the last refresh" : ""}`)
+        : item("Fear & Greed", "—", `<span class="muted">unavailable</span>`, "CoinMarketCap Fear & Greed Index: unavailable right now"),
       d ? item("BTC funding (8h)", `${d.funding_rate_pct >= 0 ? "+" : ""}${d.funding_rate_pct.toFixed(4)}%`, `<span class="muted">OKX perp</span>`, `OKX BTC-USDT-SWAP current funding rate · positive = longs pay shorts · ${ctx.src.derivatives}`) : "",
       d ? item("BTC open interest", big(d.open_interest_usd), `<span class="muted">${Math.round(d.open_interest_btc).toLocaleString()} BTC</span>`, `OKX BTC-USDT-SWAP open interest · ${ctx.src.derivatives}`) : "",
     ].join("") || '<div class="ctx"><small>Market context</small><b>unavailable</b></div>';
@@ -33,7 +34,7 @@
     renderContext();
   }
   function startContext(snap) {
-    if (snap) for (const k of ["global", "fear_greed", "derivatives"]) if (snap[k] && !snap[k].error) { ctx[k] = snap[k]; ctx.src[k] = `snapshot ${window.Dash.ct(snap.generated_utc)}`; }
+    if (snap) for (const k of ["global", "fear_greed", "derivatives"]) if (snap[k] && !snap[k].error && (k !== "fear_greed" || snap[k].source === "CoinMarketCap")) { ctx[k] = snap[k]; ctx.src[k] = `snapshot ${window.Dash.ct(snap.generated_utc)}`; }
     renderContext();
     refreshContext();
     setInterval(refreshContext, 5 * 60000);

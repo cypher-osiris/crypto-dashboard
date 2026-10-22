@@ -207,8 +207,9 @@ def timeline(t, h, by_id):
     return ev
 
 
-def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None):
+def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None, keywords=None):
     ld = json.dumps(extra_ld or [], ensure_ascii=False).replace("</", "<\\/")
+    kw = f'<meta name="keywords" content="{h.E(keywords)}">\n' if keywords else ""
     return f"""<!doctype html>
 <html lang="{h.L.code}">
 <head>
@@ -216,7 +217,7 @@ def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{h.E(title)}</title>
 <meta name="description" content="{h.E(desc)}">
-<meta name="robots" content="index, follow, max-image-preview:large">
+{kw}<meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="{url}">
 {h.head_i18n(path, h.langs)}
 <meta name="theme-color" content="#070a10">
