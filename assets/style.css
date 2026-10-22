@@ -551,3 +551,28 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .slate-sched .sched-ico{color:var(--cyan)} .slate-sched b{color:var(--text);font-weight:600}
 .slate-sched .sched-local,.slate-sched .sched-next{color:var(--dim)} .slate-sched .sched-next b{color:var(--muted)}
 .cp .slate-sched{margin:0 0 10px}
+
+/* ---------- background treatment (Oct 22, 2026): lifted navy base + soft aurora + fading dot grid + faint noise ----------
+   Pure CSS, nothing animates. All layers are position:fixed elements/pseudo-elements (no background-attachment:fixed,
+   which janks/breaks on iOS). .bg-glow is in index.html and every generated coin page. */
+:root{--bg:#0a0f1a;--bg2:#0d1422;--dim:#808da3} /* --dim lifted for AA (>=4.5:1 on cards and the aurora) */
+html{background:var(--bg)}
+body{background:transparent} /* body paints above negative-z layers, so the base color lives on html */
+.bg-glow{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+  radial-gradient(55% 48% at 8% -4%,rgba(20,184,166,.26),transparent 70%),
+  radial-gradient(50% 46% at 92% -8%,rgba(99,102,241,.30),transparent 72%),
+  radial-gradient(70% 34% at 50% -12%,rgba(56,189,248,.12),transparent 78%),
+  radial-gradient(45% 35% at 85% 108%,rgba(34,211,238,.07),transparent 75%),
+  linear-gradient(180deg,#0d1526 0%,var(--bg) 60%,#090d17 100%)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 1px 1px,rgba(160,174,200,.22) 1px,transparent 1.5px) 0 0/22px 22px;
+  -webkit-mask-image:radial-gradient(130% 80% at 50% 0%,#000 0%,rgba(0,0,0,.6) 38%,transparent 80%);
+          mask-image:radial-gradient(130% 80% at 50% 0%,#000 0%,rgba(0,0,0,.6) 38%,transparent 80%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* cards: a touch more lift so they separate from the textured background */
+.card,.coin{background:linear-gradient(180deg,rgba(24,32,48,.74),rgba(14,20,32,.70));border-color:rgba(148,163,184,.15);
+  box-shadow:0 12px 34px -14px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.04) inset}
+.hero{background:linear-gradient(180deg,rgba(13,20,33,.18),transparent)}
+.cp-top{background:linear-gradient(180deg,rgba(13,20,33,.25),transparent)}
+.nav{background:rgba(10,15,26,.78)}

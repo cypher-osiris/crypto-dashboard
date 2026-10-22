@@ -7,7 +7,8 @@ Static site (plain HTML/CSS/JS, no build step) for GitHub Pages. Everything on t
 
 ```
 index.html            page shell (Chart.js 4 + chartjs-plugin-annotation 3 from jsDelivr; Inter + JetBrains Mono from Google Fonts)
-assets/style.css      dark, mobile-friendly theme
+assets/style.css      dark, mobile-friendly theme (shared by the coin pages); background = navy base on html + fixed .bg-glow aurora,
+                      body::before dot grid (masked fade) and body::after SVG noise, all static (no background-attachment:fixed)
 assets/app.js         renders all sections from data/*.json (ticker, cards, charts, trades, log)
 assets/live.js        live prices in the browser: Coinbase websocket (coins with a coinbase pair), Kraken websocket (ZBCN),
                       CoinGecko 60s polling fallback; auto-reconnect + watchdog; LIVE/DELAYED/SNAPSHOT indicator
@@ -369,7 +370,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-23`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-24`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
