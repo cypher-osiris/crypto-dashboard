@@ -152,7 +152,14 @@ def timeline(t, h, by_id):
     if t.get("parent_id"):
         ev[0] = (t.get("opened_at"), "Opened from a “missed it” plan", f'Follow-up of {t["parent_id"]}' + (f': {t["trigger"]}' if t.get("trigger") else ""))
     if t.get("filled_at"):
-        ev.append((t["filled_at"], "Filled", f'at {h.lvl(t.get("entry"))}' + (f' (planned {h.lvl(t["planned_entry"])})' if t.get("planned_entry") and t.get("planned_entry") != t.get("entry") else "")))
+        et, ae = t.get("entry_type"), t.get("alt_entry") or {}
+        if et in ("breakdown", "breakout") and ae.get("trigger_rule"):
+            ev.append((t["filled_at"], f"Filled on a {et}", f'at {h.lvl(t.get("entry"))} after a 1h close {"below" if et == "breakdown" else "above"} {h.lvl(ae["trigger_rule"]["level"])}; stop {h.lvl(t.get("stop"))}'))
+        else:
+            ev.append((t["filled_at"], "Filled", f'at {h.lvl(t.get("entry"))}' + (f' (planned {h.lvl(t["planned_entry"])})' if t.get("planned_entry") and t.get("planned_entry") != t.get("entry") else "")))
+    ae = t.get("alt_entry") or {}
+    if ae.get("ended_at") and ae.get("status") in ("void", "expired"):
+        ev.append((ae["ended_at"], f'{str(ae.get("type", "alt")).capitalize()} entry {ae["status"]}', ae.get("end_reason") or ""))
     mp = t.get("missed_plan") or {}
     if mp.get("armed_at"):
         ev.append((mp["armed_at"], "Missed-it plan armed", "price ran past the missed-it limit before a fill" if not t.get("filled_at") else ""))
@@ -315,7 +322,10 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
         if z:
             grid.append(("Entry zone", f'{h.lvl(z.get("low"))} – {h.lvl(z.get("high"))}'))
         if t.get("filled_at") or t.get("status") in WON + LOST or t.get("status") == "open":
-            grid.append(("Entry (fill)", h.lvl(t.get("entry"))))
+            grid.append(("Entry (fill)", h.lvl(t.get("entry")) + (f' ({t["entry_type"]})' if t.get("entry_type") in ("breakdown", "breakout") else "")))
+        ae = t.get("alt_entry") or {}
+        if ae.get("trigger_rule") and t.get("status") == "pending" and (ae.get("status") or "watching") == "watching":
+            grid.append((f'Or: {ae.get("type")} entry', f'1h close {"<" if ae.get("type") == "breakdown" else ">"} {h.lvl(ae["trigger_rule"]["level"])}, stop {h.lvl(ae.get("stop"))}'))
         grid.append(("Stop", h.lvl(t.get("stop")) + (f' → {h.lvl(t["current_stop"])}' if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
         hits = t.get("targets_hit") or []
         for j, x in enumerate(t.get("targets") or []):
@@ -347,6 +357,10 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
             more.append(f'<p>{h.E(t["size_note"])}</p>')
         if t.get("leverage_note"):
             more.append(f'<p class="meta">{h.E(t["leverage_note"])}</p>')
+        if ae.get("trigger_rule"):
+            more.append(f'<h3>{h.E(str(ae.get("type")).capitalize())} entry</h3><p>{h.E(ae.get("trigger"))}. Stop {h.lvl(ae.get("stop"))}, '
+                        f'{"spot (1x)" if ae.get("leverage") == 1 else str(ae.get("leverage") or t.get("leverage")) + "x"}. Status: {h.E(ae.get("status") or "watching")}.</p>'
+                        + (f'<p class="meta">{h.E(ae["reasoning"])}</p>' if ae.get("reasoning") else ""))
         mi, mp = t.get("missed_it") or {}, t.get("missed_plan") or {}
         if mi.get("note") or mp:
             more.append("<h3>“Missed it?” plan</h3>")

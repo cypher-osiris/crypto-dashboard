@@ -34,6 +34,17 @@ Missed-it plans (optional `missed_plan` on a trade, see README "Missed-it plans"
     main idea is cancelled ("superseded"), so the one-idea-per-coin rule holds. The linked trade is then tracked like any other.
   * void if the main idea fills first (not for flip); invalidated on a 1h close beyond the plan stop while armed;
     expired at missed_plan.expiry (default: the main idea's expiry).
+Breakdown/breakout entries (optional `alt_entry` on a pending idea, see README "Breakdown / breakout entry"):
+  * a second way into the SAME idea for strong trends: short "breakdown" = a COMPLETED 1h close below
+    trigger_rule.level (long "breakout" = close above), never a wick. 1h closes are read from the 5m/1h candles
+    (the close of the candle ending on the hour; CoinGecko point fallback never triggers it).
+  * fills at that 1h close only if the close is between the level and alt_entry.max_fill (the worst fill that keeps
+    R:R >= 1.5 to T1 with the alt stop); a close further past max_fill is skipped (too extended) and the entry keeps
+    watching. Only closes ending after the alt entry was first seen by the tracker count (no back-dating).
+  * whichever comes first fills the idea: a zone touch (entry_type "pullback") or the trigger close (entry_type
+    "breakdown"/"breakout"). The other one is void. On an alt fill the idea takes the alt stop/leverage/conviction;
+    the original plan is kept in planned_entry / planned_stop / planned_leverage / planned_conviction.
+  * invalid alt entries (slate_warnings) are never filled. Ideas without alt_entry behave exactly as before.
 Idempotent: each trade stores last_checked (ISO) / last_checked_ms = end of the last processed candle; only candles
 ending after it are processed, so a second run processes nothing new. Concurrency: holds an exclusive flock on state/lock while reading/writing data files.
 """
@@ -205,6 +216,18 @@ def evaluate(t, candles, now_ms):
     max_hold = parse_ts(t["expires"]) if t.get("expires") else None
     z = t.get("entry_zone") or {}
     zlo, zhi = z.get("low", t["entry"]), z.get("high", t["entry"])
+    alt = t.get("alt_entry") if t["status"] == "pending" else None
+    alt_live = bool(alt) and alt.get("status") == "watching" and not alt_issues(t)
+    if alt_live:
+        a_lvl, a_max = float(alt["trigger_rule"]["level"]), float(alt["max_fill"])
+        a_from = alt.get("active_from_ms") or lc
+        a_exp = parse_ts(alt["expiry"]) if alt.get("expiry") else cancel_ms
+
+    def end_alt(status, ms, reason=None):
+        if alt and alt.get("status") == "watching":
+            alt["status"], alt["ended_at"] = status, iso(ms)
+            if reason:
+                alt["end_reason"] = reason
 
     def close(status, ms, price):
         t["exit_price"] = sig(price)
@@ -221,18 +244,39 @@ def evaluate(t, candles, now_ms):
             if cancel_ms and s >= cancel_ms:
                 t["status"], t["closed_at"] = "cancelled", iso(cancel_ms)
                 ev.append({"type": "cancelled", "time": t["closed_at"], "reason": "expiry reached unfilled"})
+                end_alt("cancelled", cancel_ms, "idea expired unfilled")
                 lc = e
                 break
-            if l <= zhi and h >= zlo:
+            if l <= zhi and h >= zlo:  # the zone touch happens inside the candle, before its close: pullback first
                 fill = o if zlo <= o <= zhi else (zhi if o > zhi else zlo)
                 t.setdefault("planned_entry", t["entry"])
                 t.update(status="open", entry=sig(fill), filled_at=iso(s))
-                ev.append({"type": "filled", "price": t["entry"], "time": t["filled_at"], "zone": [zlo, zhi]})
+                if not t.get("parent_id"):
+                    t["entry_type"] = "pullback"
+                ev.append({"type": "filled", "price": t["entry"], "time": t["filled_at"], "zone": [zlo, zhi], "entry_type": "pullback"})
+                end_alt("void", s, "pullback entry filled first")
                 stop = t.get("current_stop", t["stop"])
                 if (l <= stop) if long_ else (h >= stop):
                     close("stopped", s, stop)
                     lc = e
                     break
+            elif (alt_live and e % HOUR == 0 and e > a_from and (a_exp is None or e <= a_exp)
+                  and ((a_lvl < c <= a_max) if long_ else (a_max <= c < a_lvl))):
+                # completed 1h close beyond the level, not too extended: breakdown / breakout fill at that close
+                t.setdefault("planned_entry", t["entry"])
+                t["planned_stop"] = t["stop"]
+                t["stop"] = float(alt["stop"])
+                t.pop("current_stop", None)
+                if alt.get("leverage") and alt["leverage"] != t.get("leverage"):
+                    t["planned_leverage"], t["leverage"] = t.get("leverage"), alt["leverage"]
+                if alt.get("conviction") and alt["conviction"] != t.get("conviction"):
+                    t["planned_conviction"], t["conviction"] = t.get("conviction"), alt["conviction"]
+                if alt.get("leverage_reason"):
+                    t["planned_leverage_reason"], t["leverage_reason"] = t.get("leverage_reason"), alt["leverage_reason"]
+                t.update(status="open", entry=sig(c), filled_at=iso(e), entry_type=alt["type"])
+                alt["status"], alt["filled_at"] = "filled", iso(e)
+                ev.append({"type": "filled", "price": t["entry"], "time": t["filled_at"], "entry_type": alt["type"],
+                           "level": a_lvl, "stop": t["stop"]})
             lc = e
             continue
         # open
@@ -267,6 +311,9 @@ def evaluate(t, candles, now_ms):
     if t["status"] == "pending" and cancel_ms and now_ms >= cancel_ms:
         t["status"], t["closed_at"] = "cancelled", iso(cancel_ms)
         ev.append({"type": "cancelled", "time": t["closed_at"], "reason": "expiry reached unfilled"})
+        end_alt("cancelled", cancel_ms, "idea expired unfilled")
+    if alt_live and alt.get("status") == "watching" and a_exp and now_ms >= a_exp and t["status"] == "pending":
+        end_alt("expired", a_exp)
     t["last_checked_ms"] = int(lc)
     t["last_checked"] = iso(lc)
     if candles:
@@ -455,6 +502,7 @@ def compute_stats(trades):
         warn.append(f"{len(active)} active ideas - max {SLATE_MAX}")
     for t in active:
         warn += plan_issues(t)
+        warn += alt_issues(t)
         if t.get("market") == "spot" or t.get("leverage") == 1:  # spot = 1x, long only
             if t.get("direction") != "long" or lev_of(t) != 1:
                 warn.append(f"{t['id']}: spot ideas must be long at leverage 1")
@@ -471,6 +519,70 @@ def compute_stats(trades):
         "note": "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).",
         "equity_curve": curve, "slate_warnings": warn,
     }
+
+
+ALT_TYPES = {"short": ("breakdown", "close_below"), "long": ("breakout", "close_above")}
+ALT_MIN_RR = 1.5
+
+
+def alt_rr(t, alt=None):
+    """Reward:risk to T1 from the WORST accepted fill (alt_entry.max_fill) with the alt stop. None if incomplete."""
+    a = alt or t.get("alt_entry") or {}
+    try:
+        f, stop, t1 = float(a["max_fill"]), float(a["stop"]), float(t["targets"][0])
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+    risk = abs(stop - f)
+    return round(abs(t1 - f) / risk, 2) if risk else None
+
+
+def alt_issues(t):
+    """Validation messages for a trade's alt_entry (breakdown/breakout). An invalid alt entry is never filled."""
+    a = t.get("alt_entry")
+    if not a or t.get("status") != "pending":
+        return []
+    tid, d = t["id"], t.get("direction")
+    typ, kind = ALT_TYPES.get(d, (None, None))
+    if a.get("type") != typ:
+        return [f"{tid}: alt_entry.type must be {typ} for a {d} idea"]
+    r = a.get("trigger_rule") or {}
+    out = []
+    if r.get("kind") != kind or r.get("tf", "1h") != "1h":
+        out.append(f"{tid}: alt_entry.trigger_rule must be {{tf:'1h', kind:'{kind}', level}}")
+    for k in ("trigger", "max_fill", "stop", "trend", "reasoning"):
+        if a.get(k) in (None, ""):
+            out.append(f"{tid}: alt_entry.{k} missing")
+    if out:
+        return out
+    try:
+        lvl, mf, stop = float(r["level"]), float(a["max_fill"]), float(a["stop"])
+        t1 = float(t["targets"][0])
+        z = t.get("entry_zone") or {}
+        zlo, zhi = float(z.get("low", t["entry"])), float(z.get("high", t["entry"]))
+    except (KeyError, IndexError, TypeError, ValueError):
+        return [f"{tid}: alt_entry levels must be numbers"]
+    sgn = 1 if d == "long" else -1  # orient so "beyond" = larger
+    if not sgn * lvl > sgn * (zhi if d == "long" else zlo):
+        out.append(f"{tid}: alt_entry level {lvl} must be beyond the entry zone on the trend side")
+    if not sgn * mf > sgn * lvl:
+        out.append(f"{tid}: alt_entry.max_fill {mf} must be beyond the level {lvl}")
+    if not sgn * stop < sgn * lvl:
+        out.append(f"{tid}: alt_entry.stop {stop} must be back on the other side of the level {lvl}")
+    if not sgn * t1 > sgn * mf:
+        out.append(f"{tid}: T1 {t1} must be beyond alt_entry.max_fill {mf}")
+    rr = alt_rr(t)
+    if rr is None or rr < ALT_MIN_RR:
+        out.append(f"{tid}: alt_entry R:R to T1 {rr} < {ALT_MIN_RR} from max_fill - don't offer it")
+    L = a.get("leverage") or lev_of(t)
+    if not (LEV_MIN <= L <= lev_of(t)):
+        out.append(f"{tid}: alt_entry.leverage {L}x must be 1x..the idea's {lev_of(t)}x (smaller or equal size)")
+    elif L == 1 and lev_of(t) != 1:
+        out.append(f"{tid}: alt_entry.leverage 1x means spot; a leveraged idea's alt entry needs >= 2x")
+    elif mf and abs(mf - stop) / mf * 100 * L > STOP_LOSS_CAP_PCT + 1:
+        out.append(f"{tid}: alt_entry stop loss from max_fill = {abs(mf - stop) / mf * 100 * L:.1f}% of margin at {L}x (cap ~{STOP_LOSS_CAP_PCT:.0f}%)")
+    if a.get("conviction") is not None and a["conviction"] not in CONVICTIONS:
+        out.append(f"{tid}: alt_entry.conviction must be one of {', '.join(CONVICTIONS)}")
+    return out
 
 
 def stop_loss_pct(t):
@@ -514,6 +626,9 @@ def lev_txt(lev):
 def describe(e, t, sym):
     lev = lev_of(t)
     k = e["type"]
+    if k == "filled" and e.get("entry_type") in ("breakdown", "breakout"):
+        return (f"{t['id']} {sym} {t['direction']} {lev_txt(lev)} FILLED at {e['price']} on a {e['entry_type']} "
+                f"(1h close {'below' if e['entry_type'] == 'breakdown' else 'above'} {e['level']}; stop {e['stop']})")
     if k == "filled":
         return f"{t['id']} {sym} {t['direction']} {lev_txt(lev)} FILLED at {e['price']} (zone {e['zone'][0]}–{e['zone'][1]})"
     if k.startswith("target"):
@@ -546,6 +661,11 @@ def run(lock_held=False, log_events=True):
             if p["status"] == "watching":
                 p["last_checked_ms"] = now_ms - now_ms % HOUR + HOUR
                 p["last_checked"] = iso(p["last_checked_ms"])
+        a = t.get("alt_entry")
+        if a and "status" not in a:  # alt entries only count 1h closes after the tracker first saw them
+            a["status"] = "watching" if t.get("status") == "pending" else "n/a"
+            a["active_from_ms"] = now_ms
+            a["active_from"] = iso(now_ms)
     planned = [t for t in tdoc["trades"] if (t.get("missed_plan") or {}).get("status") in LIVE_PLAN]
     planned_ids = {t["id"] for t in planned}
     active = [t for t in tdoc["trades"] if t.get("status") in ("pending", "open") or t["id"] in planned_ids]
@@ -598,6 +718,8 @@ def run(lock_held=False, log_events=True):
                 if t.get("status") == "pending":
                     t["status"], t["closed_at"], t["cancel_reason"] = "cancelled", iso(trig_ms), "superseded by missed-it plan"
                     t.pop("mark_price", None)
+                    if (t.get("alt_entry") or {}).get("status") == "watching":
+                        t["alt_entry"].update(status="cancelled", ended_at=iso(trig_ms), end_reason="superseded by missed-it plan")
                     pev.append({"type": "cancelled", "time": iso(trig_ms), "reason": "superseded by its missed-it plan"})
                 if t.get("status") in ("pending", "open"):  # main filled in the trigger hour after all: keep it, void the plan
                     plan["status"], plan["ended_at"] = "void", iso(trig_ms); plan["void_reason"] = "main idea filled"

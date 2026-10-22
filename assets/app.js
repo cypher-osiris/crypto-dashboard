@@ -359,6 +359,19 @@
     mpUser.add(b.dataset.mp);
   }, true);
 
+  /* ---------- breakdown / breakout entry (trade.alt_entry): a second way into the same idea ---------- */
+  const altLive = (t) => t.status === "pending" && t.alt_entry && (t.alt_entry.status || "watching") === "watching";
+  function altLine(t) {
+    const a = t.alt_entry, et = t.entry_type;
+    if (t.status !== "pending" && (et === "breakdown" || et === "breakout") && a) {
+      return `<p class="alt-entry">Filled on a ${esc(et)}: 1h close ${et === "breakdown" ? "below" : "above"} <b class="mono">${num(a.trigger_rule.level)}</b></p>`;
+    }
+    if (!altLive(t) || !a.trigger_rule) return "";
+    const below = a.type === "breakdown", L = +a.leverage || lev(t);
+    return `<p class="alt-entry" title="${esc(a.reasoning || a.trigger || "")}">Or on a 1h close ${below ? "below" : "above"} <b class="mono">${num(a.trigger_rule.level)}</b>
+      <span class="muted">· fills to ${num(a.max_fill)} · stop ${num(a.stop)} · ${levTxt(L)}${L < lev(t) ? ", smaller size" : ""}</span></p>`;
+  }
+
   function countdown(iso) {
     const ms = Date.parse(iso) - Date.now();
     if (!(ms > 0)) return "expired";
@@ -411,6 +424,7 @@
         ${tg}
         <div class="pnl-cell"><small>${closed ? "Result" : t.status === "open" ? "Unrealized P&L" : "If filled now"}</small><b class="mono" data-upnl>${closed && t.pnl_pct != null ? pct(t.pnl_pct) : "—"}</b></div>
       </div>
+      ${altLine(t)}
       ${t.parent_id ? `<p class="mp-linked">↯ Missed-it plan of <b class="mono">${esc(t.parent_id)}</b>${t.plan_type ? ` (${esc(t.plan_type)})` : ""}${t.trigger ? `: ${esc(t.trigger)}` : ""}${t.size_note ? `. ${esc(t.size_note)}` : ""}</p>` : ""}
       ${closed ? "" : missedBlock(t, a.price)}
       ${t.leverage_note ? `<p class="meta">${esc(t.leverage_note)}</p>` : ""}
@@ -427,6 +441,10 @@
       updateMissed(el, t, price);
       if (t.status === "pending") {
         const z = zoneDistance(t, price);
+        if (altLive(t) && z.cls === "missed") { // past the missed-it limit, but the breakdown/breakout entry is still live
+          const a = t.alt_entry, below = a.type === "breakdown";
+          z.txt = z.txt.replace(/: wait for the zone, don't chase$/, `: wait for the zone or a 1h close ${below ? "below" : "above"} ${num(a.trigger_rule.level)}`);
+        }
         dist.className = "slate-dist " + z.cls;
         dist.textContent = z.txt;
         // hypothetical P&L is meaningless before a fill: show R:R from the zone midpoint instead

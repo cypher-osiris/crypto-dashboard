@@ -202,6 +202,21 @@
     } else if (p && p.type === "none") h += `<p><b>Plan B:</b> no good chase. ${esc(p.reasoning || "")}</p>`;
     return h;
   }
+  // breakdown / breakout entry (trade.alt_entry): one short line on the card, details under Read more
+  function altLine(t) {
+    const a = t.alt_entry, et = t.entry_type;
+    if (!a || !a.trigger_rule) return "";
+    const below = a.type === "breakdown", lvl = num(a.trigger_rule.level);
+    if (t.status !== "pending") return et === a.type ? `<p class="pv-linked pv-alt">Filled on a ${esc(et)}: 1h close ${below ? "below" : "above"} <span class="mono">${lvl}</span></p>` : "";
+    if ((a.status || "watching") !== "watching") return "";
+    const L = +a.leverage || lev(t);
+    return `<p class="pv-linked pv-alt" title="${esc(a.reasoning || a.trigger || "")}">Or on a 1h close ${below ? "below" : "above"} <b class="mono">${lvl}</b> · stop <span class="mono">${num(a.stop)}</span> · ${L === 1 ? "spot" : L + "x"}${L < lev(t) ? ", smaller size" : ""}</p>`;
+  }
+  function altHtml(t) {
+    const a = t.alt_entry; if (!a || !a.trigger_rule) return "";
+    return `<p><b>${esc(cap(a.type))} entry${a.status ? ` · ${esc(a.status)}` : ""}:</b> ${esc(a.trigger || "")}</p>
+      <p class="mono pv-mp">fills to ${num(a.max_fill)} · stop ${num(a.stop)} · ${(+a.leverage || lev(t)) === 1 ? "spot" : (+a.leverage || lev(t)) + "x"}${a.conviction ? ` · ${esc(a.conviction)} conviction` : ""}</p>${a.reasoning ? `<p>${esc(a.reasoning)}</p>` : ""}`;
+  }
   // "5x · High conviction" (leverage is picked per idea, 1x-10x, by conviction; 1x = spot)
   function levBadge(t) {
     const L = lev(t), c = String(t.conviction || "").toLowerCase();
@@ -227,10 +242,11 @@
       <p class="pv-thesis">${esc(cap(an.bias || (t.trigger || "")))}</p>
       ${ladder(t, a.price)}
       ${rrBar(t)}
+      ${altLine(t)}
       ${t.parent_id ? `<p class="pv-linked">Follow-up of ${esc(t.parent_id)}${t.trigger ? `: ${esc(t.trigger)}` : ""}</p>` : ""}
       <details class="why"><summary>Read more: reasoning &amp; "missed it?"</summary>
         ${t.leverage_reason ? `<p class="pv-levwhy"><b>Why ${L === 1 ? "spot (1x)" : L + "x"}${t.conviction ? ` · ${esc(cap(t.conviction))} conviction` : ""}:</b> ${esc(t.leverage_reason)}</p>` : ""}
-        <p>${esc(t.reasoning || "")}</p>${missedHtml(t)}${t.size_note ? `<p>${esc(t.size_note)}</p>` : ""}${t.leverage_note ? `<p class="muted">${esc(t.leverage_note)}</p>` : ""}
+        <p>${esc(t.reasoning || "")}</p>${altHtml(t)}${missedHtml(t)}${t.size_note ? `<p>${esc(t.size_note)}</p>` : ""}${t.leverage_note ? `<p class="muted">${esc(t.leverage_note)}</p>` : ""}
       </details>
       <div class="pv-card-links">${D.pages.has("trades") ? `<a class="pv-more-link" href="${ROOT}trades/${encodeURIComponent(t.id)}/">Trade ${esc(t.id)} page ${ICON.arrow}</a>` : ""}${page}</div>
     </article>`;

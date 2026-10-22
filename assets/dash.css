@@ -127,6 +127,7 @@
 .pv-rr-txt small{color:var(--muted);font-weight:500;margin-left:2px}
 .pv-rr>small{font-size:.7rem}
 .pv-linked{margin:0;font-size:.78rem;color:var(--muted)}
+.pv-alt b{color:var(--amber)}
 .pv-trade details.why{border-top:1px solid var(--line);padding-top:8px;font-size:.85rem;line-height:1.55;color:#cbd5e1}
 .pv-trade details.why summary,.pv-an-full summary,.pv-fold summary{cursor:pointer;color:var(--cyan);font-weight:600;font-size:.84rem}
 .pv-mp{font-size:.78rem;color:var(--muted)}

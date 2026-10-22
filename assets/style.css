@@ -471,6 +471,8 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .mplan.none{border-color:var(--line);background:rgba(255,255,255,.02)}
 .mplan.none .mp-head{color:var(--muted)}
 .mp-linked{font-size:.8rem;color:#fde68a;margin:8px 0 0}
+.alt-entry{font-size:.8rem;color:var(--text);margin:8px 0 0}
+.alt-entry b{color:var(--amber)}
 @media (prefers-reduced-motion:reduce){ .mplan,.mplan>summary::after{transition:none} }
 
 /* ---------- coin pages (/xdc/ etc., scripts/build_pages.py) + links to them ---------- */

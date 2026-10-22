@@ -44,6 +44,7 @@ Event templates (fill only from the facts JSON; these are **not** current data):
 - **Target hit:** "T1 on $SYM at {price} 🎯 Half off, stop to breakeven. The rest rides for {T2}. Paper trades, NFA"
 - **Stopped:** "Stopped out of $SYM at {price}. {one honest sentence}. {pnl}% on margin. Next. Paper trades, NFA"
 - **Cancelled/expired:** "Never got my $SYM price, so the idea expired. No fill, no loss, no regrets. Paper trades, NFA"
+- **Breakdown/breakout fill:** "No bounce on $SYM, so the breakdown entry took it: 1h close under {level}. Short at {price}, {lev}x, smaller size. Stop {stop}. Paper trades, NFA" (breakout: mirrored; from `slate[].alt_entry` / the `filled` event's `entry_type`)
 - **Missed-it plan triggered:** "Missed my $SYM dip, so the backup plan ran: {trigger in plain words} held. In at {price}, {lev}x{, half size}. Stop {stop}. Paper trades, NFA"
 - **Missed-it plan invalidated/expired:** "The $SYM backup plan is off: {what happened}. No trade is a fine outcome. Paper trades, NFA"
 
