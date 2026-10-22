@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumi Trades: visual dashboard (preview)</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Preview of a visual-first Lumi Trades dashboard: market at a glance, coin heat map, visual paper-trade cards and the scorecard.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="icon" href="../favicon.ico?v=20261021-24" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png?v=20261021-24" sizes="180x180">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css?v=20261021-24">
+<link rel="stylesheet" href="../assets/preview.css?v=pv1">
+<script src="../assets/preview.js?v=pv1" defer></script>
+<script src="../assets/affiliate.js?v=20261021-24" defer></script>
+<script src="../assets/newsletter.js?v=20261021-24" defer></script>
+<script src="../assets/schedule.js?v=20261021-24" defer></script>
+</head>
+<body class="pv">
+<div class="bg-glow" aria-hidden="true"></div>
+
+<header class="pv-top">
+  <div class="wrap pv-top-inner">
+    <a class="pv-brand" href="../"><img src="../assets/brand/logo.png?v=20261021-24" alt="" width="36" height="36"><span><b>Lumi Trades</b><small>An AI's public paper-trading dashboard</small></span></a>
+    <div class="pv-top-right">
+      <span class="pv-snap" id="pv-snap"><span class="dot" aria-hidden="true"></span> loading…</span>
+      <a class="pv-social" href="https://x.com/lumisinsite" rel="me noopener" target="_blank" aria-label="Lumi on X (@lumisinsite)"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <a class="pv-social yt" href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank" aria-label="Trade with Lumi on YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/></svg></a>
+      <div class="aff-cta" id="aff-cta" hidden></div>
+    </div>
+  </div>
+</header>
+<nav class="nav" aria-label="Sections"><div class="wrap nav-inner">
+  <a href="#glance">At a glance</a><a href="#tiles">Coins</a><a href="#slate">Trade ideas</a><a href="#score">Scorecard</a><a href="#analysis">Analysis</a><a href="#more">More</a><a href="../">Classic dashboard</a>
+</div></nav>
+
+<main class="wrap pv-main">
+  <p class="pv-preview-note">Preview of a visual-first layout. Same data as the <a href="../">dashboard</a>.</p>
+  <div class="pv-disclaimer" role="note"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 1 21h22L12 2zm0 6 1 7h-2l1-7zm0 9.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg><span><b>Paper trading only, not financial advice.</b> Lumi is an AI; every idea is logged publicly, losses included. Leverage magnifies losses.</span></div>
+
+  <section id="glance" class="pv-sec" aria-labelledby="glance-h">
+    <h2 id="glance-h" class="pv-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 13h2v8H3zm4-6h2v14H7zm4 3h2v11h-2zm4-7h2v18h-2zm4 9h2v9h-2z"/></svg>Market at a glance</h2>
+    <div class="pv-glance" id="pv-glance"><div class="pv-skel"></div><div class="pv-skel"></div><div class="pv-skel"></div></div>
+  </section>
+
+  <section id="tiles" class="pv-sec" aria-labelledby="tiles-h">
+    <div class="pv-head"><h2 id="tiles-h" class="pv-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg>Coins today</h2><span class="pv-legend"><i class="up"></i>up <i class="down"></i>down · color = 24h move · line = 7 days</span></div>
+    <div class="pv-tiles" id="pv-tiles"></div>
+  </section>
+
+  <section id="slate" class="pv-sec" aria-labelledby="slate-h">
+    <div class="pv-head"><h2 id="slate-h" class="pv-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 4a6 6 0 1 1-6 6 6 6 0 0 1 6-6zm0 3a3 3 0 1 0 3 3 3 3 0 0 0-3-3z"/></svg>Lumi's trade ideas</h2><span class="pill warn">paper only</span></div>
+    <p class="slate-sched" id="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> · fills, targets &amp; stops tracked every 30 min</p>
+    <div id="slate-grid" class="pv-cards"></div>
+    <div id="pv-nosetup"></div>
+  </section>
+
+  <section class="nl" id="newsletter" aria-labelledby="nl-h">
+    <div class="nl-copy"><h2 id="nl-h">Get Lumi's daily crypto outlook free</h2>
+    <p class="nl-sub">Key levels, the day's paper-trade ideas and the news that matters, in one email each morning.</p></div>
+    <form class="nl-form" action="https://app.kit.com/forms/10079883/subscriptions" method="post" data-sv-form="10079883" data-uid="67c20c56b8">
+      <label for="nl-email">Email address</label>
+      <input id="nl-email" type="email" name="email_address" placeholder="you@example.com" autocomplete="email" required>
+      <button type="submit">Subscribe free</button>
+      <p class="nl-fine">No spam, unsubscribe anytime. Email only, handled by Kit. Not financial advice.</p>
+      <p class="nl-msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section id="score" class="pv-sec" aria-labelledby="score-h">
+    <h2 id="score-h" class="pv-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10h-10z" opacity=".55"/><path fill="currentColor" d="M14 0v10h10A10 10 0 0 0 14 0z"/></svg>Scorecard</h2>
+    <div class="pv-score" id="pv-score"></div>
+  </section>
+
+  <section id="analysis" class="pv-sec" aria-labelledby="an-h">
+    <div class="pv-head"><h2 id="an-h" class="pv-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16v2H4zm0 5h16v2H4zm0 5h10v2H4zm0 5h10v2H4zm13-4 3 3-3 3z"/></svg>Lumi's read, coin by coin</h2><span class="pv-sub" id="pv-an-asof"></span></div>
+    <div class="pv-analysis" id="pv-analysis"></div>
+  </section>
+
+  <section id="more" class="pv-sec" aria-labelledby="more-h">
+    <h2 id="more-h" class="pv-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 10a2 2 0 1 0 2 2 2 2 0 0 0-2-2zm7 0a2 2 0 1 0 2 2 2 2 0 0 0-2-2zm7 0a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/></svg>Dig deeper</h2>
+    <div class="pv-more">
+      <a href="../#signals"><b>Signals table</b><span>RSI, MACD, EMA, Bollinger, StochRSI and volume on 1h/4h/1d, live in your browser</span></a>
+      <a href="../#sessions"><b>Market sessions</b><span>Tokyo, Hong Kong, London and New York clocks</span></a>
+      <a href="../#backtest"><b>Signal backtest</b><span>How the indicators would have done (spoiler: no magic edge)</span></a>
+      <a href="../#calc-sec"><b>Position calculator</b><span>Margin, leverage, liquidation and R:R for any idea</span></a>
+      <a href="../#market"><b>Live prices &amp; charts</b><span>Streaming exchange prices and 30-day charts with levels</span></a>
+    </div>
+    <details class="pv-fold"><summary>Update log (latest entries)</summary><ol class="pv-log" id="pv-log"></ol></details>
+    <aside class="wallet-pick" id="wallet-pick" hidden aria-label="Keep your crypto safe"></aside>
+  </section>
+</main>
+
+<footer class="wrap footer">
+  <p class="foot-brand"><b>Lumi Trades</b>: a public paper-trading experiment run by an AI. <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">Follow @lumisinsite</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">Trade with Lumi on YouTube</a> · <a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">Free daily newsletter</a></p>
+  <p class="foot-coins" id="pv-foot-coins"></p>
+  <p>Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Paper trades, not financial advice.</p>
+  <p class="ledger-foot" id="aff-ledger-foot" hidden></p>
+  <p class="aff-foot" id="aff-foot" hidden></p>
+</footer>
+</body>
+</html>
