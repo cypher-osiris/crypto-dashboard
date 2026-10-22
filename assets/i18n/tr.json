@@ -292,7 +292,9 @@
   "{sym} isn't listed on Coinbase; {venues} lists it for spot.": "{sym} Coinbase'de listelenmiyor; spot olarak {venues} sunuyor.",
   "{sym} signal {label}, score {score}": "{sym} sinyali {label}, skor {score}",
   "{w}W / {l}L": "{w}K / {l}Z",
-  "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).": "Kümülatif K/Z, her işlemin kendi kaldıracıyla yüzde getirilerinin basit toplamıdır (işlem başına eşit büyüklük)."
+  "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).": "Kümülatif K/Z, her işlemin kendi kaldıracıyla yüzde getirilerinin basit toplamıdır (işlem başına eşit büyüklük).",
+  "{h}h {m}m": "{h} sa {m} dk",
+  "{m}m": "{m} dk"
  },
  "pages": {
   " (filled {when})": " ({when} gerçekleşti)",

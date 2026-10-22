@@ -33,7 +33,7 @@
     // next review: today's remaining slots, else tomorrow 6 AM CT (tomorrow = CT date of now + 24h, safe across DST)
     let next = today.find((d) => d > now);
     if (!next) { const t = parts(new Date(now.getTime() + 864e5), TZ); next = zoned(+t.year, +t.month, +t.day, HOURS[0]); }
-    const mins = Math.round((next - now) / 6e4), inTxt = mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`;
+    const mins = Math.round((next - now) / 6e4), inTxt = mins >= 60 ? tr("{h}h {m}m", { h: Math.floor(mins / 60), m: mins % 60 }) : tr("{m}m", { m: mins });
     const sameDay = parts(next, TZ).day === c.day;
     const nextTxt = `${clock(next, TZ)} CT${sameDay ? "" : " " + tr("tomorrow")}` + (differs ? " " + tr("({t} your time)", { t: clock(next, local) }) : "") + tr(", in {d}", { d: inTxt });
     els.forEach((el) => {

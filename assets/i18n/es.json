@@ -292,7 +292,9 @@
   "{sym} isn't listed on Coinbase; {venues} lists it for spot.": "{sym} no cotiza en Coinbase; {venues} lo ofrece al contado.",
   "{sym} signal {label}, score {score}": "Señal de {sym}: {label}, puntuación {score}",
   "{w}W / {l}L": "{w} G / {l} P",
-  "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).": "El P&L acumulado es la suma simple de los rendimientos porcentuales de cada operación con su apalancamiento (mismo tamaño por operación)."
+  "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).": "El P&L acumulado es la suma simple de los rendimientos porcentuales de cada operación con su apalancamiento (mismo tamaño por operación).",
+  "{h}h {m}m": "{h} h {m} min",
+  "{m}m": "{m} min"
  },
  "pages": {
   " (filled {when})": " (ejecutada {when})",
