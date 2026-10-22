@@ -2,9 +2,9 @@
 """Static, search-friendly coin pages generated from data/*.json (stdlib only, ~0.1 s).
 
   python3 scripts/build_pages.py            # writes <slug>/index.html for every coin in PAGES, sitemap.xml,
-                                            # and the generated coin-page link blocks in index.html
+                                            # and the generated coin-page link blocks in index.html + classic/index.html
   python3 scripts/build_pages.py --quiet    # prints only the changed paths (one per line)
-  python3 scripts/build_pages.py --paths    # all generated paths + index.html if it changed (used by publish.sh)
+  python3 scripts/build_pages.py --paths    # all generated paths + index.html / classic/index.html if changed (used by publish.sh)
 
 Each page uses that coin's own data: price/changes (prices.json), levels, bias, outlook, projection, catalysts and
 sources (analysis.json), signals (signals.json), the slate idea + missed-it plan and closed ideas (trades.json), and
@@ -160,11 +160,16 @@ def venues(cid, sym, coin_cfg, aff):
     return us, intl, cb, kp, up
 
 
+def lev_txt(lev):
+    return "spot (1x)" if lev == 1 else f"{lev}x"
+
+
 def trade_html(t, sym, price):
     if not t:
         return ""
     spot = t.get("leverage") == 1 or t.get("market") == "spot"
     side = ("LONG" if t["direction"] == "long" else "SHORT") + (" SPOT (1x)" if spot else f' {t.get("leverage", 1)}x')
+    conv = f' <span class="conv-badge c-{E(t["conviction"])}">{E(str(t["conviction"]).capitalize())} conviction</span>' if t.get("conviction") else ""
     z = t.get("entry_zone") or {}
     rows = []
     if t["status"] == "open":
@@ -183,9 +188,12 @@ def trade_html(t, sym, price):
         rows.append(("Time stop", ctime(t["expires"])))
     grid = "".join(f"<div><small>{E(k)}</small><b class=\"mono\">{E(v)}</b></div>" for k, v in rows)
     tf = f' <span class="tf-badge">{E(str(t["timeframe"]).capitalize())}</span>' if t.get("timeframe") else ""
-    out = [f'<div class="cp-trade"><p class="cp-trade-head"><span class="side {E(t["direction"])}">{E(side)}</span>{tf} '
+    out = [f'<div class="cp-trade"><p class="cp-trade-head"><span class="side {E(t["direction"])}">{E(side)}</span>{conv}{tf} '
            f'<span class="status s-{E(t["status"])}">{E(t["status"])}</span> <span class="muted mono">{E(t["id"])}</span>'
            f' <span class="muted">· posted {E(ctime(t.get("opened_at")))}</span></p><div class="cp-grid">{grid}</div>']
+    if t.get("leverage_reason"):
+        out.append(f'<p class="meta cp-lev-reason"><b>Why {E(side.split(" ", 1)[1].lower() if " " in side else side)}:</b> {E(t["leverage_reason"])} '
+                   f'Leverage is set per idea (1x–10x) by conviction, keeping the loss at the stop to about 25% of margin or less.</p>')
     if t.get("parent_id"):
         out.append(f'<p class="meta">This is the “missed it” follow-up plan of idea {E(t["parent_id"])}'
                    f'{" (" + E(t.get("plan_type")) + ")" if t.get("plan_type") else ""}'
@@ -198,7 +206,7 @@ def trade_html(t, sym, price):
         if mp and mp.get("type") != "none":
             mz = mp.get("entry_zone") or {}
             out.append(f'<p><b>Plan B ({E(mp.get("type"))}):</b> {E(mp.get("trigger"))}. Zone {lvl(mz.get("low"))}–{lvl(mz.get("high"))}, '
-                       f'stop {lvl(mp.get("stop"))}, target {lvl(mp.get("target"))}, {E(mp.get("leverage", 3))}x'
+                       f'stop {lvl(mp.get("stop"))}, target {lvl(mp.get("target"))}, {E(lev_txt(mp.get("leverage") or t.get("leverage") or 1))}'
                        f'{". " + E(mp["size_note"]) if mp.get("size_note") else ""}.</p>')
             if mp.get("reasoning"):
                 out.append(f'<p class="meta">{E(mp["reasoning"])}</p>')
@@ -414,7 +422,7 @@ def build():
 <div class="bg-glow" aria-hidden="true"></div>
 <header class="cp-top"><div class="wrap cp-top-inner">
   <a class="cp-brand" href="../"><img src="../assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>
-  <a class="cp-dash" href="../#trades">Live dashboard &amp; trade slate →</a>
+  <a class="cp-dash" href="../#slate">Dashboard &amp; trade ideas →</a>
 </div></header>
 <nav class="nav" aria-label="Coin pages"><div class="wrap nav-inner"><a href="../">Dashboard</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>
 <main class="wrap cp-main">
@@ -426,7 +434,7 @@ def build():
 <section class="card cp-sec" id="price"><h2>{E(sym)} price today</h2>
 <div class="cp-stats">{stat_html}</div>
 {chart_svg(a, an, t)}
-<p class="meta">Prices: CoinGecko snapshot, {E(price_time)}. The <a href="../#coin-{E(cid)}">dashboard</a> streams live prices.</p></section>
+<p class="meta">Prices: CoinGecko snapshot, {E(price_time)}. The <a href="../classic/#coin-{E(cid)}">full detail view</a> streams live prices.</p></section>
 
 <section class="card cp-sec" id="levels"><h2>{E(sym)} support &amp; resistance levels to watch</h2>
 {lv_html}
@@ -442,7 +450,7 @@ def build():
 {SCHEDULE_NOTE}
 {trade_sec}
 {hist_html}
-<p class="meta">Every idea is tracked against 5-minute candles and logged, losses included. See the <a href="../#track">track record</a>.</p></section>
+<p class="meta">Every idea is tracked against 5-minute candles and logged, losses included. See the <a href="../#score">scorecard</a>.</p></section>
 
 {cat_html}
 {buy_html}
@@ -451,7 +459,7 @@ def build():
 {NEWSLETTER_BLOCK}
 
 <section class="card cp-sec" id="more"><h2>More coin analysis</h2><div class="cp-others">{others}</div>
-<p><a href="../">← Back to the Lumi Trades dashboard</a> (live prices, signals, the full trade slate and the backtest).</p></section>
+<p><a href="../">← Back to the Lumi Trades dashboard</a> (market at a glance, signals, the trade slate and the scorecard; the <a href="../classic/">full detail view</a> has live prices and the backtest).</p></section>
 </main>
 <footer class="wrap footer">
   <p class="foot-brand"><b>Lumi Trades</b>: a public paper-trading experiment run by an AI. <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">Follow @lumisinsite</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">Trade with Lumi on YouTube</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Free daily newsletter</a></p>
@@ -469,17 +477,23 @@ def build():
     sm += [f'  <url><loc>{SITE}{s}/</loc><lastmod>{gen_date}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>' for _, s in pages]
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
 
-    # ---- link blocks in index.html (only rewritten when the page list changes) ----
-    links = " ".join(f'<a href="{s}/" data-coin="{c}">{E(sy)}</a>' for c, s, sy in nav_items)
-    block = f'{BEGIN}\n<div class="wrap coin-pages" id="coin-pages"><span>Coin analysis &amp; how to buy:</span> {links}</div>\n{END}'
-    fblock = f'{FBEGIN}\n  <p class="foot-coins">Coin pages: ' + " · ".join(
-        f'<a href="{s}/">{E(sy)} price analysis</a>' for c, s, sy in nav_items) + f'</p>\n  {FEND}'
-    new = index
-    for b, e, blk in ((BEGIN, END, block), (FBEGIN, FEND, fblock)):
-        if b in new and e in new:
-            new = new[:new.index(b)] + blk + new[new.index(e) + len(e):]
-    if new != index:
-        write("index.html", new)
+    # ---- link blocks in the main page (index.html, root) and the classic view (classic/index.html, one level down) ----
+    for path, pre in (("index.html", ""), ("classic/index.html", "../")):
+        fp_ = os.path.join(ROOT, path)
+        if not os.path.exists(fp_):
+            continue
+        with open(fp_, encoding="utf-8") as f:
+            cur = f.read()
+        links = " ".join(f'<a href="{pre}{s}/" data-coin="{c}">{E(sy)}</a>' for c, s, sy in nav_items)
+        block = f'{BEGIN}\n<div class="wrap coin-pages" id="coin-pages"><span>Coin analysis &amp; how to buy:</span> {links}</div>\n{END}'
+        fblock = f'{FBEGIN}\n  <p class="foot-coins">Coin pages: ' + " · ".join(
+            f'<a href="{pre}{s}/">{E(sy)} price analysis</a>' for c, s, sy in nav_items) + f'</p>\n  {FEND}'
+        new = cur
+        for b, e, blk in ((BEGIN, END, block), (FBEGIN, FEND, fblock)):
+            if b in new and e in new:
+                new = new[:new.index(b)] + blk + new[new.index(e) + len(e):]
+        if new != cur:
+            write(path, new)
     return changed
 
 

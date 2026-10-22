@@ -2,14 +2,26 @@
 
 Live site: https://lumitrades.io/ (custom domain; the old https://cypher-osiris.github.io/crypto-dashboard/ redirects here) · X: [@lumisinsite](https://x.com/lumisinsite) · YouTube: [Trade with Lumi](https://www.youtube.com/@lumitradesio). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
 
-Static site (plain HTML/CSS/JS, no build step) for GitHub Pages. Everything on the page is rendered by
-`assets/app.js` from the JSON files in `data/`. Times display in US Central (America/Chicago).
+Static site (plain HTML/CSS/JS, no build step) for GitHub Pages, rendered in the browser from the JSON files in `data/`.
+Times display in US Central (America/Chicago). Two dashboard views share the same data (since Oct 22, 2026):
+- **`/` (index.html): the visual-first main dashboard**, rendered by `assets/dash.js` + `assets/dash.css` with small inline
+  SVG/HTML charts (no chart library): market at a glance (BTC sparkline, mood gauge, next events), coin heat-map tiles,
+  visual trade cards (price ladder, R:R bar, leverage/conviction badge, Read more), buy/sell signals per coin (overall read,
+  score meter, 1h/4h/1d pills, per-indicator chips, one-liner, sortable), newsletter, scorecard (outcome donut, cumulative P&L
+  step chart, open-idea bars, full history table), collapsed per-coin analysis (summary + bull/base/bear bar) and "Dig deeper".
+  It re-fetches the JSON every 5 min (snapshot data; no websockets).
+- **`/classic/` (classic/index.html): "Full detail view"**, the original dashboard (`assets/app.js` etc., live streaming prices,
+  Chart.js charts, full signals table, sessions, backtest, calculator, log). `noindex, follow`, not in the sitemap.
+  `<html data-root="../">` tells app.js/backtest.js where `data/` is (`""` at the root).
+- `/preview/` only redirects to `/` (it hosted the redesign before it was promoted).
 
 ```
-index.html            page shell (Chart.js 4 + chartjs-plugin-annotation 3 from jsDelivr; Inter + JetBrains Mono from Google Fonts)
+index.html            main (visual) dashboard shell: SEO head (canonical, og/twitter, JSON-LD), loads dash.js/dash.css + affiliate/newsletter/schedule
+classic/index.html    "Full detail view" (classic dashboard; Chart.js 4 + annotation plugin from jsDelivr), noindex
+assets/dash.js|.css   renders the main dashboard (inline SVG/HTML charts)
 assets/style.css      dark, mobile-friendly theme (shared by the coin pages); background = navy base on html + fixed .bg-glow aurora,
                       body::before dot grid (masked fade) and body::after SVG noise, all static (no background-attachment:fixed)
-assets/app.js         renders all sections from data/*.json (ticker, cards, charts, trades, log)
+assets/app.js         classic view: renders all sections from data/*.json (ticker, cards, charts, trades, log)
 assets/live.js        live prices in the browser: Coinbase websocket (coins with a coinbase pair), Kraken websocket (ZBCN),
                       CoinGecko 60s polling fallback; auto-reconnect + watchdog; LIVE/DELAYED/SNAPSHOT indicator
 assets/signals.js     in-browser signals (Coinbase/Kraken candles, CoinGecko fallback), same math as scripts/signals.py
@@ -77,13 +89,14 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
    real read on the first full review. Keep `coins.bitcoin` consistent with `backdrop`.
 3. Update the **slate** (do it while holding the lock so the 30-min tracker can't interleave, e.g.
    `scripts/locked.sh python3 my_edit.py`, or keep edits quick and run `scripts/publish.sh` right after) in `data/trades.json` (rules: max one active pending/open idea per coin, max **6** total (`slate_max` in `data/coins.json`), long or
-   short, "no setup" allowed; new trades are **3x**). Append new trades to `trades` and point `slate.coins[<coin id>]`
+   short, "no setup" allowed; each new trade carries its own **`leverage` (1x-10x), `conviction` and `leverage_reason`**, see "Leverage & conviction" below). Append new trades to `trades` and point `slate.coins[<coin id>]`
    at them; for a coin without a setup use `{"trade_id": null, "note": "why not"}`. Bump `slate.as_of`. Never edit
    generated fields of closed trades. `current_idea_id` is kept for backward compatibility. Review all 13 coins
    but only post real setups. The 7 majors start as "not reviewed yet" no-setup entries (Oct 21), and the page lists
    no-setup coins compactly under the active cards. New trade template:
    ```json
-   {"id":"T005","coin":"stellar","direction":"long","leverage":3,
+   {"id":"T005","coin":"stellar","direction":"long","leverage":4,"conviction":"medium",
+    "leverage_reason":"1h/4h Buy, 1d Neutral; clean 0.179 shelf; BTC backdrop supportive; stop 3.3% from worst fill -> 13% of margin at 4x",
     "entry":0.18,"entry_zone":{"low":0.179,"high":0.181},"stop":0.174,"targets":[0.19,0.198],
     "opened_at":"2026-10-22T08:00:00-05:00","expiry":"2026-10-24T08:00:00-05:00","status":"pending",
     "missed_it":{"max_entry":0.183,"note":"furthest price still worth entering, and when to skip"},
@@ -133,7 +146,25 @@ Single engine used by the 30-min job and by `update_prices.py`. For each pending
   The page shows `LONG SPOT` instead of `1x`, the calculator shows no liquidation for a 1x long, log lines say "spot", and
   `track_trades.py` warns (slate_warnings) if a spot idea is short or leveraged. Missed-it linked trades inherit `market`,
   `timeframe` and `expires`. Use `"timeframe": "position"` for weeks-to-months spot holds (XDC T006 is the first).
-- P&L % = price move × leverage, on margin, no fees/funding. Leverage: T001 was 5x; from Oct 21, 2026 new ideas are 3x.
+- P&L % = price move × **each trade's own** `leverage`, on margin, no fees/funding. History: T001 was 5x; Oct 21, 2026 ideas
+  were a fixed 3x; from Oct 22, 2026 leverage is chosen per idea (below). Past trades keep their recorded leverage and results.
+
+### Leverage & conviction (per idea, from Oct 22, 2026)
+Every new idea sets `leverage` (integer **1-10**), `conviction` (`low` / `medium` / `high`) and `leverage_reason` (one line,
+shown on the slate card badge "5x · High conviction" and under Read more / Reasoning).
+1. **Conviction** from what lines up: timeframe agreement (1h/4h/1d signal reads with the trade direction), indicator
+   agreement (RSI/MACD/EMA stack), level quality (repeated touches, clean invalidation), catalysts (dated events can cut
+   either way), BTC backdrop (with or against the idea) and volatility (thin small caps and +10% days count against).
+   Roughly: most factors aligned and BTC supportive = **high**; mixed but a well-defined level = **medium**; counter-trend,
+   against BTC, or event risk inside the window = **low**.
+2. **Leverage band:** low 1-2x, medium 3-5x, high 6-10x.
+3. **Hard cap:** the leveraged loss at the stop from the WORST fill (long: zone.high, short: zone.low; open: the fill)
+   must be **<= ~25% of margin**: `leverage <= 25 / stop_distance_%`. Take the lower of the band and the cap.
+4. **XDC stays spot 1x** (and any `"market":"spot"` idea), long only.
+`track_trades.py` adds a `slate_warnings` entry if a pending idea lacks `conviction`/`leverage_reason`, has leverage outside
+1-10, or would lose more than ~26% of margin at its stop. Missed-it linked trades take the plan's `leverage` (else the
+parent's) and inherit `conviction`. Open/closed trades are never re-levered. The backtest (scripts/backtest.py) still uses
+a fixed 3x because it is a uniform historical test of the indicator rules, not Lumi's discretionary sizing.
 - Every run sets `last_checked` (ISO) / `last_checked_ms` per trade and `tracked_utc`, so it is **idempotent**: a
   re-run never double-counts a candle. `data/log.json` gets an entry **only when an event happens**.
 - Prints `{"checked_utc","events":[...],"publish":bool,"active":[...],"sources","errors","slate_warnings"}`.
@@ -149,7 +180,7 @@ Backward compatible: trades without it work as before; `missed_it` (`max_entry` 
 | `trigger` | the condition in words, e.g. "1h close above 1.42" or "retest of 1.38–1.385 holds" |
 | `trigger_rule` | machine version: `{"tf":"1h","kind":"retest_hold"}` (uses `entry_zone`: long = 1h low <= zone.high and close >= zone.low; short mirrored), `{"tf":"1h","kind":"close_above","level":x}`, `{"tf":"1h","kind":"close_below","level":x}`. Pullback defaults to retest_hold. Without a rule the plan is shown but not auto-tracked (warning). |
 | `entry_zone` `{low,high}`, `stop`, `target` | the plan trade (one target) |
-| `leverage` | default 3; **2 for chase entries** |
+| `leverage` | default = the idea's leverage; set it by the same per-idea rule (cap ~25% of margin at the stop from the worst fill), usually a step lower for chase entries |
 | `size_note` | e.g. "half size: worse R:R" |
 | `reasoning` | the level-based rationale (and, for `none`, why no chase works) |
 | `expiry` | optional; default = the main idea's expiry |
@@ -317,12 +348,12 @@ Referral buttons are not in the HTML: `assets/affiliate.js` fills `#aff-coin` fo
 where listed, Kraken, Uphold, max 3, Uphold first for `uphold_first`; non-US: Bitunix spot) and `#aff-ledger` (all visitors).
 Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config.json` relative to its own URL.
 - **Regeneration:** `scripts/publish.sh` runs `python3 scripts/build_pages.py --paths` (under the lock, after the pull) whenever
-  a path under `data` is published, and adds every page + `sitemap.xml` (+ `index.html` if its generated link blocks changed) to
+  a path under `data` is published, and adds every page + `sitemap.xml` (+ `index.html` / `classic/index.html` if their generated link blocks changed) to
   the same commit. So the 4×-daily review (6 AM, 12 PM, 6 PM, 11 PM CT) and the 30-min job's event publishes refresh the pages automatically. `BUILD_PAGES=0`
   skips it; a build error only warns. Manual: `python3 scripts/build_pages.py` (only rewrites files whose content changed).
 - `sitemap.xml` is generated (dashboard + every page, `lastmod` = build date, UTC). Don't hand-edit it.
-- `index.html` has two generated blocks (`<!-- coin-pages:start -->` row under the nav, `<!-- coin-pages-foot:start -->` footer
-  links); app.js reads `#coin-pages a[data-coin]` to add "<SYM> analysis, levels & how to buy →" links to slate cards, no-setup
+- `index.html` and `classic/index.html` each have two generated blocks (`<!-- coin-pages:start -->` row (main page: under the coin
+  tiles; classic: under the nav), `<!-- coin-pages-foot:start -->` footer links; classic links are prefixed `../`); app.js reads `#coin-pages a[data-coin]` to add "<SYM> analysis, levels & how to buy →" links to slate cards, no-setup
   items and coin cards. Pages pick up the `?v=` cache-buster from index.html at build time.
 
 ## SEO & social (index.html head, scripts/make_og.py)
@@ -370,7 +401,8 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-24`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261022-1`) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
+(coin pages copy the version from index.html at build time).
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).
