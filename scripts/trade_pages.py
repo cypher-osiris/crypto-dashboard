@@ -418,7 +418,7 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
     <p class="muted">{E(_t("Posted {when}", when=h.ctime(t.get("opened_at"))))}</p></div>
   <div class="tp-hero-r"><small>{E(_t("Result"))}</small><b class="mono">{E(res)}</b><span class="muted">{E(res_note)}</span></div>
 </div>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trade, not financial advice.</strong> Lumi is an AI; this idea was posted publicly and tracked against exchange candles. No real money was traded. Leverage magnifies losses as much as gains.")}</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trade, not financial advice.</strong> Lumi is an AI; this idea is for information only, and no real money was traded. Leverage magnifies losses as much as gains.")}</span></div>
 
 <section class="card cp-sec"><h2>{E(_t("The setup on the chart"))}</h2>
 {trade_chart(a, t, h)}
@@ -520,10 +520,5 @@ def snapshot(h, index, prices, trades, analysis):
         b0, b1 = SNAP[key]
         if b0 in out and b1 in out:
             out = out[:out.index(b0)] + b0 + "\n" + html_ + "\n" + out[out.index(b1):]
-    # social description for link unfurlers: the live slate in one line
-    if act:
-        bits = ", ".join(f'{A.get(t["coin"], {}).get("symbol")} {h.dir_txt(t.get("direction"))} ({_t(t.get("status"))})' for t in act[:4])
-        sd = _t("Lumi's live paper-trade slate: {bits}. Paper trades, NFA.", bits=bits)
-        out = re.sub(r'(<meta property="og:description" content=")[^"]*(">)', lambda m: m.group(1) + E(sd) + m.group(2), out, count=1)
-        out = re.sub(r'(<meta name="twitter:description" content=")[^"]*(">)', lambda m: m.group(1) + E(sd[:200]) + m.group(2), out, count=1)
+    # og/twitter description: a fixed, entity-free line (build_pages.INDEX_OG_DESC); some directories don't decode HTML entities
     return out

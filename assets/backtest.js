@@ -1,4 +1,4 @@
-/* Signal Backtest section — renders data/backtest.json (written by scripts/backtest.py). */
+/* Indicator study section — renders data/backtest.json (written by scripts/backtest.py). */
 (() => {
   "use strict";
   const $ = (id) => document.getElementById(id);
@@ -19,7 +19,7 @@
       }
     }
     $("bt-summary").innerHTML = `
-      <p class="bt-verdict"><b>Bottom line: no reliable edge.</b> Nothing in this system passes a basic robustness check across coins and time.</p>
+      <p class="bt-verdict"><b>Summary:</b> descriptive statistics of past indicator readings, for research only. Nothing here is a forecast or a trading result.</p>
       <ul>
         <li><b>Individual signals:</b> of ${mt.tests_with_n_ge_30} indicator tests with ≥30 events, ${mt.t_ge_2} cleared t ≥ 2 and ${mt.t_le_minus_2} came in at t ≤ −2 — luck alone would produce about ${mt.expected_by_chance_each_side} on each side. The "winners" are different signals on different coins.</li>
         <li><b>Composite score:</b> its correlation with the next-24h return is slightly <i>negative</i> both in-sample (${f(score.is_mean_ic, 3)}, positive in ${score.is_positive} series) and out-of-sample (${f(score.oos_mean_ic, 3)}, ${score.oos_positive}). Trend components (EMA stack, volume) were mildly contrarian in a year when most of these coins fell.</li>
