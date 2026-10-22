@@ -89,7 +89,7 @@
   let readyResolve; Dash.ready = new Promise((r) => (readyResolve = r));
 
   async function getJSON(name, optional) {
-    const r = await fetch(`data/${name}?v=${Date.now()}`, { cache: "no-store" });
+    const r = await fetch(`${document.documentElement.dataset.root || ""}data/${name}?v=${Date.now()}`, { cache: "no-store" });
     if (!r.ok) { if (optional) return null; throw new Error(`${name}: HTTP ${r.status}`); }
     return r.json();
   }
@@ -255,7 +255,7 @@
 
   /* ---------- trades: slate + table ---------- */
   const dirSign = (t) => (t.direction === "short" ? -1 : 1);
-  const lev = (t) => t.leverage || 3;
+  const lev = (t) => +t.leverage || 1; // per-idea leverage, 1x-10x by conviction (every record carries it)
   const levTxt = (L) => (+L === 1 ? "SPOT" : `${L}x`); // 1x = spot (no leverage, long only)
   const movePct = (t, p, from = t.entry) => (dirSign(t) * (p - from) / from) * 100;
   function livePnl(t, price) {
@@ -325,7 +325,7 @@
       return `<details class="mplan none" data-mp="${esc(t.id)}"><summary><span class="mi-ico">↯</span><b>Missed it?</b> <span class="mp-head">No good chase</span><span class="mp-state s-na">wait for a new setup</span></summary>
         <div class="mp-body"><p>${esc(p.reasoning || "")}</p>${limit}</div></details>`;
     }
-    const rr = mpRR(t, p), L = p.leverage || 3, z = p.entry_zone || {};
+    const rr = mpRR(t, p), L = +p.leverage || lev(t), z = p.entry_zone || {};
     const d = mpDir(t, p);
     return `<details class="mplan" data-mp="${esc(t.id)}"><summary><span class="mi-ico">↯</span><b>Missed it?</b> <span class="mp-head">Here's the move</span>
         <span class="mp-type">${esc(p.type)}</span><span class="mp-state s-${esc(st)}" data-mp-state>${esc(MP_STATE[st] || st)}${st === "triggered" && p.linked_id ? ` → ${esc(p.linked_id)}` : ""}</span></summary>
@@ -396,7 +396,8 @@
     const { lo, hi } = zoneOf(t);
     const zoneTxt = lo === hi ? num(lo) : `${num(lo)} – ${num(hi)}`;
     const closed = !["pending", "open"].includes(t.status);
-    const side = `<span class="side ${t.direction}">${t.direction === "short" ? "SHORT" : "LONG"} ${levTxt(L)}</span>`;
+    const side = `<span class="side ${t.direction}">${t.direction === "short" ? "SHORT" : "LONG"} ${levTxt(L)}</span>` +
+      (t.conviction ? `<span class="conv-badge c-${esc(t.conviction)}" title="${esc(t.leverage_reason || "")}">${esc(String(t.conviction).charAt(0).toUpperCase() + String(t.conviction).slice(1))} conviction</span>` : "");
     const ref = t.status === "open" ? t.entry : (lo + hi) / 2;
     const tg = t.targets.map((x, i) => `<div><small>T${i + 1}${(t.targets_hit || [])[i] ? " ✓" : ""}</small>${num(x)} <span class="up">+${(movePct(t, x, ref) * L).toFixed(1)}%</span></div>`).join("");
     return `<article class="slate-card ${t.status}" data-slate="${esc(t.id)}" data-coin="${id}" data-sym="${esc(a.symbol)}" data-lev="${L}" data-dir="${esc(t.direction)}" data-cb="${esc(cbProduct(id))}">
@@ -413,7 +414,7 @@
       ${t.parent_id ? `<p class="mp-linked">↯ Missed-it plan of <b class="mono">${esc(t.parent_id)}</b>${t.plan_type ? ` (${esc(t.plan_type)})` : ""}${t.trigger ? `: ${esc(t.trigger)}` : ""}${t.size_note ? `. ${esc(t.size_note)}` : ""}</p>` : ""}
       ${closed ? "" : missedBlock(t, a.price)}
       ${t.leverage_note ? `<p class="meta">${esc(t.leverage_note)}</p>` : ""}
-      <details class="why"><summary>Reasoning</summary><p>${esc(t.reasoning || "")}</p></details>
+      <details class="why"><summary>Reasoning</summary>${t.leverage_reason ? `<p class="lev-why"><b>Why ${levTxt(L).toLowerCase()}${t.conviction ? ` · ${esc(t.conviction)} conviction` : ""}:</b> ${esc(t.leverage_reason)}</p>` : ""}<p>${esc(t.reasoning || "")}</p></details>
       ${pageLink(id, a.symbol)}
     </article>`;
   }

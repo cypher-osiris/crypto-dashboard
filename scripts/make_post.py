@@ -75,7 +75,7 @@ def missed_plan_facts(t, now_p):
     lo, hi = z.get("low"), z.get("high")
     d = p.get("direction") or ({"long": "short", "short": "long"}[t["direction"]] if p.get("type") == "flip" else t["direction"])
     out = {"type": p.get("type"), "status": p.get("status", "watching"), "trigger": p.get("trigger"), "zone": [lo, hi],
-           "stop": p.get("stop"), "target": p.get("target"), "lev": p.get("leverage", 3), "size_note": p.get("size_note")}
+           "stop": p.get("stop"), "target": p.get("target"), "lev": p.get("leverage") or t.get("leverage"), "size_note": p.get("size_note")}
     if None not in (lo, hi, p.get("stop"), p.get("target")):
         worst, best = (hi, lo) if d == "long" else (lo, hi)
         f = lambda e: round(abs(p["target"] - e) / abs(e - p["stop"]), 2)  # noqa: E731
@@ -111,7 +111,7 @@ def gather(now=None):
             if cid in A: no_setup.append({"sym": sym[cid], "watchlist": cid in watch, "why": (e.get("note") or "")[:160]})
             continue
         lo, hi = zone(t); now_p = A[t["coin"]]["price"]; long_ = t["direction"] == "long"
-        row = {"id": t["id"], "sym": sym[t["coin"]], "coin": t["coin"], "side": t["direction"], "lev": t.get("leverage", 3), "status": t["status"],
+        row = {"id": t["id"], "sym": sym[t["coin"]], "coin": t["coin"], "side": t["direction"], "lev": t.get("leverage"), "conviction": t.get("conviction"), "leverage_reason": t.get("leverage_reason"), "status": t["status"],
                "zone": [lo, hi], "stop": t.get("current_stop") or t["stop"], "targets": t["targets"], "now": now_p,
                "missed_it_max": (t.get("missed_it") or {}).get("max_entry"), "expires": ctfmt(ts(t.get("expiry")))}
         if t["status"] == "pending":

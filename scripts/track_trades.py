@@ -171,6 +171,16 @@ def candles_for(cid, since_ms, now_ms):
 
 
 # ------------------------------------------------------------------ evaluation
+# Leverage is per idea (1x-10x, picked by conviction; see README "Leverage & conviction"). LEGACY_LEV is only a
+# fallback for very old records without the field; active ideas missing it are flagged in slate_warnings.
+LEGACY_LEV, LEV_MIN, LEV_MAX, STOP_LOSS_CAP_PCT = 3, 1, 10, 25.0
+CONVICTIONS = ("low", "medium", "high")
+
+
+def lev_of(t):
+    return t.get("leverage") or LEGACY_LEV
+
+
 def pnl_pct(direction, entry, exit_price, leverage):
     move = (exit_price - entry) / entry
     return round((-move if direction == "short" else move) * leverage * 100, 2)
@@ -179,7 +189,7 @@ def pnl_pct(direction, entry, exit_price, leverage):
 def blended(t, last_exit):
     n = len(t["targets"])
     legs = [h["price"] for h in t.get("targets_hit", [])] + [last_exit] * (n - len(t.get("targets_hit", [])))
-    return round(sum(pnl_pct(t["direction"], t["entry"], p, t.get("leverage", 3)) for p in legs) / n, 2)
+    return round(sum(pnl_pct(t["direction"], t["entry"], p, lev_of(t)) for p in legs) / n, 2)
 
 
 def evaluate(t, candles, now_ms):
@@ -409,7 +419,7 @@ def linked_trade(t, plan, trig_ms, close):
     pdir = plan_direction(t, plan)
     lt = {
         "id": plan.get("linked_id") or (t["id"] + "b"), "coin": t["coin"], "direction": pdir,
-        "leverage": plan.get("leverage", 3), "entry": sig((zlo + zhi) / 2), "entry_zone": {"low": zlo, "high": zhi},
+        "leverage": plan.get("leverage") or lev_of(t), "entry": sig((zlo + zhi) / 2), "entry_zone": {"low": zlo, "high": zhi},
         "stop": plan["stop"], "targets": [plan["target"]], "opened_at": iso(trig_ms),
         "expiry": plan.get("expiry") or t.get("expiry") or t.get("fill_by"), "status": "pending", "move_stop_to_be": False,
         "parent_id": t["id"], "plan_type": plan.get("type"), "trigger": plan.get("trigger"), "size_note": plan.get("size_note"),
@@ -417,6 +427,10 @@ def linked_trade(t, plan, trig_ms, close):
         "source": f"missed_plan of {t['id']} (auto-activated by track_trades.py)",
         "last_checked_ms": int(trig_ms), "last_checked": iso(trig_ms),
     }
+    lt["conviction"] = plan.get("conviction") or t.get("conviction")
+    lt["leverage_reason"] = plan.get("leverage_reason") or (f"Missed-it plan of {t['id']}: {lev_txt(lt['leverage'])} as set in the plan." if plan.get("leverage") else f"Inherits {t['id']}'s {lev_txt(lt['leverage'])}.")
+    if not lt["conviction"]:
+        del lt["conviction"]
     for k in ("market", "timeframe", "timeframe_note", "expires"):  # spot/position ideas keep their nature
         if t.get(k):
             lt[k] = t[k]
@@ -442,11 +456,12 @@ def compute_stats(trades):
     for t in active:
         warn += plan_issues(t)
         if t.get("market") == "spot" or t.get("leverage") == 1:  # spot = 1x, long only
-            if t.get("direction") != "long" or t.get("leverage", 3) != 1:
+            if t.get("direction") != "long" or lev_of(t) != 1:
                 warn.append(f"{t['id']}: spot ideas must be long at leverage 1")
             mp = t.get("missed_plan") or {}
-            if mp.get("type") not in (None, "none") and (mp.get("leverage", 3) != 1 or mp.get("type") == "flip"):
+            if mp.get("type") not in (None, "none") and ((mp.get("leverage") or 1) != 1 or mp.get("type") == "flip"):
                 warn.append(f"{t['id']}: spot idea's missed_plan must be leverage 1 and not a flip (no shorts)")
+        warn += leverage_issues(t)
     return {
         "total": len(trades), "open": sum(1 for t in trades if t["status"] == "open"),
         "pending": sum(1 for t in trades if t["status"] == "pending"), "closed": len(closed), "won": wins,
@@ -458,13 +473,46 @@ def compute_stats(trades):
     }
 
 
+def stop_loss_pct(t):
+    """Leveraged loss (% of margin) if the stop hits from the WORST fill (pending: far zone edge; open: actual fill)."""
+    z = t.get("entry_zone") or {}
+    if t.get("status") == "open" or not z:
+        e = float(t["entry"])
+    else:
+        e = float(z["high"] if t["direction"] == "long" else z["low"])
+    stop = float(t.get("current_stop") or t["stop"])
+    return abs(e - stop) / e * 100 * lev_of(t)
+
+
+def leverage_issues(t):
+    """Per-idea leverage rule: 1x-10x by conviction, loss at the stop <= ~25% of margin. Only checked for pending
+    ideas (open trades are as recorded) and for fields that exist; never rewrites anything."""
+    w = []
+    if t.get("leverage") is None:
+        return [f"{t['id']}: no leverage set (legacy fallback {LEGACY_LEV}x used) - set 1-10 by conviction"]
+    if not (LEV_MIN <= t["leverage"] <= LEV_MAX):
+        w.append(f"{t['id']}: leverage {t['leverage']}x outside {LEV_MIN}-{LEV_MAX}x")
+    if t.get("conviction") is not None and t["conviction"] not in CONVICTIONS:
+        w.append(f"{t['id']}: conviction must be one of {', '.join(CONVICTIONS)}")
+    if t.get("status") == "pending":
+        if not t.get("conviction") or not t.get("leverage_reason"):
+            w.append(f"{t['id']}: pending idea needs conviction (low/medium/high) and leverage_reason")
+        try:
+            loss = stop_loss_pct(t)
+            if loss > STOP_LOSS_CAP_PCT + 1:
+                w.append(f"{t['id']}: stop loss from worst fill = {loss:.1f}% of margin at {t['leverage']}x (cap ~{STOP_LOSS_CAP_PCT:.0f}%) - lower leverage")
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            pass
+    return w
+
+
 def lev_txt(lev):
     """'spot' for 1x (no leverage, long only), else '3x' etc."""
     return "spot" if lev == 1 else f"{lev}x"
 
 
 def describe(e, t, sym):
-    lev = t.get("leverage", 3)
+    lev = lev_of(t)
     k = e["type"]
     if k == "filled":
         return f"{t['id']} {sym} {t['direction']} {lev_txt(lev)} FILLED at {e['price']} (zone {e['zone'][0]}–{e['zone'][1]})"

@@ -1,8 +1,10 @@
-/* Visual-first dashboard PREVIEW (/preview/). Reads the same data/*.json as the live dashboard and draws
- * everything with small inline SVGs (no chart library). The live index.html does not load this file. */
+/* Main dashboard (/, visual-first; was the /preview/ page). Reads data/*.json and draws everything with small inline
+ * SVG/HTML (no chart library). The detailed classic dashboard lives at /classic/ (app.js etc.).
+ * <html data-root="..."> = path prefix to the site root ("" at /, "../" one level down). */
 (() => {
   "use strict";
   const TZ = "America/Chicago";
+  const ROOT = document.documentElement.dataset.root ?? "";
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmtPrice = (p) => {
@@ -18,7 +20,7 @@
   const ctDate = (ts) => new Date(ts).toLocaleDateString("en-US", { timeZone: TZ, month: "short", day: "numeric" });
   const ctToday = () => new Date().toLocaleDateString("en-CA", { timeZone: TZ });
   const cap = (s) => String(s || "").charAt(0).toUpperCase() + String(s || "").slice(1);
-  const lev = (t) => +(t.leverage || 3);
+  const lev = (t) => +t.leverage || 1; // per-idea leverage (1x-10x by conviction); every record carries it
 
   const ICON = {
     up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4 4 13h5v7h6v-7h5z"/></svg>',
@@ -61,10 +63,10 @@
   const moodWord = (v) => v < 25 ? "Fearful" : v < 45 ? "Cautious" : v <= 55 ? "Neutral" : v < 75 ? "Upbeat" : "Euphoric";
 
   /* ---------- data ---------- */
-  const get = (n) => fetch(`../data/${n}?t=${Math.floor(Date.now() / 6e4)}`, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(`${n}: HTTP ${r.status}`); return r.json(); });
+  const get = (n) => fetch(`${ROOT}data/${n}?t=${Math.floor(Date.now() / 6e4)}`, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(`${n}: HTTP ${r.status}`); return r.json(); });
   async function pages() {
     try {
-      const x = await fetch("../sitemap.xml", { cache: "no-store" }).then((r) => r.text());
+      const x = await fetch(`${ROOT}sitemap.xml`, { cache: "no-store" }).then((r) => r.text());
       return new Set([...x.matchAll(/<loc>https:\/\/lumitrades\.io\/([a-z0-9-]+)\/<\/loc>/g)].map((m) => m[1]));
     } catch (e) { return new Set(); }
   }
@@ -119,7 +121,7 @@
   }
 
   /* ---------- 2. heat-map tiles ---------- */
-  function tileHref(id, sym) { return D.pages.has(sym.toLowerCase()) ? `../${sym.toLowerCase()}/` : `../#coins`; }
+  function tileHref(id, sym) { return D.pages.has(sym.toLowerCase()) ? `${ROOT}${sym.toLowerCase()}/` : `${ROOT}classic/#coins`; }
   function renderTiles(D) {
     const { prices, signals, trades } = D;
     const active = new Set((trades.trades || []).filter((t) => ["pending", "open"].includes(t.status)).map((t) => t.coin));
@@ -188,7 +190,7 @@
     return `<div class="pv-rr" title="Risk vs reward from ${t.status === "open" ? "the fill" : "the middle of the entry zone"}">
       <div class="pv-rr-bar"><span class="r" style="width:${(100 / tot).toFixed(1)}%"></span>${rr.map((v, i) => `<span class="g${i}" style="width:${(((v - (i ? rr[i - 1] : 0)) / tot) * 100).toFixed(1)}%"></span>`).join("")}</div>
       <div class="pv-rr-txt"><span class="down">risk ${mv(stop).toFixed(1)}%</span><span>R:R ${rr.map((v, i) => `<b>${v.toFixed(1)}</b><small>T${i + 1}</small>`).join(" · ")}</span><span class="up">T${tg.length} +${mv(tg[tg.length - 1]).toFixed(1)}%</span></div>
-      <small class="muted">${L === 1 ? "spot" : L + "x paper leverage"} · % moves include leverage</small></div>`;
+      <small class="muted">${L === 1 ? "spot, no leverage" : L + "x paper leverage"} · % moves include leverage</small></div>`;
   }
   function missedHtml(t) {
     const p = t.missed_plan, mi = t.missed_it; let h = "";
@@ -196,29 +198,38 @@
     if (p && p.type !== "none") {
       const z = p.entry_zone || {};
       h += `<p><b>Plan B (${esc(p.type)})${p.status ? ` · ${esc(p.status)}` : ""}:</b> ${esc(p.trigger || "")}</p>
-        <p class="mono pv-mp">entry ${num(z.low)}–${num(z.high)} · stop ${num(p.stop)} · target ${num(p.target)} · ${+(p.leverage || 3) === 1 ? "spot" : (p.leverage || 3) + "x"}</p>${p.reasoning ? `<p>${esc(p.reasoning)}</p>` : ""}`;
+        <p class="mono pv-mp">entry ${num(z.low)}–${num(z.high)} · stop ${num(p.stop)} · target ${num(p.target)} · ${(+p.leverage || lev(t)) === 1 ? "spot" : (+p.leverage || lev(t)) + "x"}</p>${p.reasoning ? `<p>${esc(p.reasoning)}</p>` : ""}`;
     } else if (p && p.type === "none") h += `<p><b>Plan B:</b> no good chase. ${esc(p.reasoning || "")}</p>`;
     return h;
+  }
+  // "5x · High conviction" (leverage is picked per idea, 1x-10x, by conviction; 1x = spot)
+  function levBadge(t) {
+    const L = lev(t), c = String(t.conviction || "").toLowerCase();
+    return `<div class="pv-lev c-${esc(c || "na")}" title="${esc(t.leverage_reason || "Leverage set per idea (1x-10x) by conviction")}">
+      <b>${L === 1 ? "Spot · 1x" : L + "x"}</b>${c ? `<span>${esc(cap(c))} conviction</span>` : ""}
+      <i class="pv-lev-meter" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => `<u class="${n <= L ? "on" : ""}"></u>`).join("")}</i></div>`;
   }
   function tradeCard(t) {
     const a = D.prices.assets[t.coin], an = (D.analysis.coins || {})[t.coin] || {};
     const [cls, lbl] = statusOf(t), long = t.direction !== "short", L = lev(t);
-    const page = D.pages.has(a.symbol.toLowerCase()) ? `<a class="pv-more-link" href="../${a.symbol.toLowerCase()}/">${esc(a.symbol)} analysis &amp; levels ${ICON.arrow}</a>` : "";
+    const page = D.pages.has(a.symbol.toLowerCase()) ? `<a class="pv-more-link" href="${ROOT}${a.symbol.toLowerCase()}/">${esc(a.symbol)} analysis &amp; levels ${ICON.arrow}</a>` : "";
     let live = "";
     if (t.status === "open" && t.unrealized_pnl_pct != null) live = `<span class="pv-pnl">P&amp;L ${pctSpan(t.unrealized_pnl_pct)}<small> (${t.last_checked ? ct(t.last_checked, { month: undefined, day: undefined }) : "tracker"})</small></span>`;
     else if (t.status === "pending" && t.expiry) live = `<span class="muted pv-exp">${ICON.clock} expires ${ct(t.expiry)}</span>`;
     return `<article class="slate-card pv-trade ${esc(t.status)}" data-slate="${esc(t.id)}" data-coin="${esc(t.coin)}" data-sym="${esc(a.symbol)}" data-lev="${L}" data-dir="${esc(t.direction)}" data-cb="${esc(D.cb[t.coin] || "")}">
       <div class="pv-trade-top">
         <span class="pv-dir ${long ? "long" : "short"}" title="${long ? "Long" : "Short"}">${long ? ICON.up : ICON.down}</span>
-        <div class="pv-trade-id"><b>${esc(a.symbol)}</b> <span class="muted">${long ? "Long" : "Short"} · ${L === 1 ? "spot" : L + "x"}</span></div>
+        <div class="pv-trade-id"><b>${esc(a.symbol)}</b> <span class="muted">${long ? "Long" : "Short"}</span></div>
         <span class="pv-status ${cls}">${lbl}</span>
       </div>
+      ${levBadge(t)}
       <div class="pv-tags"><span class="pv-tag">${esc(cap(t.timeframe || "short-term"))}</span>${t.plan_type ? `<span class="pv-tag">${esc(t.plan_type)} plan</span>` : ""}<span class="pv-tag mono">${esc(t.id)}</span>${live}</div>
       <p class="pv-thesis">${esc(cap(an.bias || (t.trigger || "")))}</p>
       ${ladder(t, a.price)}
       ${rrBar(t)}
       ${t.parent_id ? `<p class="pv-linked">Follow-up of ${esc(t.parent_id)}${t.trigger ? `: ${esc(t.trigger)}` : ""}</p>` : ""}
       <details class="why"><summary>Read more: reasoning &amp; "missed it?"</summary>
+        ${t.leverage_reason ? `<p class="pv-levwhy"><b>Why ${L === 1 ? "spot (1x)" : L + "x"}${t.conviction ? ` · ${esc(cap(t.conviction))} conviction` : ""}:</b> ${esc(t.leverage_reason)}</p>` : ""}
         <p>${esc(t.reasoning || "")}</p>${missedHtml(t)}${t.size_note ? `<p>${esc(t.size_note)}</p>` : ""}${t.leverage_note ? `<p class="muted">${esc(t.leverage_note)}</p>` : ""}
       </details>
       ${page}
@@ -235,6 +246,66 @@
       const s = $("slate-sched"); let m = s.querySelector(".pv-asof"); if (!m) { m = document.createElement("span"); m.className = "pv-asof"; s.appendChild(m); }
       m.textContent = ` · Slate as of ${ct(D.trades.slate.as_of)}`;
     }
+  }
+
+
+  /* ---------- signals (indicator reads per coin) ---------- */
+  const READ = (l) => ({ "Strong Buy": ["sb", "Strong Buy", 2], Buy: ["b", "Buy", 1], Neutral: ["n", "Neutral", 0], Sell: ["s", "Sell", -1], "Strong Sell": ["ss", "Strong Sell", -2] }[l] || ["n", l || "n/a", 0]);
+  const ARROW = { sb: "M12 3l8 8-1.8 1.8L12 6.6l-6.2 6.2L4 11zm0 7l8 8-1.8 1.8-6.2-6.2-6.2 6.2L4 18z", b: "M12 4 4 13h5v7h6v-7h5z",
+    n: "M4 11h11V7l5 5-5 5v-4H4z", s: "M12 20 4 11h5V4h6v7h5z", ss: "M12 21l-8-8 1.8-1.8 6.2 6.2 6.2-6.2L20 13zm0-7L4 6l1.8-1.8L12 10.4l6.2-6.2L20 6z" };
+  const arrowSvg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="${ARROW[k] || ARROW.n}"/></svg>`;
+  const IND = [["rsi", "RSI"], ["macd", "MACD"], ["ema", "EMA trend"], ["ema200", "EMA200"], ["bb", "Bollinger"], ["stochrsi", "StochRSI"], ["volume", "Volume"]];
+  const TFS = ["1h", "4h", "1d"];
+  const dirOf = (pts) => (pts > 0 ? "up" : pts < 0 ? "down" : "flat");
+  const tri = { up: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 9.5 9h-9z" fill="currentColor"/></svg>', down: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 .5 1h9z" fill="currentColor"/></svg>', flat: '<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="4" width="8" height="2" rx="1" fill="currentColor"/></svg>' };
+  function sigLine(c) {
+    const tf = c.timeframes || {}, reads = TFS.filter((k) => tf[k]).map((k) => READ(tf[k].label)[2]);
+    const bull = reads.filter((v) => v > 0).length, bear = reads.filter((v) => v < 0).length, n = reads.length;
+    const head = bull === n ? `All ${n} timeframes bullish` : bear === n ? `All ${n} timeframes bearish`
+      : bull > bear ? `${bull} of ${n} timeframes bullish` : bear > bull ? `${bear} of ${n} timeframes bearish`
+      : bull ? `Mixed: ${bull} bullish, ${bear} bearish` : `No clear lean on any timeframe`;
+    const r = tf["1d"] && tf["1d"].indicators && tf["1d"].indicators.rsi, rv = r && r.value != null ? Math.round(r.value) : null;
+    const rsi = rv == null ? "" : `; daily RSI ${rv}, ${rv >= 70 ? "overbought" : rv <= 30 ? "oversold" : rv >= 60 ? "strong, not overbought" : rv <= 40 ? "weak, not oversold" : "mid-range"}`;
+    const e = tf["1d"] && tf["1d"].indicators && tf["1d"].indicators.ema;
+    const trend = e ? (e.points >= 1 ? "; daily uptrend" : e.points <= -1 ? "; daily downtrend" : "") : "";
+    return head + rsi + trend + ".";
+  }
+  function signalCard(id) {
+    const c = (D.signals.coins || {})[id], a = D.prices.assets[id];
+    const [k, lbl] = READ(c.label), sc = +c.score || 0, tf = c.timeframes || {};
+    const pos = ((Math.max(-1, Math.min(1, sc)) + 1) / 2) * 100;
+    const chips = IND.filter(([key]) => TFS.some((t) => tf[t] && tf[t].indicators && tf[t].indicators[key])).map(([key, name]) => {
+      const per = TFS.map((t) => { const x = tf[t] && tf[t].indicators && tf[t].indicators[key]; return x ? { t, d: dirOf(+x.points || 0), st: x.state, v: x.value } : null; }).filter(Boolean);
+      const net = per.reduce((s2, x) => s2 + (x.d === "up" ? 1 : x.d === "down" ? -1 : 0), 0);
+      const tip = per.map((x) => `${x.t}: ${x.st}${x.v != null && key === "rsi" ? ` (${(+x.v).toFixed(0)})` : ""}`).join(" · ");
+      return `<span class="sg-chip ${net > 0 ? "up" : net < 0 ? "down" : "flat"}" title="${esc(name + " — " + tip)}"><b>${name}</b>${per.map((x) => `<i class="${x.d}" aria-label="${x.t} ${x.d}">${tri[x.d]}</i>`).join("")}</span>`;
+    }).join("");
+    return `<article class="sg-card k-${k}" aria-label="${esc(a.symbol)} signal ${esc(lbl)}, score ${sc.toFixed(2)}">
+      <div class="sg-top"><a href="${tileHref(id, a.symbol)}"><b>${esc(a.symbol)}</b></a><span class="mono muted">${fmtPrice(a.price)}</span></div>
+      <div class="sg-read"><span class="sg-arrow">${arrowSvg(k)}</span><b>${esc(lbl)}</b></div>
+      <div class="sg-meter" title="Composite score ${sc > 0 ? "+" : ""}${sc.toFixed(2)} (−1 to +1)"><span class="sg-track"><i style="left:${pos.toFixed(1)}%"></i></span><span class="sg-score mono">${sc > 0 ? "+" : ""}${sc.toFixed(2)}</span></div>
+      <div class="sg-tfs">${TFS.filter((t) => tf[t]).map((t) => { const [tk, tl] = READ(tf[t].label); return `<span class="sg-tf k-${tk}"><small>${t}</small>${esc(tl)}</span>`; }).join("")}</div>
+      <p class="sg-line">${esc(sigLine(c))}</p>
+      <div class="sg-chips">${chips}</div>
+    </article>`;
+  }
+  let sigSort = "strong";
+  function renderSignals(D) {
+    const box = $("sg-grid"); if (!box) return;
+    const ids = D.ids.filter((id) => (D.signals.coins || {})[id]);
+    const sc = (id) => +D.signals.coins[id].score || 0;
+    const order = { strong: (a, b) => Math.abs(sc(b)) - Math.abs(sc(a)), bull: (a, b) => sc(b) - sc(a), bear: (a, b) => sc(a) - sc(b), list: () => 0 }[sigSort];
+    box.innerHTML = ids.slice().sort(order).map(signalCard).join("");
+    const counts = ids.reduce((m, id) => { const k = READ(D.signals.coins[id].label)[2]; m[k > 0 ? 0 : k < 0 ? 2 : 1]++; return m; }, [0, 0, 0]);
+    $("sg-sum").innerHTML = `<span class="up">${counts[0]} buy</span> · <span>${counts[1]} neutral</span> · <span class="down">${counts[2]} sell</span>` +
+      (D.signals.generated_utc ? ` <span class="muted">· computed ${ct(D.signals.generated_utc)}</span>` : "");
+  }
+  function wireSignalSort() {
+    document.querySelectorAll("[data-sgsort]").forEach((b) => b.addEventListener("click", () => {
+      sigSort = b.dataset.sgsort;
+      document.querySelectorAll("[data-sgsort]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      if (D) renderSignals(D);
+    }));
   }
 
   /* ---------- 4. scorecard ---------- */
@@ -313,7 +384,7 @@
       const tfTxt = ["1h", "4h", "1d"].filter((k) => tf[k]).map((k) => `${k} ${tf[k].label}`).join(" · ");
       const sup = (c.support || [])[0], res = (c.resistance || [])[0];
       const summary = `${esc(cap(c.bias))}. ` + (sup != null && res != null ? `Nearest support <b class="mono">${num(sup)}</b>, resistance <b class="mono">${num(res)}</b>` : "") + (tfTxt ? `; signals ${esc(tfTxt)}.` : ".");
-      const page = D.pages.has(a.symbol.toLowerCase()) ? `<a class="pv-more-link" href="../${a.symbol.toLowerCase()}/">Open the ${esc(a.symbol)} page ${ICON.arrow}</a>` : "";
+      const page = D.pages.has(a.symbol.toLowerCase()) ? `<a class="pv-more-link" href="${ROOT}${a.symbol.toLowerCase()}/">Open the ${esc(a.symbol)} page ${ICON.arrow}</a>` : "";
       return `<article class="pv-card pv-an">
         <div class="pv-an-top"><a href="${tileHref(id, a.symbol)}"><b>${esc(a.symbol)}</b> <span class="muted">${esc(a.name)}</span></a><span class="mono">${fmtPrice(a.price)} ${pctSpan(a.change_24h)}</span>${sigBadge(s.label)}</div>
         <p class="pv-an-sum">${summary}</p>
@@ -334,7 +405,8 @@
   }
   function renderFoot(D) {
     const links = D.ids.map((id) => D.prices.assets[id].symbol).filter((s) => D.pages.has(s.toLowerCase()));
-    $("pv-foot-coins").innerHTML = links.length ? "Coin pages: " + links.map((s) => `<a href="../${s.toLowerCase()}/">${esc(s)}</a>`).join(" · ") : "";
+    if (!$("pv-foot-coins")) return; // the main page has the static block from build_pages.py
+    $("pv-foot-coins").innerHTML = links.length ? "Coin pages: " + links.map((s) => `<a href="${ROOT}${s.toLowerCase()}/">${esc(s)}</a>`).join(" · ") : "";
   }
 
   let D = null;
@@ -346,7 +418,7 @@
       const cb = Object.fromEntries((coins.coins || []).map((c) => [c.id, c.coinbase || ""]));
       D = { prices, signals, trades, analysis, context, coins, log, pages: pg, ids: order, cb };
       const openKeep = [...document.querySelectorAll("details[open]")].map((d) => d.closest("[data-slate]")?.dataset.slate || d.querySelector("summary")?.textContent);
-      [renderGlance, renderTiles, renderSlate, renderScore, renderAnalysis, renderLog, renderFoot].forEach((f) => { try { f(D); } catch (e) { console.warn("preview:", f.name, e); } });
+      [renderGlance, renderTiles, renderSlate, renderSignals, renderScore, renderAnalysis, renderLog, renderFoot].forEach((f) => { try { f(D); } catch (e) { console.warn("preview:", f.name, e); } });
       document.querySelectorAll("details").forEach((d) => { const k = d.closest("[data-slate]")?.dataset.slate || d.querySelector("summary")?.textContent; if (openKeep.includes(k)) d.open = true; });
       $("pv-snap").innerHTML = `<span class="dot" aria-hidden="true"></span> Data as of ${ct(prices.updated_utc)}`;
     } catch (e) {
@@ -354,6 +426,7 @@
       console.warn("preview load failed", e);
     }
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", load); else load();
+  const boot = () => { wireSignalSort(); load(); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
   setInterval(load, 5 * 60e3);
 })();

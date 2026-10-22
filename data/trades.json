@@ -1,5 +1,5 @@
 {
-  "_readme": "Trades are hand-edited ideas + script-evaluated status. SLATE model: up to one active idea per coin (max 5), listed in slate.coins[coin] = {trade_id | null, note}. Fields: id, coin, direction long|short, leverage (3 default), entry (planned; replaced by fill price when filled, original kept in planned_entry), entry_zone {low, high} (optional), stop, targets[], opened_at, expiry (fill deadline for pending; legacy fill_by also accepted), expires (optional max hold for open trades), status pending|open|won|lost|stopped|cancelled, missed_it {max_entry, note}, reasoning. Script fills targets_hit/filled_at/closed_at/exit_price/pnl_pct/unrealized_pnl_pct/mark_price. Times are ISO-8601; no offset = US Central.",
+  "_readme": "Trades are hand-edited ideas + script-evaluated status. SLATE model: up to one active idea per coin (max 5), listed in slate.coins[coin] = {trade_id | null, note}. Fields: id, coin, direction long|short, leverage (1-10 per idea; plus conviction low|medium|high and leverage_reason), entry (planned; replaced by fill price when filled, original kept in planned_entry), entry_zone {low, high} (optional), stop, targets[], opened_at, expiry (fill deadline for pending; legacy fill_by also accepted), expires (optional max hold for open trades), status pending|open|won|lost|stopped|cancelled, missed_it {max_entry, note}, reasoning. Script fills targets_hit/filled_at/closed_at/exit_price/pnl_pct/unrealized_pnl_pct/mark_price. Times are ISO-8601; no offset = US Central.",
   "current_idea_id": "T002",
   "trades": [
     {
@@ -85,7 +85,7 @@
       "id": "T003",
       "coin": "stellar",
       "direction": "short",
-      "leverage": 3,
+      "leverage": 2,
       "entry": 0.1905,
       "entry_zone": {
         "low": 0.1895,
@@ -104,7 +104,7 @@
         "max_entry": 0.1885,
         "note": "Only short INTO the zone. If XLM rolls over below $0.1885 without tagging it, skip (reward to T1 too small). Skip entirely if it reclaims and holds above the daily EMA50 (~$0.1935)."
       },
-      "reasoning": "SEED SLATE IDEA (3x short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895–0.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 ≈ the 1h EMA20/prior breakout; T2 0.1775 ≈ the Oct 17–19 support. From 0.1905: risk +2.6% (−7.9% at 3x) vs. −3.9% / −6.8% (+11.7% / +20.4% at 3x).",
+      "reasoning": "SEED SLATE IDEA (short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895–0.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 ≈ the 1h EMA20/prior breakout; T2 0.1775 ≈ the Oct 17–19 support. From 0.1905: risk +2.6% (−5.2% at 2x) vs. −3.9% / −6.8% (+7.8% / +13.6% at 2x).",
       "source": "seed slate (Grok Bot)",
       "last_checked_ms": 1792626000000,
       "mark_price": 0.183512,
@@ -120,7 +120,10 @@
         "reasoning": "No good chase; wait for a new setup. If XLM rolls over without rallying into 0.1895–0.1915, a breakdown short (1h close below the Oct 21 0.1808 base / 4h EMA20 0.1809, stop above the 0.1842 Oct 21 08:00 UTC high) runs straight into the 0.177–0.1775 support: about 0.6:1 from 0.18. A flip long above the 0.1955 stop has the 0.203 resistance only ~3% higher with a stop back under 0.1915 (about 1.1:1 from 0.197). Neither clears 1.5:1, so the fade either fills in its zone or Lumi waits.",
         "written_at": "2026-10-21T18:50:00Z",
         "status": "n/a"
-      }
+      },
+      "conviction": "low",
+      "leverage_reason": "Low conviction: only the 1d read agrees (1d Strong Sell vs 4h Buy, 1h Neutral; overall Neutral), the BTC backdrop is Buy (a headwind for shorts) and Stellar's Meridian (Oct 28) and Protocol 30 vote (Nov 3) are upside event risks. Low band = 1-2x; stop 0.1955 is 3.2% from the worst fill 0.1895, so 2x risks about 6% of margin (cap 25% would allow ~7x).",
+      "leverage_note": "Re-levered 3x -> 2x on Oct 22, 2026 under the per-idea conviction rule (still pending, never filled)."
     },
     {
       "id": "T004",
@@ -177,7 +180,9 @@
       "planned_entry": 0.00232,
       "filled_at": "2026-10-21T19:10:00Z",
       "targets_hit": [],
-      "unrealized_pnl_pct": -7.05
+      "unrealized_pnl_pct": -7.05,
+      "conviction": "medium",
+      "leverage_reason": "Recorded at 3x under the fixed-3x rule (Oct 21); seen as medium conviction: uptrend on all three timeframes, but a thin small cap after a +13% day."
     },
     {
       "id": "T005",
@@ -212,7 +217,9 @@
       "source": "analysis run (AXL range review)",
       "last_checked_ms": 1792625700000,
       "last_checked": "2026-10-21T23:35:00Z",
-      "mark_price": 0.0537
+      "mark_price": 0.0537,
+      "conviction": "medium",
+      "leverage_reason": "Medium conviction: a well-defined range floor (6 shelf lows 0.0516-0.0535) and 1h/1d Buy with a supportive BTC backdrop, but 4h Sell, a thin small cap and an unexplained Oct 14 spike. Medium band = 3-5x, kept at the low end for volatility over a multi-day swing; stop 0.0505 is 4.7% from the worst fill 0.0530, so 3x risks about 14% of margin (cap 25% would allow ~5x)."
     },
     {
       "id": "T006",
@@ -272,7 +279,9 @@
       "filled_at": "2026-10-21T21:55:00Z",
       "targets_hit": [],
       "mark_price": 0.03487,
-      "unrealized_pnl_pct": -0.94
+      "unrealized_pnl_pct": -0.94,
+      "conviction": "medium",
+      "leverage_reason": "Spot (1x) by rule: XDC ideas are spot only; a weeks-to-months position hold, not leveraged."
     },
     {
       "id": "T002b",
@@ -304,7 +313,9 @@
       "filled_at": "2026-10-21T23:00:00Z",
       "mark_price": 1.3642,
       "targets_hit": [],
-      "unrealized_pnl_pct": -1.4
+      "unrealized_pnl_pct": -1.4,
+      "conviction": "medium",
+      "leverage_reason": "Inherited 3x from T002 (fixed-3x rule at the time); a pullback retest of the breakout zone with a tight stop."
     }
   ],
   "stats": {
@@ -329,7 +340,7 @@
   "evaluated_utc": "2026-10-21T17:08:18Z",
   "slate": {
     "as_of": "2026-10-21T23:06:14Z",
-    "rules": "Max one active (pending/open) idea per coin, max 6 at once; long or short; 'no setup' is allowed. New trades default to 3x.",
+    "rules": "Max one active (pending/open) idea per coin, max 6 at once; long or short; 'no setup' is allowed. Leverage is per idea, 1x-10x by conviction (low 1-2x, medium 3-5x, high 6-10x), capped so the loss at the stop from the worst fill is <= ~25% of margin; XDC is spot 1x.",
     "coins": {
       "ripple": {
         "trade_id": "T002b"

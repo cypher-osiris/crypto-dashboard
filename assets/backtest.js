@@ -76,7 +76,7 @@
   async function start() {
     const el = $("backtest"); if (!el) return;
     try {
-      const r = await fetch(`data/backtest.json?v=${Date.now()}`, { cache: "no-store" });
+      const r = await fetch(`${document.documentElement.dataset.root || ""}data/backtest.json?v=${Date.now()}`, { cache: "no-store" });
       if (!r.ok) throw new Error(r.status);
       BT = await r.json();
     } catch (e) { $("bt-summary").innerHTML = `<p class="meta">No backtest data yet (run scripts/backtest.py).</p>`; return; }

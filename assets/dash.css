@@ -1,4 +1,4 @@
-/* Visual-first dashboard PREVIEW (/preview/ only). Builds on style.css; every rule is pv-scoped. */
+/* Main (visual-first) dashboard at /. Builds on style.css; rules are pv-/sg-scoped (body.pv). */
 .pv{--pv-up:#22c55e;--pv-down:#f43f5e;--pv-card:rgba(17,24,38,.78);--pv-gap:16px}
 .pv .up{color:#34d399}.pv .down{color:#fb7185}
 .pv svg{display:block}
@@ -209,3 +209,64 @@
 @media (prefers-reduced-motion:reduce){.pv-tile{transition:none}.pv-tile:hover{transform:none}}
 .pv .pv-trade .aff-note{font-size:.7rem;line-height:1.4}
 .pv-analysis{align-items:start}
+/* leverage + conviction badge on trade cards */
+.pv-lev{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;border-radius:10px;background:rgba(148,163,184,.08);border:1px solid var(--line2);width:fit-content;max-width:100%}
+.pv-lev b{font:700 1.05rem var(--sans);letter-spacing:-.01em}
+.pv-lev span{font-size:.8rem;font-weight:600}
+.pv-lev.c-high{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.1)}.pv-lev.c-high span{color:#4ade80}
+.pv-lev.c-medium{border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.08)}.pv-lev.c-medium span{color:#7dd3fc}
+.pv-lev.c-low{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}.pv-lev.c-low span{color:#fcd34d}
+.pv-lev-meter{display:inline-flex;gap:2px}
+.pv-lev-meter u{width:5px;height:12px;border-radius:2px;background:rgba(148,163,184,.2)}
+.pv-lev-meter u.on{background:currentColor}
+.pv-lev.c-high .pv-lev-meter{color:#4ade80}.pv-lev.c-medium .pv-lev-meter{color:#7dd3fc}.pv-lev.c-low .pv-lev-meter{color:#fcd34d}.pv-lev.c-na .pv-lev-meter{color:#cbd5e1}
+.pv-levwhy{background:rgba(148,163,184,.07);border-radius:8px;padding:8px 10px}
+/* signals */
+.sg-legend{font-size:.84rem;color:#cbd5e1;margin:0 0 6px;line-height:1.5}
+.sg-honest{font-size:.78rem;color:var(--muted);margin:0 0 12px;line-height:1.5}
+.sg-bar{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-bottom:12px}
+.sg-sum{font-size:.84rem;font-weight:600}
+.sg-sort{display:flex;gap:4px;flex-wrap:wrap}
+.sg-sort button{font:600 .76rem var(--sans);color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;cursor:pointer}
+.sg-sort button[aria-pressed="true"]{color:var(--text);background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.45)}
+.sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.sg-card{--k:#94a3b8;--kbg:rgba(148,163,184,.1);display:flex;flex-direction:column;gap:9px;padding:14px;border-radius:14px;min-width:0;
+  background:linear-gradient(165deg,var(--kbg),rgba(17,24,38,.85) 70%);border:1px solid var(--line2);border-top:3px solid var(--k)}
+.sg-tf.k-sb,.k-sb{--k:#16a34a;--kbg:rgba(22,163,74,.22)}.k-b{--k:#4ade80;--kbg:rgba(74,222,128,.13)}.k-n{--k:#94a3b8;--kbg:rgba(148,163,184,.08)}
+.sg-tf.k-s,.k-s{--k:#fb7185;--kbg:rgba(251,113,133,.13)}.k-ss{--k:#e11d48;--kbg:rgba(225,29,72,.22)}
+.sg-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.sg-top a{color:var(--text)}.sg-top b{font-size:1.1rem}.sg-top .mono{font-size:.76rem}
+.sg-read{display:flex;align-items:center;gap:8px;color:var(--k)}
+.sg-read b{font-size:1.35rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.sg-arrow{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--kbg);border:1px solid var(--k)}
+.sg-arrow svg{width:20px;height:20px}
+.sg-meter{display:flex;align-items:center;gap:8px}
+.sg-track{position:relative;flex:1;height:8px;border-radius:999px;background:linear-gradient(90deg,#e11d48 0,#fb7185 25%,#94a3b8 42.5%,#94a3b8 57.5%,#4ade80 75%,#16a34a 100%);opacity:.9}
+.sg-track i{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--k);transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(10,15,26,.8)}
+.sg-score{font-size:.78rem;font-weight:600;min-width:38px;text-align:right}
+.sg-tfs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.sg-tf{display:flex;flex-direction:column;align-items:center;padding:5px 2px;border-radius:9px;font-size:.78rem;font-weight:700;color:var(--k);background:var(--kbg);border:1px solid color-mix(in srgb,var(--k) 55%,transparent);white-space:nowrap;line-height:1.15;text-align:center}
+.sg-tf small{font:600 .64rem var(--sans);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sg-line{margin:0;font-size:.8rem;line-height:1.45;color:#d6dde8}
+.sg-chips{display:flex;flex-wrap:wrap;gap:4px}
+.sg-chip{display:inline-flex;align-items:center;gap:2px;padding:2px 6px 2px 7px;border-radius:7px;font-size:.68rem;background:rgba(148,163,184,.08);border:1px solid var(--line)}
+.sg-chip b{font-weight:600;margin-right:3px;color:#cbd5e1}
+.sg-chip.up{border-color:rgba(74,222,128,.35)}.sg-chip.down{border-color:rgba(251,113,133,.35)}
+.sg-chip i{display:inline-flex;width:9px;height:9px}
+.sg-chip i svg{width:9px;height:9px}
+.sg-chip i.up{color:#4ade80}.sg-chip i.down{color:#fb7185}.sg-chip i.flat{color:#64748b}
+.sg-key{font-size:.72rem;color:var(--muted);margin:10px 0 0}
+.sg-key i{display:inline-flex;width:9px;height:9px;vertical-align:-1px}
+@media (max-width:640px){
+  .sg-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .sg-card{padding:10px;gap:7px}
+  .sg-read b{font-size:1.08rem}
+  .sg-arrow{width:26px;height:26px}.sg-arrow svg{width:16px;height:16px}
+  .sg-tf{font-size:.68rem;padding:4px 1px}
+  .sg-line{font-size:.74rem}
+  .sg-chip{font-size:.62rem;padding:2px 4px 2px 5px}
+}
+/* classic dashboard: leverage/conviction badge */
+.pv-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
+.pv .coin-pages{padding:0;margin:14px 0 0;max-width:none}
+.pv-more a.pv-more-main{border-color:rgba(34,211,238,.4);background:linear-gradient(160deg,rgba(34,211,238,.1),var(--pv-card) 70%)}

@@ -62,12 +62,12 @@
     ];
     $("track-stats").innerHTML = tiles.map(([k, v, s]) => `<div class="stat"><small>${k}</small><b>${v}</b>${s ? `<span class="stat-sub">${s}</span>` : ""}</div>`).join("");
     $("track-body").innerHTML = closed.slice().reverse().map((t) => `<tr>
-      <td>${D.esc(t.id)}</td><td>${D.esc(st.prices.assets[t.coin]?.symbol || t.coin)}</td><td>${D.esc(t.direction)} ${D.levTxt(t.leverage || 3)}</td>
+      <td>${D.esc(t.id)}</td><td>${D.esc(st.prices.assets[t.coin]?.symbol || t.coin)}</td><td>${D.esc(t.direction)} ${D.levTxt(t.leverage)}</td>
       <td>${D.num(t.entry)}</td><td>${D.num(t.exit_price)}</td><td><span class="status s-${D.esc(t.status)}">${D.esc(t.status)}</span></td>
       <td>${D.pct(t.pnl_pct)}</td><td>${money(usd(t))}</td><td>${D.esc(D.ct(t.opened_at, false))} → ${D.esc(D.ct(t.closed_at, false))}</td></tr>`).join("") || '<tr><td colspan="9">No closed trades yet.</td></tr>';
     const openN = all.filter((t) => t.status === "open").length, pendN = all.filter((t) => t.status === "pending").length;
     $("track-note").innerHTML = `Every closed paper trade is included — losers too; nothing is removed after the fact. Results assume <b>$${MARGIN} margin per trade</b> at the trade's own leverage, equal size across targets, no fees or funding, evaluated on ~hourly CoinGecko prices (brief wicks can be missed). ` +
-      `T001 was taken at 5x before leverage was lowered to 3x on Oct 21, 2026. ${openN} open and ${pendN} pending idea(s) are not counted until they close. ` +
+      `Leverage is each trade's own: T001 was 5x, Oct 21 ideas a fixed 3x, and from Oct 22, 2026 Lumi sets it per idea (1x–10x by conviction, loss at the stop capped near 25% of margin). ${openN} open and ${pendN} pending idea(s) are not counted until they close. ` +
       (closed.length < 20 ? `With only ${closed.length} closed trade${closed.length === 1 ? "" : "s"}, these numbers say almost nothing about skill yet.` : "");
     if (window.Chart) {
       let cum = 0;
@@ -103,7 +103,7 @@
       const t = useSlate && (st.trades.trades || []).find((x) => x.coin === id && ["pending", "open"].includes(x.status));
       if (t) {
         const z = t.entry_zone; const e = t.status === "open" ? t.entry : z ? (z.low + z.high) / 2 : t.entry;
-        f.side.value = t.direction; setNum(f.entry, e); setNum(f.stp, t.current_stop ?? t.stop); setNum(f.tgt, t.targets[0]); f.lev.value = t.leverage || 3;
+        f.side.value = t.direction; setNum(f.entry, e); setNum(f.stp, t.current_stop ?? t.stop); setNum(f.tgt, t.targets[0]); f.lev.value = t.leverage || 1;
         $("calc-src").textContent = `Loaded ${t.id} (${t.status}) from the slate.`;
       } else {
         const long = f.side.value === "long";
