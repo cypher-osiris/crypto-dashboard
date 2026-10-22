@@ -1,44 +1,44 @@
 {
- "generated_utc": "2026-10-22T17:23:28Z",
+ "generated_utc": "2026-10-22T23:19:23Z",
  "global": {
-  "total_mcap_usd": 2737422100658.107,
-  "total_volume_usd": 82933309793.93463,
-  "mcap_change_24h_pct": -6.323228201893986,
-  "btc_dominance_pct": 59.47521417915785,
-  "eth_dominance_pct": 10.581312506777122
+  "total_mcap_usd": 2736614617959.5127,
+  "total_volume_usd": 80679480222.34337,
+  "mcap_change_24h_pct": -6.0223332068738555,
+  "btc_dominance_pct": 59.50159787209276,
+  "eth_dominance_pct": 10.597098549487997
  },
  "fear_greed": {
-  "value": 47,
+  "value": 48,
   "classification": "Neutral",
   "previous": 54,
-  "timestamp": "2026-10-22T17:08:10Z",
+  "timestamp": "2026-10-22T23:08:10Z",
   "source": "CoinMarketCap"
  },
  "derivatives": {
   "instrument": "BTC-USDT-SWAP (OKX)",
-  "funding_rate_pct": 0.008561082919490001,
+  "funding_rate_pct": 0.00681337124447,
   "next_funding_time": "2026-10-23T00:00:00Z",
-  "open_interest_btc": 30737.653200000135,
-  "open_interest_usd": 2500133088.450971
+  "open_interest_btc": 30790.802100000146,
+  "open_interest_usd": 2502993539.949642
  },
  "yen": {
   "usd_jpy": {
    "name": "USD/JPY",
    "symbol": "JPY=X",
-   "price": 156.967,
-   "change_pct": -0.6928,
-   "day_high": 158.254,
-   "day_low": 156.681,
+   "price": 156.593,
+   "change_pct": -0.1161,
+   "day_high": 156.816,
+   "day_low": 156.514,
    "week52_high": 163.979,
    "week52_low": 151.549,
    "closes_5d": [
-    158.143,
     157.806,
     158.523,
     158.268,
-    156.967
+    158.132,
+    156.593
    ],
-   "as_of": "2026-10-22T17:23:27Z",
+   "as_of": "2026-10-22T23:19:23Z",
    "source": "Yahoo Finance"
   },
   "nikkei": {

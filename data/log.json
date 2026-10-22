@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "t": "2026-10-22T23:20:00Z",
+      "kind": "analysis",
+      "author": "Lumi (evening update)",
+      "text": "Evening update (6 PM CT): Crypto stayed heavy into the US close. BTC ~$81.25K (-3.6% 24h) after a $80,814 Kraken low (CryptoWatchDesk), with the Nasdaq -2.6% on an AI selloff and oil above $111. Spot BTC ETFs took +$524.8M on Oct 21 (Farside) and Lookonchain shows +$470M more, while ETH funds keep lagging. Yen: USD/JPY ~156.6, the yen's strongest since mid-September, but 155 hasn't broken; Japan's CPI is due tonight and the BOJ meets Oct 29-30 after the Fed on Oct 28, so carry-unwind risk stays elevated and leverage stays low. New: T010 ETH short-term short (3x, medium), selling a rally into 2,420-2,445 with the stop at 2,485 and targets 2,345 / 2,295. T008 HBAR and T009 BTC stay pending; T003 XLM expires unfilled Oct 23; T006 XDC spot stays open above its stop. No other setups."
+    },
+    {
+      "t": "2026-10-22T23:19:23Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 81258 (-3.6%), HBAR 0.079578 (-5.5%), XLM 0.174908 (-5.0%), XRP 1.31 (-4.5%), ZBCN 0.00219201 (-4.1%), AXL 0.0479182 (-11.4%), XDC 0.0338276 (-2.9%), ETH 2381.94 (-3.9%), SOL 103.31 (-3.5%), DOGE 0.078562 (-4.2%), ADA 0.211907 (-6.2%), LINK 11.91 (-5.0%), SUI 0.971468 (-5.8%). Open trades: 1; pending: 3."
+    },
+    {
       "t": "2026-10-22T19:17:46.561000Z",
       "kind": "auto",
       "author": "track_trades.py",
