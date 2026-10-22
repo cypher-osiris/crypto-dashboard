@@ -16,6 +16,7 @@ assets/extras.js      market-context strip, track record ($100 margin/trade), po
 assets/backtest.js    "Signal Backtest" section (renders data/backtest.json)
 assets/affiliate.js   affiliate buttons + disclosures, driven by data/config.json; geo-gated (Bitunix non-US only, Coinbase US)
 assets/newsletter.js  Kit newsletter form (fetch submit, inline status)
+assets/schedule.js    slate schedule note: review times in the visitor's zone + "Next review" (Intl, DST-safe; HOURS = 6/12/18/23 CT)
 assets/markets.js     Global Markets panel: live TSE/HKEX/LSE/NYSE session clocks + 24h timeline (Intl/IANA, DST-safe; no holidays)
 data/prices.json      GENERATED  – quotes + 30-day ~hourly history (CoinGecko); compact JSON; has "groups"
 data/trades.json      HAND-EDITED ideas + GENERATED status/P&L/stats
@@ -57,7 +58,7 @@ run `update_prices.py` and `signals.py`, then add a block under `coins` in `anal
 the page reads it at load time. Coin charts below the fold are created lazily, and backtest data loads only near its
 section. The browser's signals refresh is throttled to about 6 Coinbase requests per second.
 
-## Each update (3× a day)
+## Each update (4× a day: 6 AM, 12 PM, 6 PM & 11 PM CT)
 
 1. Run the data scripts (all stdlib, no keys):
    ```sh
@@ -172,7 +173,7 @@ missed-it limit or the plan is armed, unless the reader has toggled it.
 
 ### Locking
 `track_trades.py`, `update_prices.py`, `publish.sh` and `locked.sh` all take an exclusive `flock` on `state/lock`
-(git-ignored, waits up to 300 s, released automatically if a process dies), so the 30-min job and the 3×-daily job
+(git-ignored, waits up to 300 s, released automatically if a process dies), so the 30-min job and the 4×-daily review job
 never write `trades.json`/`log.json` or run git at the same time.
 
 ### The 30-minute job (exact commands)
@@ -185,7 +186,7 @@ echo "$out" | python3 -c 'import sys,json; sys.exit(0 if json.load(sys.stdin)["p
      scripts/publish.sh data/trades.json data/log.json data/signals.json
 ```
 It publishes only when a trade event happened (otherwise `last_checked` churn would create a commit every 30 min);
-the next 3×-daily publish picks up the quiet `last_checked` updates. `publish.sh` exit codes: 0 ok (or nothing to
+the next 4×-daily publish picks up the quiet `last_checked` updates. `publish.sh` exit codes: 0 ok (or nothing to
 commit), 1 git failure, 2 invalid JSON, 3 lock timeout.
 
 ## Signal backtest (scripts/backtest.py)
@@ -316,7 +317,7 @@ where listed, Kraken, Uphold, max 3, Uphold first for `uphold_first`; non-US: Bi
 Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config.json` relative to its own URL.
 - **Regeneration:** `scripts/publish.sh` runs `python3 scripts/build_pages.py --paths` (under the lock, after the pull) whenever
   a path under `data` is published, and adds every page + `sitemap.xml` (+ `index.html` if its generated link blocks changed) to
-  the same commit. So the 3x-daily update and the 30-min job's event publishes refresh the pages automatically. `BUILD_PAGES=0`
+  the same commit. So the 4×-daily review (6 AM, 12 PM, 6 PM, 11 PM CT) and the 30-min job's event publishes refresh the pages automatically. `BUILD_PAGES=0`
   skips it; a build error only warns. Manual: `python3 scripts/build_pages.py` (only rewrites files whose content changed).
 - `sitemap.xml` is generated (dashboard + every page, `lastmod` = build date, UTC). Don't hand-edit it.
 - `index.html` has two generated blocks (`<!-- coin-pages:start -->` row under the nav, `<!-- coin-pages-foot:start -->` footer
@@ -368,7 +369,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261021-22`) on the asset links in `index.html` so browsers pick up the new files.
+`?v=` version (currently `20261021-23`) on the asset links in `index.html` so browsers pick up the new files.
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
 Never commit API keys: pass `COINGECKO_DEMO_API_KEY` via the environment only (`.env*` is git-ignored).

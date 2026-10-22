@@ -546,3 +546,8 @@ th{color:var(--dim);font-weight:600;font-size:.68rem;text-transform:uppercase;le
 .nl-msg.ok{color:var(--green)} .nl-msg.err{color:#fda4af}
 .nl-done input,.nl-done button{display:none}
 @media (max-width:720px){ .nl-form button{flex:1 1 100%} }
+/* slate schedule note (assets/schedule.js) */
+.slate-sched{margin:-6px 0 8px;font-size:.78rem;color:var(--muted);line-height:1.5}
+.slate-sched .sched-ico{color:var(--cyan)} .slate-sched b{color:var(--text);font-weight:600}
+.slate-sched .sched-local,.slate-sched .sched-next{color:var(--dim)} .slate-sched .sched-next b{color:var(--muted)}
+.cp .slate-sched{margin:0 0 10px}

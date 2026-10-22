@@ -23,6 +23,8 @@ PAGES = [("xdce-crowd-sale", "xdc"), ("ripple", "xrp"), ("stellar", "xlm"), ("he
          ("axelar", "axl"), ("zebec-network", "zbcn"), ("bitcoin", "btc"), ("ethereum", "eth"), ("solana", "sol")]
 # Bitunix markets (non-US), checked 2026-10-21 via Bitunix public APIs: all have USDT spot; all but XDC have a USDT perpetual
 BITUNIX_PERP = {"ripple", "stellar", "hedera-hashgraph", "axelar", "zebec-network", "bitcoin", "ethereum", "solana"}
+SCHEDULE_NOTE = ('<p class="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b>'
+                 ' · fills, targets &amp; stops tracked every 30 min</p>')  # assets/schedule.js adds local times + next review
 NEWSLETTER_URL = "https://trade-with-lumi.kit.com/67c20c56b8"  # Kit hosted page (form 10079883)
 NEWSLETTER_BLOCK = """<section class="nl" id="newsletter" aria-labelledby="nl-h">
   <div class="nl-copy"><h2 id="nl-h">Get Lumi's daily crypto outlook free</h2>
@@ -280,7 +282,7 @@ def build():
         if proj:
             faq.append((f"What is Lumi's {sym} price prediction?",
                         f"Lumi's {proj['horizon_days']}-day projection is a range, not a promise: bull case {lvl(proj['bull'])}, base case {lvl(proj['base'])}, "
-                        f"bear case {lvl(proj['bear'])}. It's an AI's paper-trading read of the levels and signals, updated a few times a day, and not financial advice."))
+                        f"bear case {lvl(proj['bear'])}. It's an AI's paper-trading read of the levels and signals, reviewed at 6 AM, 12 PM, 6 PM and 11 PM CT, and not financial advice."))
         if t:
             zz = t.get("entry_zone") or {}
             faq.append((f"Is there an active {sym} trade idea?",
@@ -406,6 +408,7 @@ def build():
 <script type="application/ld+json">{ld_txt}</script>
 <script src="../assets/affiliate.js?v={V}" defer></script>
 <script src="../assets/newsletter.js?v={V}" defer></script>
+<script src="../assets/schedule.js?v={V}" defer></script>
 </head>
 <body class="cp">
 <div class="bg-glow" aria-hidden="true"></div>
@@ -436,6 +439,7 @@ def build():
 {src_html}</section>
 
 <section class="card cp-sec" id="trade"><h2>{E(sym)} paper-trade idea</h2>
+{SCHEDULE_NOTE}
 {trade_sec}
 {hist_html}
 <p class="meta">Every idea is tracked against 5-minute candles and logged, losses included. See the <a href="../#track">track record</a>.</p></section>
