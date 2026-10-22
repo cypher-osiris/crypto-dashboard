@@ -1,0 +1,36 @@
+# Lumi Trades
+
+> Crypto market data for people and AI agents: live prices, crypto and trading signals (RSI, MACD, EMA), support and resistance
+> levels, CoinMarketCap Fear & Greed, an AI's paper-trade ideas, a daily market brief and a daily Institutional & Policy Brief
+> (BIS, IMF, CBDCs, stablecoins, tokenization). AI agents buy the data per call with x402 (USDC on Base, or XRP, RLUSD or USDC on
+> the XRP Ledger); no account or API key. A free x402 vendor trust list records test-buys of other pay-per-call endpoints.
+> Data from a paper-trading experiment, not financial advice.
+
+## API docs (api.lumitrades.io)
+- [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
+- [OpenAPI spec](https://api.lumitrades.io/openapi.json): every endpoint, parameter and response
+- [Agent skill (skill.md)](https://api.lumitrades.io/skill.md): step-by-step guide for an agent to pay and call the API
+- [x402 discovery](https://api.lumitrades.io/.well-known/x402): machine-readable list of paid resources and accepted payments
+- [MCP server](https://api.lumitrades.io/mcp): remote MCP (streamable HTTP); local option `npx -y lumi-trades-mcp`
+- [Trust methodology](https://api.lumitrades.io/v1/trust/methodology): how vendor trust scores are computed
+
+## Pages
+- [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
+- [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
+- [Dashboard](https://lumitrades.io/): live prices, signals and today's paper-trade ideas (also in es, pt, tr, ko, ja)
+
+## Prices (USD per call)
+- `GET /v1/signal/{coin}`: Signal per coin (buy/sell read, RSI/MACD/EMA), $0.01 per call
+- `GET /v1/levels/{coin}`: Support / resistance levels + 7-day projection, $0.01 per call
+- `GET /v1/sentiment`: Crypto sentiment (CoinMarketCap Fear & Greed, funding), $0.01 per call
+- `GET /v1/macro/yen`: Yen carry-trade watch (USD/JPY, Nikkei), $0.015 per call
+- `GET /v1/slate`: Market slate (today's paper-trade ideas), $0.02 per call
+- `GET /v1/market`: BTC + macro market backdrop, $0.02 per call
+- `GET /v1/brief`: Daily crypto market brief, $0.03 per call
+- `GET /v1/institutional`: Daily Institutional & Policy Brief, $0.25 per call
+- `GET /v1/trust/vendors/{id}/report`: Detailed vendor report (full observation history), $0.02 per call
+- `GET /v1/trust/vendors`: Vendor trust list, free
+
+## Optional
+- [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free
+- [Sitemap](https://lumitrades.io/sitemap.xml)
