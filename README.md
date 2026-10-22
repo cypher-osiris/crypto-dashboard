@@ -7,8 +7,8 @@ Times display in US Central (America/Chicago). Two dashboard views share the sam
 - **`/` (index.html): the visual-first main dashboard**, rendered by `assets/dash.js` + `assets/dash.css` with small inline
   SVG/HTML charts (no chart library): market at a glance (BTC sparkline, mood gauge, next events), coin heat-map tiles,
   visual trade cards (price ladder, R:R bar, leverage/conviction badge, Read more), buy/sell signals per coin (overall read,
-  score meter, 1h/4h/1d pills, per-indicator chips, one-liner, sortable), newsletter, scorecard (outcome donut, cumulative P&L
-  step chart, open-idea bars, full history table), collapsed per-coin analysis (summary + bull/base/bear bar) and "Dig deeper".
+  score meter, 1h/4h/1d pills, per-indicator chips, one-liner, sortable), newsletter, a "For AI agents / API" section
+  (prices, link to /agents/), collapsed per-coin analysis (summary + bull/base/bear bar) and "Dig deeper".
   It re-fetches the JSON every 5 min (snapshot data; no websockets).
 - **`/classic/` (classic/index.html): "Full detail view"**, the original dashboard (`assets/app.js` etc., live streaming prices,
   Chart.js charts, full signals table, sessions, backtest, calculator, log). `noindex, follow`, not in the sitemap.
@@ -27,7 +27,7 @@ assets/ticker.js      scrolling price ticker under the header on /, the coin pag
 assets/live.js        live prices in the browser: Coinbase websocket (coins with a coinbase pair), Kraken websocket (ZBCN),
                       CoinGecko 60s polling fallback; auto-reconnect + watchdog; LIVE/DELAYED/SNAPSHOT indicator
 assets/signals.js     in-browser signals (Coinbase/Kraken candles, CoinGecko fallback), same math as scripts/signals.py
-assets/extras.js      market-context strip, track record ($100 margin/trade), position calculator
+assets/extras.js      market-context strip, position calculator
 assets/backtest.js    "Signal Backtest" section (renders data/backtest.json)
 assets/affiliate.js   affiliate buttons + disclosures, driven by data/config.json; geo-gated (Bitunix non-US only, Coinbase US)
 assets/newsletter.js  Kit newsletter form (fetch submit, inline status)
@@ -176,7 +176,9 @@ a fixed 3x because it is a uniform historical test of the indicator rules, not L
 - Prints `{"checked_utc","events":[...],"publish":bool,"active":[...],"sources","errors","slate_warnings"}`.
   Event types: `filled` (with `entry_type` pullback / breakdown / breakout), `target1_hit`/`target2_hit`, `stopped`, `won`, `lost`, `cancelled`.
   New fills record `entry_type` on the trade (older trades don't have it and are not back-filled).
-- Stats: win rate = won / closed; cumulative P&L = simple sum of closed trades' P&L %.
+- Stats: `data/trades.json` `stats` keeps only `open`, `pending`, `slate_warnings`. The full record (win rate = won / closed;
+  cumulative P&L = simple sum of closed trades' P&L %; equity curve) goes to `state/track_record.json` (git-ignored, never
+  served). Since Oct 22, 2026 the aggregate record is private: it is not rendered on any page, card, post or meta tag.
 
 ### Missed-it plans (`missed_plan` on a trade)
 Backward compatible: trades without it work as before; `missed_it` (`max_entry` + note) stays and defines when the idea counts as missed.
@@ -353,7 +355,7 @@ fetched without the cache. The URL is HTML-escaped when rendered (`&` → `&amp;
 judgment following `docs/x_voice.md` (the Lumi voice, formats, rules and examples).
 ```sh
 python3 scripts/make_post.py facts --pretty   # compact JSON: slate (+distance to zone), changes since last post, trade events,
-                                              # movers, BTC levels, record, 1-2 sourced catalysts, sentiment, links
+                                              # movers, BTC levels, 1-2 sourced catalysts, sentiment, links
 python3 scripts/make_post.py check post.txt   # every number must exist in the data at the precision written; X lengths
 python3 scripts/make_post.py save post.txt --kind midday --focus XRP   # posts/YYYY-MM-DD-HHMM.txt + .png, sets the baseline
 python3 scripts/make_post.py card --focus slate --out /tmp/card.png    # 1200x675 "Lumi Trades" card only
@@ -397,33 +399,31 @@ Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config
   tiles; classic: under the nav), `<!-- coin-pages-foot:start -->` footer links; classic links are prefixed `../`); app.js reads `#coin-pages a[data-coin]` to add "<SYM> analysis, levels & how to buy →" links to slate cards, no-setup
   items and coin cards. Pages pick up the `?v=` cache-buster from index.html at build time.
 
-## Trade history & static snapshot (scripts/trade_pages.py, since Oct 22, 2026)
-- **`/trades/`**: the archive ("Lumi's paper-trade history"): record KPIs (ideas, won, lost, win rate, cumulative P&L, open/pending/cancelled),
-  a static step chart of `stats.equity_curve`, and color-coded cards for every idea (active first, then closed/cancelled, newest first).
-- **`/trades/<ID>/`** (e.g. `/trades/T005/`, `/trades/T002b/`): one permalink per idea in `trades.json`: outcome hero (status + realized or
-  last-check unrealized P&L), a static SVG of the coin's hourly price around the idea (prices.json history, so only ~30 days back) with entry zone,
-  stop, targets, posted/closed lines and fill/exit dots, plus an HTML legend (in-SVG labels hide on phones), the numbers grid, a risk/reward bar
-  (from the fill, or the worst fill in the zone while pending), a "What happened" timeline from tracker fields (`opened_at`, `filled_at`,
-  `missed_plan.armed_at/triggered_at/ended_at`, `closed_at`, `cancel_reason`; target-hit times aren't recorded, so none are shown), and the
-  reasoning / leverage reason / missed-it plan folded under Read more. Links: parent / follow-up idea, prev/next, the coin page. Linkable from X posts.
-- Generated by `build_pages.py` (it imports `trade_pages.py`), so publish.sh refreshes them with every data publish; `--paths` lists them, and
-  they are in `sitemap.xml` (archive daily 0.7; active ideas daily, closed ones monthly with `lastmod` = close date). A failure in
-  trade_pages.py only prints a warning: coin pages, sitemap and the data publish still go out.
-- **Static snapshot in index.html**: three generated blocks (`<!-- snap-glance:start -->`, `snap-slate`, `snap-score`) inside `#pv-glance`,
-  `#slate-grid` and `#pv-score` hold real numbers (BTC price/24h, active ideas with zone/stop/targets, the record) for crawlers, no-JS visitors
-  and link unfurlers; `dash.js` replaces them when it renders. The same build rewrites `og:description` / `twitter:description` with the live
-  slate and record (the meta description stays fixed). Don't hand-edit inside the markers.
-- `dash.js` links slate cards ("Trade T00x page") and the history table IDs to the trade pages once `trades/` is in the sitemap; coin pages link
-  their past ideas and the current idea; nav "Trade history" on `/`, `/classic/` and the coin pages.
+## Trade ideas, agents & trust pages (scripts/trade_pages.py, scripts/site_pages.py)
+- **`/trades/`**: "Lumi's active paper-trade ideas": cards for open/pending ideas only (no record KPIs, no equity chart, no closed list).
+- **`/trades/<ID>/`**: one permalink per **active** idea (price chart with zone/stop/targets, numbers grid, R:R bar, timeline, reasoning under
+  Read more). Closed or cancelled ideas get a small `noindex, follow` placeholder ("no longer active", no outcome) so old links still work;
+  they are not in the sitemap.
+- **`/agents/`** ("For AI agents"): what the API sells, prices per call, how to pay (USDC on Base or XRP/RLUSD/USDC on the XRP Ledger, x402),
+  a curl 402 example, MCP config, and links (api.lumitrades.io, /trust/, Bazaar, x402scan, MCP Registry). Generated by `site_pages.py`.
+- **`/trust/`** ("x402 vendor trust list"): the table is rendered to static HTML at build time from
+  `https://api.lumitrades.io/v1/trust/vendors` (cached in `state/trust_vendors.json`; the cache is used if the API is down), and
+  `assets/trust.js` refreshes it live in the browser. Because both routines (dashboard update and the 3-hourly tracker) publish through
+  `publish.sh` -> `build_pages.py`, the static table is refreshed on every publish; no extra job is needed.
+- All of these are generated by `build_pages.py` in all 6 languages, listed by `--paths`, and in `sitemap.xml`
+  (agents weekly 0.8, trust daily 0.7, trades daily 0.7). A failure in either module only prints a warning.
+- **Static snapshot in index.html**: generated blocks (`<!-- snap-glance:start -->`, `snap-slate`) inside `#pv-glance` and `#slate-grid`
+  hold real numbers (BTC price/24h, active ideas with zone/stop/targets) for crawlers, no-JS visitors and link unfurlers; `dash.js` replaces
+  them when it renders. The same build rewrites `og:description` / `twitter:description` with the live slate. Don't hand-edit inside the markers.
 
 ## SEO & social (index.html head, scripts/make_og.py)
 - `<title>`, meta description, `robots: index, follow`, canonical `https://lumitrades.io/`.
 - Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). `python3 scripts/make_og.py`
-  regenerates it from the current slate and record (step 5 of each update). `--icons` also rebuilds the favicons
+  regenerates it from the current slate (step 5 of each update). `--icons` also rebuilds the favicons
   (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` 180, `icon-192.png`, `icon-512.png`) plus `assets/brand/logo.png` and
   `x_avatar.png` from `assets/brand/logo-source.jpg` via `scripts/make_brand.py` (only needed if the logo changes). X and other platforms
   cache card images, so a new og.png can take a while to show on links that were already shared.
-- JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/trades/backtest JSON).
+- JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/backtest JSON).
   If you change the description or data files, keep it in sync and validate (e.g. https://validator.schema.org/).
 - `robots.txt`, `sitemap.xml` (generated by build_pages.py), `site.webmanifest` at the repo root, which is now the domain root (https://lumitrades.io/robots.txt), so crawlers
   read them. Submit https://lumitrades.io/sitemap.xml in Google Search Console / Bing Webmaster Tools.

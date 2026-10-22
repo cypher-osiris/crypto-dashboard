@@ -687,3 +687,19 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 /* free text that only exists in English, on a translated page */
 .i18n-en::after{content:"EN";display:inline-block;margin-left:5px;padding:0 4px;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:.04em;line-height:1.5;vertical-align:1px;color:var(--muted);border:1px solid rgba(148,163,184,.35)}
 .i18n-note{font-style:italic}
+/* /agents/ + /trust/ (scripts/site_pages.py) */
+.ag-code{background:rgba(5,8,14,.75);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:.76rem;line-height:1.55;white-space:pre;margin:8px 0}
+.ag-list{margin:6px 0 4px 18px;padding:0}.ag-list li{margin:4px 0}
+.cp-main code{font-family:var(--mono);font-size:.85em;background:rgba(148,163,184,.1);border-radius:5px;padding:1px 5px}
+.cp-main pre code{background:none;padding:0;font-size:inherit}
+.cp-table td.num,.cp-table th.num{text-align:right}
+.tr-wrap{overflow-x:auto}
+.tr-table td:last-child{white-space:normal;min-width:9rem}
+.tr-table td:last-child a{word-break:break-word}
+.tr-table .vid{display:block;color:var(--dim);font-family:var(--mono);font-size:.72rem}
+.tr-conf{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.72rem;background:rgba(148,163,184,.12);color:var(--muted)}
+.tr-conf.c-medium,.tr-conf.c-high{color:var(--text)}
+#tr-status{margin:10px 0}
+.ag-home{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start}
+.ag-home ul{margin:6px 0 0 18px;padding:0}.ag-home li{margin:3px 0}
+@media (max-width:720px){.ag-home{grid-template-columns:1fr}}

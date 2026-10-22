@@ -1,8 +1,7 @@
-/* Market context strip, Track record, Position calculator. Depends on window.Dash (app.js). */
+/* Market context strip, Position calculator. Depends on window.Dash (app.js). */
 (() => {
   "use strict";
   const $ = (id) => document.getElementById(id);
-  const MARGIN = 100; // $ margin assumed per paper trade for the track record
 
   /* ---------------- market context ---------------- */
   const big = (v) => (v == null ? "—" : v >= 1e12 ? `$${(v / 1e12).toFixed(2)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(2)}B` : `$${(v / 1e6).toFixed(1)}M`);
@@ -16,7 +15,7 @@
       g ? item("Total market cap", big(g.total_mcap_usd), g.mcap_change_24h_pct != null ? D.chip(g.mcap_change_24h_pct) : "", `CoinGecko /global · ${ctx.src.global}`) : "",
       g ? item("BTC dominance", `${g.btc_dominance_pct.toFixed(1)}%`, g.eth_dominance_pct != null ? `<span class="muted">ETH ${g.eth_dominance_pct.toFixed(1)}%</span>` : "", `CoinGecko /global · ${ctx.src.global}`) : "",
       g ? item("24h volume", big(g.total_volume_usd), "", `CoinGecko /global · ${ctx.src.global}`) : "",
-      f ? item("Fear & Greed", `${f.value}`, `<span class="fng ${fngClass(f.value)}">${D.esc(f.classification)}</span>${f.previous != null ? `<span class="muted"> prev ${f.previous}</span>` : ""}`, `${f.source === "alternative.me" ? "alternative.me Crypto Fear & Greed Index (daily)" : "CoinMarketCap Fear & Greed Index"} · ${ctx.src.fear_greed}`) : "",
+      f && f.source !== "alternative.me" ? item("Fear & Greed", `${f.value}`, `<span class="fng ${fngClass(f.value)}">${D.esc(f.classification)}</span>${f.previous != null ? `<span class="muted"> prev ${f.previous}</span>` : ""}`, `CoinMarketCap Fear & Greed Index · ${ctx.src.fear_greed}`) : "",
       d ? item("BTC funding (8h)", `${d.funding_rate_pct >= 0 ? "+" : ""}${d.funding_rate_pct.toFixed(4)}%`, `<span class="muted">OKX perp</span>`, `OKX BTC-USDT-SWAP current funding rate · positive = longs pay shorts · ${ctx.src.derivatives}`) : "",
       d ? item("BTC open interest", big(d.open_interest_usd), `<span class="muted">${Math.round(d.open_interest_btc).toLocaleString()} BTC</span>`, `OKX BTC-USDT-SWAP open interest · ${ctx.src.derivatives}`) : "",
     ].join("") || '<div class="ctx"><small>Market context</small><b>unavailable</b></div>';
@@ -25,9 +24,7 @@
   async function refreshContext() {
     const jobs = [
       getJ("https://api.coingecko.com/api/v3/global").then((j) => { const d = j.data; ctx.global = { total_mcap_usd: d.total_market_cap.usd, total_volume_usd: d.total_volume.usd, mcap_change_24h_pct: d.market_cap_change_percentage_24h_usd, btc_dominance_pct: d.market_cap_percentage.btc, eth_dominance_pct: d.market_cap_percentage.eth }; ctx.src.global = "live"; }),
-      // CoinMarketCap (primary, via data/context.json snapshot; its API has no CORS). alternative.me live only as a fallback when no CMC snapshot.
-      (ctx.fear_greed && ctx.fear_greed.source === "CoinMarketCap") ? Promise.resolve() :
-      getJ("https://api.alternative.me/fng/?limit=2").then((j) => { const d = j.data; ctx.fear_greed = { value: +d[0].value, classification: d[0].value_classification, previous: d[1] ? +d[1].value : null, source: "alternative.me" }; ctx.src.fear_greed = "live"; }),
+      // Fear & Greed: CoinMarketCap only, via the data/context.json snapshot (its API has no CORS); no other index is used
       Promise.all([getJ("https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP"), getJ("https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP")]).then(([f, o]) => {
         ctx.derivatives = { funding_rate_pct: +f.data[0].fundingRate * 100, open_interest_usd: +o.data[0].oiUsd, open_interest_btc: +o.data[0].oiCcy }; ctx.src.derivatives = "live";
       }),
@@ -40,53 +37,6 @@
     renderContext();
     refreshContext();
     setInterval(refreshContext, 5 * 60000);
-  }
-
-  /* ---------------- track record ---------------- */
-  function renderTrack(st) {
-    const D = window.Dash;
-    const all = st.trades.trades || [];
-    const closed = all.filter((t) => ["won", "lost", "stopped"].includes(t.status) && t.pnl_pct != null).sort((a, b) => Date.parse(a.closed_at) - Date.parse(b.closed_at));
-    const wins = closed.filter((t) => t.pnl_pct > 0), losses = closed.filter((t) => t.pnl_pct <= 0);
-    const usd = (t) => (t.pnl_pct / 100) * MARGIN;
-    const sum = (a) => a.reduce((x, y) => x + y, 0);
-    const avg = (a) => (a.length ? sum(a) / a.length : null);
-    const total = sum(closed.map(usd));
-    const gp = sum(wins.map(usd)), gl = -sum(losses.map(usd));
-    const money = (v) => (v == null ? "—" : `<span class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v < 0 ? "−" : v > 0 ? "+" : ""}$${Math.abs(v).toFixed(2)}</span>`);
-    const tiles = [
-      ["Closed trades", `${closed.length}`, `${wins.length}W / ${losses.length}L`],
-      ["Win rate", closed.length ? `${((wins.length / closed.length) * 100).toFixed(0)}%` : "n/a", ""],
-      ["Avg win", wins.length ? D.pct(avg(wins.map((t) => t.pnl_pct))) : "—", "on margin"],
-      ["Avg loss", losses.length ? D.pct(avg(losses.map((t) => t.pnl_pct))) : "—", "on margin"],
-      ["Total return", money(total), closed.length ? `${((total / (MARGIN * closed.length)) * 100).toFixed(1)}% of $${MARGIN * closed.length} deployed` : ""],
-      ["Profit factor", gl > 0 ? (gp / gl).toFixed(2) : gp > 0 ? "∞" : "—", "gross win ÷ gross loss"],
-    ];
-    $("track-stats").innerHTML = tiles.map(([k, v, s]) => `<div class="stat"><small>${k}</small><b>${v}</b>${s ? `<span class="stat-sub">${s}</span>` : ""}</div>`).join("");
-    $("track-body").innerHTML = closed.slice().reverse().map((t) => `<tr>
-      <td>${D.esc(t.id)}</td><td>${D.esc(st.prices.assets[t.coin]?.symbol || t.coin)}</td><td>${D.esc(t.direction)} ${D.levTxt(t.leverage)}</td>
-      <td>${D.num(t.entry)}</td><td>${D.num(t.exit_price)}</td><td><span class="status s-${D.esc(t.status)}">${D.esc(t.status)}</span></td>
-      <td>${D.pct(t.pnl_pct)}</td><td>${money(usd(t))}</td><td>${D.esc(D.ct(t.opened_at, false))} → ${D.esc(D.ct(t.closed_at, false))}</td></tr>`).join("") || '<tr><td colspan="9">No closed trades yet.</td></tr>';
-    const openN = all.filter((t) => t.status === "open").length, pendN = all.filter((t) => t.status === "pending").length;
-    $("track-note").innerHTML = `Every closed paper trade is included — losers too; nothing is removed after the fact. Results assume <b>$${MARGIN} margin per trade</b> at the trade's own leverage, equal size across targets, no fees or funding, evaluated on ~hourly CoinGecko prices (brief wicks can be missed). ` +
-      `Leverage is each trade's own: T001 was 5x, Oct 21 ideas a fixed 3x, and from Oct 22, 2026 Lumi sets it per idea (1x–10x by conviction, loss at the stop capped near 25% of margin). ${openN} open and ${pendN} pending idea(s) are not counted until they close. ` +
-      (closed.length < 20 ? `With only ${closed.length} closed trade${closed.length === 1 ? "" : "s"}, these numbers say almost nothing about skill yet.` : "");
-    if (window.Chart) {
-      let cum = 0;
-      const first = all.length ? Math.min(...all.map((t) => Date.parse(t.opened_at))) : Date.now();
-      const pts = [{ x: first, y: 0, id: "start" }].concat(closed.map((t) => ({ x: Date.parse(t.closed_at), y: +(cum += usd(t)).toFixed(2), id: `${t.id} ${t.pnl_pct > 0 ? "+" : ""}${t.pnl_pct}%` })));
-      pts.push({ x: Date.now(), y: pts[pts.length - 1].y, id: "now" });
-      if (D.charts.track) D.charts.track.destroy();
-      D.charts.track = new Chart($("chart-track"), {
-        type: "line",
-        data: { datasets: [{ label: `Cumulative P&L ($${MARGIN} margin per trade)`, data: pts, stepped: true, borderColor: D.COLORS.base, borderWidth: 2, pointRadius: pts.map((p, i) => (i && i < pts.length - 1 ? 4 : 0)), pointBackgroundColor: pts.map((p) => (p.y < 0 ? D.COLORS.res : D.COLORS.sup)),
-          fill: { target: { value: 0 }, above: "rgba(34,197,94,0.14)", below: "rgba(244,63,94,0.14)" } }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: false, parsing: false,
-          scales: { x: { type: "linear", min: pts[0].x, max: pts[pts.length - 1].x, afterBuildTicks: D.dayTicks, grid: { color: D.COLORS.grid }, ticks: { callback: (v) => D.shortDate(v) } },
-            y: { grid: { color: D.COLORS.grid }, ticks: { callback: (v) => `$${v}` } } },
-          plugins: { legend: { labels: { color: D.COLORS.tick } }, tooltip: { callbacks: { title: (it) => D.ct(it[0].parsed.x), label: (it) => `${it.raw.id}: $${it.parsed.y.toFixed(2)} cumulative` } } } },
-      });
-    }
   }
 
   /* ---------------- position calculator ---------------- */
@@ -152,7 +102,6 @@
     if (!window.Dash || !window.Dash.ready) return setTimeout(boot, 50);
     window.Dash.ready.then((st) => {
       startContext(st.context);
-      renderTrack(st);
       startCalc(st);
     });
   }

@@ -336,60 +336,7 @@
     }));
   }
 
-  /* ---------- 4. scorecard ---------- */
-  function donut(parts) {
-    const tot = parts.reduce((a, p) => a + p.n, 0) || 1, R = 42, C = 2 * Math.PI * R; let off = 0;
-    return `<svg class="pv-donut" viewBox="0 0 120 120" role="img" aria-label="${parts.map((p) => `${p.n} ${p.l}`).join(", ")}">
-      <circle cx="60" cy="60" r="${R}" fill="none" stroke="rgba(148,163,184,.12)" stroke-width="16"/>
-      ${parts.filter((p) => p.n).map((p) => { const len = (p.n / tot) * C; const s = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${len - 2} ${C - len + 2}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)"/>`; off += len; return s; }).join("")}
-      <text x="60" y="58" text-anchor="middle" class="dn">${tot}</text><text x="60" y="74" text-anchor="middle" class="dl">${tr("ideas")}</text></svg>`;
-  }
-  function pnlChart(trades, curve) {
-    const first = trades.map((t) => Date.parse(t.opened_at)).filter(Boolean).sort((a, b) => a - b)[0];
-    const pts = [[first, 0], ...curve.map((p) => [Date.parse(p.t), +p.cum_pnl_pct])];
-    const now = Date.now(); pts.push([now, pts[pts.length - 1][1]]);
-    const W = 520, H = 150, P = { l: 44, r: 12, t: 14, b: 26 };
-    const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
-    const x0 = Math.min(...xs), x1 = Math.max(...xs), lo = Math.min(0, ...ys), hi = Math.max(0, ...ys), pad = (hi - lo) * 0.15 || 5;
-    const X = (v) => P.l + ((v - x0) / (x1 - x0 || 1)) * (W - P.l - P.r), Y = (v) => P.t + (1 - (v - (lo - pad)) / (hi + pad - (lo - pad))) * (H - P.t - P.b);
-    // step line: P&L changes only when a trade closes
-    let d = `M${X(pts[0][0])},${Y(pts[0][1])}`; for (let i = 1; i < pts.length; i++) d += `H${X(pts[i][0])}V${Y(pts[i][1])}`;
-    const last = ys[ys.length - 1], col = last >= 0 ? "var(--pv-up)" : "var(--pv-down)";
-    const ticks = [0, ...curve.map((p) => +p.cum_pnl_pct)].filter((v, i, a) => a.indexOf(v) === i);
-    return `<svg class="pv-pnl-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(tr("Cumulative paper P&L {pct}", { pct: sgn(last) }))}">
-      ${ticks.map((v) => `<line x1="${P.l}" x2="${W - P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(148,163,184,${v === 0 ? ".35" : ".1"})" ${v === 0 ? "" : 'stroke-dasharray="3 4"'}/><text x="${P.l - 6}" y="${Y(v) + 4}" text-anchor="end" class="ax">${v === 0 ? "0%" : sgn(v, 1)}</text>`).join("")}
-      <path d="${d}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/>
-      ${curve.map((p) => `<circle cx="${X(Date.parse(p.t))}" cy="${Y(+p.cum_pnl_pct)}" r="4.5" fill="${col}"><title>${esc(tr("{id} closed: cumulative {pct}", { id: p.trade_id, pct: sgn(+p.cum_pnl_pct) }))}</title></circle>`).join("")}
-      <text x="${P.l}" y="${H - 6}" class="ax">${ctDate(x0)}</text><text x="${W - P.r}" y="${H - 6}" text-anchor="end" class="ax">${tr("now")}</text></svg>`;
-  }
-  function renderScore(D) {
-    const all = D.trades.trades || [], st = D.trades.stats || {};
-    const n = (f) => all.filter(f).length;
-    const won = n((t) => t.status === "won" || t.status === "target" || (["closed"].includes(t.status) && t.pnl_pct > 0));
-    const lost = n((t) => ["stopped", "lost"].includes(t.status) || (t.status === "closed" && t.pnl_pct <= 0));
-    const parts = [{ l: tr("won"), n: won, c: "#22c55e" }, { l: tr("stopped"), n: lost, c: "#f43f5e" }, { l: tr("open"), n: n((t) => t.status === "open"), c: "#38bdf8" }, { l: tr("pending"), n: n((t) => t.status === "pending"), c: "#fbbf24" }, { l: tr("cancelled"), n: n((t) => t.status === "cancelled"), c: "#64748b" }];
-    const opens = all.filter((t) => t.status === "open" && t.unrealized_pnl_pct != null);
-    const mx = Math.max(1, ...opens.map((t) => Math.abs(t.unrealized_pnl_pct)));
-    const sym = (id) => (D.prices.assets[id] || {}).symbol || id;
-    const closed = all.filter((t) => !["pending", "open"].includes(t.status)).sort((a, b) => String(b.closed_at || b.opened_at).localeCompare(String(a.closed_at || a.opened_at)));
-    $("pv-score").innerHTML = `
-      <article class="pv-card pv-score-a">
-        <div class="pv-donut-wrap">${donut(parts)}<ul class="pv-keys">${parts.map((p) => `<li><i style="background:${p.c}"></i>${p.n} ${p.l}</li>`).join("")}</ul></div>
-        <div class="pv-kpis"><span><small>${tr("Win rate (closed)")}</small><b>${st.win_rate_pct != null ? st.win_rate_pct.toFixed(0) + "%" : "—"}</b><small class="muted">${tr("{w}W / {l}L", { w: won, l: lost })}</small></span>
-          <span><small>${tr("Cumulative paper P&amp;L")}</small><b class="${(st.cumulative_pnl_pct || 0) >= 0 ? "up" : "down"}">${st.cumulative_pnl_pct != null ? sgn(st.cumulative_pnl_pct) : "—"}</b><small class="muted">${tr("closed trades, at leverage")}</small></span></div>
-      </article>
-      <article class="pv-card pv-score-b">
-        <div class="pv-card-top"><span class="pv-kicker">${tr("Cumulative paper P&amp;L")}</span><span class="muted">${tr("realized, equal size per trade")}</span></div>
-        ${pnlChart(all, st.equity_curve || [])}
-        ${opens.length ? `<div class="pv-open-pnl"><span class="pv-kicker">${tr("Open ideas right now (unrealized)")}</span>${opens.map((t) => `<div class="pv-ob"><span>${esc(sym(t.coin))} <small class="muted mono">${esc(t.id)}</small></span><span class="pv-ob-track"><i class="${t.unrealized_pnl_pct >= 0 ? "pos" : "neg"}" style="width:${(Math.abs(t.unrealized_pnl_pct) / mx) * 50}%"></i></span>${pctSpan(t.unrealized_pnl_pct)}</div>`).join("")}</div>` : ""}
-        ${st.note ? `<p class="pv-fine">${fx(st, "note")}</p>` : ""}
-      </article>
-      <details class="pv-fold pv-span"><summary>${tr("Full trade history ({n})", { n: all.length })}</summary>
-        <div class="pv-table-wrap"><table class="pv-table"><thead><tr><th>ID</th><th>${tr("Coin")}</th><th>${tr("Side")}</th><th>${tr("Entry")}</th><th>${tr("Stop")}</th><th>${tr("Targets")}</th><th>${tr("Status")}</th><th>${tr("Result")}</th></tr></thead><tbody>
-        ${all.slice().reverse().map((t) => `<tr><td class="mono">${D.pages.has("trades") ? `<a href="${HOME}trades/${encodeURIComponent(t.id)}/">${esc(t.id)}</a>` : esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(tr(t.direction))} ${lev(t)}x</td><td class="mono">${num(t.entry)}</td><td class="mono">${num(t.current_stop ?? t.stop)}</td><td class="mono">${(t.targets || []).map(num).join(" / ")}</td><td><span class="pv-status ${statusOf(t)[0]}">${statusOf(t)[1]}</span></td><td>${t.pnl_pct != null ? pctSpan(t.pnl_pct) : t.unrealized_pnl_pct != null ? pctSpan(t.unrealized_pnl_pct) + `<small class="muted"> ${tr("open")}</small>` : "—"}</td></tr>`).join("")}
-        </tbody></table></div>${closed.length ? "" : ""}</details>
-      ${D.pages.has("trades") ? `<a class="pv-more-link pv-span" href="${HOME}trades/">${tr("Trade history: every idea with its own page, chart &amp; outcome")} ${ICON.arrow}</a>` : ""}`;
-  }
+  /* ---------- 4. (scorecard removed Oct 22, 2026: the paper-trade track record is no longer published) ---------- */
 
   /* ---------- 5. analysis, collapsed ---------- */
   function projBar(pr, price, sup, res) {
@@ -428,9 +375,15 @@
     }).join("");
   }
 
+  // the update log stays, minus trade results (closed WON/LOST/STOPPED at …, win rate …): the track record is private
+  const BAD = [/\bT\d+\w*\b[^.;]*\b(?:stopped|won|lost|closed (?:WON|LOST|STOPPED))\b/i, /\b(?:win rate|track record|scorecard|cumulative (?:paper )?P&L)\b/i, /\b\d+W\s*\/\s*\d+L\b/, /[+-]\d+(?:\.\d+)?% at \d+x/];
+  const noRecord = (t) => String(t || "")
+    .replace(/\b(T\d+\w*) (\w+)(?: (?:long|short) [\d.]+x)? closed (?:WON|LOST|STOPPED|EXPIRED|CLOSED)\b[^;]*?(?=;|\.(?:\s|$)|$)/g, "$1 $2 idea closed")
+    .replace(/;?\s*\bclosed: \d+(?=[;.])/g, "")
+    .split(/(?<=[.;])\s+/).filter((seg) => !BAD.some((re) => re.test(seg))).join(" ").replace(/^Trade events:\s*\.?$/, "").replace(/;$/, ".").trim();
   function renderLog(D) {
     const e = ((D.log || {}).entries || []).slice(0, 10);
-    $("pv-log").innerHTML = e.map((x) => `<li><span class="mono muted">${ct(x.t)}</span> <span class="pv-tag">${esc(tr(x.kind))}</span> ${fx(x, "text")}</li>`).join("");
+    $("pv-log").innerHTML = e.map((x) => ({ t: x.t, kind: x.kind, text: noRecord(x.text) })).filter((x) => x.text).map((x) => `<li><span class="mono muted">${ct(x.t)}</span> <span class="pv-tag">${esc(tr(x.kind))}</span> ${fx(x, "text")}</li>`).join("");
   }
   function renderFoot(D) {
     const links = D.ids.map((id) => D.prices.assets[id].symbol).filter((s) => D.pages.has(s.toLowerCase()));
@@ -447,7 +400,7 @@
       const cb = Object.fromEntries((coins.coins || []).map((c) => [c.id, c.coinbase || ""]));
       D = { prices, signals, trades, analysis, context, coins, log, pages: pg, ids: order, cb };
       const openKeep = [...document.querySelectorAll("details[open]")].map((d) => d.closest("[data-slate]")?.dataset.slate || d.querySelector("summary")?.textContent);
-      [renderGlance, renderTiles, renderSlate, renderSignals, renderScore, renderAnalysis, renderLog, renderFoot].forEach((f) => { try { f(D); } catch (e) { console.warn("preview:", f.name, e); } });
+      [renderGlance, renderTiles, renderSlate, renderSignals, renderAnalysis, renderLog, renderFoot].forEach((f) => { try { f(D); } catch (e) { console.warn("preview:", f.name, e); } });
       document.querySelectorAll("details").forEach((d) => { const k = d.closest("[data-slate]")?.dataset.slate || d.querySelector("summary")?.textContent; if (openKeep.includes(k)) d.open = true; });
       $("pv-snap").innerHTML = `<span class="dot" aria-hidden="true"></span> ${tr("Data as of {when}", { when: ct(prices.updated_utc) })}`;
     } catch (e) {

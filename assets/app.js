@@ -243,7 +243,7 @@
         <div class="sources">${sourcesHTML(an.sources)}</div>`;
       grid.appendChild(el);
       // mark entries of trades on this coin
-      const markers = (trades.trades || []).filter((t) => t.coin === id && t.status !== "pending" && t.status !== "cancelled").map((t) => ({
+      const markers = (trades.trades || []).filter((t) => t.coin === id && t.status === "open").map((t) => ({
         id: `entry-${t.id}`, type: "point", xValue: Date.parse(t.filled_at || t.opened_at), yValue: t.entry, radius: 4,
         backgroundColor: t.status === "won" ? COLORS.sup : t.status === "open" ? COLORS.line : COLORS.res, borderColor: "#fff", borderWidth: 1,
       }));
@@ -388,7 +388,9 @@
         const t = all.find((x) => x.id === trades.current_idea_id && x.coin === id);
         entry = t ? { trade_id: t.id } : null;
       }
-      const t = entry && entry.trade_id ? all.find((x) => x.id === entry.trade_id) : null;
+      let t = entry && entry.trade_id ? all.find((x) => x.id === entry.trade_id) : null;
+      // closed ideas are not shown with their result (the track record is private); the next review sets a new idea
+      if (t && !["pending", "open"].includes(t.status)) return { id, trade: null, note: "This idea has closed; the next slate review decides what comes next." };
       return { id, trade: t, note: entry && entry.note };
     });
   }
@@ -476,7 +478,7 @@
       }).join("")}</div></div>` : "");
     shown.forEach((s) => updateSlateLive(s.id, prices.assets[s.id].price));
 
-    const rows = [...all].sort((a, b) => Date.parse(b.opened_at) - Date.parse(a.opened_at));
+    const rows = all.filter((t) => ["pending", "open"].includes(t.status)).sort((a, b) => Date.parse(b.opened_at) - Date.parse(a.opened_at));
     $("trades-body").innerHTML = rows.map((t) => {
       const z = t.entry_zone;
       return `<tr title="${esc(t.reasoning)}">
@@ -487,7 +489,7 @@
         <td>${t.exit_price != null ? num(t.exit_price) : t.mark_price != null ? `<small class="meta">mark <span data-lp="${t.coin}">${num(t.mark_price)}</span></small>` : "—"}</td>
         <td data-row-pnl="${esc(t.id)}">${t.pnl_pct != null ? pct(t.pnl_pct) : t.status === "open" && t.unrealized_pnl_pct != null ? pct(t.unrealized_pnl_pct) : "—"}</td>
       </tr>`;
-    }).join("") || '<tr><td colspan="10">No trades yet.</td></tr>';
+    }).join("") || '<tr><td colspan="10">No active ideas right now.</td></tr>';
   }
 
   /* ---------- live wiring ---------- */
@@ -541,9 +543,15 @@
     $("live-sub").textContent = m === "live" ? "streaming" : m === "delayed" ? "polling 60s" : "connecting…";
   }
 
+  // log entries without trade results or win/loss stats (same filter as dash.js)
+  const BAD = [/\bT\d+\w*\b[^.;]*\b(?:stopped|won|lost|closed (?:WON|LOST|STOPPED))\b/i, /\b(?:win rate|track record|scorecard|cumulative (?:paper )?P&L)\b/i, /\b\d+W\s*\/\s*\d+L\b/, /[+-]\d+(?:\.\d+)?% at \d+x/];
+  const noRecord = (t) => String(t || "")
+    .replace(/\b(T\d+\w*) (\w+)(?: (?:long|short) [\d.]+x)? closed (?:WON|LOST|STOPPED|EXPIRED|CLOSED)\b[^;]*?(?=;|\.(?:\s|$)|$)/g, "$1 $2 idea closed")
+    .replace(/;?\s*\bclosed: \d+(?=[;.])/g, "")
+    .split(/(?<=[.;])\s+/).filter((seg) => !BAD.some((re) => re.test(seg))).join(" ").replace(/^Trade events:\s*\.?$/, "").replace(/;$/, ".").trim();
   function renderLog(log) {
     const entries = [...(log.entries || [])].sort((a, b) => Date.parse(b.t) - Date.parse(a.t));
-    $("log-list").innerHTML = entries.map((e) => `
+    $("log-list").innerHTML = entries.map((e) => ({ ...e, text: noRecord(e.text) })).filter((e) => e.text).map((e) => `
       <li class="${esc(e.kind)}"><time datetime="${esc(e.t)}">${esc(ct(e.t))}<span class="who">${esc(e.kind)} · ${esc(e.author || "")}</span></time>${esc(e.text)}</li>`).join("") || "<li>No updates yet.</li>";
   }
 
