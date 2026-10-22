@@ -13,7 +13,7 @@ Placeholders use {name} and must be kept as-is. A missing key falls back to the 
 build_pages.py imports this module, renders every page once per language (English at /, others under /<lang>/),
 and calls bundle() so the browser bundles never drift from the JSON.
 """
-import datetime as dt, html, json, os, re, sys
+import ast, datetime as dt, html, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR = os.path.join(ROOT, "assets", "i18n")
@@ -226,10 +226,10 @@ def bundle(langs=None):
 _LIT = re.compile(r'"((?:[^"\\]|\\.)*)"')
 
 
-def _tr_literals(src):
+def _tr_literals(src, call=r"\btr\(", py=False):
     """String literals that are the first argument of tr(...) (including both arms of a ternary)."""
     out = set()
-    for m in re.finditer(r"\btr\(", src):
+    for m in re.finditer(call, src):
         i, depth, arg = m.end(), 0, []
         while i < len(src):
             c = src[i]
@@ -237,7 +237,8 @@ def _tr_literals(src):
                 j = src.index('"', i + 1)
                 while src[j - 1] == "\\":
                     j = src.index('"', j + 1)
-                arg.append(src[i:j + 1]); i = j + 1; continue
+                skip = src[i - 1] in "fF" or (py and (src[i - 1] == "[" or src[i - 4:i] == "get(" or src[j + 1:j + 2] in (":", "]")))
+                arg.append(" " if skip else src[i:j + 1]); i = j + 1; continue  # skip f-strings, data keys t["x"] / .get("x") / {"x": …}
             if c in "'`":  # other quote styles: skip (keys always use double quotes)
                 j = src.index(c, i + 1); arg.append(" "); i = j + 1; continue
             if c in "([{":
@@ -250,7 +251,7 @@ def _tr_literals(src):
                 break
             arg.append(c if depth == 0 else " "); i += 1
         for lit in _LIT.findall("".join(arg)):
-            if lit.strip(): out.add(json.loads('"' + lit + '"'))
+            if lit.strip(): out.add(ast.literal_eval('"' + lit + '"') if py else json.loads('"' + lit + '"'))
     return out
 
 
@@ -263,16 +264,29 @@ def js_keys():
     return keys
 
 
+PY_CALL = r"(?<![\w.])(?:_t|_)\(|\bh\._\(|\bL\.t\("  # _("…") in build_pages.py, _t("…") / h._("…") in trade_pages.py
+
+
+def py_keys():
+    """Literal keys in the page generators, so `check` also sees strings for states today's data doesn't reach
+    (e.g. a breakout fill). Keep keys literal: _("A" if x else "B"), never _(f"…")."""
+    keys = set()
+    for fn in ("build_pages.py", "trade_pages.py"):
+        src = open(os.path.join(ROOT, "scripts", fn), encoding="utf-8").read()
+        keys |= {k for k in _tr_literals(src, PY_CALL, py=True)}
+    return keys
+
+
 def check(only=None):
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import build_pages
     langs = build_pages.build(dry=True)
-    jk = js_keys()
+    jk, pk = js_keys(), py_keys()
     bad = 0
     for L in langs:
         if L.en or (only and L.code != only):
             continue
-        miss = sorted(L.missing | {k for k in jk if not L.ui.get(k)})
+        miss = sorted(L.missing | {k for k in jk if not L.ui.get(k)} | {k for k in pk if not L.s.get(k)})
         print(f"== {L.code}: {len(L.s)} strings, {len(miss)} missing")
         for k in miss:
             print("  MISSING", json.dumps(k, ensure_ascii=False))

@@ -472,6 +472,10 @@ Not translated: `classic/` (English, noindex), `og.png`, X posts, news headlines
 Then `python3 scripts/i18n.py check` lists missing keys per language; add them to each JSON (`ui` if the browser
 uses it, else `pages`) and run `python3 scripts/build_pages.py` (it also regenerates the JS bundles).
 Changing an English string changes the key: update the JSON keys too (`check` shows them as missing).
+Keep keys literal (`_("Breakout entry void" if … else "…")`, never `_(f"{type} entry")`): `check` renders today's data
+and also scans the literal `_()`/`_t()`/`tr()` keys in build_pages.py, trade_pages.py and assets/*.js, so strings for states
+today's data doesn't reach (a breakout fill, an expired plan) are caught too. Korean: avoid particles right after a
+`{placeholder}` (을/를, 은/는 depend on how the ticker is read); phrase it as `{sym} 코인을` or `{sym}: …`.
 
 **Add a language.** Add the code to `ORDER` in `scripts/i18n.py` and the suggestion text to `ASK` in `assets/i18n.js`,
 copy `assets/i18n/es.json` to `<lang>.json`, set `_meta`, translate every value (keep `{placeholders}`, HTML tags,
@@ -506,7 +510,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261022-4`) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
+`?v=` version (currently `20261022-7`; build_pages.py reads it from index.html) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
 (coin pages copy the version from index.html at build time).
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
