@@ -214,10 +214,12 @@ def page_head(h, title, desc, url, V, kind="article", extra_ld=None):
 def chrome(h, pre, nav_items, V, current="trades"):
     """Header + nav for pages under /trades/ (pre = path prefix to the site root)."""
     nav = "".join(f'<a href="{pre}{s}/">{h.E(sy)}</a>' for c, s, sy in nav_items)
+    tk_pages = ",".join(f"{c}:{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
     return (f'<body class="cp tp">\n<div class="bg-glow" aria-hidden="true"></div>\n'
             f'<header class="cp-top"><div class="wrap cp-top-inner">\n'
             f'  <a class="cp-brand" href="{pre}"><img src="{pre}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>\n'
             f'  <a class="cp-dash" href="{pre}#slate">Dashboard &amp; trade ideas →</a>\n</div></header>\n'
+            f'<div class="ticker lt-ticker" role="region" aria-label="Live crypto prices" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>\n'
             f'<nav class="nav" aria-label="Site"><div class="wrap nav-inner"><a href="{pre}">Dashboard</a>'
             f'<a href="{pre}trades/"{" aria-current=\"page\"" if current == "trades" else ""}>Trade history</a>{nav}'
             f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>\n')
@@ -235,7 +237,9 @@ def footer(h, pre, gen_date):
 def assets(pre, V):
     return (f'<link rel="icon" href="{pre}favicon.ico?v={V}" sizes="any">\n'
             f'<link rel="apple-touch-icon" href="{pre}assets/apple-touch-icon.png?v={V}" sizes="180x180">\n'
-            f'<link rel="stylesheet" href="{pre}assets/style.css?v={V}">\n')
+            f'<link rel="stylesheet" href="{pre}assets/style.css?v={V}">\n'
+            f'<script src="{pre}assets/live.js?v={V}" defer></script>\n'
+            f'<script src="{pre}assets/ticker.js?v={V}" defer></script>\n')
 
 
 def kpis(st, all_trades):

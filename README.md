@@ -22,6 +22,8 @@ assets/dash.js|.css   renders the main dashboard (inline SVG/HTML charts)
 assets/style.css      dark, mobile-friendly theme (shared by the coin pages); background = navy base on html + fixed .bg-glow aurora,
                       body::before dot grid (masked fade) and body::after SVG noise, all static (no background-attachment:fixed)
 assets/app.js         classic view: renders all sections from data/*.json (ticker, cards, charts, trades, log)
+assets/ticker.js      scrolling price ticker under the header on /, the coin pages and /trades/ (prices.json snapshot, then live.js ticks;
+                      pause on hover, static scrollable strip with prefers-reduced-motion; styles .lt-ticker in style.css)
 assets/live.js        live prices in the browser: Coinbase websocket (coins with a coinbase pair), Kraken websocket (ZBCN),
                       CoinGecko 60s polling fallback; auto-reconnect + watchdog; LIVE/DELAYED/SNAPSHOT indicator
 assets/signals.js     in-browser signals (Coinbase/Kraken candles, CoinGecko fallback), same math as scripts/signals.py
@@ -421,7 +423,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261022-2`) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
+`?v=` version (currently `20261022-3`) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
 (coin pages copy the version from index.html at build time).
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
