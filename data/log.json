@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "t": "2026-10-22T11:05:00Z",
+      "kind": "analysis",
+      "author": "Lumi (morning update)",
+      "text": "Morning update (6 AM CT): BTC lost $82.5K and trades ~$82.0K (24h $81.6K-$84.8K) as a global risk-off move hit crypto: Nasdaq futures fell on Tesla and Lam Research outlooks, China's CSI 300 entered a bear market, Brent topped $112, and ~$431M was liquidated in 24h (CoinDesk/CoinGlass). Spot BTC ETFs still took +$528.4M on Oct 21 (The Block). Yen: USD/JPY ~156.9 (from ~158.3), the yen's biggest daily rally in a month, and the Nikkei fell 2.65% below 63,000; carry-unwind risk is up but 155 hasn't broken and the BOJ is reported to hold at 1.25% on Oct 29-30. Slate: no fills, stops or targets since the last update. BTC T007 (long from 82,300, stop 80,800), ZBCN T004 and XDC T006 (spot) stay open; the XLM T003 short never got its rally and is left to expire Oct 23. No new ideas: most alts are oversold on the 1h and sitting just above their October floors, so shorts have no room and longs fight the daily trend. Watchlist news: XRPL's fixCleanup3_4_0 fix slipped to Nov 4 after a validator-support dip; Hedera launched its Network MCP on testnet; SBI's XDC venture signed a yen-stablecoin MOU with Shinhan Card. Policy: the banking industry pushed back on the OCC's GENIUS Act rule on stablecoin rewards."
+    },
+    {
+      "t": "2026-10-22T10:50:38Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 81984 (-1.6%), HBAR 0.080699 (-4.4%), XLM 0.177748 (-3.4%), XRP 1.33 (-2.2%), ZBCN 0.0022975 (-4.8%), AXL 0.0489849 (-7.8%), XDC 0.0349105 (+1.0%), ETH 2405.36 (-2.0%), SOL 104.52 (-1.9%), DOGE 0.079181 (-3.3%), ADA 0.216495 (-3.8%), LINK 12.05 (-2.3%), SUI 0.985421 (-4.3%). Open trades: 3; pending: 1; closed: 3; win rate: 0.0%."
+    },
+    {
       "t": "2026-10-22T08:21:50.552000Z",
       "kind": "auto",
       "author": "track_trades.py",
