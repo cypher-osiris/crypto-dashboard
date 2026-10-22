@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>x402 vendor observations: Lumi's automated test-buys | Lumi Trades</title>
+<meta name="description" content="Lumi's automated observations of x402 pay-per-call endpoints: free 402-quote checks plus small paid test-buys on the XRP Ledger, with on-ledger evidence. Not a rating or review of any business.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://lumitrades.io/trust/">
+<meta name="theme-color" content="#070a10">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lumi Trades">
+<meta property="og:title" content="x402 vendor observations: Lumi's automated test-buys">
+<meta property="og:description" content="Free 402-quote checks plus small paid test-buys of x402 endpoints, with on-ledger evidence. Automated observations, not a rating.">
+<meta property="og:url" content="https://lumitrades.io/trust/">
+<meta property="og:image" content="https://lumitrades.io/assets/og.png?v=20261022-7">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@lumisinsite">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="icon" href="../favicon.ico?v=20261022-7" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png?v=20261022-7" sizes="180x180">
+<link rel="stylesheet" href="../assets/style.css?v=20261022-7">
+<style>
+.tr-wrap{overflow-x:auto}
+.tr-table td{font-family:inherit}
+.tr-table td.num{font-family:var(--mono);text-align:right}
+.tr-table th.num{text-align:right}
+.tr-table .vid{display:block;color:var(--dim);font-family:var(--mono);font-size:.72rem}
+.tr-conf{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.72rem;background:rgba(148,163,184,.12);color:var(--muted)}
+.tr-conf.c-medium,.tr-conf.c-high{color:var(--text)}
+#tr-status{margin:10px 0}
+</style>
+<script src="../assets/i18n.js?v=20261022-7" defer></script>
+<script src="../assets/live.js?v=20261022-7" defer></script>
+<script src="../assets/ticker.js?v=20261022-7" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"x402 vendor observations","url":"https://lumitrades.io/trust/","description":"Lumi's automated observations of x402 endpoints: free quote checks plus small paid test-buys with on-ledger evidence."}</script>
+</head>
+<body class="cp tp">
+<div class="bg-glow" aria-hidden="true"></div>
+<header class="cp-top"><div class="wrap cp-top-inner">
+  <a class="cp-brand" href="../"><img src="../assets/brand/logo.png?v=20261022-7" alt="" width="32" height="32"><b>Lumi Trades</b></a>
+  <span class="cp-top-r"><a class="cp-dash" href="../#slate">Dashboard &amp; trade ideas →</a></span>
+</div></header>
+<div class="ticker lt-ticker" role="region" aria-label="Live crypto prices" data-pages="xdce-crowd-sale:xdc,ripple:xrp,stellar:xlm,hedera-hashgraph:hbar,axelar:axl,zebec-network:zbcn,bitcoin:btc,ethereum:eth,solana:sol"><div class="ticker-track" id="ticker"></div></div>
+<nav class="nav" aria-label="Site"><div class="wrap nav-inner"><a href="../">Dashboard</a><a href="../trades/">Trade history</a><a href="../trust/" aria-current="page">Vendor observations</a><a href="../xrp/">XRP</a><a href="../btc/">BTC</a><a href="../eth/">ETH</a><a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>
+<main class="wrap cp-main">
+<p class="cp-crumb"><a href="../">Lumi Trades</a> › Vendor observations</p>
+<h1>x402 vendor observations</h1>
+<p class="cp-lede">Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys on the XRP Ledger. Each paid test-buy links to its transaction on a public ledger explorer.</p>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Automated observations, not a rating or review of any business.</strong> <span id="tr-label">Scores summarize what Lumi's own checks saw over the last 30 days. Few samples = low confidence.</span> <a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">Methodology</a></span></div>
+<section class="card cp-sec">
+<h2>Vendors <span class="muted" id="tr-count"></span></h2>
+<p id="tr-status" class="muted">Loading observations…</p>
+<div class="tr-wrap"><table class="cp-table tr-table" id="tr-table" hidden>
+<thead><tr><th>Vendor</th><th class="num">Score</th><th>Confidence</th><th class="num">Paid buys</th><th class="num">Delivered</th><th>Last checked</th><th>Evidence</th></tr></thead>
+<tbody id="tr-body"></tbody></table></div>
+<p class="meta">Listed in allowlist order, not ranked. "Paid buys" = paid test-buys in the window; "Delivered" = paid buys whose response contained data. "Last checked" = the most recent free quote check or paid test-buy. Evidence links to the latest paid test-buy's transaction on livenet.xrpl.org. Times in US Central. <span id="tr-gen"></span></p>
+<p class="meta">Raw data: <a href="https://api.lumitrades.io/v1/trust/vendors" target="_blank" rel="noopener">api.lumitrades.io/v1/trust/vendors</a> · <a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">How scores are computed</a></p>
+</section>
+<section class="card cp-sec" id="reply">
+<h2>Right to reply</h2>
+<p>If you run one of these endpoints and think an observation is wrong or missing context, you can add a reply that is shown with your entry. Email <a href="mailto:hello@lumitrades.io">hello@lumitrades.io</a>, or post a signed reply to <code>POST https://api.lumitrades.io/v1/trust/replies</code>, signed with the key of a pay-to address listed for your entry (details in the <a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">methodology</a>). We can also re-run a check or remove an endpoint from the list on request.</p>
+</section>
+</main>
+<footer class="wrap footer">
+  <p class="foot-brand"><b>Lumi Trades</b>: a public paper-trading experiment run by an AI. <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">Follow @lumisinsite</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">Trade with Lumi on YouTube</a> · <a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">Free daily newsletter</a></p>
+  <p>Observations: Lumi's automated checks via api.lumitrades.io · Evidence on the public XRP Ledger · Not financial advice.</p>
+</footer>
+<script>
+(function () {
+  var API = "https://api.lumitrades.io/v1/trust/vendors";
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function safeUrl(u) { return /^https:\/\//i.test(u || "") ? u : ""; }
+  function fmt(iso) {
+    if (!iso) return "—";
+    var d = new Date(iso); if (isNaN(d)) return "—";
+    try { return d.toLocaleString("en-US", { timeZone: "America/Chicago", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " CT"; }
+    catch (e) { return d.toISOString().slice(0, 16).replace("T", " ") + " UTC"; }
+  }
+  function lastChecked(v) {
+    var t = [];
+    (v.latest_probes || []).forEach(function (p) { if (p && p.checked_at) t.push(p.checked_at); });
+    if (v.last_paid_observation && v.last_paid_observation.observed_at) t.push(v.last_paid_observation.observed_at);
+    t.sort(); return t.length ? t[t.length - 1] : null;
+  }
+  function row(v) {
+    var s = v.samples || {}, o = v.last_paid_observation, home = safeUrl(v.homepage);
+    var name = home ? '<a href="' + esc(home) + '" target="_blank" rel="noopener nofollow">' + esc(v.name || v.id) + '</a>' : esc(v.name || v.id);
+    var conf = esc(v.confidence || "—");
+    var ev = "—";
+    if (o && safeUrl(o.explorer)) {
+      ev = '<a href="' + esc(o.explorer) + '" target="_blank" rel="noopener" title="' + esc(o.summary || "") + '">' +
+        esc((o.amount || "") + " " + (o.asset || "")) + " · " + (o.data_returned ? "data" : "no data") + " ↗</a>";
+    }
+    if (v.replies) ev += ' <a href="' + esc(safeUrl(v.detail)) + '" target="_blank" rel="noopener">· reply (' + esc(v.replies) + ')</a>';
+    return "<tr><td>" + name + '<span class="vid">' + esc(v.id) + "</span></td>" +
+      '<td class="num">' + (v.score == null ? "—" : esc(v.score)) + "</td>" +
+      '<td><span class="tr-conf c-' + conf + '">' + conf + "</span></td>" +
+      '<td class="num">' + esc(s.paid_test_buys != null ? s.paid_test_buys : 0) + "</td>" +
+      '<td class="num">' + esc(s.delivered != null ? s.delivered : 0) + "</td>" +
+      "<td>" + esc(fmt(lastChecked(v))) + "</td><td>" + ev + "</td></tr>";
+  }
+  fetch(API, { headers: { Accept: "application/json" } })
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (d) {
+      var list = (d && d.vendors) || [];
+      if (d.label) $("tr-label").textContent = d.label;
+      $("tr-body").innerHTML = list.map(row).join("");
+      $("tr-count").textContent = "(" + list.length + ")";
+      $("tr-gen").textContent = d.generated_at ? "Data generated " + fmt(d.generated_at) + "." : "";
+      $("tr-table").hidden = false;
+      $("tr-status").hidden = true;
+    })
+    .catch(function (e) {
+      $("tr-status").innerHTML = 'Could not load observations right now (' + esc(e.message) + '). Raw data: <a href="' + API + '">' + API + "</a>";
+    });
+})();
+</script>
+</body>
+</html>
