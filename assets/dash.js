@@ -221,7 +221,7 @@
     if ((a.status || "watching") !== "watching") return "";
     const L = +a.leverage || lev(t);
     const lv = `<b class="mono">${lvl}</b>`;
-    return `<p class="pv-linked pv-alt" title="${esc(a.reasoning || a.trigger || "")}">${below ? tr("Or on a 1h close below {lvl}", { lvl: lv }) : tr("Or on a 1h close above {lvl}", { lvl: lv })} · ${tr("stop")} <span class="mono">${num(a.stop)}</span> · ${L === 1 ? tr("spot") : L + "x"}${L < lev(t) ? tr(", smaller size") : ""}</p>`;
+    return `<p class="pv-linked pv-alt" title="${esc(a.reasoning || a.trigger || "")}">${below ? tr("Or on a 1h close below {lvl}", { lvl: lv }) : tr("Or on a 1h close above {lvl}", { lvl: lv })}${a.max_fill != null ? ` · ${tr("fills to {p}", { p: `<span class="mono">${num(a.max_fill)}</span>` })}` : ""} · ${tr("stop")} <span class="mono">${num(a.stop)}</span> · ${L === 1 ? tr("spot") : L + "x"}${L < lev(t) ? tr(", smaller size") : ""}</p>`;
   }
   function altHtml(t) {
     const a = t.alt_entry; if (!a || !a.trigger_rule) return "";
@@ -422,7 +422,7 @@
           <div class="pv-lv"><span><small>${tr("Support")}</small>${(c.support || []).map(num).join(" · ") || "—"}</span><span><small>${tr("Resistance")}</small>${(c.resistance || []).map(num).join(" · ") || "—"}</span></div>
           ${I.en || (c.i18n && c.i18n[I.lang] && c.i18n[I.lang].commentary) ? "" : `<p class="muted i18n-note">${tr("Lumi writes this commentary in English; numbers and levels are the same in every language.")}</p>`}<p>${fx(c, "commentary")}</p>
           ${(c.catalysts || []).length ? `<h4>${tr("Catalysts")}</h4><ul class="pv-cat">${c.catalysts.map((x) => `<li><span class="pv-tag">${esc(tr(x.kind))}</span> <b>${esc(x.date)}</b> ${fx(x, "text")}${x.url ? ` <a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.source || tr("source"))}</a>` : ""}</li>`).join("")}</ul>` : ""}
-          ${(c.sources || []).length ? `<h4>${tr("Sources")}</h4><ul class="pv-src">${c.sources.map((x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a></li>`).join("")}</ul>` : ""}
+          ${(c.sources || []).length ? `<h4>${tr("Sources")}</h4><ul class="pv-src"${I.en ? "" : ' lang="en"'}>${c.sources.map((x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a></li>`).join("")}</ul>` : ""}
         </details>${page}
       </article>`;
     }).join("");

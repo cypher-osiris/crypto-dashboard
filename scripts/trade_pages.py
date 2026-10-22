@@ -176,14 +176,16 @@ def timeline(t, h, by_id):
             ev.append((t["filled_at"], _t("Filled"), E(_t("at {p}", p=h.lvl(t.get("entry"))) + (_t(" (planned {p})", p=h.lvl(t["planned_entry"])) if t.get("planned_entry") and t.get("planned_entry") != t.get("entry") else ""))))
     ae = t.get("alt_entry") or {}
     if ae.get("ended_at") and ae.get("status") in ("void", "expired"):
-        ev.append((ae["ended_at"], _t(f'{str(ae.get("type", "alt")).capitalize()} entry {ae["status"]}'), fr(ae, "end_reason")))
+        ended = {("breakdown", "void"): "Breakdown entry void", ("breakdown", "expired"): "Breakdown entry expired",
+                 ("breakout", "void"): "Breakout entry void", ("breakout", "expired"): "Breakout entry expired"}  # literal keys for i18n check
+        ev.append((ae["ended_at"], _t(ended.get((ae.get("type"), ae["status"]), f'{str(ae.get("type", "alt")).capitalize()} entry {ae["status"]}')), fr(ae, "end_reason")))
     mp = t.get("missed_plan") or {}
     if mp.get("armed_at"):
         ev.append((mp["armed_at"], _t("Missed-it plan armed"), E(_t("price ran past the missed-it limit before a fill")) if not t.get("filled_at") else ""))
     if mp.get("triggered_at"):
         ev.append((mp["triggered_at"], _t("Missed-it plan triggered"), E(_t("became idea {id}", id=mp["linked_id"])) if mp.get("linked_id") else ""))
     if mp.get("ended_at") and mp.get("status") in ("void", "invalidated", "expired"):
-        ev.append((mp["ended_at"], _t(f'Missed-it plan {mp["status"]}'), E(_t({"void": "the main idea filled first", "invalidated": "1h close beyond the plan's stop", "expired": "plan window ended"}[mp["status"]]))))
+        ev.append((mp["ended_at"], _t({"void": "Missed-it plan void", "invalidated": "Missed-it plan invalidated", "expired": "Missed-it plan expired"}[mp["status"]]), E(_t({"void": "the main idea filled first", "invalidated": "1h close beyond the plan's stop", "expired": "plan window ended"}[mp["status"]]))))
     hits = t.get("targets_hit") or []
     if any(hits):
         ev.append((None, _t("Target hit"), E(", ".join(f"T{i + 1} {h.lvl(x)}" for i, x in enumerate(t.get("targets") or []) if i < len(hits) and hits[i]) + _t(" (time not recorded)"))))
@@ -353,7 +355,7 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
             grid.append((_t("Entry (fill)"), h.lvl(t.get("entry")) + (f' ({_t(t["entry_type"])})' if t.get("entry_type") in ("breakdown", "breakout") else "")))
         ae = t.get("alt_entry") or {}
         if ae.get("trigger_rule") and t.get("status") == "pending" and (ae.get("status") or "watching") == "watching":
-            grid.append((_t(f'Or: {ae.get("type")} entry'), _t("1h close {op} {lvl}, stop {stop}", op="<" if ae.get("type") == "breakdown" else ">", lvl=h.lvl(ae["trigger_rule"]["level"]), stop=h.lvl(ae.get("stop")))))
+            grid.append((_t("Or: breakdown entry" if ae.get("type") == "breakdown" else "Or: breakout entry"), _t("1h close {op} {lvl}, stop {stop}", op="<" if ae.get("type") == "breakdown" else ">", lvl=h.lvl(ae["trigger_rule"]["level"]), stop=h.lvl(ae.get("stop")))))
         grid.append((_t("Stop"), h.lvl(t.get("stop")) + (f' → {h.lvl(t["current_stop"])}' if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
         hits = t.get("targets_hit") or []
         for j, x in enumerate(t.get("targets") or []):
