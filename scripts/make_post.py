@@ -203,7 +203,7 @@ def gather(now=None):
         "slate": slate, "no_setup": [n["sym"] for n in no_setup], "no_setup_notes_watchlist": [n for n in no_setup if n["watchlist"]],
         "btc": {"price": sig(btc.get("price"), 5), "pct_24h": round(btc.get("change_24h") or 0, 1), "support": bd.get("support"), "resistance": bd.get("resistance")},
         "movers_24h": movers, "record": record, "news": news, "signals": sigs,
-        "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous")} if fg else None,
+        "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous"), "source": fg.get("source")} if fg else None,
         "links": {"site": SITE, "affiliate": affiliate()},
         "post_kinds": ["morning", "midday", "evening", "event", "news", "weekly", "missed"],
         "voice": "docs/x_voice.md",

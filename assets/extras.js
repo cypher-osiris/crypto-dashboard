@@ -7,7 +7,7 @@
   /* ---------------- market context ---------------- */
   const big = (v) => (v == null ? "—" : v >= 1e12 ? `$${(v / 1e12).toFixed(2)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(2)}B` : `$${(v / 1e6).toFixed(1)}M`);
   const ctx = { global: null, fear_greed: null, derivatives: null, src: {} };
-  function fngClass(v) { return v >= 75 ? "xg" : v >= 55 ? "g" : v > 45 ? "n" : v > 25 ? "f" : "xf"; }
+  function fngClass(v) { return v >= 80 ? "xg" : v >= 60 ? "g" : v >= 40 ? "n" : v >= 20 ? "f" : "xf"; } // CoinMarketCap bands
   function renderContext() {
     const D = window.Dash, el = $("context"); if (!el) return;
     const g = ctx.global, f = ctx.fear_greed, d = ctx.derivatives;
@@ -16,7 +16,7 @@
       g ? item("Total market cap", big(g.total_mcap_usd), g.mcap_change_24h_pct != null ? D.chip(g.mcap_change_24h_pct) : "", `CoinGecko /global · ${ctx.src.global}`) : "",
       g ? item("BTC dominance", `${g.btc_dominance_pct.toFixed(1)}%`, g.eth_dominance_pct != null ? `<span class="muted">ETH ${g.eth_dominance_pct.toFixed(1)}%</span>` : "", `CoinGecko /global · ${ctx.src.global}`) : "",
       g ? item("24h volume", big(g.total_volume_usd), "", `CoinGecko /global · ${ctx.src.global}`) : "",
-      f ? item("Fear & Greed", `${f.value}`, `<span class="fng ${fngClass(f.value)}">${D.esc(f.classification)}</span>${f.previous != null ? `<span class="muted"> prev ${f.previous}</span>` : ""}`, `alternative.me Crypto Fear & Greed Index (daily) · ${ctx.src.fear_greed}`) : "",
+      f ? item("Fear & Greed", `${f.value}`, `<span class="fng ${fngClass(f.value)}">${D.esc(f.classification)}</span>${f.previous != null ? `<span class="muted"> prev ${f.previous}</span>` : ""}`, `${f.source === "alternative.me" ? "alternative.me Crypto Fear & Greed Index (daily)" : "CoinMarketCap Fear & Greed Index"} · ${ctx.src.fear_greed}`) : "",
       d ? item("BTC funding (8h)", `${d.funding_rate_pct >= 0 ? "+" : ""}${d.funding_rate_pct.toFixed(4)}%`, `<span class="muted">OKX perp</span>`, `OKX BTC-USDT-SWAP current funding rate · positive = longs pay shorts · ${ctx.src.derivatives}`) : "",
       d ? item("BTC open interest", big(d.open_interest_usd), `<span class="muted">${Math.round(d.open_interest_btc).toLocaleString()} BTC</span>`, `OKX BTC-USDT-SWAP open interest · ${ctx.src.derivatives}`) : "",
     ].join("") || '<div class="ctx"><small>Market context</small><b>unavailable</b></div>';
@@ -25,7 +25,9 @@
   async function refreshContext() {
     const jobs = [
       getJ("https://api.coingecko.com/api/v3/global").then((j) => { const d = j.data; ctx.global = { total_mcap_usd: d.total_market_cap.usd, total_volume_usd: d.total_volume.usd, mcap_change_24h_pct: d.market_cap_change_percentage_24h_usd, btc_dominance_pct: d.market_cap_percentage.btc, eth_dominance_pct: d.market_cap_percentage.eth }; ctx.src.global = "live"; }),
-      getJ("https://api.alternative.me/fng/?limit=2").then((j) => { const d = j.data; ctx.fear_greed = { value: +d[0].value, classification: d[0].value_classification, previous: d[1] ? +d[1].value : null }; ctx.src.fear_greed = "live"; }),
+      // CoinMarketCap (primary, via data/context.json snapshot; its API has no CORS). alternative.me live only as a fallback when no CMC snapshot.
+      (ctx.fear_greed && ctx.fear_greed.source === "CoinMarketCap") ? Promise.resolve() :
+      getJ("https://api.alternative.me/fng/?limit=2").then((j) => { const d = j.data; ctx.fear_greed = { value: +d[0].value, classification: d[0].value_classification, previous: d[1] ? +d[1].value : null, source: "alternative.me" }; ctx.src.fear_greed = "live"; }),
       Promise.all([getJ("https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP"), getJ("https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP")]).then(([f, o]) => {
         ctx.derivatives = { funding_rate_pct: +f.data[0].fundingRate * 100, open_interest_usd: +o.data[0].oiUsd, open_interest_btc: +o.data[0].oiCcy }; ctx.src.derivatives = "live";
       }),

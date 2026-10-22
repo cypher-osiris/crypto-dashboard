@@ -2,7 +2,7 @@
 """
 Market-context snapshot -> data/context.json (fallback for the in-browser live fetch).
   python3 scripts/context.py
-Sources (all free, no keys): CoinGecko /global (total mcap, BTC dominance), alternative.me Fear & Greed,
+Sources (all free, no keys): CoinGecko /global (total mcap, BTC dominance), CoinMarketCap Fear & Greed (alternative.me fallback),
 OKX public API (BTC-USDT perpetual funding rate + open interest). Each source is optional; failures are recorded.
 """
 import json
@@ -27,11 +27,43 @@ def cg_global():
             "btc_dominance_pct": d["market_cap_percentage"]["btc"], "eth_dominance_pct": d["market_cap_percentage"].get("eth")}
 
 
-def fng():
+CMC_BANDS = ((20, "Extreme fear"), (40, "Fear"), (60, "Neutral"), (80, "Greed"), (101, "Extreme greed"))
+
+
+def fng_band(v):
+    """CoinMarketCap band label: 0-20 Extreme fear, 20-40 Fear, 40-60 Neutral, 60-80 Greed, 80-100 Extreme greed."""
+    return next(lbl for hi, lbl in CMC_BANDS if v < hi)
+
+
+def _iso(ts):
+    return datetime.fromtimestamp(int(ts), timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def fng_cmc():
+    import time
+    now = int(time.time())
+    d = get(f"https://api.coinmarketcap.com/data-api/v3/fear-greed/chart?start={now - 3 * 86400}&end={now}")["data"]
+    hv = d["historicalValues"]; cur = hv["now"]; y = hv.get("yesterday") or {}
+    v = int(round(float(cur["score"])))
+    return {"value": v, "classification": fng_band(v),
+            "previous": int(round(float(y["score"]))) if y.get("score") is not None else None,
+            "timestamp": _iso(cur["timestamp"]), "source": "CoinMarketCap"}
+
+
+def fng_alt():
     d = get("https://api.alternative.me/fng/?limit=2")["data"]
     return {"value": int(d[0]["value"]), "classification": d[0]["value_classification"],
             "previous": int(d[1]["value"]) if len(d) > 1 else None,
-            "timestamp": datetime.fromtimestamp(int(d[0]["timestamp"]), timezone.utc).isoformat().replace("+00:00", "Z")}
+            "timestamp": _iso(d[0]["timestamp"]), "source": "alternative.me"}
+
+
+def fng():
+    """Primary: CoinMarketCap Fear & Greed (intraday). Fallback: alternative.me (daily)."""
+    try:
+        return fng_cmc()
+    except Exception as e:
+        out = fng_alt(); out["primary_error"] = f"CoinMarketCap: {e}"
+        return out
 
 
 def okx():
