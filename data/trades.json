@@ -482,42 +482,8 @@
     }
   ],
   "stats": {
-    "total": 10,
     "open": 1,
     "pending": 3,
-    "closed": 5,
-    "won": 0,
-    "lost_or_stopped": 5,
-    "win_rate_pct": 0.0,
-    "cumulative_pnl_pct": -62.6,
-    "note": "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).",
-    "equity_curve": [
-      {
-        "t": "2026-10-18T15:00:00Z",
-        "trade_id": "T001",
-        "cum_pnl_pct": -18.8
-      },
-      {
-        "t": "2026-10-22T01:40:00Z",
-        "trade_id": "T002b",
-        "cum_pnl_pct": -23.75
-      },
-      {
-        "t": "2026-10-22T03:15:00Z",
-        "trade_id": "T005",
-        "cum_pnl_pct": -37.9
-      },
-      {
-        "t": "2026-10-22T16:50:00Z",
-        "trade_id": "T004",
-        "cum_pnl_pct": -57.13
-      },
-      {
-        "t": "2026-10-22T16:50:00Z",
-        "trade_id": "T007",
-        "cum_pnl_pct": -62.6
-      }
-    ],
     "slate_warnings": []
   },
   "evaluated_utc": "2026-10-21T17:08:18Z",
