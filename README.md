@@ -437,7 +437,7 @@ Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config
 ## Languages (scripts/i18n.py, assets/i18n/)
 
 English is the source and stays at `/`. Translated copies of every page live under `/<lang>/`
-(`/es/`, `/es/xrp/`, `/es/trades/T007/` …). Live languages: English, Español (`/es/`), Português (`/pt/`, Brazil-leaning).
+(`/es/`, `/es/xrp/`, `/es/trades/T007/` …). Live languages: English, Español (`/es/`), Português (`/pt/`, Brazil-leaning), Türkçe (`/tr/`).
 A language is live as soon as `assets/i18n/<lang>.json` exists; `scripts/i18n.py` `ORDER` sets the menu order.
 
 **How it works.** The site uses gettext-style strings: the key is the English text itself (with `{placeholders}`).
