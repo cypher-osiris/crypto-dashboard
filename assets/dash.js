@@ -232,7 +232,7 @@
         ${t.leverage_reason ? `<p class="pv-levwhy"><b>Why ${L === 1 ? "spot (1x)" : L + "x"}${t.conviction ? ` · ${esc(cap(t.conviction))} conviction` : ""}:</b> ${esc(t.leverage_reason)}</p>` : ""}
         <p>${esc(t.reasoning || "")}</p>${missedHtml(t)}${t.size_note ? `<p>${esc(t.size_note)}</p>` : ""}${t.leverage_note ? `<p class="muted">${esc(t.leverage_note)}</p>` : ""}
       </details>
-      ${page}
+      <div class="pv-card-links">${D.pages.has("trades") ? `<a class="pv-more-link" href="${ROOT}trades/${encodeURIComponent(t.id)}/">Trade ${esc(t.id)} page ${ICON.arrow}</a>` : ""}${page}</div>
     </article>`;
   }
   function renderSlate(D) {
@@ -358,8 +358,9 @@
       </article>
       <details class="pv-fold pv-span"><summary>Full trade history (${all.length})</summary>
         <div class="pv-table-wrap"><table class="pv-table"><thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Entry</th><th>Stop</th><th>Targets</th><th>Status</th><th>Result</th></tr></thead><tbody>
-        ${all.slice().reverse().map((t) => `<tr><td class="mono">${esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(t.direction)} ${lev(t)}x</td><td class="mono">${num(t.entry)}</td><td class="mono">${num(t.current_stop ?? t.stop)}</td><td class="mono">${(t.targets || []).map(num).join(" / ")}</td><td><span class="pv-status ${statusOf(t)[0]}">${statusOf(t)[1]}</span></td><td>${t.pnl_pct != null ? pctSpan(t.pnl_pct) : t.unrealized_pnl_pct != null ? pctSpan(t.unrealized_pnl_pct) + '<small class="muted"> open</small>' : "—"}</td></tr>`).join("")}
-        </tbody></table></div>${closed.length ? "" : ""}</details>`;
+        ${all.slice().reverse().map((t) => `<tr><td class="mono">${D.pages.has("trades") ? `<a href="${ROOT}trades/${encodeURIComponent(t.id)}/">${esc(t.id)}</a>` : esc(t.id)}</td><td>${esc(sym(t.coin))}</td><td>${esc(t.direction)} ${lev(t)}x</td><td class="mono">${num(t.entry)}</td><td class="mono">${num(t.current_stop ?? t.stop)}</td><td class="mono">${(t.targets || []).map(num).join(" / ")}</td><td><span class="pv-status ${statusOf(t)[0]}">${statusOf(t)[1]}</span></td><td>${t.pnl_pct != null ? pctSpan(t.pnl_pct) : t.unrealized_pnl_pct != null ? pctSpan(t.unrealized_pnl_pct) + '<small class="muted"> open</small>' : "—"}</td></tr>`).join("")}
+        </tbody></table></div>${closed.length ? "" : ""}</details>
+      ${D.pages.has("trades") ? `<a class="pv-more-link pv-span" href="${ROOT}trades/">Trade history: every idea with its own page, chart &amp; outcome ${ICON.arrow}</a>` : ""}`;
   }
 
   /* ---------- 5. analysis, collapsed ---------- */

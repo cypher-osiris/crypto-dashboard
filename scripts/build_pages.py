@@ -6,13 +6,16 @@
   python3 scripts/build_pages.py --quiet    # prints only the changed paths (one per line)
   python3 scripts/build_pages.py --paths    # all generated paths + index.html / classic/index.html if changed (used by publish.sh)
 
+Also (scripts/trade_pages.py): the trade-history archive /trades/ + one permalink page per idea /trades/<ID>/ from trades.json,
+and the static snapshot blocks (<!-- snap-*:start -->) + og/twitter description in index.html. A failure there only warns.
+
 Each page uses that coin's own data: price/changes (prices.json), levels, bias, outlook, projection, catalysts and
 sources (analysis.json), signals (signals.json), the slate idea + missed-it plan and closed ideas (trades.json), and
 the exchange list (data/config.json: coinbase product from coins.json, kraken_pairs, uphold_assets). Referral buttons
 are NOT in the HTML: assets/affiliate.js injects them per visitor region into #aff-coin / #aff-ledger.
 Only files whose content changed are rewritten. publish.sh runs this automatically when publishing data.
 """
-import datetime as dt, html, json, math, os, re, sys
+import datetime as dt, html, json, math, os, re, sys, types
 from zoneinfo import ZoneInfo
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -343,7 +346,7 @@ def build():
         hist_html = ""
         if closed:
             hist_html = '<h3>Past ' + E(sym) + ' ideas</h3><ul class="cp-list">' + "".join(
-                f'<li><span class="mono">{E(x["id"])}</span> {E(x["direction"])} · <b>{E(x["status"])}</b>'
+                f'<li><a class="mono" href="../trades/{E(x["id"])}/">{E(x["id"])}</a> {E(x["direction"])} · <b>{E(x["status"])}</b>'
                 f'{" · " + pct_txt(x["pnl_pct"]) if x.get("pnl_pct") is not None else ""} · {E(ctime(x.get("closed_at") or x.get("opened_at"), False))}'
                 f'{" · " + E(x.get("cancel_reason")) if x.get("cancel_reason") else ""}</li>' for x in closed[:5]) + "</ul>"
 
@@ -424,7 +427,7 @@ def build():
   <a class="cp-brand" href="../"><img src="../assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>
   <a class="cp-dash" href="../#slate">Dashboard &amp; trade ideas →</a>
 </div></header>
-<nav class="nav" aria-label="Coin pages"><div class="wrap nav-inner"><a href="../">Dashboard</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>
+<nav class="nav" aria-label="Coin pages"><div class="wrap nav-inner"><a href="../">Dashboard</a><a href="../trades/">Trade history</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>
 <main class="wrap cp-main">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(sym)} analysis</p>
 <h1>{h1}</h1>
@@ -450,7 +453,7 @@ def build():
 {SCHEDULE_NOTE}
 {trade_sec}
 {hist_html}
-<p class="meta">Every idea is tracked against 5-minute candles and logged, losses included. See the <a href="../#score">scorecard</a>.</p></section>
+<p class="meta">Every idea is tracked against 5-minute candles and logged, losses included. See the <a href="../#score">scorecard</a> and the <a href="../trades/">full trade history</a>{(' (this idea: <a href="../trades/' + E(t["id"]) + '/">' + E(t["id"]) + ' page</a>)') if t else ""}.</p></section>
 
 {cat_html}
 {buy_html}
@@ -471,10 +474,23 @@ def build():
 """
         write(f"{slug}/index.html", page)
 
+    # ---- trade history (/trades/ + /trades/<ID>/), see scripts/trade_pages.py ----
+    h = types.SimpleNamespace(E=E, fp=fp, lvl=lvl, pc=pc, pct_txt=pct_txt, ctime=ctime, CT=CT, SITE=SITE, NEWSLETTER_URL=NEWSLETTER_URL)
+    coin_slug = {c: s for c, s in pages}
+    trade_sm = []
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import trade_pages
+        trade_sm = trade_pages.build(h, prices, trades, nav_items, coin_slug, V, gen_date, write)
+    except Exception as e:  # never block the coin pages / data publish
+        trade_pages = None
+        print(f"build_pages: WARNING trade pages failed: {e!r}", file=sys.stderr)
+
     # ---- sitemap ----
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
           f'  <url><loc>{SITE}</loc><lastmod>{gen_date}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>']
     sm += [f'  <url><loc>{SITE}{s}/</loc><lastmod>{gen_date}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>' for _, s in pages]
+    sm += [f'  <url><loc>{SITE}{p}</loc><lastmod>{lm}</lastmod><changefreq>{fq}</changefreq><priority>{pr}</priority></url>' for p, lm, fq, pr in trade_sm]
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
 
     # ---- link blocks in the main page (index.html, root) and the classic view (classic/index.html, one level down) ----
@@ -492,6 +508,11 @@ def build():
         for b, e, blk in ((BEGIN, END, block), (FBEGIN, FEND, fblock)):
             if b in new and e in new:
                 new = new[:new.index(b)] + blk + new[new.index(e) + len(e):]
+        if path == "index.html" and trade_pages:
+            try:
+                new = trade_pages.snapshot(h, new, prices, trades, analysis)
+            except Exception as e:
+                print(f"build_pages: WARNING index snapshot failed: {e!r}", file=sys.stderr)
         if new != cur:
             write(path, new)
     return changed
@@ -502,6 +523,10 @@ if __name__ == "__main__":
     if "--paths" in sys.argv:
         # for publish.sh: every generated page + sitemap (unchanged ones are no-ops for git add), index.html only if changed
         outs = [f"{slug}/index.html" for _, slug in PAGES if os.path.exists(os.path.join(ROOT, slug, "index.html"))] + ["sitemap.xml"]
+        tdir = os.path.join(ROOT, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
+        if os.path.isdir(tdir):
+            outs += ["trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
+                f"trades/{d}/index.html" for d in os.listdir(tdir) if os.path.exists(os.path.join(tdir, d, "index.html")))
         print("\n".join(outs + [x for x in ch if x not in outs]))
     elif "--quiet" in sys.argv:
         print("\n".join(ch))
