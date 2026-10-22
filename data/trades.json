@@ -106,9 +106,9 @@
       },
       "reasoning": "SEED SLATE IDEA (short, fade into resistance). Daily trend is down (price below the daily EMA20 0.1909 / EMA50 0.1933 / EMA200 0.1908; daily RSI 44), while the 1h/4h bounce is stretched (1h StochRSI ~100, 1h RSI 69). The 0.1895–0.1915 zone stacks the daily EMA20/EMA200 with prior support-turned-resistance near 0.19. Stop 0.1955 sits above the daily EMA50. T1 0.1830 ≈ the 1h EMA20/prior breakout; T2 0.1775 ≈ the Oct 17–19 support. From 0.1905: risk +2.6% (−5.2% at 2x) vs. −3.9% / −6.8% (+7.8% / +13.6% at 2x).",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792634700000,
-      "mark_price": 0.181592,
-      "last_checked": "2026-10-22T02:05:00Z",
+      "last_checked_ms": 1792641000000,
+      "mark_price": 0.18042,
+      "last_checked": "2026-10-22T03:50:00Z",
       "missed_plan": {
         "type": "none",
         "trigger": null,
@@ -150,9 +150,9 @@
       },
       "reasoning": "SEED SLATE IDEA (3x long, buy the pullback). ZBCN is the only coin with an uptrend on all three timeframes (price > EMA20 > EMA50 on 1h/4h/1d, above the daily EMA200 0.00227), but 1h/4h RSI is >70 after today's +13% breakout, so wait for a retest of the 0.0023 breakout area / 1h EMA20 (0.00233). Stop 0.00219 below the 4h EMA20/50 (~0.00222) and the daily EMA200. T1 0.00258 = early-Oct resistance; T2 0.00270 = bull projection. From 0.00232: risk −5.6% (−16.8% at 3x) vs. +11.2% / +16.4% (+33.6% / +49.1% at 3x). Small cap: wide swings, size down.",
       "source": "seed slate (Grok Bot)",
-      "last_checked_ms": 1792634700000,
-      "mark_price": 0.002266,
-      "last_checked": "2026-10-22T02:05:00Z",
+      "last_checked_ms": 1792641000000,
+      "mark_price": 0.002268,
+      "last_checked": "2026-10-22T03:50:00Z",
       "missed_plan": {
         "type": "pullback",
         "trigger": "Range floor holds: a 1h candle dips into 0.002385–0.00241 and closes at or above 0.002385",
@@ -180,7 +180,7 @@
       "planned_entry": 0.00232,
       "filled_at": "2026-10-21T19:10:00Z",
       "targets_hit": [],
-      "unrealized_pnl_pct": -9.49,
+      "unrealized_pnl_pct": -9.23,
       "conviction": "medium",
       "leverage_reason": "Recorded at 3x under the fixed-3x rule (Oct 21); seen as medium conviction: uptrend on all three timeframes, but a thin small cap after a +13% day."
     },
@@ -201,7 +201,7 @@
       ],
       "opened_at": "2026-10-21T20:31:02Z",
       "expiry": "2026-11-07T20:00:00Z",
-      "status": "open",
+      "status": "stopped",
       "timeframe": "swing",
       "timeframe_note": "Swing / range trade: multi-day hold inside the 0.0475-0.0647 channel, about 2.5 weeks to fill",
       "missed_it": {
@@ -215,15 +215,16 @@
       },
       "reasoning": "SWING / RANGE trade (multi-day). AXL has been range-trading in a channel since Sep 22 (Coinbase daily + 4H candles): outer floor 0.0475-0.0505 (6 swing lows: 0.0488 Sep 24, 0.0501 Sep 29, 0.0493 Oct 1, 0.0505 Oct 2, 0.0490 Oct 7, 0.0475 Oct 8; only three 4H closes under 0.050, reclaimed within a day), a rising inner shelf at 0.0516-0.0535 (6 lows since Oct 13: 0.0533, 0.0516, 0.0535, 0.0532, 0.0528, 0.0525) and a ceiling at 0.0600-0.0647 (4 rejections: 0.0600 Sep 27, 0.0629 Oct 12, 0.0647 Oct 14, 0.0642 Oct 18; highest 4H close 0.0621, no daily close above 0.0603). Floor-to-ceiling legs have run +21-32% and ceiling-to-floor drops -15-20%, usually in 1-4 days. Price (~0.0545) sits just above the shelf, below mid-channel (~0.056), so this is a pending limit at the shelf, not a chase. Stop 0.0505 is under the 0.0516 shelf low: a break there means the October floor failed and price likely rotates to 0.0475-0.050 (a stop under 0.0475 from a 0.053 fill would risk about 35% of margin at 3x for a sub-1.5 R:R to T2). T1 0.0583 sits under the 0.0581-0.0591 lower-high cluster; T2 0.0620 sits under the 0.0625-0.0647 rejection wicks. R:R from the worst fill (0.0530): 2.1 to T1, 3.6 to T2. Signals: 1h Buy, 1d Buy (above EMA50/EMA200, daily StochRSI oversold), 4h Sell (below EMA20/50), so wait for the floor. Context: CoinDCX (Oct 15) reports the Oct 14 spike came with no Axelar announcement, on volume equal to 78% of market cap, and warns of sharp retracements once volume normalizes. That fits wick-and-fade range behaviour more than a breakout. Mirror trade: after T2, a rejection at 0.0615-0.0645 is the short back toward the shelf.",
       "source": "analysis run (AXL range review)",
-      "last_checked_ms": 1792634700000,
-      "last_checked": "2026-10-22T02:05:00Z",
-      "mark_price": 0.0521,
+      "last_checked_ms": 1792639200000,
+      "last_checked": "2026-10-22T03:20:00Z",
       "conviction": "medium",
       "leverage_reason": "Medium conviction: a well-defined range floor (6 shelf lows 0.0516-0.0535) and 1h/1d Buy with a supportive BTC backdrop, but 4h Sell, a thin small cap and an unexplained Oct 14 spike. Medium band = 3-5x, kept at the low end for volatility over a multi-day swing; stop 0.0505 is 4.7% from the worst fill 0.0530, so 3x risks about 14% of margin (cap 25% would allow ~5x).",
       "planned_entry": 0.0524,
       "filled_at": "2026-10-22T01:35:00Z",
       "targets_hit": [],
-      "unrealized_pnl_pct": -5.09
+      "exit_price": 0.0505,
+      "pnl_pct": -14.15,
+      "closed_at": "2026-10-22T03:15:00Z"
     },
     {
       "id": "T006",
@@ -277,13 +278,13 @@
       },
       "reasoning": "SPOT POSITION idea (1x, long only; a long-term spot holding idea, and the main perp venues used here (Bitunix, Binance, OKX, Kraken Futures, Coinbase) list no XDC perpetual). Kraken candles: today's +11% move broke the Oct 15-20 lower highs (0.0352 to 0.0329) and is testing the 0.0355-0.0360 ceiling (Oct 9/10/12 highs 0.03587/0.03574/0.03569, today 0.03597), but it has not closed a 4H or daily candle above 0.0360. Volume is higher (Kraken ~1.6x its 10-day average, CoinGecko all-exchange ~$25.6M vs ~$8-18M/day) on the SBI/Shinhan yen-stablecoin MOU and this week's MoneyGram validator news. Price is stretched (4H above the upper Bollinger band, 1h RSI 80), so this is a pending buy on a retest of 0.0347-0.0352: the broken lower-high line (Oct 15 high 0.0352, Oct 16 0.0347) and today's 1-3 PM CT base (1h lows 0.0347-0.0350). Stop 0.0330 sits under today's 7 AM CT 4H low (0.0339) and the Oct 13 low (0.03318), near the daily EMA20 (0.0334). A close there means the breakout failed and the October floor (0.0318-0.0321) is in play. T1 0.0383 is under the Sep 29 high (0.0384, the 90-day high); T2 0.0440 is under the Jan 22-23 highs. R:R from the worst fill (0.0352): 1.4 to T1, 4.0 to T2, about 2.7 blended (equal halves; the stop moves to breakeven after T1). P&L is at 1x: T1 +8.8%, T2 +25%, stop -6.3% from 0.0352. The news is mostly MOUs and pilots with no disclosed numbers, so the idea rests on the levels, not on the headlines.",
       "source": "analysis run (XDC first review, Oct 21 breakout check)",
-      "last_checked_ms": 1792634700000,
-      "last_checked": "2026-10-22T02:05:00Z",
+      "last_checked_ms": 1792641000000,
+      "last_checked": "2026-10-22T03:50:00Z",
       "planned_entry": 0.03495,
       "filled_at": "2026-10-21T21:55:00Z",
       "targets_hit": [],
-      "mark_price": 0.03522,
-      "unrealized_pnl_pct": 0.06,
+      "mark_price": 0.03429,
+      "unrealized_pnl_pct": -2.59,
       "conviction": "medium",
       "leverage_reason": "Spot (1x) by rule: XDC ideas are spot only; a weeks-to-months position hold, not leveraged."
     },
@@ -321,17 +322,72 @@
       "exit_price": 1.348,
       "pnl_pct": -4.95,
       "closed_at": "2026-10-22T01:40:00Z"
+    },
+    {
+      "id": "T007",
+      "coin": "bitcoin",
+      "direction": "long",
+      "leverage": 3,
+      "conviction": "medium",
+      "leverage_reason": "4h Strong Buy / 1d Buy but 1h Sell; clear 81.1K-81.6K base under the zone; Fed Oct 28 inside the window; stop 1.8% from worst fill -> 5.5% of margin at 3x",
+      "entry": 82050,
+      "entry_zone": {
+        "low": 81800,
+        "high": 82300
+      },
+      "stop": 80800,
+      "targets": [
+        84500,
+        86000
+      ],
+      "opened_at": "2026-10-22T03:51:52Z",
+      "expiry": "2026-10-25T23:00:00-05:00",
+      "expires": "2026-10-28T12:00:00-05:00",
+      "status": "pending",
+      "move_stop_to_be": true,
+      "timeframe": "swing",
+      "timeframe_note": "Swing (days): bid a retest of the Oct 19-20 base; fills by Oct 25, closes at market before the Oct 28 Fed decision if still open",
+      "missed_it": {
+        "max_entry": 82600,
+        "note": "Above 82,600 the reward to T1 84,500 drops under ~1.2R against the 80,800 stop, so don't chase the bounce. Skip the idea if BTC has a 4h close under 81,000 before filling (the Oct 20 base is gone)."
+      },
+      "missed_plan": {
+        "type": "breakout",
+        "trigger": "1h close above 85,000 (clears the Oct 21 high 84,850)",
+        "trigger_rule": {
+          "tf": "1h",
+          "kind": "close_above",
+          "level": 85000
+        },
+        "entry_zone": {
+          "low": 85000,
+          "high": 85300
+        },
+        "stop": 84000,
+        "target": 87400,
+        "leverage": 3,
+        "size_note": "normal size; the stop is tighter in % than the main idea's",
+        "reasoning": "If BTC never dips to 82.3K and instead clears the Oct 21 high (84,850), buy 85,000-85,300 after a 1h close above 85,000. Stop 84,000 sits under the Oct 21 late-session hourly lows (83,983-84,008); a close back there means the breakout failed. Target 87,400 is just under the 90-day high (~87,395) and the 87,450 resistance. R:R from the worst fill 85,300: 2,100 / 1,300 = 1.6.",
+        "expiry": "2026-10-25T23:00:00-05:00",
+        "status": "watching",
+        "last_checked_ms": 1792641600000,
+        "last_checked": "2026-10-22T04:00:00Z"
+      },
+      "reasoning": "SWING LONG (pullback buy). BTC topped at 84,850 on Oct 21 and pulled back to ~82.9K, right onto the daily EMA20 (~82.7K) and the 82.5K level analysts flagged as the line for the bounce. The bid sits lower, at 81.8K-82.3K, over the Oct 19-20 base (lows 81,634 / 81,081, closes ~81.8K-82.9K) so a fill comes from a real retest, not mid-air. Stop 80,800 is under the Oct 20 low; below that the 80K-80.6K Oct 15-18 lows are the last support. T1 84,500 sits under the Oct 21 high/84.85K resistance; T2 86,000 is the next resistance band. From the 82,300 worst fill: risk -1.8% (-5.5% at 3x) vs +2.7% / +4.5% (+8.0% / +13.6% at 3x) = 1.5R / 2.5R. Support: spot BTC ETFs +$289.8M on Oct 21 (second straight inflow day), funding only ~0.003%, 4h Strong Buy / 1d Buy. Against: 1h Sell, Fear & Greed 68 (Greed) and the Oct 28 FOMC, so the trade closes at market before the decision if still open. Indicators are context, not proof.",
+      "source": "analysis run (late night Oct 21)",
+      "last_checked_ms": 1792641112000,
+      "last_checked": "2026-10-22T03:51:52Z"
     }
   ],
   "stats": {
-    "total": 7,
-    "open": 3,
-    "pending": 1,
-    "closed": 2,
+    "total": 8,
+    "open": 2,
+    "pending": 2,
+    "closed": 3,
     "won": 0,
-    "lost_or_stopped": 2,
+    "lost_or_stopped": 3,
     "win_rate_pct": 0.0,
-    "cumulative_pnl_pct": -23.75,
+    "cumulative_pnl_pct": -37.9,
     "note": "Cumulative P&L is the simple sum of per-trade % returns at each trade's leverage (equal size per trade).",
     "equity_curve": [
       {
@@ -343,17 +399,23 @@
         "t": "2026-10-22T01:40:00Z",
         "trade_id": "T002b",
         "cum_pnl_pct": -23.75
+      },
+      {
+        "t": "2026-10-22T03:15:00Z",
+        "trade_id": "T005",
+        "cum_pnl_pct": -37.9
       }
     ],
     "slate_warnings": []
   },
   "evaluated_utc": "2026-10-21T17:08:18Z",
   "slate": {
-    "as_of": "2026-10-21T23:06:14Z",
+    "as_of": "2026-10-22T03:51:52Z",
     "rules": "Max one active (pending/open) idea per coin, max 6 at once; long or short; 'no setup' is allowed. Leverage is per idea, 1x-10x by conviction (low 1-2x, medium 3-5x, high 6-10x), capped so the loss at the stop from the worst fill is <= ~25% of margin; XDC is spot 1x.",
     "coins": {
       "ripple": {
-        "trade_id": "T002b"
+        "trade_id": null,
+        "note": "No setup (late night Oct 21). T002b was stopped at 1.348. XRP is back on the 1.33-1.345 pivot with the daily EMA cluster (1.369-1.375) overhead: a long from 1.33 with a stop under 1.29 is ~1:1 to 1.37, and a short into 1.33 support has no room. Wait for a daily close back above 1.375 or a flush to 1.28-1.29 that holds."
       },
       "stellar": {
         "trade_id": "T003"
@@ -363,43 +425,43 @@
       },
       "hedera-hashgraph": {
         "trade_id": null,
-        "note": "No setup (evening Oct 21). Daily Sell, below EMA20/50 (~0.0872-0.0885); 1h fresh bearish MACD. Wait for a hold of 0.082-0.084 or a daily close above ~0.0887."
+        "note": "No setup (late night Oct 21). Testing the 0.082 floor (low 0.08197) under falling daily EMAs (~0.0869-0.0878): a short has little room, a long fights the trend. Wait for a daily close above ~0.0887 or a reclaim after a flush below 0.080."
       },
       "axelar": {
-        "trade_id": "T005"
+        "trade_id": null,
+        "note": "No setup (late night Oct 21). T005 was stopped at 0.0505 when the 0.0516-0.0535 shelf broke. Price ~0.0508 is in the outer 0.0475-0.0505 floor with 1h Strong Sell momentum; wait for a 4h close back above 0.0516 or a flush into 0.0475-0.049 that reverses. A daily close under 0.0475 ends the range thesis."
       },
       "ethereum": {
         "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). Mid-range at ~2,484 between 2,435 and 2,520 with ETH ETF outflows; wait for a close above 2,520 or a retest of 2,336-2,435."
+        "note": "No setup (late night Oct 21). ~2,441 at the 2,432-2,435 support, 1d Sell; a long has the 2,480-2,520 ceiling close and a short into 2,336-2,370 is ~3% with the BTC 4h still Buy."
       },
       "solana": {
         "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). ~107 sits between 105.5 support and 109 resistance; no edge until one breaks."
+        "note": "No setup (late night Oct 21). Slipped under 105.5 (low 104.93); a breakdown short to 100.5 from a 105.5-106.5 retest with a stop above 108.4 is only ~1.4-1.7:1 against a BTC 4h Buy."
       },
       "dogecoin": {
         "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). Daily downtrend, but only ~7% above the 0.0763 floor, so a short has little room and a long fights the trend."
+        "note": "No setup (late night Oct 21). Daily Strong Sell, but only ~5% above the 0.076-0.077 floor: no room for a short, and a long fights the trend."
       },
       "cardano": {
         "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). Below daily EMA20 0.2326; wait for a reclaim or a test of 0.2118-0.222."
+        "note": "No setup (late night Oct 21). Lost 0.2219 support (low 0.2193); next 0.2144/0.2108. Wait for a reclaim of 0.2267 or a test of 0.211-0.2145."
       },
       "chainlink": {
         "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). At the top of the weekly range (12.70-12.80); wait for a breakout close or a pullback toward 12.26/11.56."
+        "note": "No setup (late night Oct 21). Rejected at 12.80, now on 12.17-12.26 support mid-range; wait for a hold there with a 4h turn, or a breakout close above 12.80."
       },
       "sui": {
         "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). Mid-range at ~1.03 between 0.985 and 1.055."
+        "note": "No setup (late night Oct 21). Testing 1.00 (low 0.9999) mid-range between 0.975 and 1.056; no edge until one breaks."
       },
       "bitcoin": {
-        "trade_id": null,
-        "note": "No setup (reviewed evening Oct 21). ~84.4K is pressing the 84.8-86K resistance band after a short squeeze; a long here is late and a pullback buy at 82.5-83K with a stop under 80K is only ~1:1 to 86K. Wait for a clean retest or a daily close above 86K."
+        "trade_id": "T007"
       },
       "xdce-crowd-sale": {
         "trade_id": "T006"
       }
     }
   },
-  "tracked_utc": "2026-10-22T02:08:23.908000Z"
+  "tracked_utc": "2026-10-22T03:51:52.292000Z"
 }

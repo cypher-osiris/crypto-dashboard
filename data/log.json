@@ -1,6 +1,24 @@
 {
   "entries": [
     {
+      "t": "2026-10-22T03:52:04Z",
+      "kind": "analysis",
+      "author": "Lumi (late-night update)",
+      "text": "Late-night update (11 PM CT): BTC gave back Wednesday's short squeeze, ~$82.9K after topping at $84.85K, as alts slid 1-5%; spot BTC ETFs still took +$289.8M on Oct 21 (SoSoValue) and Fear & Greed is 68. Slate events since the evening review: XRP T002b stopped at 1.348 (-4.95% at 3x); AXL swing T005 filled at 0.0530 and was stopped at 0.0505 (-14.15% at 3x) when the 0.0516-0.0535 shelf broke. New idea: T007 BTC swing long 3x (medium conviction), pending 81,800-82,300, stop 80,800, targets 84,500 / 86,000; fills by Oct 25, closes before the Oct 28 FOMC if still open; missed-it plan = breakout buy above 85,000. T003 XLM short stays pending (expires Oct 23); ZBCN T004 and XDC T006 (spot) stay open. XRP, AXL, HBAR and the other majors: no setup. Policy: industry comments on the SEC's Regulation Crypto Assets proposal (Stellar, Hedera, Cardano, Chainlink and others jointly; Ripple separately) ask for the 'digital commodity' category in the final rule text. Next dated risks: jobless claims Oct 22, flash PMI Oct 23, FOMC Oct 28, GDP/PCE Oct 29."
+    },
+    {
+      "t": "2026-10-22T03:48:17Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 82875 (+0.2%), HBAR 0.082688 (-0.8%), XLM 0.180382 (-0.5%), XRP 1.34 (+0.9%), ZBCN 0.00226018 (-4.3%), AXL 0.050692 (-5.4%), XDC 0.0342402 (+6.1%), ETH 2442.52 (-0.1%), SOL 105.44 (-0.5%), DOGE 0.0803 (-1.5%), ADA 0.220596 (-1.2%), LINK 12.25 (-0.6%), SUI 1.006 (-1.9%). Trades: T005 AXL closed STOPPED at 0.0505 (-14.15% at 3x). Open trades: 2; pending: 1; closed: 3; win rate: 0.0%."
+    },
+    {
+      "t": "2026-10-22T03:48:17.872000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T005 AXL closed STOPPED at 0.0505 (-14.15% at 3x)."
+    },
+    {
       "t": "2026-10-22T02:08:23.908000Z",
       "kind": "auto",
       "author": "track_trades.py",
