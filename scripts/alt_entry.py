@@ -187,13 +187,13 @@ def main(argv):
             print(f"not applied: {res.get('reason', 'unknown id')}", file=sys.stderr)
             return 1
         with tt.file_lock():
-            doc = tt.load("trades.json", {"trades": []})
+            doc = tt.load_trades()
             t = next(x for x in doc["trades"] if x["id"] == tid)
             if t.get("status") != "pending" or t.get("alt_entry"):
                 print(f"not applied: {tid} is {t.get('status')} / already has an alt_entry", file=sys.stderr)
                 return 1
             t["alt_entry"] = res["alt_entry"]
-            tt.save("trades.json", doc)
+            tt.save_trades(doc)
         print(f"applied alt_entry to {tid}; run python3 scripts/track_trades.py and check slate_warnings", file=sys.stderr)
     print(json.dumps(out, indent=1, ensure_ascii=False))
     return 0

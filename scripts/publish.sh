@@ -3,8 +3,8 @@
 #   scripts/publish.sh                    # stage everything under data/
 #   scripts/publish.sh data/trades.json data/log.json data/signals.json   # stage only these paths
 #   PUBLISH_MSG="custom message" scripts/publish.sh
-# Steps: take state/lock -> git pull --rebase --autostash -> (data paths: scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push.
-# Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, other = git failure.
+# Steps: take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push.
+# Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export GIT_TERMINAL_PROMPT=0 GIT_EDITOR=true
@@ -15,6 +15,16 @@ exec 9>>state/lock
 if ! flock -w 300 9; then echo "publish: could not acquire state/lock" >&2; exit 3; fi
 
 git pull --rebase --autostash --quiet
+
+# Data publishes first scrub paper-trade results out of the public files (scripts/privacy.py; the full trades doc is
+# state/trades_full.json, git-ignored). A failed scrub stops the publish so results never go out by accident.
+if [ -f scripts/privacy.py ] && printf '%s\n' "${paths[@]}" | grep -q '^data\(/\|$\)'; then
+  if scrubbed=$(python3 scripts/privacy.py --lock-held --paths); then
+    while IFS= read -r p; do [ -n "$p" ] && paths+=("$p"); done <<< "$scrubbed"
+  else
+    echo "publish: privacy scrub failed; not publishing" >&2; exit 4
+  fi
+fi
 
 # Data publishes also regenerate the static coin pages (/xdc/ etc.) + sitemap.xml and publish them in the same commit.
 # Set BUILD_PAGES=0 to skip. A failed build only warns: the data publish still goes out.

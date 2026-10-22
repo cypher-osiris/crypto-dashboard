@@ -46,7 +46,12 @@ data/config.json      HAND-EDITED site config (affiliate link)
 data/log.json         update log (scripts prepend "auto" entries; analysis runs add "analysis" entries)
 scripts/update_prices.py   fetch prices, then delegate trade evaluation to track_trades.py (Python 3.9+, stdlib only)
 scripts/track_trades.py    THE trade engine: fills/stops/targets/expiry from 5m candles; run every 30 min (~1 s, no args)
-scripts/publish.sh         pull --rebase --autostash, validate JSON, commit data if changed, push (no prompts)
+scripts/publish.sh         pull --rebase --autostash, privacy scrub, validate JSON, commit data if changed, push (no prompts)
+scripts/privacy.py         public-data scrub (publish.sh runs it): data/trades.json is a public view (closed ideas just "closed",
+                           no exit/P&L/outcome fields); the full trade doc lives in git-ignored state/trades_full.json;
+                           paper-trade results are removed from data/log.json and data/analysis.json prose
+scripts/seo.py             schema.org JSON-LD (WebSite, Organization, WebAPI + offers, Dataset, FAQPage), keywords meta,
+                           /agents/ FAQ and /llms.txt (written by build_pages.py)
 scripts/locked.sh          run any command while holding state/lock (use for hand edits of trades.json/log.json)
 scripts/make_post.py       X helper: facts JSON for writing posts, number check, 1200x675 card, save drafts -> posts/ (git-ignored)
 scripts/make_og.py         1200x630 "Lumi Trades" social card (assets/og.png) from the current slate; --icons rebuilds favicons
@@ -133,7 +138,8 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
 Prices stream straight from exchanges to the visitor (nothing to run): Coinbase Exchange websocket `ticker` for
 every `coinbase` product in data/coins.json; Kraken v2 websocket for ZBCN/USD and XDC/USD (not listed on Coinbase); CoinGecko
 `simple/price` every 60 s for any coin whose socket is down. Signals refresh every 3 min, market context every 5 min
-(CoinGecko /global, alternative.me Fear & Greed, OKX public funding/open interest). If a source fails, the JSON
+(CoinGecko /global, OKX public funding/open interest; Fear & Greed comes only from CoinMarketCap via the
+data/context.json snapshot: if CoinMarketCap fails, the last CoinMarketCap value is shown marked stale, otherwise "unavailable"). If a source fails, the JSON
 snapshot stays on screen. Binance/Bybit are not used (geo-blocked in the US).
 
 ## Trade tracking (scripts/track_trades.py)
@@ -262,7 +268,13 @@ echo "$out" | python3 -c 'import sys,json; sys.exit(0 if json.load(sys.stdin)["p
 ```
 It publishes only when a trade event happened (otherwise `last_checked` churn would create a commit every 30 min);
 the next 4×-daily publish picks up the quiet `last_checked` updates. `publish.sh` exit codes: 0 ok (or nothing to
-commit), 1 git failure, 2 invalid JSON, 3 lock timeout.
+commit), 1 git failure, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed.
+
+**Public vs private trade data.** `track_trades.py`, `update_prices.py` and `alt_entry.py` read and write the full
+document in `state/trades_full.json` (git-ignored) and write only the public view to `data/trades.json`. Hand edits
+of the public file (new ideas, slate notes) are merged back into the full doc on the next load. Do not write
+paper-trade results (exits, P&L, wins/losses, records) into log entries, analysis commentary or notes:
+`scripts/privacy.py` strips them at publish, but keep prose about levels and setups only.
 
 ## Signal backtest (scripts/backtest.py)
 ```sh

@@ -1,5 +1,5 @@
 """Static info pages, one per language: /agents/ (Lumi's pay-per-call API for AI agents) and /trust/ (x402 vendor
-observations). Called by build_pages.py inside its language loop with the same helper namespace `h` that
+observations), plus /llms.txt. SEO bits (keywords, JSON-LD, the /agents/ FAQ) live in seo.py. Called by build_pages.py inside its language loop with the same helper namespace `h` that
 trade_pages.py gets (h.E, h._, h.L, h.SITE, h.ctime, h.langs, h.i18n, h.head_i18n, h.i18n_scripts, ...).
 
 /trust/ is rendered to static HTML at build time from https://api.lumitrades.io/v1/trust/vendors (fetched once per
@@ -10,6 +10,8 @@ then refreshes the table live from the same free endpoint. Every routine that ru
 import json
 import os
 import urllib.request
+
+import seo
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API = "https://api.lumitrades.io"
@@ -111,22 +113,32 @@ def vendor_row(h, v):
             f'<td>{E(h.ctime(lc)) if lc else "—"}</td><td>{ev}</td></tr>')
 
 
-def _page(h, tp, path, title, desc, ld, body, V, gen_date, nav_items, current, extra_js=""):
+def _page(h, tp, path, title, desc, ld, body, V, gen_date, nav_items, current, extra_js="", keywords=None):
     up = "" if h.L.en else "../"
     R = "../" + up
-    head = tp.page_head(h, title, desc, h.SITE + h.L.prefix + path, V, path, "website", ld).replace(
+    head = tp.page_head(h, title, desc, h.SITE + h.L.prefix + path, V, path, "website", ld, keywords).replace(
         "{ASSETS}", tp.assets(h, R, V) + extra_js.replace("{R}", R).replace("{V}", V))
     return head + tp.chrome(h, R, "../", nav_items, V, path, current) + body + tp.footer(h, R, gen_date)
+
+
+AGENTS_DESC = ("Pay-per-call crypto API for AI agents: trading signals, support and resistance levels, CoinMarketCap Fear & Greed, "
+               "a daily brief and an Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Pay with x402 in USDC "
+               "on Base or XRP and RLUSD on the XRPL. MCP server, no API key.")
+TRUST_DESC = ("x402 vendor reputation: free trust scores for pay-per-call endpoints from Lumi's automated 402-quote checks and small "
+              "paid test-buys, with on-ledger evidence on Base and the XRP Ledger. Observations, not a rating or review of any business.")
 
 
 def agents_page(h, tp, nav_items, V, gen_date):
     E, _t = h.E, h._
     rows = "".join(f'<tr><td>{E(_t(p))}</td><td class="mono">{E(ep)}</td><td class="num mono">{E(_t(pr) if pr == "free" else pr)}</td></tr>' for p, ep, pr in PRICES)
     title = _t("Crypto market data API for AI agents, pay per call with x402 | Lumi Trades")
-    desc = _t("Lumi sells crypto signals, levels, a daily brief and a vendor trust list to AI agents: no account or key, a few cents per call, paid with x402 in USDC on Base or XRP, RLUSD or USDC on the XRP Ledger. MCP server included.")
-    ld = [{"@context": "https://schema.org", "@type": "WebAPI", "name": "Lumi Trades API", "url": API + "/", "documentation": API + "/openapi.json",
-           "description": desc, "provider": {"@type": "Organization", "name": "Lumi Trades", "url": h.SITE},
-           "offers": {"@type": "Offer", "price": "0.01", "priceCurrency": "USD"}, "inLanguage": h.L.code},
+    desc = _t(AGENTS_DESC)
+    url = h.SITE + h.L.prefix + "agents/"
+    ld = [seo.organization(_t), seo.web_api(_t, h.L.code, PRICES, url),
+          {"@context": "https://schema.org", "@type": "WebPage", "name": title.replace(" | Lumi Trades", ""), "url": url, "description": desc,
+           "inLanguage": h.L.code, "isPartOf": {"@id": seo.SITE_ID}, "about": {"@id": seo.API_ID}, "publisher": {"@id": seo.ORG_ID},
+           "keywords": seo.keywords(_t, "agents", h.L.en)},
+          seo.faq_ld(_t),
           {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
               {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + h.L.prefix},
               {"@type": "ListItem", "position": 2, "name": _t("For AI agents"), "item": h.SITE + h.L.prefix + "agents/"}]}]
@@ -154,19 +166,24 @@ def agents_page(h, tp, nav_items, V, gen_date):
 <li><a href="../trust/">{E(_t("Vendor trust list (free)"))}</a></li>
 <li>{lk(BAZAAR, _t("Coinbase x402 Bazaar"))} · {lk(X402SCAN, "x402scan")}</li>
 <li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/a2a", "A2A")}</li></ul></section>
+{seo.faq_html(_t, E)}
 <div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas come from an AI's paper-trading experiment; no real money is traded.")}</span></div>
 </main>
 """
-    return _page(h, tp, "agents/", title, desc, ld, body, V, gen_date, nav_items, "agents")
+    return _page(h, tp, "agents/", title, desc, ld, body, V, gen_date, nav_items, "agents", keywords=seo.keywords(_t, "agents", h.L.en))
 
 
 def trust_page(h, tp, nav_items, V, gen_date, doc):
     E, _t = h.E, h._
     vendors = (doc or {}).get("vendors") or []
     title = _t("x402 vendor trust list: Lumi's automated test-buys | Lumi Trades")
-    desc = _t("Lumi's automated observations of x402 pay-per-call endpoints: free 402-quote checks plus small paid test-buys, with on-ledger evidence. Free to read. Not a rating or review of any business.")
-    ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": _t("x402 vendor trust list"), "url": h.SITE + h.L.prefix + "trust/",
-           "description": desc, "inLanguage": h.L.code},
+    desc = _t(TRUST_DESC)
+    url = h.SITE + h.L.prefix + "trust/"
+    ld = [seo.organization(_t),
+          {"@context": "https://schema.org", "@type": "WebPage", "name": _t("x402 vendor trust list"), "url": url,
+           "description": desc, "inLanguage": h.L.code, "isPartOf": {"@id": seo.SITE_ID}, "publisher": {"@id": seo.ORG_ID},
+           "keywords": seo.keywords(_t, "trust", h.L.en)},
+          seo.trust_dataset(_t, h.L.code, url, doc, VENDORS_URL),
           {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
               {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + h.L.prefix},
               {"@type": "ListItem", "position": 2, "name": _t("Vendor trust"), "item": h.SITE + h.L.prefix + "trust/"}]}]
@@ -194,13 +211,15 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 </main>
 """
     js = '<script src="{R}assets/trust.js?v={V}" defer></script>\n'
-    return _page(h, tp, "trust/", title, desc, ld, body, V, gen_date, nav_items, "trust", js)
+    return _page(h, tp, "trust/", title, desc, ld, body, V, gen_date, nav_items, "trust", js, seo.keywords(_t, "trust", h.L.en))
 
 
 def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
-    """Writes [<lang>/]agents/index.html and [<lang>/]trust/index.html. Returns sitemap entries (language-relative)."""
+    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
     P = h.L.prefix
     write(f"{P}agents/index.html", agents_page(h, tp, nav_items, V, gen_date))
     write(f"{P}trust/index.html", trust_page(h, tp, nav_items, V, gen_date, vendors_doc))
+    if h.L.en:
+        write("llms.txt", seo.llms_txt(PRICES))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7")]

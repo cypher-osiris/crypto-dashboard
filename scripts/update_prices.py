@@ -31,6 +31,7 @@ CENTRAL = ZoneInfo("America/Chicago")
 
 # Coin list lives in data/coins.json (CoinGecko ids verified 2026-10-21; AXL is "axelar", NOT "axelar-network").
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import privacy  # noqa: E402  (scrubs paper-trade results from the public log)
 import coins as coincfg  # noqa: E402
 COINS = [{"id": c["id"], "symbol": c["symbol"], "name": c["name"], "group": c.get("group")} for c in coincfg.coins()]
 BACKDROP_ID = coincfg.backdrop()
@@ -191,6 +192,7 @@ def main():
             msg += " Trades: " + "; ".join(notes) + "."
         msg += f" Open trades: {s.get('open', 0)}; pending: {s.get('pending', 0)}."  # aggregate record stays private (state/track_record.json)
         log["entries"].insert(0, {"t": prices["updated_utc"], "kind": "auto", "author": "update_prices.py", "text": msg})
+        log = privacy.scrub_log(log)  # no paper-trade results in the public log
         log["entries"] = log["entries"][:LOG_MAX]
         save("log.json", log)
         print("Wrote data/log.json")

@@ -47,7 +47,9 @@ Breakdown/breakout entries (optional `alt_entry` on a pending idea, see README "
   * invalid alt entries (slate_warnings) are never filled. Ideas without alt_entry behave exactly as before.
 Idempotent: each trade stores last_checked (ISO) / last_checked_ms = end of the last processed candle; only candles
 ending after it are processed, so a second run processes nothing new.
-Stats: data/trades.json keeps only open/pending counts + slate_warnings; the full record is in state/track_record.json (private). Concurrency: holds an exclusive flock on state/lock while reading/writing data files.
+Stats: data/trades.json keeps only open/pending counts + slate_warnings; the full record is in state/track_record.json (private).
+Privacy: the full trade doc (exits, P&L, outcomes) is state/trades_full.json (git-ignored); data/trades.json is its public view
+(closed ideas -> status "closed" without exit/P&L fields, prose scrubbed). load_trades() merges hand edits of the public file back in. Concurrency: holds an exclusive flock on state/lock while reading/writing data files.
 """
 import copy
 import fcntl
@@ -68,6 +70,12 @@ LOCK = os.path.join(ROOT, "state", "lock")
 # go to state/track_record.json (git-ignored, never served); data/trades.json "stats" keeps only the slate counters + warnings.
 RECORD = os.path.join(ROOT, "state", "track_record.json")
 PUBLIC_STATS = ("open", "pending", "slate_warnings")
+# Closed ideas are published without their result: data/trades.json is the PUBLIC view (closed ideas: status "closed",
+# no exit price / P&L / targets hit; prose scrubbed by scripts/privacy.py). The full doc lives in state/trades_full.json
+# (git-ignored). load_trades() merges hand edits of data/trades.json into it; save_trades() writes both.
+PRIVATE_TRADES = os.path.join(ROOT, "state", "trades_full.json")
+CLOSED = ("won", "lost", "stopped", "target", "closed")
+HIDDEN_CLOSED = ("exit_price", "pnl_pct", "targets_hit", "unrealized_pnl_pct", "mark_price")
 CENTRAL = ZoneInfo("America/Chicago")
 UA = {"User-Agent": "crypto-dashboard-tracker/1.0", "Accept": "application/json"}
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -491,6 +499,75 @@ def linked_trade(t, plan, trig_ms, close):
     return lt
 
 
+def public_trade(t):
+    import privacy
+    t = privacy.scrub_obj(t)
+    if t.get("status") in CLOSED:
+        t = {k: v for k, v in t.items() if k not in HIDDEN_CLOSED}
+        t["status"] = "closed"
+    return t
+
+
+def public_view(doc):
+    """What data/trades.json shows: closed ideas without outcome, prose without results, public stats only."""
+    import privacy
+    out = {k: (v if k == "trades" else privacy.scrub_obj(v, k)) for k, v in doc.items()}
+    out["trades"] = [public_trade(t) for t in doc.get("trades", [])]
+    if isinstance(doc.get("stats"), dict):
+        out["stats"] = public_stats(doc["stats"])
+    return out
+
+
+def _merge(priv, pub, base):
+    """3-way merge: keys that differ between the public file and the last public view are hand edits and win."""
+    out = dict(priv)
+    for k, v in pub.items():
+        if k not in base or base[k] != v:
+            out[k] = v
+    for k in base:
+        if k not in pub:
+            out.pop(k, None)
+    return out
+
+
+def load_trades():
+    """Full trades doc: state/trades_full.json + any hand edits made to data/trades.json since the last save."""
+    pub = load("trades.json", {"trades": []})
+    if not os.path.exists(PRIVATE_TRADES):
+        return pub  # first run: the public file still has everything
+    with open(PRIVATE_TRADES) as f:
+        priv = json.load(f)
+    base = public_view(priv)
+    doc = _merge({k: v for k, v in priv.items() if k != "trades"}, {k: v for k, v in pub.items() if k != "trades"},
+                 {k: v for k, v in base.items() if k != "trades"})
+    pt = {t["id"]: t for t in priv.get("trades", [])}
+    bt = {t["id"]: t for t in base.get("trades", [])}
+    trades, seen = [], set()
+    for t in pub.get("trades", []):
+        seen.add(t["id"])
+        if t["id"] not in pt:
+            trades.append(t)
+            continue
+        m = _merge(pt[t["id"]], t, bt.get(t["id"], {}))
+        if m.get("status") == "closed" and pt[t["id"]].get("status") in CLOSED:
+            m["status"] = pt[t["id"]]["status"]
+        trades.append(m)
+    trades += [t for t in priv.get("trades", []) if t["id"] not in seen]  # history is never dropped
+    doc["trades"] = trades
+    return doc
+
+
+def save_trades(doc):
+    """Full doc -> state/trades_full.json (private), public view -> data/trades.json."""
+    os.makedirs(os.path.dirname(PRIVATE_TRADES), exist_ok=True)
+    tmp = PRIVATE_TRADES + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(doc, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+    os.replace(tmp, PRIVATE_TRADES)
+    save("trades.json", public_view(doc))
+
+
 def save_record(stats, now_ms):
     """Full stats -> state/track_record.json (private, not in git). Never fails the tracker."""
     try:
@@ -682,7 +759,7 @@ def run(lock_held=False, log_events=True):
         with file_lock():
             return run(lock_held=True, log_events=log_events)
     now_ms = int(time.time() * 1000)
-    tdoc = load("trades.json", {"trades": []})
+    tdoc = load_trades()
     for t in tdoc["trades"]:  # initialise new missed plans: scanning starts at the first full hour after now
         p = t.get("missed_plan")
         if p and "status" not in p:
@@ -775,10 +852,12 @@ def run(lock_held=False, log_events=True):
     save_record(full, now_ms)
     tdoc["stats"] = public_stats(full)
     tdoc["tracked_utc"] = iso(now_ms)
-    save("trades.json", tdoc)
+    save_trades(tdoc)
     if events and log_events:
+        import privacy
         log = load("log.json", {"entries": []})
         log["entries"].insert(0, {"t": iso(now_ms), "kind": "auto", "author": "track_trades.py", "text": "Trade events: " + "; ".join(public_text(e) for e in events) + "."})
+        log = privacy.scrub_log(log)  # results never reach the public log
         log["entries"] = log["entries"][:LOG_MAX]
         save("log.json", log)
     return {"checked_utc": iso(now_ms), "events": events, "publish": bool(events),
