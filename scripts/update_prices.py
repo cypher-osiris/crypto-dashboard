@@ -7,7 +7,8 @@ Refresh market data for the crypto dashboard and evaluate open paper trades.
 
 Writes:
   data/prices.json  - current quotes + 30-day hourly history (CoinGecko free public API)
-  data/trades.json  - open trades marked won/stopped when target/stop was hit since entry; stats recomputed
+  data/trades.json  - open trades marked won/stopped when target/stop was hit since entry; slate counters recomputed
+                      (the aggregate record goes to state/track_record.json, not published)
   data/log.json     - an automatic log entry is prepended
 
 Does NOT touch data/analysis.json (commentary, levels, projections) - that is edited by hand.
@@ -176,20 +177,19 @@ def main():
         notes = [e["text"] for e in res["events"]]
         if res["errors"]:
             notes.append("tracking errors: " + "; ".join(f"{k}: {v}" for k, v in res["errors"].items()))
-        for w in tdoc["stats"].get("slate_warnings", []):
+        for w in tdoc.get("stats", {}).get("slate_warnings", []):
             print("WARNING:", w, file=sys.stderr)
         print("Trades evaluated by track_trades.py")
         log = load("log.json", {"entries": []})
         quotes = ", ".join(
             f"{prices['assets'][i]['symbol']} {prices['assets'][i]['price']:.6g} ({prices['assets'][i]['change_24h'] or 0:+.1f}%)"
             for i in dict.fromkeys([prices["backdrop"]] + prices["coins"]))
-        s = tdoc["stats"]
+        s = tdoc.get("stats", {})
         msg = (f"Re-evaluated trades on existing data (no fetch); prices as of {prices['updated_central']}: {quotes}." if args.no_fetch
                else f"Prices refreshed: {quotes}.")
         if notes:
             msg += " Trades: " + "; ".join(notes) + "."
-        msg += f" Open trades: {s['open']}; pending: {s['pending']}; closed: {s['closed']}; win rate: " + \
-               (f"{s['win_rate_pct']}%" if s["win_rate_pct"] is not None else "n/a") + "."
+        msg += f" Open trades: {s.get('open', 0)}; pending: {s.get('pending', 0)}."  # aggregate record stays private (state/track_record.json)
         log["entries"].insert(0, {"t": prices["updated_utc"], "kind": "auto", "author": "update_prices.py", "text": msg})
         log["entries"] = log["entries"][:LOG_MAX]
         save("log.json", log)

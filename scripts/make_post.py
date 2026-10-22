@@ -169,14 +169,7 @@ def gather(now=None):
         d.sort(key=lambda x: -abs(x[0]))
         since_moves = [{"sym": sym[k], "from": sig(base["prices"][k]), "to": sig(A[k]["price"]), "pct": round(x, 1)} for x, k in d[:3]]
 
-    # record
-    st = TD.get("stats", {})
-    closed = sorted([t for t in TD["trades"] if t["status"] not in ("pending", "open", "cancelled")], key=lambda t: t.get("closed_at") or "")
-    last = closed[-1] if closed else None
-    record = {"closed": st.get("closed", 0), "won": st.get("won", 0), "lost": st.get("lost_or_stopped", 0),
-              "win_rate_pct": st.get("win_rate_pct"), "cum_pnl_pct": st.get("cumulative_pnl_pct"),
-              "last_closed": {"id": last["id"], "sym": sym.get(last["coin"]), "side": last["direction"], "lev": last.get("leverage"),
-                              "status": last["status"], "pnl_pct": last.get("pnl_pct"), "closed": ctfmt(ts(last.get("closed_at")), "%b %-d")} if last else None}
+    # (no win/loss record: the aggregate track record is private since Oct 22, 2026; see state/track_record.json)
 
     # news: freshest 1-2 catalysts (news <= 2 days old, events within the next 10 days), watchlist + BTC first
     cats = []
@@ -208,7 +201,7 @@ def gather(now=None):
         "trade_events_24h" if not base else "trade_events": events,
         "slate": slate, "no_setup": [n["sym"] for n in no_setup], "no_setup_notes_watchlist": [n for n in no_setup if n["watchlist"]],
         "btc": {"price": sig(btc.get("price"), 5), "pct_24h": round(btc.get("change_24h") or 0, 1), "support": bd.get("support"), "resistance": bd.get("resistance")},
-        "movers_24h": movers, "record": record, "news": news, "signals": sigs,
+        "movers_24h": movers, "news": news, "signals": sigs,
         "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous"), "source": fg.get("source")} if fg else None,
         "links": {"site": SITE, "affiliate": affiliate()},
         "post_kinds": ["morning", "midday", "evening", "event", "news", "weekly", "missed"],
@@ -235,7 +228,7 @@ def allowed_values():
         walk({k: a.get(k) for k in ("price", "change_24h", "change_7d", "change_30d", "high_24h", "low_24h", "market_cap_rank")})
         h = [p for _, p in a.get("history", [])]
         if h: walk([min(h), max(h), min(h[-168:]), max(h[-168:])])
-    TD = load("trades.json"); walk(TD["trades"]); walk(TD.get("stats", {}))
+    TD = load("trades.json"); walk(TD["trades"])
     AN = load("analysis.json", {}); walk(AN.get("backdrop", {})); walk(AN.get("coins", {}))
     walk(load("context.json", {})); walk(gather())
     return vals

@@ -271,7 +271,7 @@ def py_keys():
     """Literal keys in the page generators, so `check` also sees strings for states today's data doesn't reach
     (e.g. a breakout fill). Keep keys literal: _("A" if x else "B"), never _(f"…")."""
     keys = set()
-    for fn in ("build_pages.py", "trade_pages.py"):
+    for fn in ("build_pages.py", "trade_pages.py", "site_pages.py"):
         src = open(os.path.join(ROOT, "scripts", fn), encoding="utf-8").read()
         keys |= {k for k in _tr_literals(src, PY_CALL, py=True)}
     return keys

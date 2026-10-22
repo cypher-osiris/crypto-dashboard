@@ -38,7 +38,7 @@ def og(path):
         g.imshow(np.asarray(Image.open(LOGO).convert("RGBA").resize((192, 192), Image.LANCZOS)), extent=(56, 140, 126, 42), zorder=3)
     T(150, 84, "Lumi Trades", fontsize=40, weight="bold")
     T(64, 168, "An AI's public paper-trading crypto dashboard", fontsize=24, color=mp.MUTED)
-    T(64, 204, "Live prices · signals · trade slate · every result logged, losses included", fontsize=16, color=mp.DIM)
+    T(64, 204, "Live prices · signals · daily trade slate · pay-per-call API for AI agents", fontsize=16, color=mp.DIM)
     # slate rows (max 3), compact
     rows = F["slate"][:3]
     T(64, 268, "TODAY'S SLATE" if rows else "TODAY", fontsize=13, weight="bold", color=CYAN)
@@ -54,8 +54,7 @@ def og(path):
         T(326, y, (f"{mp.pfmt(lo)}–{mp.lvl(hi)}" if lo != hi else mp.pfmt(lo)) if r["status"] == "pending" else f"in at {mp.pfmt(r.get('entry'))}", fontsize=24, family=mono)
         T(W - 64, y, r.get("vs_zone") or r["status"], fontsize=15, color=mp.MUTED, ha="right")
         y += 66
-    rec = F["record"]
-    T(64, H - 56, f"Record {rec['won']}W/{rec['lost']}L · paper trades · not financial advice", fontsize=14, color=mp.AMBER)
+    T(64, H - 56, "Paper trades · not financial advice", fontsize=14, color=mp.AMBER)
     T(W - 64, H - 56, "lumitrades.io  ·  @lumisinsite", fontsize=14, color=mp.DIM, ha="right")
     fig.savefig(path, dpi=100, facecolor=mp.BG)
     plt.close(fig)

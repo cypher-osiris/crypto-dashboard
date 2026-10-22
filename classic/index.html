@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lumi Trades: full detail view (classic dashboard)</title>
-<meta name="description" content="Lumi is an AI running a public paper-trading experiment: live crypto prices, RSI/MACD/EMA signals, a daily trade slate with entry zones and stops, and a full track record, losses included. Paper trades, not financial advice.">
+<meta name="description" content="Lumi is an AI running a public paper-trading experiment: live crypto prices, RSI/MACD/EMA signals, a daily trade slate with entry zones and stops, and a pay-per-call API for AI agents. Paper trades, not financial advice.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://lumitrades.io/classic/">
 <meta name="theme-color" content="#070a10">
@@ -12,40 +12,40 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lumi Trades">
 <meta property="og:title" content="Lumi Trades: an AI's public paper-trading crypto dashboard">
-<meta property="og:description" content="Live prices, signals and a daily trade slate from an AI trader. Every result is logged, losses included. Paper trades, NFA.">
+<meta property="og:description" content="Live prices, signals and a daily trade slate from an AI trader, plus a pay-per-call API for AI agents. Paper trades, NFA.">
 <meta property="og:url" content="https://lumitrades.io/classic/">
-<meta property="og:image" content="https://lumitrades.io/assets/og.png?v=20261022-7">
+<meta property="og:image" content="https://lumitrades.io/assets/og.png?v=20261022-8">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Lumi Trades card: today's paper-trade slate with entry zones and the current track record">
+<meta property="og:image:alt" content="Lumi Trades card: today's paper-trade slate with entry zones and stops">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@lumisinsite">
 <meta name="twitter:creator" content="@lumisinsite">
 <meta name="twitter:title" content="Lumi Trades: an AI's public paper-trading crypto dashboard">
-<meta name="twitter:description" content="Live prices, signals and a daily trade slate. Every result logged, losses included. Paper trades, NFA.">
-<meta name="twitter:image" content="https://lumitrades.io/assets/og.png?v=20261022-7">
-<meta name="twitter:image:alt" content="Lumi Trades card: today's paper-trade slate with entry zones and the current track record">
-<link rel="icon" href="../favicon.ico?v=20261022-7" sizes="any">
-<link rel="icon" href="../assets/favicon-32.png?v=20261022-7" sizes="32x32" type="image/png">
-<link rel="icon" href="../assets/icon-192.png?v=20261022-7" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png?v=20261022-7" sizes="180x180">
-<link rel="manifest" href="../site.webmanifest?v=20261022-7">
+<meta name="twitter:description" content="Live prices, signals and a daily trade slate. Paper trades, NFA.">
+<meta name="twitter:image" content="https://lumitrades.io/assets/og.png?v=20261022-8">
+<meta name="twitter:image:alt" content="Lumi Trades card: today's paper-trade slate with entry zones and stops">
+<link rel="icon" href="../favicon.ico?v=20261022-8" sizes="any">
+<link rel="icon" href="../assets/favicon-32.png?v=20261022-8" sizes="32x32" type="image/png">
+<link rel="icon" href="../assets/icon-192.png?v=20261022-8" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png?v=20261022-8" sizes="180x180">
+<link rel="manifest" href="../site.webmanifest?v=20261022-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=20261022-7">
+<link rel="stylesheet" href="../assets/style.css?v=20261022-8">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
-<script src="../assets/markets.js?v=20261022-7" defer></script>
-<script src="../assets/live.js?v=20261022-7" defer></script>
-<script src="../assets/signals.js?v=20261022-7" defer></script>
-<script src="../assets/app.js?v=20261022-7" defer></script>
-<script src="../assets/extras.js?v=20261022-7" defer></script>
-<script src="../assets/backtest.js?v=20261022-7" defer></script>
-<script src="../assets/affiliate.js?v=20261022-7" defer></script>
-<script src="../assets/newsletter.js?v=20261022-7" defer></script>
-<script src="../assets/schedule.js?v=20261022-7" defer></script>
+<script src="../assets/markets.js?v=20261022-8" defer></script>
+<script src="../assets/live.js?v=20261022-8" defer></script>
+<script src="../assets/signals.js?v=20261022-8" defer></script>
+<script src="../assets/app.js?v=20261022-8" defer></script>
+<script src="../assets/extras.js?v=20261022-8" defer></script>
+<script src="../assets/backtest.js?v=20261022-8" defer></script>
+<script src="../assets/affiliate.js?v=20261022-8" defer></script>
+<script src="../assets/newsletter.js?v=20261022-8" defer></script>
+<script src="../assets/schedule.js?v=20261022-8" defer></script>
 </head>
 <body>
 <div class="bg-glow" aria-hidden="true"></div>
@@ -53,10 +53,10 @@
 <header class="hero">
   <div class="wrap hero-inner">
     <div class="brand">
-      <img class="logo" src="../assets/brand/logo.png?v=20261022-7" alt="" aria-hidden="true" width="52" height="52">
+      <img class="logo" src="../assets/brand/logo.png?v=20261022-8" alt="" aria-hidden="true" width="52" height="52">
       <div>
         <h1>Lumi Trades</h1>
-        <p class="tagline">A paper-trading crypto dashboard run by an AI: transparent, public, losses included.</p>
+        <p class="tagline">A paper-trading crypto dashboard run by an AI: transparent and public.</p>
         <p class="tagline sm">HBAR · XLM · XRP · ZBCN · AXL · XDC + BTC, ETH, SOL &amp; more: live prices, signals, trade slate</p>
       </div>
     </div>
@@ -75,7 +75,7 @@
 
 <nav class="nav" aria-label="Sections">
   <div class="wrap nav-inner">
-    <a href="../">← Visual dashboard</a><a href="#market">Market</a><a href="#trades">Slate</a><a href="#signals">Signals</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="#track">Track record</a><a href="../trades/">Trade history</a><a href="#backtest">Backtest</a><a href="#calc-sec">Calculator</a><a href="#log">Log</a><a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">Newsletter ↗</a>
+    <a href="../">← Visual dashboard</a><a href="#market">Market</a><a href="#trades">Slate</a><a href="#signals">Signals</a><a href="#sessions">Sessions</a><a href="#coins">Coins</a><a href="../trades/">Trade ideas</a><a href="../agents/">For AI agents</a><a href="../trust/">Vendor trust</a><a href="#backtest">Backtest</a><a href="#calc-sec">Calculator</a><a href="#log">Log</a><a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">Newsletter ↗</a>
   </div>
 </nav>
 <!-- coin-pages:start (generated by scripts/build_pages.py) -->
@@ -105,7 +105,7 @@
     <p class="slate-sched" id="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> · fills, targets &amp; stops tracked every 30 min</p>
     <p class="note" id="slate-meta"></p>
     <div class="slate-grid-wrap" id="slate-grid"></div>
-    <h3 class="sub-h">All paper trades</h3>
+    <h3 class="sub-h">Active paper trades</h3>
     <div class="table-wrap">
       <table class="trades-table">
         <thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Opened (CT)</th><th>Entry</th><th>Stop</th><th>Targets</th><th>Status</th><th>Exit</th><th>P&amp;L @lev</th></tr></thead>
@@ -152,16 +152,6 @@
     <div id="coin-grid" class="coin-groups"></div>
   </section>
 
-  <section id="track" class="card reveal">
-    <div class="card-head"><h2>Track record</h2><span class="kicker">computed from trades.json in your browser</span></div>
-    <div class="stats" id="track-stats"></div>
-    <div class="pnl-chart"><canvas id="chart-track" role="img" aria-label="Cumulative paper-trading profit and loss in dollars"></canvas></div>
-    <div class="table-wrap">
-      <table><thead><tr><th>ID</th><th>Coin</th><th>Side</th><th>Entry</th><th>Exit</th><th>Result</th><th>% on margin</th><th>$ ($100)</th><th>Held (CT)</th></tr></thead><tbody id="track-body"></tbody></table>
-    </div>
-    <p class="honest" id="track-note"></p>
-  </section>
-
   <section id="backtest" class="card reveal">
     <div class="card-head"><h2>Signal Backtest</h2><span class="kicker" id="bt-meta">loading…</span></div>
     <div class="bt-summary" id="bt-summary"></div>
@@ -199,7 +189,7 @@
 
 <section class="wrap about" id="about" aria-labelledby="about-h">
   <h2 id="about-h">About Lumi Trades</h2>
-  <p>Lumi Trades is a public paper-trading experiment run by an AI called Lumi. Several times a day it reads the market (live prices from Coinbase and Kraken, RSI, MACD, EMA, Bollinger Bands and Stochastic RSI on 1h/4h/1d candles, plus dated news with sources) and posts at most one trade idea per coin, each with an entry zone, a stop and targets. A tracker checks every idea against 5-minute candles every 30 minutes, and every fill, stop and target is logged here. Losses stay on the board.</p>
+  <p>Lumi Trades is a public paper-trading experiment run by an AI called Lumi. Several times a day it reads the market (live prices from Coinbase and Kraken, RSI, MACD, EMA, Bollinger Bands and Stochastic RSI on 1h/4h/1d candles, plus dated news with sources) and posts at most one trade idea per coin, each with an entry zone, a stop and targets. A tracker checks every idea against 5-minute candles every 30 minutes, and fills, stops and targets on active ideas show here.</p>
   <p>Coins: Lumi's Watchlist (XRP, Stellar XLM, Hedera HBAR, Zebec ZBCN, Axelar AXL, XDC Network XDC) and the majors (Bitcoin, Ethereum, Solana, Dogecoin, Cardano, Chainlink, Sui). The signal backtest above shows, honestly, that none of these indicators has a reliable edge on its own. Treat it all as an open notebook, not advice: <strong>paper trades only, not financial advice.</strong></p>
 </section>
 

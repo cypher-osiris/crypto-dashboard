@@ -46,7 +46,8 @@ Breakdown/breakout entries (optional `alt_entry` on a pending idea, see README "
     the original plan is kept in planned_entry / planned_stop / planned_leverage / planned_conviction.
   * invalid alt entries (slate_warnings) are never filled. Ideas without alt_entry behave exactly as before.
 Idempotent: each trade stores last_checked (ISO) / last_checked_ms = end of the last processed candle; only candles
-ending after it are processed, so a second run processes nothing new. Concurrency: holds an exclusive flock on state/lock while reading/writing data files.
+ending after it are processed, so a second run processes nothing new.
+Stats: data/trades.json keeps only open/pending counts + slate_warnings; the full record is in state/track_record.json (private). Concurrency: holds an exclusive flock on state/lock while reading/writing data files.
 """
 import copy
 import fcntl
@@ -63,6 +64,10 @@ from zoneinfo import ZoneInfo
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data")
 LOCK = os.path.join(ROOT, "state", "lock")
+# Aggregate results (won/lost, win rate, cumulative P&L, equity curve) are NOT published since Oct 22, 2026: the full stats
+# go to state/track_record.json (git-ignored, never served); data/trades.json "stats" keeps only the slate counters + warnings.
+RECORD = os.path.join(ROOT, "state", "track_record.json")
+PUBLIC_STATS = ("open", "pending", "slate_warnings")
 CENTRAL = ZoneInfo("America/Chicago")
 UA = {"User-Agent": "crypto-dashboard-tracker/1.0", "Accept": "application/json"}
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -486,6 +491,23 @@ def linked_trade(t, plan, trig_ms, close):
     return lt
 
 
+def save_record(stats, now_ms):
+    """Full stats -> state/track_record.json (private, not in git). Never fails the tracker."""
+    try:
+        os.makedirs(os.path.dirname(RECORD), exist_ok=True)
+        tmp = RECORD + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump({"updated_utc": iso(now_ms), "stats": stats}, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        os.replace(tmp, RECORD)
+    except OSError as e:
+        print(f"track_trades: WARNING could not write {RECORD}: {e}", file=sys.stderr)
+
+
+def public_stats(stats):
+    return {k: stats[k] for k in PUBLIC_STATS if k in stats}
+
+
 def compute_stats(trades):
     closed = sorted([t for t in trades if t["status"] in ("won", "lost", "stopped")], key=lambda t: t["closed_at"])
     wins = sum(1 for t in closed if t["status"] == "won")
@@ -647,6 +669,13 @@ def describe(e, t, sym):
     return f"{t['id']} {sym} closed {k.upper()} at {e['price']} ({e['pnl_pct']:+.2f}% at {lev_txt(lev)})"
 
 
+def public_text(e):
+    """Log text for data/log.json (public): a close is logged without its result (the record is private)."""
+    if "pnl_pct" in e and not str(e.get("type", "")).startswith(("target", "missed_plan_")) and e.get("type") not in ("filled", "cancelled"):
+        return f"{e.get('id')} {e.get('symbol')} idea closed"
+    return e["text"]
+
+
 def run(lock_held=False, log_events=True):
     """Evaluate all active trades. Returns the result dict. Safe to call from update_prices.py."""
     if not lock_held:
@@ -742,12 +771,14 @@ def run(lock_held=False, log_events=True):
         emit(lt, evaluate(lt, candles, now_ms), src)
         active.append(lt)
     events.sort(key=lambda e: e.get("time") or "")
-    tdoc["stats"] = compute_stats(tdoc["trades"])
+    full = compute_stats(tdoc["trades"])
+    save_record(full, now_ms)
+    tdoc["stats"] = public_stats(full)
     tdoc["tracked_utc"] = iso(now_ms)
     save("trades.json", tdoc)
     if events and log_events:
         log = load("log.json", {"entries": []})
-        log["entries"].insert(0, {"t": iso(now_ms), "kind": "auto", "author": "track_trades.py", "text": "Trade events: " + "; ".join(e["text"] for e in events) + "."})
+        log["entries"].insert(0, {"t": iso(now_ms), "kind": "auto", "author": "track_trades.py", "text": "Trade events: " + "; ".join(public_text(e) for e in events) + "."})
         log["entries"] = log["entries"][:LOG_MAX]
         save("log.json", log)
     return {"checked_utc": iso(now_ms), "events": events, "publish": bool(events),
@@ -755,7 +786,7 @@ def run(lock_held=False, log_events=True):
                         "unrealized_pnl_pct": t.get("unrealized_pnl_pct"), "last_checked": t.get("last_checked"),
                         "missed_plan": (t.get("missed_plan") or {}).get("status")} for t in active],
             "sources": {c: v[1] for c, v in fetched.items()}, "errors": errors,
-            "slate_warnings": tdoc["stats"]["slate_warnings"]}
+            "slate_warnings": full["slate_warnings"], "record": {k: full.get(k) for k in ("closed", "won", "lost_or_stopped", "win_rate_pct", "cumulative_pnl_pct")}}
 
 
 if __name__ == "__main__":
