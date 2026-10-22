@@ -373,6 +373,7 @@ def build():
         others = "".join(
             f'<a href="../{s}/"><b>{E(prices["assets"][c]["symbol"])}</b> <span class="mono">{fp(prices["assets"][c].get("price"))}</span> {pc(prices["assets"][c].get("change_24h"), 1)}</a>'
             for c, s in pages if c != cid)
+        tk_pages = ",".join(f"{c}:{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
         nav = "".join(f'<a href="../{s}/"{" aria-current=\"page\"" if c == cid else ""}>{E(sy)}</a>' for c, s, sy in nav_items)
 
         ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": html.unescape(h1), "url": url, "description": desc,
@@ -420,6 +421,8 @@ def build():
 <script src="../assets/affiliate.js?v={V}" defer></script>
 <script src="../assets/newsletter.js?v={V}" defer></script>
 <script src="../assets/schedule.js?v={V}" defer></script>
+<script src="../assets/live.js?v={V}" defer></script>
+<script src="../assets/ticker.js?v={V}" defer></script>
 </head>
 <body class="cp">
 <div class="bg-glow" aria-hidden="true"></div>
@@ -427,6 +430,7 @@ def build():
   <a class="cp-brand" href="../"><img src="../assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>
   <a class="cp-dash" href="../#slate">Dashboard &amp; trade ideas →</a>
 </div></header>
+<div class="ticker lt-ticker" role="region" aria-label="Live crypto prices" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
 <nav class="nav" aria-label="Coin pages"><div class="wrap nav-inner"><a href="../">Dashboard</a><a href="../trades/">Trade history</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>
 <main class="wrap cp-main">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(sym)} analysis</p>
