@@ -33,7 +33,8 @@
  *   affiliate.dcent_url (+ dcent_label) = main button; affiliate.ledger_url (+ ledger_label) = second option, hidden while empty. */
 (() => {
   "use strict";
-  const DISCLOSURE = "Some links are affiliate links; we may earn a commission at no cost to you. Paper trades, not financial advice.";
+  const tr = (window.LumiI18n && window.LumiI18n.t) || ((s, v) => (v ? s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s)); // assets/i18n.js
+  const DISCLOSURE = tr("Some links are affiliate links; we may earn a commission at no cost to you. Paper trades, not financial advice.");
   const CACHE_KEY = "lumi_geo_v1";
   const US_CODES = new Set(["US", "PR", "GU", "VI", "AS", "MP", "UM"]); // US + territories
   const US_ZONES = new Set(["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Phoenix",
@@ -87,25 +88,26 @@
   const link = (text, cls) => `<a class="aff-btn ${cls || ""}" href="${esc(P.url)}" rel="sponsored noopener" target="_blank">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
   const extra = () => P.extra ? `<a class="aff-extra" href="${esc(P.extra.url)}" rel="sponsored noopener" target="_blank">${esc(P.extra.text)}<span aria-hidden="true"> ↗</span></a>` : "";
   const note = () => `<p class="aff-note">${esc(DISCLOSURE)}</p>`;
-  const kbtn = (text, aria) => `<a class="aff-btn aff-kraken" href="${esc(K.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(aria)} (referral link, opens in a new tab)">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
-  const kcode = () => K.code ? ` Referral code: ${K.code}.` : "";
+  const kbtn = (text, aria) => `<a class="aff-btn aff-kraken" href="${esc(K.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(aria)} ${esc(tr("(referral link, opens in a new tab)"))}">${esc(text)}<span aria-hidden="true"> ↗</span></a>`;
+  const kcode = () => K.code ? " " + tr("Referral code: {code}.", { code: K.code }) : "";
   /* Kraken block for one slate card ("" when the coin has no Kraken pair or the idea isn't a long) */
   function upholdFor(card, sym) {
     if (!U || card.dataset.dir === "short" || card.dataset.cb !== "") return "";
     if (!U.assets[card.dataset.coin || ""]) return "";
-    const t = U.label.replace("{SYM}", sym);
-    return `<a class="aff-btn aff-uphold" href="${esc(U.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(t)} (referral link, opens in a new tab)">${esc(t)}<span aria-hidden="true"> ↗</span></a>` +
-      `<p class="aff-note">Referral link; new Uphold accounts. Spot only. Availability varies by state/country (not available in New York).</p>`;
+    const t = tr(U.label).replace("{SYM}", sym);
+    return `<a class="aff-btn aff-uphold" href="${esc(U.url)}" rel="sponsored noopener" target="_blank" aria-label="${esc(t)} ${esc(tr("(referral link, opens in a new tab)"))}">${esc(t)}<span aria-hidden="true"> ↗</span></a>` +
+      `<p class="aff-note">${esc(tr("Referral link; new Uphold accounts. Spot only. Availability varies by state/country (not available in New York)."))}</p>`;
   }
   function krakenFor(card, sym) {
     if (!K || card.dataset.dir === "short") return "";
     const pair = K.pairs[card.dataset.coin || ""];
     if (!pair) return "";
     const base = pair.split("/")[0];
-    const listed = base !== sym ? ` (Kraken's ticker for ${sym})` : "";
-    return kbtn(`Buy ${sym} spot on Kraken`, `Buy ${sym} spot on Kraken`) +
-      `<p class="aff-note">Referral link; new Kraken accounts.${esc(kcode())} Spot only, no leverage: ${esc(pair)}${esc(listed)}. ` +
-      `Already have an account? Sign in and open ${esc(pair)}. Availability varies by state/country.</p>`;
+    const listed = base !== sym ? " " + tr("(Kraken's ticker for {sym})", { sym }) : "";
+    const lb = tr("Buy {sym} spot on Kraken", { sym });
+    return kbtn(lb, lb) +
+      `<p class="aff-note">${esc(tr("Referral link; new Kraken accounts."))}${esc(kcode())} ${esc(tr("Spot only, no leverage:"))} ${esc(pair)}${esc(listed)}. ` +
+      `${esc(tr("Already have an account? Sign in and open {pair}. Availability varies by state/country.", { pair }))}</p>`;
   }
 
   function decorateSlate() {
@@ -123,14 +125,14 @@
         const spot = U && U.first.has(card.dataset.coin) ? up + kr : kr + up;
         if (venues.length && !(U && U.first.has(card.dataset.coin))) venues.reverse();
         w.innerHTML = spot
-          ? `<p class="aff-note">${esc(sym)} isn't listed on Coinbase; ${venues.join(" and ")} ${venues.length > 1 ? "list" : "lists"} it for spot.</p>` + spot + note()
-          : `<p class="aff-note">${esc(sym)} isn't listed on Coinbase, so there's no Coinbase button for this idea.</p>`;
+          ? `<p class="aff-note">${esc(tr(venues.length > 1 ? "{sym} isn't listed on Coinbase; {venues} list it for spot." : "{sym} isn't listed on Coinbase; {venues} lists it for spot.", { sym, venues: venues.join(tr(" and ")) }))}</p>` + spot + note()
+          : `<p class="aff-note">${esc(tr("{sym} isn't listed on Coinbase, so there's no Coinbase button for this idea.", { sym }))}</p>`;
       } else {
-        const lbl = P.key === "bitunix" && spot ? `Buy ${sym} spot on Bitunix` : P.slate;
-        const hint = P.key === "coinbase" ? `<p class="aff-note">Referral sign-up link (new Coinbase accounts). Already have one? Sign in at Coinbase Advanced and open ${esc(card.dataset.cb || sym)}.</p>` : "";
+        const lbl = P.key === "bitunix" && spot ? tr("Buy {sym} spot on Bitunix", { sym }) : P.slate;
+        const hint = P.key === "coinbase" ? `<p class="aff-note">${esc(tr("Referral sign-up link (new Coinbase accounts). Already have one? Sign in at Coinbase Advanced and open {pair}.", { pair: card.dataset.cb || sym }))}</p>` : "";
         w.innerHTML = link(lbl, "") + hint + kr + note();
         const a = w.querySelector("a");
-        if (sym) a.setAttribute("aria-label", `${P.key === "bitunix" && spot ? lbl : P.aria(sym)} (affiliate link, opens in a new tab)`);
+        if (sym) a.setAttribute("aria-label", `${P.key === "bitunix" && spot ? lbl : P.aria(sym)} ${tr("(affiliate link, opens in a new tab)")}`);
       }
       const why = card.querySelector(":scope > details.why");
       why ? card.insertBefore(w, why) : card.appendChild(w);
@@ -139,10 +141,10 @@
 
   function apply() {
     const cta = document.getElementById("aff-cta");
-    if (cta) { cta.innerHTML = link(P.label, "sm") + extra() + `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a>`; cta.hidden = false; }
+    if (cta) { cta.innerHTML = link(P.label, "sm") + extra() + `<a class="aff-tag" href="#aff-foot">${tr("Affiliate link · disclosure")}</a>`; cta.hidden = false; }
     const calc = document.getElementById("aff-calc");
-    const cbHint = P.key === "coinbase" ? `<p class="aff-note">Coinbase referral sign-up page. Existing members: sign in on Coinbase as usual.</p>` : "";
-    const kCalc = K ? kbtn(K.label, K.label) + `<p class="aff-note">Kraken referral link; new Kraken accounts.${esc(kcode())} Spot only, no leverage.</p>` : "";
+    const cbHint = P.key === "coinbase" ? `<p class="aff-note">${esc(tr("Coinbase referral sign-up page. Existing members: sign in on Coinbase as usual."))}</p>` : "";
+    const kCalc = K ? kbtn(K.label, K.label) + `<p class="aff-note">${esc(tr("Kraken referral link; new Kraken accounts."))}${esc(kcode())} ${esc(tr("Spot only, no leverage."))}</p>` : "";
     if (calc) { calc.innerHTML = link(P.label, "") + extra() + cbHint + kCalc + note(); calc.hidden = false; }
     const foot = document.getElementById("aff-foot");
     if (foot) { foot.textContent = DISCLOSURE; foot.hidden = false; }
@@ -156,11 +158,11 @@
     const dcent = s("dcent_url"), ledger = s("ledger_url");
     if (!box || !dcent) return;
     const btn = (u, t, cls) => `<a class="aff-btn ${cls}" href="${esc(u)}" rel="sponsored noopener" target="_blank">${esc(t)}<span aria-hidden="true"> ↗</span></a>`;
-    box.innerHTML = `<div class="w-ico" aria-hidden="true">🔐</div><div><h3>Keep your crypto safe</h3>` +
-      `<p class="w-copy">Don't leave long-term holdings on an exchange. A hardware wallet keeps your keys offline. Lumi's pick: <b>D'CENT Biometric Wallet</b>. Our link gets you <b>50% off</b> (about $79 instead of $159).</p>` +
-      `<div class="w-btns">${btn(dcent, String(a.dcent_label || "Get the D'CENT Biometric Wallet"), "sm")}` +
-      (ledger ? btn(ledger, String(a.ledger_label || "Or choose Ledger"), "sm") : "") +
-      `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a></div></div>`;
+    box.innerHTML = `<div class="w-ico" aria-hidden="true">🔐</div><div><h3>${esc(tr("Keep your crypto safe"))}</h3>` +
+      `<p class="w-copy">${tr("Don't leave long-term holdings on an exchange. A hardware wallet keeps your keys offline. Lumi's pick: <b>D'CENT Biometric Wallet</b>. Our link gets you <b>50% off</b> (about $79 instead of $159).")}</p>` +
+      `<div class="w-btns">${btn(dcent, tr(String(a.dcent_label || "Get the D'CENT Biometric Wallet")), "sm")}` +
+      (ledger ? btn(ledger, tr(String(a.ledger_label || "Or choose Ledger")), "sm") : "") +
+      `<a class="aff-tag" href="#aff-foot">${tr("Affiliate link · disclosure")}</a></div></div>`;
     box.hidden = false;
     const foot = document.getElementById("aff-foot");
     if (foot) { foot.textContent = DISCLOSURE; foot.hidden = false; }
@@ -170,16 +172,16 @@
   function renderLedgerHook(a, s) {
     const u = s("ledger_url");
     if (!u) return; // unset => show nothing
-    const n = String(a.ledger_note || "Referral link: Ledger's referral program, which may give you a reward on your first order.");
+    const n = tr(String(a.ledger_note || "Referral link: Ledger's referral program, which may give you a reward on your first order."));
     const box = document.getElementById("aff-ledger"); // coin pages: self-custody section
     if (box) {
-      box.innerHTML = `<a class="aff-btn sm aff-ledger" href="${esc(u)}" rel="sponsored noopener" target="_blank" aria-label="Get a Ledger hardware wallet (referral link, opens in a new tab)">${esc(String(a.ledger_page_label || "Get a Ledger"))}<span aria-hidden="true"> ↗</span></a>` +
+      box.innerHTML = `<a class="aff-btn sm aff-ledger" href="${esc(u)}" rel="sponsored noopener" target="_blank" aria-label="${esc(tr("Get a Ledger hardware wallet (referral link, opens in a new tab)"))}">${esc(tr(String(a.ledger_page_label || "Get a Ledger")))}<span aria-hidden="true"> ↗</span></a>` +
         `<p class="aff-note">${esc(n)}</p>`;
       box.hidden = false;
     }
     const lf = document.getElementById("aff-ledger-foot"); // dashboard footer: one quiet line
     if (lf) {
-      lf.innerHTML = `Holding long term? Self-custody with <a href="${esc(u)}" rel="sponsored noopener" target="_blank">Ledger</a><span aria-hidden="true"> ↗</span> <span class="aff-note-inline">(${esc(n)})</span>`;
+      lf.innerHTML = `${esc(tr("Holding long term? Self-custody with"))} <a href="${esc(u)}" rel="sponsored noopener" target="_blank">Ledger</a><span aria-hidden="true"> ↗</span> <span class="aff-note-inline">(${esc(n)})</span>`;
       lf.hidden = false;
     }
     if (!box && !lf) return;
@@ -192,19 +194,19 @@
     const box = document.getElementById("aff-coin");
     if (!box || !P) return;
     const id = box.dataset.coin || "", sym = box.dataset.sym || "", cb = box.dataset.cb || "";
-    const btn = (u, t, cls, n) => `<a class="aff-btn ${cls}" href="${esc(u)}" rel="sponsored noopener" target="_blank" aria-label="${esc(t)} (referral link, opens in a new tab)">${esc(t)}<span aria-hidden="true"> ↗</span></a>` + (n ? `<p class="aff-note">${esc(n)}</p>` : "");
+    const btn = (u, t, cls, n) => `<a class="aff-btn ${cls}" href="${esc(u)}" rel="sponsored noopener" target="_blank" aria-label="${esc(t)} ${esc(tr("(referral link, opens in a new tab)"))}">${esc(t)}<span aria-hidden="true"> ↗</span></a>` + (n ? `<p class="aff-note">${esc(n)}</p>` : "");
     const out = [];
     if (P.key === "coinbase" && cb) {
       const u = s("coinbase_url") || s("coinbase_advanced_url");
-      if (u) out.push(btn(u, `Buy ${sym} on Coinbase`, "", `Referral sign-up link (new Coinbase accounts). Already have one? Sign in and search ${cb}.`));
+      if (u) out.push(btn(u, tr("Buy {sym} on Coinbase", { sym }), "", tr("Referral sign-up link (new Coinbase accounts). Already have one? Sign in and search {pair}.", { pair: cb })));
     }
-    if (P.key === "bitunix") out.push(btn(P.url, `Buy ${sym} on Bitunix`, "", `Referral link; new Bitunix accounts. ${sym}/USDT spot.`));
+    if (P.key === "bitunix") out.push(btn(P.url, tr("Buy {sym} on Bitunix", { sym }), "", tr("Referral link; new Bitunix accounts. {sym}/USDT spot.", { sym })));
     const kp = K && K.pairs[id];
-    const kr = kp ? btn(K.url, `Buy ${sym} on Kraken`, "aff-kraken", `Referral link; new Kraken accounts.${kcode()} Spot only: ${kp}. Availability varies by state/country.`) : "";
-    const up = U && U.assets[id] ? btn(U.url, `Buy ${sym} on Uphold`, "aff-uphold", "Referral link; new Uphold accounts. Spot only. Availability varies by state/country (not available in New York).") : "";
+    const kr = kp ? btn(K.url, tr("Buy {sym} on Kraken", { sym }), "aff-kraken", tr("Referral link; new Kraken accounts.") + kcode() + " " + tr("Spot only: {pair}. Availability varies by state/country.", { pair: kp })) : "";
+    const up = U && U.assets[id] ? btn(U.url, tr("Buy {sym} on Uphold", { sym }), "aff-uphold", tr("Referral link; new Uphold accounts. Spot only. Availability varies by state/country (not available in New York).")) : "";
     if (U && U.first.has(id)) out.unshift(...[up, kr].filter(Boolean)); else out.push(...[kr, up].filter(Boolean));
     if (!out.length) return;
-    box.innerHTML = `<p class="aff-note"><b>${P.key === "coinbase" ? "Exchanges for US visitors" : "Exchange for your region"}</b></p>` + out.slice(0, 3).join("") + note();
+    box.innerHTML = `<p class="aff-note"><b>${P.key === "coinbase" ? tr("Exchanges for US visitors") : tr("Exchange for your region")}</b></p>` + out.slice(0, 3).join("") + note();
     box.hidden = false;
   }
 
@@ -221,19 +223,19 @@
       const g = await geo();
       document.documentElement.dataset.geo = g.us === null ? "unknown" : (g.us ? "us" : "non-us");
       if (g.us === false && bitunix) {
-        P = { key: "bitunix", url: bitunix, label: String(a.label || "Trade on Bitunix"), slate: "Copy this paper trade on Bitunix",
-              aria: (sym) => `Copy this ${sym} paper trade on Bitunix`, extra: null };
+        P = { key: "bitunix", url: bitunix, label: tr(String(a.label || "Trade on Bitunix")), slate: tr("Copy this paper trade on Bitunix"),
+              aria: (sym) => tr("Copy this {sym} paper trade on Bitunix", { sym }), extra: null };
       } else if (g.us === true && (cbAdv || cbJoin)) {
         // US: no leveraged perps on Coinbase for most users => neutral wording, no "setup" language
-        const lbl = cbAdv ? String(a.coinbase_label || "Trade on Coinbase Advanced") : "Get started on Coinbase";
+        const lbl = tr(cbAdv ? String(a.coinbase_label || "Trade on Coinbase Advanced") : "Get started on Coinbase");
         P = { key: "coinbase", url: cbAdv || cbJoin, label: lbl, slate: lbl, aria: (sym) => `${lbl} (${sym})`,
-              extra: cbAdv && cbJoin ? { url: cbJoin, text: "New to crypto? Get started on Coinbase" } : null };
+              extra: cbAdv && cbJoin ? { url: cbJoin, text: tr("New to crypto? Get started on Coinbase") } : null };
       }
       const kUrl = s("kraken_url");
       const kPairs = (a.kraken_pairs && typeof a.kraken_pairs === "object") ? a.kraken_pairs : {};
       if (P && kUrl && (g.us === true || (g.us === false && a.kraken_non_us === true))) {
         const code = String(a.kraken_code || "").trim();
-        K = { url: kUrl, code: /^[A-Za-z0-9]{4,32}$/.test(code) ? code : "", label: String(a.kraken_label || "Buy spot on Kraken"),
+        K = { url: kUrl, code: /^[A-Za-z0-9]{4,32}$/.test(code) ? code : "", label: tr(String(a.kraken_label || "Buy spot on Kraken")),
               pairs: Object.fromEntries(Object.entries(kPairs).filter(([, v]) => /^[A-Z0-9]{2,12}\/USD[A-Z]?$/.test(String(v)))) };
       }
       const uUrl = s("uphold_url");

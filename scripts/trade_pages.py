@@ -26,35 +26,44 @@ def ts(iso):
     return int(t.timestamp() * 1000)
 
 
-def outcome(t):
-    """(css class, short label) for a trade's state."""
+def _(h, key, **kw):
+    return h._(key, **kw)
+
+
+def outcome(t, h=None):
+    """(css class, short label) for a trade's state (label translated when `h` is given)."""
+    tr = (lambda x: h._(x)) if h else (lambda x: x)
     s = t.get("status")
     if s in WON or (s == "closed" and (t.get("pnl_pct") or 0) > 0):
-        return "win", "Won"
+        return "win", tr("Won")
     if s in LOST or (s == "closed" and (t.get("pnl_pct") or 0) <= 0):
-        return "loss", "Stopped" if s == "stopped" else "Lost"
+        return "loss", tr("Stopped" if s == "stopped" else "Lost")
     if s == "open":
-        return "open", "T1 hit · open" if any(t.get("targets_hit") or []) else "Open"
+        return "open", tr("T1 hit · open" if any(t.get("targets_hit") or []) else "Open")
     if s == "pending":
-        return "pending", "Pending (waiting for entry)"
+        return "pending", tr("Pending (waiting for entry)")
     if s == "cancelled":
-        return "void", "Cancelled · never filled" if not t.get("filled_at") else "Cancelled"
-    return "void", str(s or "").capitalize()
+        return "void", tr("Cancelled · never filled" if not t.get("filled_at") else "Cancelled")
+    return "void", tr(str(s or "").capitalize())
 
 
-def side_txt(t):
+def side_txt(t, h):
     spot = t.get("leverage") == 1 or t.get("market") == "spot"
-    return ("Long" if t.get("direction") != "short" else "Short") + (" · spot 1x" if spot else f' · {t.get("leverage", 1)}x')
+    return h._("Long" if t.get("direction") != "short" else "Short") + (" · " + h._("spot 1x") if spot else f' · {t.get("leverage", 1)}x')
+
+
+def lev_word(lev, h):
+    return h._("spot (1x)") if lev == 1 else f"{lev}x"
 
 
 def result_txt(t, h):
     if t.get("pnl_pct") is not None:
-        return h.pct_txt(t["pnl_pct"], 2), "realized, at the idea's leverage"
+        return h.pct_txt(t["pnl_pct"], 2), h._("realized, at the idea's leverage")
     if t.get("unrealized_pnl_pct") is not None:
-        return h.pct_txt(t["unrealized_pnl_pct"], 2), f'unrealized at the last check ({h.ctime(t.get("last_checked"))})'
+        return h.pct_txt(t["unrealized_pnl_pct"], 2), h._("unrealized at the last check ({when})", when=h.ctime(t.get("last_checked")))
     if t.get("status") == "cancelled":
-        return "—", "never filled, so no P&L"
-    return "—", "not filled yet"
+        return "—", h._("never filled, so no P&L")
+    return "—", h._("not filled yet")
 
 
 def trade_chart(a, t, h):
@@ -84,17 +93,17 @@ def trade_chart(a, t, h):
     if z:
         ya, yb = Y(z["high"]), Y(z["low"])
         g.append(f'<rect x="{L}" y="{ya:.1f}" width="{W - L - R}" height="{max(1.5, yb - ya):.1f}" fill="rgba(245,176,65,.16)"/>')
-        g.append(f'<text class="lb" x="{W - R + 4}" y="{(ya + yb) / 2 + 3.5:.1f}" fill="#f5b041" font-size="10">entry</text>')
-    lines = ([(stop, "#f43f5e", "stop " + h.lvl(stop))] if stop is not None else []) + \
+        g.append(f'<text class="lb" x="{W - R + 4}" y="{(ya + yb) / 2 + 3.5:.1f}" fill="#f5b041" font-size="10">{h.E(h._("entry"))}</text>')
+    lines = ([(stop, "#f43f5e", h._("stop") + " " + h.lvl(stop))] if stop is not None else []) + \
             [(x, "#22c55e", f"T{i + 1} {h.lvl(x)}") for i, x in enumerate(tg)]
     for v, c, lab in lines:
         g.append(f'<line x1="{L}" x2="{W - R}" y1="{Y(v):.1f}" y2="{Y(v):.1f}" stroke="{c}" stroke-opacity=".7" stroke-dasharray="5 4"/>')
         g.append(f'<text class="lb" x="{W - R + 4}" y="{Y(v) + 3.5:.1f}" fill="{c}" font-size="10">{h.E(lab)}</text>')
     marks = []
     if t_open and t0 <= t_open <= t1:
-        marks.append((t_open, "posted", "#94a3b8"))
+        marks.append((t_open, h._("posted"), "#94a3b8"))
     if t_close and t0 <= t_close <= t1:
-        marks.append((t_close, "closed" if t.get("status") != "cancelled" else "cancelled", "#e7ecf3"))
+        marks.append((t_close, h._("closed") if t.get("status") != "cancelled" else h._("cancelled"), "#e7ecf3"))
     last_x = -999
     for k, (x, lab, c) in enumerate(sorted(marks)):
         xx = X(x)
@@ -104,27 +113,30 @@ def trade_chart(a, t, h):
         g.append(f'<text class="mk" x="{xx + (-4 if right else 4):.1f}" y="{H - B - 6 - row * 13}" fill="{c}" font-size="10" text-anchor="{"end" if right else "start"}">{lab}</text>')
         last_x = xx
     if t_fill and t0 <= t_fill <= t1 and t.get("entry") is not None:
-        g.append(f'<circle cx="{X(t_fill):.1f}" cy="{Y(t["entry"]):.1f}" r="5" fill="#38bdf8" stroke="#0b1220" stroke-width="2"><title>Filled at {h.lvl(t["entry"])}</title></circle>')
+        g.append(f'<circle cx="{X(t_fill):.1f}" cy="{Y(t["entry"]):.1f}" r="5" fill="#38bdf8" stroke="#0b1220" stroke-width="2"><title>{h.E(h._("Filled at {p}", p=h.lvl(t["entry"])))}</title></circle>')
     elif not t.get("filled_at") and t.get("status") not in ("pending", "cancelled") and t_open and t0 <= t_open <= t1 and t.get("entry") is not None:
-        g.append(f'<circle cx="{X(t_open):.1f}" cy="{Y(t["entry"]):.1f}" r="5" fill="#38bdf8" stroke="#0b1220" stroke-width="2"><title>Entered at {h.lvl(t["entry"])}</title></circle>')
+        g.append(f'<circle cx="{X(t_open):.1f}" cy="{Y(t["entry"]):.1f}" r="5" fill="#38bdf8" stroke="#0b1220" stroke-width="2"><title>{h.E(h._("Entered at {p}", p=h.lvl(t["entry"])))}</title></circle>')
     if t_close and t.get("exit_price") is not None and t0 <= t_close <= t1:
         c = "#22c55e" if (t.get("pnl_pct") or 0) > 0 else "#f43f5e"
-        g.append(f'<circle cx="{X(t_close):.1f}" cy="{Y(t["exit_price"]):.1f}" r="5" fill="{c}" stroke="#0b1220" stroke-width="2"><title>Exit {h.lvl(t["exit_price"])}</title></circle>')
+        g.append(f'<circle cx="{X(t_close):.1f}" cy="{Y(t["exit_price"]):.1f}" r="5" fill="{c}" stroke="#0b1220" stroke-width="2"><title>{h.E(h._("Exit {p}", p=h.lvl(t["exit_price"])))}</title></circle>')
     for i in range(4):
         x = t0 + (t1 - t0) * i / 3
-        lab = dt.datetime.fromtimestamp(x / 1000, h.CT).strftime("%b %-d %-I%p").replace("AM", "a").replace("PM", "p")
+        lab = h.L.dayhour(dt.datetime.fromtimestamp(x / 1000, h.CT))
         anchor = "start" if i == 0 else "end" if i == 3 else "middle"
         g.append(f'<text class="ax" x="{X(x):.1f}" y="{H - 8}" fill="#7d8ba0" font-size="10" text-anchor="{anchor}">{lab}</text>')
-    win = (dt.datetime.fromtimestamp(t0 / 1000, h.CT).strftime("%b %-d, %-I %p") + " – " + dt.datetime.fromtimestamp(t1 / 1000, h.CT).strftime("%b %-d, %-I %p CT"))
-    leg = ([f'<span><i class="sw zone"></i>Entry zone {h.lvl(z["low"])}–{h.lvl(z["high"])}</span>'] if z else []) + \
-          ([f'<span><i class="sw stop"></i>Stop {h.lvl(stop)}</span>'] if stop is not None else []) + \
+    if h.L.en:
+        win = (dt.datetime.fromtimestamp(t0 / 1000, h.CT).strftime("%b %-d, %-I %p") + " – " + dt.datetime.fromtimestamp(t1 / 1000, h.CT).strftime("%b %-d, %-I %p CT"))
+    else:
+        win = h.L.dayhour(dt.datetime.fromtimestamp(t0 / 1000, h.CT)) + " – " + h.L.dayhour(dt.datetime.fromtimestamp(t1 / 1000, h.CT)) + " CT"
+    leg = ([f'<span><i class="sw zone"></i>{h.E(h._("Entry zone"))} {h.lvl(z["low"])}–{h.lvl(z["high"])}</span>'] if z else []) + \
+          ([f'<span><i class="sw stop"></i>{h.E(h._("Stop"))} {h.lvl(stop)}</span>'] if stop is not None else []) + \
           [f'<span><i class="sw tg"></i>T{i + 1} {h.lvl(x)}</span>' for i, x in enumerate(tg)] + \
-          ([f'<span><i class="sw dot fill"></i>Fill {h.lvl(t["entry"])}</span>'] if t.get("filled_at") or (t.get("status") not in ("pending", "cancelled") and t.get("entry") is not None) else []) + \
-          ([f'<span><i class="sw dot {"win" if (t.get("pnl_pct") or 0) > 0 else "loss"}"></i>Exit {h.lvl(t["exit_price"])}</span>'] if t.get("exit_price") is not None else []) + \
-          [f'<span class="muted">Dotted lines: posted / closed · {h.E(win)}</span>']
+          ([f'<span><i class="sw dot fill"></i>{h.E(h._("Fill"))} {h.lvl(t["entry"])}</span>'] if t.get("filled_at") or (t.get("status") not in ("pending", "cancelled") and t.get("entry") is not None) else []) + \
+          ([f'<span><i class="sw dot {"win" if (t.get("pnl_pct") or 0) > 0 else "loss"}"></i>{h.E(h._("Exit"))} {h.lvl(t["exit_price"])}</span>'] if t.get("exit_price") is not None else []) + \
+          [f'<span class="muted">{h.E(h._("Dotted lines: posted / closed"))} · {h.E(win)}</span>']
     col = "#7dd3fc"
-    label = (f'{a["symbol"]} hourly price around paper idea {t["id"]}: entry zone (amber), stop (red), targets (green)'
-             + (", fill (blue dot)" if t.get("filled_at") else "") + (", exit dot" if t.get("exit_price") is not None else ""))
+    label = (h._("{sym} hourly price around paper idea {id}: entry zone (amber), stop (red), targets (green)", sym=a["symbol"], id=t["id"])
+             + (h._(", fill (blue dot)") if t.get("filled_at") else "") + (h._(", exit dot") if t.get("exit_price") is not None else ""))
     return (f'<svg class="tp-chart" viewBox="0 0 {W} {H}" role="img" aria-label="{h.E(label)}" preserveAspectRatio="none">'
             f'<path d="{d}" fill="none" stroke="{col}" stroke-width="1.7" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'
             f'{"".join(g)}</svg><p class="tp-legend">{"".join(leg)}</p>')
@@ -135,9 +147,9 @@ def risk_reward(t, h):
     z = t.get("entry_zone") or {}
     long = t.get("direction") != "short"
     if t.get("filled_at") or not z or t.get("status") in ("open",) or t.get("status") in WON + LOST:
-        ref, basis = t.get("entry"), "from the fill"
+        ref, basis = t.get("entry"), h._("from the fill")
     else:
-        ref, basis = (z.get("high") if long else z.get("low")), "from the worst fill in the zone"
+        ref, basis = (z.get("high") if long else z.get("low")), h._("from the worst fill in the zone")
     stop, tg = t.get("stop"), t.get("targets") or []
     if not ref or stop is None or not tg:
         return None
@@ -148,47 +160,52 @@ def risk_reward(t, h):
 
 
 def timeline(t, h, by_id):
-    ev = [(t.get("opened_at"), "Idea posted", f'{side_txt(t)}; ' + (f'entry zone {h.lvl(t["entry_zone"]["low"])}–{h.lvl(t["entry_zone"]["high"])}' if t.get("entry_zone") else f'entry {h.lvl(t.get("entry"))}'))]
+    """[(iso, title, detail_html)] (detail is escaped HTML; free text is marked lang=en on translated pages)."""
+    E, _t = h.E, h._
+    fr = lambda o, f: h.L.free(o, f, E)
+    ev = [(t.get("opened_at"), _t("Idea posted"), E(f'{side_txt(t, h)}; ' + (_t("entry zone {lo}–{hi}", lo=h.lvl(t["entry_zone"]["low"]), hi=h.lvl(t["entry_zone"]["high"])) if t.get("entry_zone") else _t("entry {p}", p=h.lvl(t.get("entry"))))))]
     if t.get("parent_id"):
-        ev[0] = (t.get("opened_at"), "Opened from a “missed it” plan", f'Follow-up of {t["parent_id"]}' + (f': {t["trigger"]}' if t.get("trigger") else ""))
+        ev[0] = (t.get("opened_at"), _t("Opened from a “missed it” plan"), E(_t("Follow-up of {id}", id=t["parent_id"])) + (": " + fr(t, "trigger") if t.get("trigger") else ""))
     if t.get("filled_at"):
         et, ae = t.get("entry_type"), t.get("alt_entry") or {}
         if et in ("breakdown", "breakout") and ae.get("trigger_rule"):
-            ev.append((t["filled_at"], f"Filled on a {et}", f'at {h.lvl(t.get("entry"))} after a 1h close {"below" if et == "breakdown" else "above"} {h.lvl(ae["trigger_rule"]["level"])}; stop {h.lvl(t.get("stop"))}'))
+            kw = dict(p=h.lvl(t.get("entry")), lvl=h.lvl(ae["trigger_rule"]["level"]), stop=h.lvl(t.get("stop")))
+            ev.append((t["filled_at"], _t("Filled on a breakdown" if et == "breakdown" else "Filled on a breakout"),
+                       E(_t("at {p} after a 1h close below {lvl}; stop {stop}", **kw) if et == "breakdown" else _t("at {p} after a 1h close above {lvl}; stop {stop}", **kw))))
         else:
-            ev.append((t["filled_at"], "Filled", f'at {h.lvl(t.get("entry"))}' + (f' (planned {h.lvl(t["planned_entry"])})' if t.get("planned_entry") and t.get("planned_entry") != t.get("entry") else "")))
+            ev.append((t["filled_at"], _t("Filled"), E(_t("at {p}", p=h.lvl(t.get("entry"))) + (_t(" (planned {p})", p=h.lvl(t["planned_entry"])) if t.get("planned_entry") and t.get("planned_entry") != t.get("entry") else ""))))
     ae = t.get("alt_entry") or {}
     if ae.get("ended_at") and ae.get("status") in ("void", "expired"):
-        ev.append((ae["ended_at"], f'{str(ae.get("type", "alt")).capitalize()} entry {ae["status"]}', ae.get("end_reason") or ""))
+        ev.append((ae["ended_at"], _t(f'{str(ae.get("type", "alt")).capitalize()} entry {ae["status"]}'), fr(ae, "end_reason")))
     mp = t.get("missed_plan") or {}
     if mp.get("armed_at"):
-        ev.append((mp["armed_at"], "Missed-it plan armed", "price ran past the missed-it limit before a fill" if not t.get("filled_at") else ""))
+        ev.append((mp["armed_at"], _t("Missed-it plan armed"), E(_t("price ran past the missed-it limit before a fill")) if not t.get("filled_at") else ""))
     if mp.get("triggered_at"):
-        ev.append((mp["triggered_at"], "Missed-it plan triggered", f'became idea {mp["linked_id"]}' if mp.get("linked_id") else ""))
+        ev.append((mp["triggered_at"], _t("Missed-it plan triggered"), E(_t("became idea {id}", id=mp["linked_id"])) if mp.get("linked_id") else ""))
     if mp.get("ended_at") and mp.get("status") in ("void", "invalidated", "expired"):
-        ev.append((mp["ended_at"], f'Missed-it plan {mp["status"]}', {"void": "the main idea filled first", "invalidated": "1h close beyond the plan's stop", "expired": "plan window ended"}[mp["status"]]))
+        ev.append((mp["ended_at"], _t(f'Missed-it plan {mp["status"]}'), E(_t({"void": "the main idea filled first", "invalidated": "1h close beyond the plan's stop", "expired": "plan window ended"}[mp["status"]]))))
     hits = t.get("targets_hit") or []
     if any(hits):
-        ev.append((None, "Target hit", ", ".join(f"T{i + 1} {h.lvl(x)}" for i, x in enumerate(t.get("targets") or []) if i < len(hits) and hits[i]) + " (time not recorded)"))
+        ev.append((None, _t("Target hit"), E(", ".join(f"T{i + 1} {h.lvl(x)}" for i, x in enumerate(t.get("targets") or []) if i < len(hits) and hits[i]) + _t(" (time not recorded)"))))
     if t.get("closed_at"):
         s = t.get("status")
         if s == "cancelled":
-            ev.append((t["closed_at"], "Cancelled", t.get("cancel_reason") or "not filled before expiry"))
+            ev.append((t["closed_at"], _t("Cancelled"), fr(t, "cancel_reason") or E(_t("not filled before expiry"))))
         else:
             r = result_txt(t, h)[0]
-            ev.append((t["closed_at"], outcome(t)[1], f'exit {h.lvl(t.get("exit_price"))}, {r} at {t.get("leverage", 1)}x'))
+            ev.append((t["closed_at"], outcome(t, h)[1], E(_t("exit {p}, {r} at {lev}x", p=h.lvl(t.get("exit_price")), r=r, lev=t.get("leverage", 1)))))
     elif t.get("status") == "pending" and t.get("expiry"):
-        ev.append((t["expiry"], "Expires if not filled", ""))
+        ev.append((t["expiry"], _t("Expires if not filled"), ""))
     if t.get("expires") and t.get("status") in ("open", "pending"):
-        ev.append((t["expires"], "Time stop", "closes at market if still open"))
+        ev.append((t["expires"], _t("Time stop"), E(_t("closes at market if still open"))))
     ev.sort(key=lambda e: ts(e[0]) or 10 ** 15)
     return ev
 
 
-def page_head(h, title, desc, url, V, kind="article", extra_ld=None):
+def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None):
     ld = json.dumps(extra_ld or [], ensure_ascii=False).replace("</", "<\\/")
     return f"""<!doctype html>
-<html lang="en">
+<html lang="{h.L.code}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -196,6 +213,7 @@ def page_head(h, title, desc, url, V, kind="article", extra_ld=None):
 <meta name="description" content="{h.E(desc)}">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="{url}">
+{h.head_i18n(path, h.langs)}
 <meta name="theme-color" content="#070a10">
 <meta property="og:type" content="{kind}">
 <meta property="og:site_name" content="Lumi Trades">
@@ -218,33 +236,34 @@ def page_head(h, title, desc, url, V, kind="article", extra_ld=None):
 """
 
 
-def chrome(h, pre, nav_items, V, current="trades"):
-    """Header + nav for pages under /trades/ (pre = path prefix to the site root)."""
-    nav = "".join(f'<a href="{pre}{s}/">{h.E(sy)}</a>' for c, s, sy in nav_items)
-    tk_pages = ",".join(f"{c}:{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
+def chrome(h, pre, home, nav_items, V, path, current="trades"):
+    """Header + nav for pages under /trades/ (pre = path prefix to the site root, home = to this language's home)."""
+    nav = "".join(f'<a href="{home}{s}/">{h.E(sy)}</a>' for c, s, sy in nav_items)
+    tk_pages = ",".join(f"{c}:{h.L.prefix}{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
     return (f'<body class="cp tp">\n<div class="bg-glow" aria-hidden="true"></div>\n'
             f'<header class="cp-top"><div class="wrap cp-top-inner">\n'
-            f'  <a class="cp-brand" href="{pre}"><img src="{pre}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>\n'
-            f'  <a class="cp-dash" href="{pre}#slate">Dashboard &amp; trade ideas →</a>\n</div></header>\n'
-            f'<div class="ticker lt-ticker" role="region" aria-label="Live crypto prices" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>\n'
-            f'<nav class="nav" aria-label="Site"><div class="wrap nav-inner"><a href="{pre}">Dashboard</a>'
-            f'<a href="{pre}trades/"{" aria-current=\"page\"" if current == "trades" else ""}>Trade history</a>{nav}'
-            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>\n')
+            f'  <a class="cp-brand" href="{home}"><img src="{pre}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>\n'
+            f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}#slate">{h._("Dashboard &amp; trade ideas →")}</a></span>\n</div></header>\n'
+            f'<div class="ticker lt-ticker" role="region" aria-label="{h.E(h._("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>\n'
+            f'<nav class="nav" aria-label="{h.E(h._("Site"))}"><div class="wrap nav-inner"><a href="{home}">{h.E(h._("Dashboard"))}</a>'
+            f'<a href="{home}trades/"{" aria-current=\"page\"" if current == "trades" else ""}>{h.E(h._("Trade history"))}</a>{nav}'
+            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{h.E(h._("Newsletter ↗"))}</a></div></nav>\n')
 
 
 def footer(h, pre, gen_date):
-    return (f'<footer class="wrap footer">\n  <p class="foot-brand"><b>Lumi Trades</b>: a public paper-trading experiment run by an AI. '
-            f'<a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">Follow @lumisinsite</a> · '
-            f'<a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">Trade with Lumi on YouTube</a> · '
-            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">Free daily newsletter</a></p>\n'
-            f'  <p>Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {h.E(gen_date)} · Paper trades, not financial advice.</p>\n'
+    return (f'<footer class="wrap footer">\n  <p class="foot-brand">{h._("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} '
+            f'<a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{h.E(h._("Follow @lumisinsite"))}</a> · '
+            f'<a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{h.E(h._("Trade with Lumi on YouTube"))}</a> · '
+            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{h.E(h._("Free daily newsletter"))}</a></p>\n'
+            f'  <p>{h._("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=h.E(gen_date))}</p>\n'
             f'  <p class="aff-foot" id="aff-foot" hidden></p>\n</footer>\n</body>\n</html>\n')
 
 
-def assets(pre, V):
+def assets(h, pre, V):
     return (f'<link rel="icon" href="{pre}favicon.ico?v={V}" sizes="any">\n'
             f'<link rel="apple-touch-icon" href="{pre}assets/apple-touch-icon.png?v={V}" sizes="180x180">\n'
             f'<link rel="stylesheet" href="{pre}assets/style.css?v={V}">\n'
+            + h.i18n_scripts(pre) +
             f'<script src="{pre}assets/live.js?v={V}" defer></script>\n'
             f'<script src="{pre}assets/ticker.js?v={V}" defer></script>\n')
 
@@ -260,7 +279,7 @@ def equity_svg(curve, h):
         return ""
     W, H, P = 640, 170, 40
     pts = [(ts(curve[0]["t"]) - 3600e3 * 6, 0.0)] + [(ts(p["t"]), float(p["cum_pnl_pct"])) for p in curve]
-    lo, hi = min(0, min(v for _, v in pts)), max(0, max(v for _, v in pts))
+    lo, hi = min(0, min(v for _v, v in pts)), max(0, max(v for _v, v in pts))
     pad = (hi - lo) * 0.12 or 5
     y0, y1 = lo - pad, hi + pad
     t0, t1 = pts[0][0], pts[-1][0]
@@ -270,10 +289,10 @@ def equity_svg(curve, h):
     for x, v in pts[1:]:
         d += f"H{X(x):.1f}V{Y(v):.1f}"
     col = "#22c55e" if pts[-1][1] >= 0 else "#f43f5e"
-    dots = "".join(f'<circle cx="{X(ts(p["t"])):.1f}" cy="{Y(float(p["cum_pnl_pct"])):.1f}" r="4" fill="{col}"><title>{h.E(p["trade_id"])} closed: cumulative {h.pct_txt(float(p["cum_pnl_pct"]), 2)}</title></circle>' for p in curve)
-    lab0 = dt.datetime.fromtimestamp(t0 / 1000, h.CT).strftime("%b %-d")
-    lab1 = dt.datetime.fromtimestamp(t1 / 1000, h.CT).strftime("%b %-d")
-    return (f'<svg class="tp-eq" viewBox="0 0 {W} {H}" role="img" aria-label="Cumulative realized paper P&amp;L by closed trade, ending at {h.E(h.pct_txt(pts[-1][1], 2))}">'
+    dots = "".join(f'<circle cx="{X(ts(p["t"])):.1f}" cy="{Y(float(p["cum_pnl_pct"])):.1f}" r="4" fill="{col}"><title>{h.E(h._("{id} closed: cumulative {pct}", id=p["trade_id"], pct=h.pct_txt(float(p["cum_pnl_pct"]), 2)))}</title></circle>' for p in curve)
+    lab0 = h.L.day(dt.datetime.fromtimestamp(t0 / 1000, h.CT))
+    lab1 = h.L.day(dt.datetime.fromtimestamp(t1 / 1000, h.CT))
+    return (f'<svg class="tp-eq" viewBox="0 0 {W} {H}" role="img" aria-label="{h.E(h._("Cumulative realized paper P&L by closed trade, ending at {pct}", pct=h.pct_txt(pts[-1][1], 2)))}">'
             f'<line x1="{P}" x2="{W - 14}" y1="{Y(0):.1f}" y2="{Y(0):.1f}" stroke="rgba(148,163,184,.35)"/>'
             f'<text x="{P - 6}" y="{Y(0) + 4:.1f}" text-anchor="end" fill="#7d8ba0" font-size="10">0%</text>'
             f'<text x="{P - 6}" y="{Y(pts[-1][1]) + 4:.1f}" text-anchor="end" fill="{col}" font-size="10">{h.E(h.pct_txt(pts[-1][1], 1))}</text>'
@@ -282,20 +301,26 @@ def equity_svg(curve, h):
 
 
 def mini_card(t, a, h, pre):
-    cls, lab = outcome(t)
-    res, _ = result_txt(t, h)
+    cls, lab = outcome(t, h)
+    res, _r = result_txt(t, h)
     z = t.get("entry_zone") or {}
     when = h.ctime(t.get("closed_at") or t.get("opened_at"), False)
     arrow = "▲" if t.get("direction") != "short" else "▼"
+    zone = h._("Zone {lo}–{hi}", lo=h.lvl(z.get("low")), hi=h.lvl(z.get("high"))) if z else h._("Entry {p}", p=h.lvl(t.get("entry")))
     return (f'<a class="tp-card o-{cls}" href="{pre}trades/{h.E(t["id"])}/">'
-            f'<span class="tp-card-top"><b>{h.E(a.get("symbol", t["coin"]))}</b> <span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{arrow} {h.E(side_txt(t))}</span>'
+            f'<span class="tp-card-top"><b>{h.E(a.get("symbol", t["coin"]))}</b> <span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{arrow} {h.E(side_txt(t, h))}</span>'
             f'<span class="mono muted">{h.E(t["id"])}</span></span>'
             f'<span class="tp-card-res"><span class="tp-badge o-{cls}">{h.E(lab)}</span><b class="mono">{h.E(res)}</b></span>'
-            f'<span class="tp-card-meta muted">{"Zone " + h.lvl(z.get("low")) + "–" + h.lvl(z.get("high")) if z else "Entry " + h.lvl(t.get("entry"))} · stop {h.lvl(t.get("stop"))} · {h.E(when)}</span></a>')
+            f'<span class="tp-card-meta muted">{h.E(zone)} · {h.E(h._("stop {p}", p=h.lvl(t.get("stop"))))} · {h.E(when)}</span></a>')
 
 
 def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
-    """Writes trades/index.html + trades/<ID>/index.html. Returns sitemap entries [(path, lastmod, freq, prio)]."""
+    """Writes [<lang>/]trades/index.html + [<lang>/]trades/<ID>/index.html for the current language (h.L).
+    Returns sitemap entries [(path, lastmod, freq, prio)] (paths relative to a language root)."""
+    E, _t, Lg = h.E, h._, h.L
+    fr = lambda o, f: Lg.free(o, f, E)
+    P = Lg.prefix
+    up = "" if Lg.en else "../"  # extra level for /<lang>/
     all_t = trades.get("trades", [])
     st = trades.get("stats", {})
     by_id = {t["id"]: t for t in all_t}
@@ -307,123 +332,132 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
         sym, name = a.get("symbol"), a.get("name")
         full = f"{name} ({sym})" if name and name != sym else sym
         tid = t["id"]
-        url = f"{h.SITE}trades/{tid}/"
-        cls, lab = outcome(t)
+        url = f"{h.SITE}{P}trades/{tid}/"
+        cls, lab = outcome(t, h)
         res, res_note = result_txt(t, h)
         z = t.get("entry_zone") or {}
         posted = h.ctime(t.get("opened_at"), False)
-        title = f"Paper trade {tid}: {sym} {side_txt(t).replace(' · ', ' ')}, {lab.lower()}" + (f" ({res})" if t.get("pnl_pct") is not None else "") + " | Lumi Trades"
-        desc = (f"Lumi's {full} {t.get('direction')} idea {tid}, posted {posted}: "
-                + (f"entry zone {h.lvl(z.get('low'))}–{h.lvl(z.get('high'))}" if z else f"entry {h.lvl(t.get('entry'))}")
-                + f", stop {h.lvl(t.get('stop'))}, targets {' / '.join(h.lvl(x) for x in t.get('targets') or [])}. "
-                + f"Status: {lab.lower()}" + (f", {res} at {t.get('leverage', 1)}x" if t.get("pnl_pct") is not None else "") + ". Paper trade, not financial advice.")
+        side = side_txt(t, h)
+        title = (_t("Paper trade {id}: {sym} {side}, {status}", id=tid, sym=sym, side=side.replace(" · ", " "), status=lab.lower() if Lg.en or Lg.code in ("es", "pt", "tr") else lab)
+                 + (f" ({res})" if t.get("pnl_pct") is not None else "") + " | Lumi Trades")
+        desc = (_t("Lumi's {full} {dir} idea {id}, posted {date}: ", full=full, dir=h.dir_txt(t.get("direction")), id=tid, date=posted)
+                + (_t("entry zone {lo}–{hi}", lo=h.lvl(z.get('low')), hi=h.lvl(z.get('high'))) if z else _t("entry {p}", p=h.lvl(t.get('entry'))))
+                + _t(", stop {stop}, targets {targets}. ", stop=h.lvl(t.get('stop')), targets=' / '.join(h.lvl(x) for x in t.get('targets') or []))
+                + _t("Status: {status}", status=lab.lower() if Lg.en or Lg.code in ("es", "pt", "tr") else lab)
+                + (_t(", {res} at {lev}x", res=res, lev=t.get('leverage', 1)) if t.get("pnl_pct") is not None else "") + _t(". Paper trade, not financial advice."))
         rr = risk_reward(t, h)
         grid = []
         if z:
-            grid.append(("Entry zone", f'{h.lvl(z.get("low"))} – {h.lvl(z.get("high"))}'))
+            grid.append((_t("Entry zone"), f'{h.lvl(z.get("low"))} – {h.lvl(z.get("high"))}'))
         if t.get("filled_at") or t.get("status") in WON + LOST or t.get("status") == "open":
-            grid.append(("Entry (fill)", h.lvl(t.get("entry")) + (f' ({t["entry_type"]})' if t.get("entry_type") in ("breakdown", "breakout") else "")))
+            grid.append((_t("Entry (fill)"), h.lvl(t.get("entry")) + (f' ({_t(t["entry_type"])})' if t.get("entry_type") in ("breakdown", "breakout") else "")))
         ae = t.get("alt_entry") or {}
         if ae.get("trigger_rule") and t.get("status") == "pending" and (ae.get("status") or "watching") == "watching":
-            grid.append((f'Or: {ae.get("type")} entry', f'1h close {"<" if ae.get("type") == "breakdown" else ">"} {h.lvl(ae["trigger_rule"]["level"])}, stop {h.lvl(ae.get("stop"))}'))
-        grid.append(("Stop", h.lvl(t.get("stop")) + (f' → {h.lvl(t["current_stop"])}' if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
+            grid.append((_t(f'Or: {ae.get("type")} entry'), _t("1h close {op} {lvl}, stop {stop}", op="<" if ae.get("type") == "breakdown" else ">", lvl=h.lvl(ae["trigger_rule"]["level"]), stop=h.lvl(ae.get("stop")))))
+        grid.append((_t("Stop"), h.lvl(t.get("stop")) + (f' → {h.lvl(t["current_stop"])}' if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
         hits = t.get("targets_hit") or []
         for j, x in enumerate(t.get("targets") or []):
-            grid.append((f"Target {j + 1}", h.lvl(x) + (" ✓" if j < len(hits) and hits[j] else "")))
+            grid.append((_t("Target {n}", n=j + 1), h.lvl(x) + (" ✓" if j < len(hits) and hits[j] else "")))
         if t.get("exit_price") is not None:
-            grid.append(("Exit", h.lvl(t["exit_price"])))
+            grid.append((_t("Exit"), h.lvl(t["exit_price"])))
         if t.get("status") in ("open", "pending") and t.get("mark_price") is not None:
-            grid.append(("Price at last check", h.lvl(t["mark_price"])))
-        grid.append(("Leverage", "spot (1x)" if t.get("leverage") == 1 else f'{t.get("leverage", 1)}x'))
+            grid.append((_t("Price at last check"), h.lvl(t["mark_price"])))
+        grid.append((_t("Leverage"), lev_word(t.get("leverage", 1), h)))
         if t.get("conviction"):
-            grid.append(("Conviction", str(t["conviction"]).capitalize()))
+            grid.append((_t("Conviction"), _t(str(t["conviction"]).capitalize())))
         if t.get("timeframe"):
-            grid.append(("Timeframe", str(t["timeframe"]).capitalize()))
-        grid_html = "".join(f'<div><small>{h.E(k)}</small><b class="mono">{h.E(v)}</b></div>' for k, v in grid)
+            grid.append((_t("Timeframe"), _t(str(t["timeframe"]).capitalize())))
+        grid_html = "".join(f'<div><small>{E(k)}</small><b class="mono">{E(v)}</b></div>' for k, v in grid)
         rr_html = ""
         if rr:
             tot = rr["risk"] + rr["rew"]
             rr_html = (f'<div class="tp-rr"><div class="tp-rr-bar"><span class="r" style="width:{rr["risk"] / tot * 100:.1f}%"></span><span class="g" style="width:{rr["rew"] / tot * 100:.1f}%"></span></div>'
-                       f'<p class="tp-rr-lbl"><span class="down">Risk to stop {rr["risk"]:.2f}% ({rr["risk"] * rr["lev"]:.1f}% of margin at {rr["lev"]}x)</span>'
-                       f'<span class="up">Reward to T1 {rr["rew"]:.2f}% ({rr["rew"] * rr["lev"]:.1f}% at {rr["lev"]}x)</span></p>'
-                       f'<p class="meta">Price moves {h.E(rr["basis"])}{"; reward/risk " + format(rr["rr"], ".2f") if rr["rr"] else ""}. No fees or funding.</p></div>')
-        tl = "".join(f'<li><span class="mono muted">{h.E(h.ctime(w)) if w else "—"}</span> <b>{h.E(k)}</b>{(" · " + h.E(v)) if v else ""}</li>' for w, k, v in timeline(t, h, by_id))
+                       f'<p class="tp-rr-lbl"><span class="down">{E(_t("Risk to stop {p}% ({m}% of margin at {lev}x)", p=f"{rr['risk']:.2f}", m=f"{rr['risk'] * rr['lev']:.1f}", lev=rr["lev"]))}</span>'
+                       f'<span class="up">{E(_t("Reward to T1 {p}% ({m}% at {lev}x)", p=f"{rr['rew']:.2f}", m=f"{rr['rew'] * rr['lev']:.1f}", lev=rr["lev"]))}</span></p>'
+                       f'<p class="meta">{E(_t("Price moves {basis}", basis=rr["basis"]))}{E(_t("; reward/risk {rr}", rr=format(rr["rr"], ".2f"))) if rr["rr"] else ""}. {E(_t("No fees or funding."))}</p></div>')
+        tl = "".join(f'<li><span class="mono muted">{E(h.ctime(w)) if w else "—"}</span> <b>{E(k)}</b>{(" · " + v) if v else ""}</li>' for w, k, v in timeline(t, h, by_id))
         more = []
         if t.get("leverage_reason"):
-            more.append(f'<p><b>Why {"spot (1x)" if t.get("leverage") == 1 else str(t.get("leverage")) + "x"}:</b> {h.E(t["leverage_reason"])}</p>')
+            more.append(f'<p><b>{E(_t("Why {lev}:", lev=lev_word(t.get("leverage"), h)))}</b> {fr(t, "leverage_reason")}</p>')
         if t.get("reasoning"):
-            more.append(f'<p>{h.E(t["reasoning"])}</p>')
+            more.append(f'<p>{fr(t, "reasoning")}</p>')
         if t.get("size_note"):
-            more.append(f'<p>{h.E(t["size_note"])}</p>')
+            more.append(f'<p>{fr(t, "size_note")}</p>')
         if t.get("leverage_note"):
-            more.append(f'<p class="meta">{h.E(t["leverage_note"])}</p>')
+            more.append(f'<p class="meta">{fr(t, "leverage_note")}</p>')
         if ae.get("trigger_rule"):
-            more.append(f'<h3>{h.E(str(ae.get("type")).capitalize())} entry</h3><p>{h.E(ae.get("trigger"))}. Stop {h.lvl(ae.get("stop"))}, '
-                        f'{"spot (1x)" if ae.get("leverage") == 1 else str(ae.get("leverage") or t.get("leverage")) + "x"}. Status: {h.E(ae.get("status") or "watching")}.</p>'
-                        + (f'<p class="meta">{h.E(ae["reasoning"])}</p>' if ae.get("reasoning") else ""))
+            more.append(f'<h3>{E(_t(str(ae.get("type")).capitalize() + " entry"))}</h3><p>{fr(ae, "trigger")}. {E(_t("Stop {p}", p=h.lvl(ae.get("stop"))))}, '
+                        f'{E(lev_word(ae.get("leverage") or t.get("leverage"), h))}. {E(_t("Status: {status}", status=_t(ae.get("status") or "watching")))}.</p>'
+                        + (f'<p class="meta">{fr(ae, "reasoning")}</p>' if ae.get("reasoning") else ""))
         mi, mp = t.get("missed_it") or {}, t.get("missed_plan") or {}
         if mi.get("note") or mp:
-            more.append("<h3>“Missed it?” plan</h3>")
+            more.append(f"<h3>{E(_t('“Missed it?” plan'))}</h3>")
             if mi.get("note"):
-                more.append(f'<p>{h.E(mi["note"])}{" (missed-it limit " + h.lvl(mi["max_entry"]) + ")" if mi.get("max_entry") else ""}</p>')
+                more.append(f'<p>{fr(mi, "note")}{E(_t(" (missed-it limit {p})", p=h.lvl(mi["max_entry"]))) if mi.get("max_entry") else ""}</p>')
             if mp and mp.get("type") not in (None, "none"):
                 mz = mp.get("entry_zone") or {}
-                more.append(f'<p><b>Plan B ({h.E(mp.get("type"))}):</b> {h.E(mp.get("trigger"))}. Zone {h.lvl(mz.get("low"))}–{h.lvl(mz.get("high"))}, stop {h.lvl(mp.get("stop"))}, '
-                            f'target {h.lvl(mp.get("target"))}. Status: {h.E(mp.get("status") or "watching")}'
-                            + (f' (became <a href="../{h.E(mp["linked_id"])}/">{h.E(mp["linked_id"])}</a>)' if mp.get("linked_id") else "") + ".</p>")
+                more.append(f'<p><b>{E(_t("Plan B ({type}):", type=_t(mp.get("type"))))}</b> {fr(mp, "trigger")}. '
+                            + E(_t("Zone {lo}–{hi}, stop {stop}, target {target}.", lo=h.lvl(mz.get("low")), hi=h.lvl(mz.get("high")), stop=h.lvl(mp.get("stop")), target=h.lvl(mp.get("target"))))
+                            + " " + E(_t("Status: {status}", status=_t(mp.get("status") or "watching")))
+                            + (" " + _t('(became <a href="{href}">{id}</a>)', href=f'../{E(mp["linked_id"])}/', id=E(mp["linked_id"])) if mp.get("linked_id") else "") + ".</p>")
                 if mp.get("reasoning"):
-                    more.append(f'<p class="meta">{h.E(mp["reasoning"])}</p>')
+                    more.append(f'<p class="meta">{fr(mp, "reasoning")}</p>')
             elif mp.get("type") == "none" and mp.get("reasoning"):
-                more.append(f'<p>{h.E(mp["reasoning"])}</p>')
+                more.append(f'<p>{fr(mp, "reasoning")}</p>')
         rel = []
         if t.get("parent_id") and t["parent_id"] in by_id:
-            rel.append(f'<a href="../{h.E(t["parent_id"])}/">← Parent idea {h.E(t["parent_id"])}</a>')
+            rel.append(f'<a href="../{E(t["parent_id"])}/">{E(_t("← Parent idea {id}", id=t["parent_id"]))}</a>')
         lid = (mp or {}).get("linked_id")
         if lid and lid in by_id:
-            rel.append(f'<a href="../{h.E(lid)}/">Follow-up idea {h.E(lid)} →</a>')
+            rel.append(f'<a href="../{E(lid)}/">{E(_t("Follow-up idea {id} →", id=lid))}</a>')
         prev_id = order[i - 1] if i > 0 else None
         next_id = order[i + 1] if i + 1 < len(order) else None
-        pn = (f'<a href="../{h.E(prev_id)}/">← {h.E(prev_id)}</a>' if prev_id else "<span></span>") + '<a href="../">All trades</a>' + (f'<a href="../{h.E(next_id)}/">{h.E(next_id)} →</a>' if next_id else "<span></span>")
+        pn = (f'<a href="../{E(prev_id)}/">← {E(prev_id)}</a>' if prev_id else "<span></span>") + f'<a href="../">{E(_t("All trades"))}</a>' + (f'<a href="../{E(next_id)}/">{E(next_id)} →</a>' if next_id else "<span></span>")
         slug = coin_slug.get(t["coin"])
-        coin_link = f'<a href="../../{slug}/">{h.E(sym)} analysis, levels &amp; how to buy →</a>' if slug else ""
+        coin_link = f'<a href="../../{slug}/">{_t("{sym} analysis, levels &amp; how to buy →", sym=E(sym))}</a>' if slug else ""
         is_active = t.get("status") in ("open", "pending")
         ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": title.replace(" | Lumi Trades", ""), "url": url, "description": desc,
-               "datePublished": t.get("opened_at"), "dateModified": t.get("last_checked") or t.get("closed_at") or t.get("opened_at"), "inLanguage": "en",
-               "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": h.SITE}, "about": {"@type": "Thing", "name": full}},
+               "datePublished": t.get("opened_at"), "dateModified": t.get("last_checked") or t.get("closed_at") or t.get("opened_at"), "inLanguage": Lg.code,
+               "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": h.SITE + P}, "about": {"@type": "Thing", "name": full}},
               {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-                  {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE},
-                  {"@type": "ListItem", "position": 2, "name": "Trade history", "item": h.SITE + "trades/"},
+                  {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + P},
+                  {"@type": "ListItem", "position": 2, "name": _t("Trade history"), "item": h.SITE + P + "trades/"},
                   {"@type": "ListItem", "position": 3, "name": tid, "item": url}]}]
-        head = page_head(h, title, desc, url, V, "article", ld).replace("{ASSETS}", assets("../../", V))
-        page = (head + chrome(h, "../../", nav_items, V) +
+        path = f"trades/{tid}/"
+        R = "../../" + up
+        head = page_head(h, title, desc, url, V, path, "article", ld).replace("{ASSETS}", assets(h, R, V))
+        conv = f'<span class="conv-badge c-{E(t["conviction"])}">{E(_t(str(t["conviction"]).capitalize() + " conviction"))}</span>' if t.get("conviction") else ""
+        why_sum = (_t("Read more: why this idea") + (_t(", the leverage") if t.get("leverage_reason") else "")
+                   + (_t(" and the “missed it?” plan") if (t.get("missed_it") or t.get("missed_plan")) else ""))
+        page = (head + chrome(h, R, "../../", nav_items, V, path) +
                 f"""<main class="wrap cp-main">
-<p class="cp-crumb"><a href="../../">Lumi Trades</a> › <a href="../">Trade history</a> › {h.E(tid)}</p>
-<h1>Paper trade {h.E(tid)}: {h.E(full)} {h.E(t.get("direction"))}</h1>
+<p class="cp-crumb"><a href="../../">Lumi Trades</a> › <a href="../">{E(_t("Trade history"))}</a> › {E(tid)}</p>
+<h1>{E(_t("Paper trade {id}: {full} {dir}", id=tid, full=full, dir=h.dir_txt(t.get("direction"))))}</h1>
 <div class="tp-hero o-{cls}">
-  <div class="tp-hero-l"><span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{"▲" if t.get("direction") != "short" else "▼"} {h.E(side_txt(t))}</span>
-    <span class="tp-badge o-{cls}">{h.E(lab)}</span>{f'<span class="conv-badge c-{h.E(t["conviction"])}">{h.E(str(t["conviction"]).capitalize())} conviction</span>' if t.get("conviction") else ""}
-    <p class="muted">Posted {h.E(h.ctime(t.get("opened_at")))}</p></div>
-  <div class="tp-hero-r"><small>Result</small><b class="mono">{h.E(res)}</b><span class="muted">{h.E(res_note)}</span></div>
+  <div class="tp-hero-l"><span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{"▲" if t.get("direction") != "short" else "▼"} {E(side)}</span>
+    <span class="tp-badge o-{cls}">{E(lab)}</span>{conv}
+    <p class="muted">{E(_t("Posted {when}", when=h.ctime(t.get("opened_at"))))}</p></div>
+  <div class="tp-hero-r"><small>{E(_t("Result"))}</small><b class="mono">{E(res)}</b><span class="muted">{E(res_note)}</span></div>
 </div>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Paper trade, not financial advice.</strong> Lumi is an AI; this idea was posted publicly and tracked against exchange candles. No real money was traded. Leverage magnifies losses as much as gains.</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trade, not financial advice.</strong> Lumi is an AI; this idea was posted publicly and tracked against exchange candles. No real money was traded. Leverage magnifies losses as much as gains.")}</span></div>
 
-<section class="card cp-sec"><h2>The setup on the chart</h2>
+<section class="card cp-sec"><h2>{E(_t("The setup on the chart"))}</h2>
 {trade_chart(a, t, h)}
-<p class="meta">Hourly {h.E(sym)} price (CoinGecko snapshot history){", up to now" if is_active else ""}. Fills, stops and targets are decided on 5-minute exchange candles by the tracker, so the hourly line can miss a brief wick.</p>
+<p class="meta">{E(_t("Hourly {sym} price (CoinGecko snapshot history)", sym=sym))}{E(_t(", up to now")) if is_active else ""}. {E(_t("Fills, stops and targets are decided on 5-minute exchange candles by the tracker, so the hourly line can miss a brief wick."))}</p>
 <div class="cp-grid">{grid_html}</div>
 {rr_html}</section>
 
-<section class="card cp-sec"><h2>What happened</h2><ol class="tp-tl">{tl}</ol>
+<section class="card cp-sec"><h2>{E(_t("What happened"))}</h2><ol class="tp-tl">{tl}</ol>
 {('<p class="tp-rel">' + " · ".join(rel) + "</p>") if rel else ""}</section>
 
-<section class="card cp-sec"><h2>Lumi's reasoning</h2>
-<details class="why"><summary>Read more: why this idea{", the leverage" if t.get("leverage_reason") else ""}{" and the “missed it?” plan" if (t.get("missed_it") or t.get("missed_plan")) else ""}</summary>{"".join(more) or "<p>No reasoning recorded.</p>"}</details></section>
+<section class="card cp-sec"><h2>{_t("Lumi's reasoning")}</h2>
+<details class="why"><summary>{why_sum}</summary>{"".join(more) or "<p>" + E(_t("No reasoning recorded.")) + "</p>"}</details></section>
 
-<nav class="tp-pn" aria-label="Other trades">{pn}</nav>
-<p class="tp-links">{coin_link} <a href="../../#slate">Today's trade ideas →</a> <a href="../../#score">Scorecard →</a></p>
+<nav class="tp-pn" aria-label="{E(_t("Other trades"))}">{pn}</nav>
+<p class="tp-links">{coin_link} <a href="../../#slate">{_t("Today's trade ideas →")}</a> <a href="../../#score">{E(_t("Scorecard →"))}</a></p>
 </main>
-""" + footer(h, "../../", gen_date))
-        write(f"trades/{tid}/index.html", page)
+""" + footer(h, R, gen_date))
+        write(f"{P}trades/{tid}/index.html", page)
         lm = (t.get("closed_at") or t.get("last_checked") or t.get("opened_at") or gen_date)[:10] if not is_active else gen_date
         sm.append((f"trades/{tid}/", lm, "daily" if is_active else "monthly", "0.5"))
 
@@ -439,34 +473,36 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
     active = [t for t in newest if t.get("status") in ("open", "pending")]
     done = [t for t in newest if t.get("status") not in ("open", "pending")]
     card = lambda t: mini_card(t, A.get(t["coin"], {}), h, "../")
-    title = "Lumi's paper-trade history: every idea, wins and losses | Lumi Trades"
-    desc = (f"All {len(all_t)} paper-trade ideas Lumi (an AI) has posted, each with its own page: entry, stop, targets, chart and outcome. "
-            f"Closed: {won} won, {lost} lost" + (f", cumulative {h.pct_txt(cum, 1)} at each idea's leverage" if cum is not None else "") + ". Losses included. Not financial advice.")
-    ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Lumi's paper-trade history", "url": h.SITE + "trades/", "description": desc,
-           "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": h.SITE},
-           "hasPart": [{"@type": "WebPage", "name": f'Paper trade {t["id"]}', "url": f'{h.SITE}trades/{t["id"]}/'} for t in newest]},
+    title = _t("Lumi's paper-trade history: every idea, wins and losses | Lumi Trades")
+    desc = (_t("All {n} paper-trade ideas Lumi (an AI) has posted, each with its own page: entry, stop, targets, chart and outcome. ", n=len(all_t))
+            + _t("Closed: {won} won, {lost} lost", won=won, lost=lost) + (_t(", cumulative {pct} at each idea's leverage", pct=h.pct_txt(cum, 1)) if cum is not None else "") + _t(". Losses included. Not financial advice."))
+    ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": _t("Lumi's paper-trade history"), "url": h.SITE + P + "trades/", "description": desc,
+           "inLanguage": Lg.code, "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": h.SITE + P},
+           "hasPart": [{"@type": "WebPage", "name": _t("Paper trade {id}", id=t["id"]), "url": f'{h.SITE}{P}trades/{t["id"]}/'} for t in newest]},
           {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-              {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE},
-              {"@type": "ListItem", "position": 2, "name": "Trade history", "item": h.SITE + "trades/"}]}]
-    head = page_head(h, title, desc, h.SITE + "trades/", V, "website", ld).replace("{ASSETS}", assets("../", V))
-    kp = [("Ideas posted", str(len(all_t)), ""), ("Won", str(won), "up"), ("Lost / stopped", str(lost), "down"), ("Win rate (closed)", wr, ""),
-          ("Cumulative P&L", h.pct_txt(cum, 1) if cum is not None else "—", "up" if (cum or 0) > 0 else "down" if (cum or 0) < 0 else ""),
-          ("Open · pending · cancelled", f"{n_open} · {n_pend} · {n_can}", "")]
-    kp_html = "".join(f'<div><small>{h.E(k)}</small><b class="mono {c}">{h.E(v)}</b></div>' for k, v, c in kp)
-    page = (head + chrome(h, "../", nav_items, V) + f"""<main class="wrap cp-main">
-<p class="cp-crumb"><a href="../">Lumi Trades</a> › Trade history</p>
-<h1>Lumi's paper-trade history: every idea, wins and losses</h1>
-<p class="cp-lede">Every idea Lumi has posted stays here with its own page, including the ones that lost or never filled. Updated {h.E(h.ctime(trades.get("tracked_utc") or trades.get("evaluated_utc")))}.</p>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Paper trading only, not financial advice.</strong> Results are price moves at each idea's leverage on margin, equal size per trade, without fees or funding.</span></div>
-<section class="card cp-sec"><h2>The record so far</h2><div class="cp-stats tp-kpis">{kp_html}</div>
+              {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + P},
+              {"@type": "ListItem", "position": 2, "name": _t("Trade history"), "item": h.SITE + P + "trades/"}]}]
+    R = "../" + up
+    head = page_head(h, title, desc, h.SITE + P + "trades/", V, "trades/", "website", ld).replace("{ASSETS}", assets(h, R, V))
+    kp = [(_t("Ideas posted"), str(len(all_t)), ""), (_t("Won"), str(won), "up"), (_t("Lost / stopped"), str(lost), "down"), (_t("Win rate (closed)"), wr, ""),
+          (_t("Cumulative P&L"), h.pct_txt(cum, 1) if cum is not None else "—", "up" if (cum or 0) > 0 else "down" if (cum or 0) < 0 else ""),
+          (_t("Open · pending · cancelled"), f"{n_open} · {n_pend} · {n_can}", "")]
+    kp_html = "".join(f'<div><small>{E(k)}</small><b class="mono {c}">{E(v)}</b></div>' for k, v, c in kp)
+    note = Lg.free(st, "note", E)
+    page = (head + chrome(h, R, "../", nav_items, V, "trades/") + f"""<main class="wrap cp-main">
+<p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("Trade history"))}</p>
+<h1>{_t("Lumi's paper-trade history: every idea, wins and losses")}</h1>
+<p class="cp-lede">{_t("Every idea Lumi has posted stays here with its own page, including the ones that lost or never filled. Updated {when}.", when=E(h.ctime(trades.get("tracked_utc") or trades.get("evaluated_utc"))))}</p>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trading only, not financial advice.</strong> Results are price moves at each idea's leverage on margin, equal size per trade, without fees or funding.")}</span></div>
+<section class="card cp-sec"><h2>{E(_t("The record so far"))}</h2><div class="cp-stats tp-kpis">{kp_html}</div>
 {equity_svg(st.get("equity_curve") or [], h)}
-<p class="meta">{h.E(st.get("note") or "")} Win rate = won / closed (cancelled ideas never filled and don't count).</p></section>
-{('<section class="card cp-sec"><h2>Active now (' + str(len(active)) + ')</h2><div class="tp-cards">' + "".join(map(card, active)) + "</div></section>") if active else ""}
-<section class="card cp-sec"><h2>Closed &amp; cancelled ({len(done)})</h2><div class="tp-cards">{"".join(map(card, done)) or "<p>None yet.</p>"}</div></section>
-<p class="tp-links"><a href="../#slate">Today's trade ideas →</a> <a href="../#score">Scorecard →</a> <a href="../data/trades.json">Raw data (trades.json)</a></p>
+<p class="meta">{note} {_t("Win rate = won / closed (cancelled ideas never filled and don't count).")}</p></section>
+{('<section class="card cp-sec"><h2>' + E(_t("Active now ({n})", n=len(active))) + '</h2><div class="tp-cards">' + "".join(map(card, active)) + "</div></section>") if active else ""}
+<section class="card cp-sec"><h2>{_t("Closed &amp; cancelled ({n})", n=len(done))}</h2><div class="tp-cards">{"".join(map(card, done)) or "<p>" + E(_t("None yet.")) + "</p>"}</div></section>
+<p class="tp-links"><a href="../#slate">{_t("Today's trade ideas →")}</a> <a href="../#score">{E(_t("Scorecard →"))}</a> <a href="{R}data/trades.json">{E(_t("Raw data (trades.json)"))}</a></p>
 </main>
-""" + footer(h, "../", gen_date))
-    write("trades/index.html", page)
+""" + footer(h, R, gen_date))
+    write(f"{P}trades/index.html", page)
     sm.insert(0, ("trades/", gen_date, "daily", "0.7"))
     return sm
 
@@ -474,6 +510,7 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
 # ---------- static snapshot blocks in index.html ----------
 def snapshot(h, index, prices, trades, analysis):
     """Fill the snap-* blocks in index.html with real numbers (crawlers / no-JS / link unfurlers); dash.js replaces them."""
+    E, _t = h.E, h._
     A = prices.get("assets", {})
     all_t = trades.get("trades", [])
     st = trades.get("stats", {})
@@ -481,29 +518,31 @@ def snapshot(h, index, prices, trades, analysis):
     b = A.get(bk, {})
     asof = h.ctime(prices.get("updated_utc"))
     up = sum(1 for a in A.values() if (a.get("change_24h") or 0) > 0)
-    glance = (f'<article class="pv-card snap-card"><span class="pv-kicker">Snapshot · {h.E(asof)}</span>'
-              f'<p class="snap-big"><b>{h.E(b.get("symbol", "BTC"))}</b> <span class="mono">{h.E(h.fp(b.get("price")))}</span> {h.pc(b.get("change_24h"))} <small class="muted">24h</small></p>'
-              f'<p class="muted">{up} of {len(A)} tracked coins are up over 24 hours. Live charts load in a moment.</p></article>')
+    glance = (f'<article class="pv-card snap-card"><span class="pv-kicker">{E(_t("Snapshot · {when}", when=asof))}</span>'
+              f'<p class="snap-big"><b>{E(b.get("symbol", "BTC"))}</b> <span class="mono">{E(h.fp(b.get("price")))}</span> {h.pc(b.get("change_24h"))} <small class="muted">24h</small></p>'
+              f'<p class="muted">{E(_t("{up} of {n} tracked coins are up over 24 hours. Live charts load in a moment.", up=up, n=len(A)))}</p></article>')
     act = [t for t in all_t if t.get("status") in ("open", "pending")]
     act.sort(key=lambda t: 0 if t.get("status") == "open" else 1)
     cards = []
     for t in act:
         a = A.get(t["coin"], {})
-        cls, lab = outcome(t)
+        cls, lab = outcome(t, h)
         z = t.get("entry_zone") or {}
-        res, _ = result_txt(t, h)
-        cards.append(f'<article class="pv-card snap-trade o-{cls}"><p class="snap-tt"><b>{h.E(a.get("symbol"))}</b> <span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{h.E(side_txt(t))}</span> <span class="tp-badge o-{cls}">{h.E(lab)}</span></p>'
-                     f'<p class="mono snap-lv">{"Fill " + h.lvl(t.get("entry")) if t.get("status") == "open" else "Zone " + h.lvl(z.get("low")) + "–" + h.lvl(z.get("high"))} · Stop {h.lvl(t.get("stop"))} · Targets {" / ".join(h.lvl(x) for x in t.get("targets") or [])}'
-                     f'{" · P&amp;L " + h.E(res) if t.get("status") == "open" else ""}</p>'
-                     f'<a href="trades/{h.E(t["id"])}/">Trade {h.E(t["id"])} details →</a></article>')
-    slate = "".join(cards) or '<p class="muted">No active ideas right now.</p>'
+        res, _r = result_txt(t, h)
+        lv = (_t("Fill {p}", p=h.lvl(t.get("entry"))) if t.get("status") == "open" else _t("Zone {lo}–{hi}", lo=h.lvl(z.get("low")), hi=h.lvl(z.get("high"))))
+        lv += " · " + _t("Stop {p}", p=h.lvl(t.get("stop"))) + " · " + _t("Targets {list}", list=" / ".join(h.lvl(x) for x in t.get("targets") or []))
+        cards.append(f'<article class="pv-card snap-trade o-{cls}"><p class="snap-tt"><b>{E(a.get("symbol"))}</b> <span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{E(side_txt(t, h))}</span> <span class="tp-badge o-{cls}">{E(lab)}</span></p>'
+                     f'<p class="mono snap-lv">{E(lv)}'
+                     f'{" · " + E(_t("P&L {res}", res=res)) if t.get("status") == "open" else ""}</p>'
+                     f'<a href="trades/{E(t["id"])}/">{E(_t("Trade {id} details →", id=t["id"]))}</a></article>')
+    slate = "".join(cards) or f'<p class="muted">{E(_t("No active ideas right now."))}</p>'
     won = sum(1 for t in all_t if outcome(t)[0] == "win")
     lost = sum(1 for t in all_t if outcome(t)[0] == "loss")
     cum = st.get("cumulative_pnl_pct")
-    score = (f'<article class="pv-card snap-card"><span class="pv-kicker">Track record (paper)</span>'
-             f'<p class="snap-big">{len(all_t)} ideas · <span class="up">{won} won</span> · <span class="down">{lost} lost</span>'
-             f' · cumulative <b class="{"up" if (cum or 0) > 0 else "down"}">{h.E(h.pct_txt(cum, 1)) if cum is not None else "—"}</b></p>'
-             f'<p><a href="trades/">Every trade, with its own page →</a></p></article>')
+    score = (f'<article class="pv-card snap-card"><span class="pv-kicker">{E(_t("Track record (paper)"))}</span>'
+             f'<p class="snap-big">{_t("{n} ideas · <span class=\"up\">{won} won</span> · <span class=\"down\">{lost} lost</span> · cumulative", n=len(all_t), won=won, lost=lost)}'
+             f' <b class="{"up" if (cum or 0) > 0 else "down"}">{E(h.pct_txt(cum, 1)) if cum is not None else "—"}</b></p>'
+             f'<p><a href="trades/">{E(_t("Every trade, with its own page →"))}</a></p></article>')
     out = index
     for key, html_ in (("glance", glance), ("slate", slate), ("score", score)):
         b0, b1 = SNAP[key]
@@ -511,8 +550,8 @@ def snapshot(h, index, prices, trades, analysis):
             out = out[:out.index(b0)] + b0 + "\n" + html_ + "\n" + out[out.index(b1):]
     # social description for link unfurlers: the live slate in one line
     if act:
-        bits = ", ".join(f'{A.get(t["coin"], {}).get("symbol")} {t.get("direction")} ({t.get("status")})' for t in act[:4])
-        sd = f"Lumi's live paper-trade slate: {bits}. Record {won}W/{lost}L, every result logged. Paper trades, NFA."
-        out = re.sub(r'(<meta property="og:description" content=")[^"]*(">)', lambda m: m.group(1) + h.E(sd) + m.group(2), out, count=1)
-        out = re.sub(r'(<meta name="twitter:description" content=")[^"]*(">)', lambda m: m.group(1) + h.E(sd[:200]) + m.group(2), out, count=1)
+        bits = ", ".join(f'{A.get(t["coin"], {}).get("symbol")} {h.dir_txt(t.get("direction"))} ({_t(t.get("status"))})' for t in act[:4])
+        sd = _t("Lumi's live paper-trade slate: {bits}. Record {won}W/{lost}L, every result logged. Paper trades, NFA.", bits=bits, won=won, lost=lost)
+        out = re.sub(r'(<meta property="og:description" content=")[^"]*(">)', lambda m: m.group(1) + E(sd) + m.group(2), out, count=1)
+        out = re.sub(r'(<meta name="twitter:description" content=")[^"]*(">)', lambda m: m.group(1) + E(sd[:200]) + m.group(2), out, count=1)
     return out

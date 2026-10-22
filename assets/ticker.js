@@ -6,6 +6,7 @@
    prefers-reduced-motion: no animation, no duplicated items; the strip scrolls by hand instead. */
 (() => {
   "use strict";
+  const tr = (window.LumiI18n && window.LumiI18n.t) || ((s, v) => (v ? s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s)); // assets/i18n.js
   const me = document.currentScript;
   const ROOT = me && me.src ? new URL("../", me.src).href : (document.documentElement.dataset.root ?? "");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -22,7 +23,7 @@
     const ok = v != null && !isNaN(v);
     const cls = !ok ? "flat" : v > 0 ? "up" : v < 0 ? "down" : "flat";
     const arrow = cls === "up" ? "▲" : cls === "down" ? "▼" : "•";
-    return `<span class="tk-chg ${cls}"><i aria-hidden="true">${arrow}</i>${ok ? `${v > 0 ? "+" : ""}${Number(v).toFixed(2)}%` : "n/a"}</span>`;
+    return `<span class="tk-chg ${cls}"><i aria-hidden="true">${arrow}</i>${ok ? `${v > 0 ? "+" : ""}${Number(v).toFixed(2)}%` : tr("n/a")}</span>`;
   }
   function spark(history) {
     const pts = (history || []).slice(-168).map((p) => p[1]).filter((v) => v != null);
@@ -57,7 +58,7 @@
       const a = prices.assets[id], href = pages[id];
       const tag = href ? "a" : "span";
       const attrs = (href ? ` href="${esc(href)}"` : "") + (dup ? ' aria-hidden="true" tabindex="-1"' : "") +
-        (href && !dup ? ` aria-label="${esc(a.symbol)} analysis"` : "");
+        (href && !dup ? ` aria-label="${esc(tr("{sym} analysis", { sym: a.symbol }))}"` : "");
       return `<${tag} class="tk${dup ? " dup" : ""}"${attrs}><span class="s">${esc(a.symbol)}</span><span class="p" data-tp="${esc(id)}">${fmtPrice(a.price)}</span><span data-tc="${esc(id)}">${chg(a.change_24h)}</span>${spark(a.history)}</${tag}>`;
     };
     const half = ids.map((i) => item(i, false)).join("");

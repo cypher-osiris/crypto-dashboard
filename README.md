@@ -434,6 +434,51 @@ Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config
   both are in the JSON-LD `WebSite.publisher.sameAs`.
 - Growth backlog for the nightly improvement job: `docs/roadmap.md`.
 
+## Languages (scripts/i18n.py, assets/i18n/)
+
+English is the source and stays at `/`. Translated copies of every page live under `/<lang>/`
+(`/es/`, `/es/xrp/`, `/es/trades/T007/` …). Live languages: English, Español (`/es/`).
+A language is live as soon as `assets/i18n/<lang>.json` exists; `scripts/i18n.py` `ORDER` sets the menu order.
+
+**How it works.** The site uses gettext-style strings: the key is the English text itself (with `{placeholders}`).
+- `assets/i18n/<lang>.json` = `_meta` (name, `locale` for `Intl`, `og_locale`, short month names, date formats),
+  `ui` (strings the browser scripts use, plus shared ones) and `pages` (strings only the Python generators use).
+- `scripts/build_pages.py` renders every coin page, `trades/` page and the sitemap once per language with `_("…")`.
+  `/<lang>/index.html` is generated from the hand-edited English `index.html`: text nodes, `data-i18n` blocks
+  (the element's inner HTML is the key) and `aria-label`/`title`/`placeholder`/`alt` are translated, the head gets
+  the translated title, description, canonical and JSON-LD. **Edit `index.html` only; never edit `/es/index.html`.**
+- `assets/i18n/<lang>.js` is generated from the JSON (`window.LUMI_I18N`); `assets/i18n.js` exposes
+  `LumiI18n.t()`; `dash.js`, `affiliate.js`, `ticker.js`, `schedule.js`, `newsletter.js` call `tr("English text", {vars})`.
+  On English pages no bundle loads and `tr()` returns the English text, so English output is unchanged.
+- Every page variant has `<html lang>`, `<link rel="canonical">` to itself, `hreflang` alternates for every
+  language plus `x-default` (= English), `og:locale` + `og:locale:alternate`; `sitemap.xml` lists every URL with
+  `xhtml:link` alternates.
+- Language switcher (globe menu in the header) saves the choice in `localStorage.lumi_lang`. No auto-redirect:
+  `assets/i18n.js` only shows a small dismissible bar suggesting the saved or browser language (`lumi_lang_hint=off`
+  after dismissing).
+- Numbers, prices, tickers and the brand stay as in English (en-US number format); dates use the language's format,
+  times stay US Central.
+
+**Free text stays English, clearly marked.** Lumi's commentary, bias, notes, reasoning, catalysts, log entries and news
+come from the routines as English prose. On translated pages they are wrapped in `<span lang="en" class="i18n-en">`
+(small "EN" tag) and the analysis shows a one-line note. To add a translation for one item, the routine may write
+`"i18n": {"es": {"<field>": "…"}}` next to the field (e.g. on a coin in `data/analysis.json`:
+`"i18n": {"es": {"commentary": "…", "bias": "…"}}`; on a trade: `reasoning`, `leverage_reason`, …). Optional.
+Fixed texts the scripts write (statuses, signal states, labels, the stats note) are translated by key.
+Not translated: `classic/` (English, noindex), `og.png`, X posts, news headlines.
+
+**Add or change a string.** Wrap it: Python `_("English {x}", x=…)` (`T()` escapes values), JS `tr("English {x}", {x})`,
+`index.html` plain text is picked up automatically (use `data-i18n` on an element whose inner HTML has tags).
+Then `python3 scripts/i18n.py check` lists missing keys per language; add them to each JSON (`ui` if the browser
+uses it, else `pages`) and run `python3 scripts/build_pages.py` (it also regenerates the JS bundles).
+Changing an English string changes the key: update the JSON keys too (`check` shows them as missing).
+
+**Add a language.** Add the code to `ORDER` in `scripts/i18n.py` and the suggestion text to `ASK` in `assets/i18n.js`,
+copy `assets/i18n/es.json` to `<lang>.json`, set `_meta`, translate every value (keep `{placeholders}`, HTML tags,
+tickers, numbers and "Lumi"/"Lumi Trades"), run `python3 scripts/i18n.py check <lang>` until 0 missing, then
+`python3 scripts/build_pages.py` and commit the new `/<lang>/` folder with the JSON and bundle.
+`publish.sh` needs no change: `build_pages.py --paths` lists every language.
+
 ## Local preview
 `python3 -m http.server 8000` in this folder, open http://localhost:8000 (opening index.html via file:// will not
 load the JSON).

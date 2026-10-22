@@ -4,6 +4,7 @@
  * scripts/build_pages.py SCHEDULE_NOTE and the README). */
 (() => {
   "use strict";
+  const tr = (window.LumiI18n && window.LumiI18n.t) || ((s, v) => (v ? s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s)); // assets/i18n.js
   const TZ = "America/Chicago", HOURS = [6, 12, 18, 23];
   const parts = (d, tz) => Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23",
     year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" }).formatToParts(d).map((p) => [p.type, p.value]));
@@ -17,9 +18,10 @@
     }
     return new Date(t);
   }
-  const fmt = (d, tz, opts) => new Intl.DateTimeFormat("en-US", Object.assign({ timeZone: tz, hour: "numeric" }, opts || {})).format(d);
+  const LOC = (window.LumiI18n && window.LumiI18n.locale) || "en-US";
+  const fmt = (d, tz, opts) => new Intl.DateTimeFormat(LOC, Object.assign({ timeZone: tz, hour: "numeric" }, opts || {})).format(d);
   const clock = (d, tz) => { const p = parts(d, tz); return fmt(d, tz, +p.minute ? { minute: "2-digit" } : {}); };
-  const join = (a) => a.length > 1 ? a.slice(0, -1).join(", ") + " & " + a[a.length - 1] : a.join("");
+  const join = (a) => a.length > 1 ? a.slice(0, -1).join(", ") + tr(" & ") + a[a.length - 1] : a.join("");
   function run() {
     const els = document.querySelectorAll(".slate-sched");
     if (!els.length) return;
@@ -33,12 +35,12 @@
     if (!next) { const t = parts(new Date(now.getTime() + 864e5), TZ); next = zoned(+t.year, +t.month, +t.day, HOURS[0]); }
     const mins = Math.round((next - now) / 6e4), inTxt = mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`;
     const sameDay = parts(next, TZ).day === c.day;
-    const nextTxt = `${clock(next, TZ)} CT${sameDay ? "" : " tomorrow"}` + (differs ? ` (${clock(next, local)} your time)` : "") + `, in ${inTxt}`;
+    const nextTxt = `${clock(next, TZ)} CT${sameDay ? "" : " " + tr("tomorrow")}` + (differs ? " " + tr("({t} your time)", { t: clock(next, local) }) : "") + tr(", in {d}", { d: inTxt });
     els.forEach((el) => {
       let x = el.querySelector(".sched-live");
       if (!x) { x = document.createElement("span"); x.className = "sched-live"; el.appendChild(x); }
-      x.innerHTML = (differs ? `<span class="sched-local"> · Your time: ${join(mine)}</span>` : "") +
-        `<span class="sched-next"> · Next review: <b>${nextTxt}</b></span>`;
+      x.innerHTML = (differs ? `<span class="sched-local"> · ${tr("Your time:")} ${join(mine)}</span>` : "") +
+        `<span class="sched-next"> · ${tr("Next review:")} <b>${nextTxt}</b></span>`;
     });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else run();
