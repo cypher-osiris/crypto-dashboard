@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "t": "2026-10-22T05:19:11.155000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T007 BTC: missed-it plan ARMED (price past the missed-it limit 82600); watching: 1h close above 85,000 (clears the Oct 21 high 84,850); T007 BTC: missed-it plan invalidated (1h close 82835.6 beyond its stop)."
+    },
+    {
       "t": "2026-10-22T03:52:04Z",
       "kind": "analysis",
       "author": "Lumi (late-night update)",
