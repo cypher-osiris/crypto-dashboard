@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "t": "2026-10-22T02:08:23.908000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T005 AXL long 3x FILLED at 0.053 (zone 0.0518–0.053); T002b XRP closed STOPPED at 1.348 (-4.95% at 3x)."
+    },
+    {
       "t": "2026-10-22T01:58:00Z",
       "kind": "analysis",
       "author": "Grok Bot (leverage rule)",
