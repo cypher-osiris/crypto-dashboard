@@ -18,6 +18,20 @@ Only files whose content changed are rewritten. publish.sh runs this automatical
 import datetime as dt, html, json, math, os, re, sys, types
 from zoneinfo import ZoneInfo
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import i18n  # assets/i18n/<lang>.json; every page is rendered once per language (English at /, others under /<lang>/)
+
+L = i18n.Lang("en")  # current language while building (set per pass in build())
+
+
+def _(_key, **kw):
+    return L.t(_key, **kw)
+
+
+def T(_key, **kw):
+    """Translated HTML: the string itself is trusted markup, the values are escaped."""
+    return L.t(_key, **{k: E(v) for k, v in kw.items()})
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://lumitrades.io/"
 CT = ZoneInfo("America/Chicago")
@@ -26,17 +40,23 @@ PAGES = [("xdce-crowd-sale", "xdc"), ("ripple", "xrp"), ("stellar", "xlm"), ("he
          ("axelar", "axl"), ("zebec-network", "zbcn"), ("bitcoin", "btc"), ("ethereum", "eth"), ("solana", "sol")]
 # Bitunix markets (non-US), checked 2026-10-21 via Bitunix public APIs: all have USDT spot; all but XDC have a USDT perpetual
 BITUNIX_PERP = {"ripple", "stellar", "hedera-hashgraph", "axelar", "zebec-network", "bitcoin", "ethereum", "solana"}
-SCHEDULE_NOTE = ('<p class="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b>'
-                 ' · fills, targets &amp; stops tracked every 30 min</p>')  # assets/schedule.js adds local times + next review
+SCHED_HTML = 'Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> · fills, targets &amp; stops tracked every 30 min'
 NEWSLETTER_URL = "https://trade-with-lumi.kit.com/67c20c56b8"  # Kit hosted page (form 10079883)
-NEWSLETTER_BLOCK = """<section class="nl" id="newsletter" aria-labelledby="nl-h">
-  <div class="nl-copy"><h2 id="nl-h">Get Lumi's daily crypto outlook free</h2>
-  <p class="nl-sub">Key levels, the day's paper-trade ideas and the news that matters, in one email each morning.</p></div>
+
+
+def SCHEDULE_NOTE():  # assets/schedule.js adds local times + next review
+    return f'<p class="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> {_(SCHED_HTML)}</p>'
+
+
+def NEWSLETTER_BLOCK():
+    return f"""<section class="nl" id="newsletter" aria-labelledby="nl-h">
+  <div class="nl-copy"><h2 id="nl-h">{T("Get Lumi's daily crypto outlook free")}</h2>
+  <p class="nl-sub">{T("Key levels, the day's paper-trade ideas and the news that matters, in one email each morning.")}</p></div>
   <form class="nl-form" action="https://app.kit.com/forms/10079883/subscriptions" method="post" data-sv-form="10079883" data-uid="67c20c56b8">
-    <label for="nl-email">Email address</label>
-    <input id="nl-email" type="email" name="email_address" placeholder="you@example.com" autocomplete="email" required>
-    <button type="submit">Subscribe free</button>
-    <p class="nl-fine">No spam, unsubscribe anytime. Email only, handled by Kit. Not financial advice.</p>
+    <label for="nl-email">{E(_("Email address"))}</label>
+    <input id="nl-email" type="email" name="email_address" placeholder="{E(_("you@example.com"))}" autocomplete="email" required>
+    <button type="submit">{E(_("Subscribe free"))}</button>
+    <p class="nl-fine">{E(_("No spam, unsubscribe anytime. Email only, handled by Kit. Not financial advice."))}</p>
     <p class="nl-msg" role="status" aria-live="polite"></p>
   </form>
 </section>"""
@@ -73,13 +93,13 @@ def lvl(p):
 
 def pc(v, digits=2):
     if v is None:
-        return '<span class="muted">n/a</span>'
+        return f'<span class="muted">{_("n/a")}</span>'
     cls = "up" if v > 0 else "down" if v < 0 else "flat"
     return f'<span class="{cls}">{"+" if v > 0 else ""}{v:.{digits}f}%</span>'
 
 
 def pct_txt(v, digits=1):
-    return "n/a" if v is None else f'{"+" if v > 0 else ""}{v:.{digits}f}%'
+    return _("n/a") if v is None else f'{"+" if v > 0 else ""}{v:.{digits}f}%'
 
 
 def ctime(iso, with_time=True):
@@ -88,9 +108,7 @@ def ctime(iso, with_time=True):
     t = dt.datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
     if t.tzinfo is None:
         t = t.replace(tzinfo=CT)
-    t = t.astimezone(CT)
-    s = t.strftime("%b %-d, %Y")
-    return s + t.strftime(", %-I:%M %p ") + t.tzname() if with_time else s
+    return L.date(t.astimezone(CT), with_time)
 
 
 def paragraphs(text, per=4):
@@ -99,22 +117,31 @@ def paragraphs(text, per=4):
     return "".join(f"<p>{E(p)}</p>" for p in out if p)
 
 
+def en_note():
+    """Shown on non-English pages above free text that is only written in English."""
+    return "" if L.en else f'<p class="meta i18n-note">{E(_("Lumi writes this commentary in English; numbers and levels are the same in every language."))}</p>'
+
+
+def free(obj, field, default=""):
+    return L.free(obj, field, E, default)
+
+
 def chart_svg(a, an, trade):
     hist = a.get("history") or []
     if len(hist) < 10:
         return ""
     step = max(1, len(hist) // 180)
     pts = hist[::step] + ([hist[-1]] if (len(hist) - 1) % step else [])
-    W, H, L, R, T, B = 720, 260, 8, 66, 12, 26
+    W, H, L_, R, T, B = 720, 260, 8, 66, 12, 26
     lo, hi = min(p[1] for p in pts), max(p[1] for p in pts)
     lv = [(x, "sup") for x in an.get("support") or []] + [(x, "res") for x in an.get("resistance") or []]
     # include the nearest level on each side even if just outside the 30-day range
-    near = [x for x, _ in lv if lo * 0.93 <= x <= hi * 1.07]
+    near = [x for x, _k in lv if lo * 0.93 <= x <= hi * 1.07]
     lo2, hi2 = min([lo] + near), max([hi] + near)
     pad = (hi2 - lo2) * 0.06 or hi2 * 0.02
     y0, y1 = lo2 - pad, hi2 + pad
     t0, t1 = pts[0][0], pts[-1][0]
-    X = lambda t: L + (t - t0) / ((t1 - t0) or 1) * (W - L - R)
+    X = lambda t: L_ + (t - t0) / ((t1 - t0) or 1) * (W - L_ - R)
     Y = lambda v: T + (y1 - v) / ((y1 - y0) or 1) * (H - T - B)
     d = "".join(f'{"L" if i else "M"}{X(t):.1f} {Y(v):.1f}' for i, (t, v) in enumerate(pts))
     up = pts[-1][1] >= pts[0][1]
@@ -124,23 +151,23 @@ def chart_svg(a, an, trade):
         z = trade["entry_zone"]
         if y0 <= z["high"] and z["low"] <= y1:
             ya, yb = Y(min(z["high"], y1)), Y(max(z["low"], y0))
-            g.append(f'<rect x="{L}" y="{ya:.1f}" width="{W - L - R}" height="{max(1.5, yb - ya):.1f}" fill="rgba(245,176,65,.16)"/>')
-            g.append(f'<text x="{L + 4}" y="{ya - 3:.1f}" fill="#f5b041" font-size="10">entry zone {lvl(z["low"])}–{lvl(z["high"])}</text>')
+            g.append(f'<rect x="{L_}" y="{ya:.1f}" width="{W - L_ - R}" height="{max(1.5, yb - ya):.1f}" fill="rgba(245,176,65,.16)"/>')
+            g.append(f'<text x="{L_ + 4}" y="{ya - 3:.1f}" fill="#f5b041" font-size="10">{E(_("entry zone"))} {lvl(z["low"])}–{lvl(z["high"])}</text>')
     for x, k in lv:
         if y0 <= x <= y1:
             c = "#22c55e" if k == "sup" else "#f43f5e"
-            g.append(f'<line x1="{L}" x2="{W - R}" y1="{Y(x):.1f}" y2="{Y(x):.1f}" stroke="{c}" stroke-opacity=".55" stroke-dasharray="4 4"/>')
+            g.append(f'<line x1="{L_}" x2="{W - R}" y1="{Y(x):.1f}" y2="{Y(x):.1f}" stroke="{c}" stroke-opacity=".55" stroke-dasharray="4 4"/>')
             g.append(f'<text x="{W - R + 4}" y="{Y(x) + 3.5:.1f}" fill="{c}" font-size="10">{lvl(x)}</text>')
     for i in range(5):
         t = t0 + (t1 - t0) * i / 4
-        lab = dt.datetime.fromtimestamp(t / 1000, CT).strftime("%b %-d")
+        lab = L.day(dt.datetime.fromtimestamp(t / 1000, CT))
         anchor = "start" if i == 0 else "end" if i == 4 else "middle"
         g.append(f'<text x="{X(t):.1f}" y="{H - 8}" fill="#7d8ba0" font-size="10" text-anchor="{anchor}">{lab}</text>')
-    title = f'{a["name"]} ({a["symbol"]}) price, last 30 days, with Lumi\'s support (green) and resistance (red) levels'
+    title = _("{name} ({sym}) price, last 30 days, with Lumi's support (green) and resistance (red) levels", name=a["name"], sym=a["symbol"])
     return (f'<svg class="cp-chart" viewBox="0 0 {W} {H}" role="img" aria-label="{E(title)}" preserveAspectRatio="none">'
             f'<defs><linearGradient id="cpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{col}" stop-opacity=".25"/>'
             f'<stop offset="1" stop-color="{col}" stop-opacity="0"/></linearGradient></defs>'
-            f'<path d="{d}L{X(t1):.1f} {H - B}L{L} {H - B}Z" fill="url(#cpg)"/>'
+            f'<path d="{d}L{X(t1):.1f} {H - B}L{L_} {H - B}Z" fill="url(#cpg)"/>'
             f'<path d="{d}" fill="none" stroke="{col}" stroke-width="1.6" stroke-linejoin="round"/>{"".join(g)}'
             f'<circle cx="{X(t1):.1f}" cy="{Y(pts[-1][1]):.1f}" r="3" fill="{col}"/></svg>')
 
@@ -154,96 +181,219 @@ def venues(cid, sym, coin_cfg, aff):
     if cb:
         us.append(f"Coinbase / Coinbase Advanced ({cb})")
     if kp:
-        us.append(f"Kraken ({kp}{', Kraken’s ticker for ' + sym if kp.split('/')[0] != sym else ''})")
+        us.append(f"Kraken ({kp}{_(', Kraken’s ticker for {sym}', sym=sym) if kp.split('/')[0] != sym else ''})")
     if up:
         us.append(f"Uphold ({up})")
-    intl.append(f"Bitunix ({sym}/USDT spot{' and perpetual futures' if cid in BITUNIX_PERP else ''})")
+    intl.append(f"Bitunix ({sym}/USDT {_('spot')}{_(' and perpetual futures') if cid in BITUNIX_PERP else ''})")
     if kp:
-        intl.append("Kraken in many countries")
+        intl.append(_("Kraken in many countries"))
     return us, intl, cb, kp, up
 
 
 def lev_txt(lev):
-    return "spot (1x)" if lev == 1 else f"{lev}x"
+    return _("spot (1x)") if lev == 1 else f"{lev}x"
 
 
-def trade_html(t, sym, price):
+def dir_txt(d):
+    return _("long") if d == "long" else _("short") if d == "short" else str(d or "")
+
+
+def trade_html(t, sym, price, H):
     if not t:
         return ""
     spot = t.get("leverage") == 1 or t.get("market") == "spot"
-    side = ("LONG" if t["direction"] == "long" else "SHORT") + (" SPOT (1x)" if spot else f' {t.get("leverage", 1)}x')
-    conv = f' <span class="conv-badge c-{E(t["conviction"])}">{E(str(t["conviction"]).capitalize())} conviction</span>' if t.get("conviction") else ""
+    side = _("LONG" if t["direction"] == "long" else "SHORT") + (" " + _("SPOT (1x)") if spot else f' {t.get("leverage", 1)}x')
+    conv = f' <span class="conv-badge c-{E(t["conviction"])}">{E(_(str(t["conviction"]).capitalize() + " conviction"))}</span>' if t.get("conviction") else ""
     z = t.get("entry_zone") or {}
     rows = []
     if t["status"] == "open":
-        rows.append(("Filled at", lvl(t.get("entry")) + (f' (filled {ctime(t.get("filled_at"))})' if t.get("filled_at") else "")))
+        rows.append((_("Filled at"), lvl(t.get("entry")) + (_(" (filled {when})", when=ctime(t.get("filled_at"))) if t.get("filled_at") else "")))
         if t.get("unrealized_pnl_pct") is not None:
-            rows.append(("Unrealized P&L (paper)", pct_txt(t["unrealized_pnl_pct"]) + " at the last check"))
+            rows.append((_("Unrealized P&L (paper)"), _("{pct} at the last check", pct=pct_txt(t["unrealized_pnl_pct"]))))
     else:
-        rows.append(("Entry zone", f'{lvl(z.get("low"))} – {lvl(z.get("high"))}' if z else lvl(t.get("entry"))))
+        rows.append((_("Entry zone"), f'{lvl(z.get("low"))} – {lvl(z.get("high"))}' if z else lvl(t.get("entry"))))
         if t.get("expiry"):
-            rows.append(("Fill by", ctime(t["expiry"])))
-    rows.append(("Stop", lvl(t.get("current_stop") or t.get("stop")) + (" (moved to breakeven)" if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
+            rows.append((_("Fill by"), ctime(t["expiry"])))
+    rows.append((_("Stop"), lvl(t.get("current_stop") or t.get("stop")) + (_(" (moved to breakeven)") if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
     hits = t.get("targets_hit") or []
     for i, x in enumerate(t.get("targets") or []):
-        rows.append((f"Target {i + 1}", lvl(x) + (" ✓ hit" if i < len(hits) and hits[i] else "")))
+        rows.append((_("Target {n}", n=i + 1), lvl(x) + (_(" ✓ hit") if i < len(hits) and hits[i] else "")))
     if t.get("expires"):
-        rows.append(("Time stop", ctime(t["expires"])))
+        rows.append((_("Time stop"), ctime(t["expires"])))
+    a = t.get("alt_entry") or {}
+    et = t.get("entry_type")
+    if t["status"] == "open" and et in ("breakdown", "breakout") and a.get("trigger_rule"):
+        rows[0] = (_("Filled at"), rows[0][1] + " " + (_("on a breakdown (1h close below {lvl})", lvl=lvl(a["trigger_rule"]["level"])) if et == "breakdown"
+                                                     else _("on a breakout (1h close above {lvl})", lvl=lvl(a["trigger_rule"]["level"]))))
     grid = "".join(f"<div><small>{E(k)}</small><b class=\"mono\">{E(v)}</b></div>" for k, v in rows)
-    tf = f' <span class="tf-badge">{E(str(t["timeframe"]).capitalize())}</span>' if t.get("timeframe") else ""
+    tf = f' <span class="tf-badge">{E(_(str(t["timeframe"]).capitalize()))}</span>' if t.get("timeframe") else ""
     out = [f'<div class="cp-trade"><p class="cp-trade-head"><span class="side {E(t["direction"])}">{E(side)}</span>{conv}{tf} '
-           f'<span class="status s-{E(t["status"])}">{E(t["status"])}</span> <span class="muted mono">{E(t["id"])}</span>'
-           f' <span class="muted">· posted {E(ctime(t.get("opened_at")))}</span></p><div class="cp-grid">{grid}</div>']
+           f'<span class="status s-{E(t["status"])}">{E(_(t["status"]))}</span> <span class="muted mono">{E(t["id"])}</span>'
+           f' <span class="muted">· {E(_("posted {when}", when=ctime(t.get("opened_at"))))}</span></p><div class="cp-grid">{grid}</div>']
     if t.get("leverage_reason"):
-        out.append(f'<p class="meta cp-lev-reason"><b>Why {E(side.split(" ", 1)[1].lower() if " " in side else side)}:</b> {E(t["leverage_reason"])} '
-                   f'Leverage is set per idea (1x–10x) by conviction, keeping the loss at the stop to about 25% of margin or less.</p>')
+        lv_word = side.split(" ", 1)[1].lower() if " " in side else side
+        out.append(f'<p class="meta cp-lev-reason"><b>{E(_("Why {lev}:", lev=lv_word))}</b> {free(t, "leverage_reason")} '
+                   f'{E(_("Leverage is set per idea (1x–10x) by conviction, keeping the loss at the stop to about 25% of margin or less."))}</p>')
+    if t["status"] == "pending" and a.get("trigger_rule") and (a.get("status") or "watching") == "watching":
+        below = a.get("type") == "breakdown"
+        lv_a = f'<b class="mono">{lvl(a["trigger_rule"]["level"])}</b>'
+        out.append(f'<p class="alt-entry">{_("Or on a 1h close below {lvl}", lvl=lv_a) if below else _("Or on a 1h close above {lvl}", lvl=lv_a)} '
+                   f'<span class="muted">· {E(_("fills to {p}", p=lvl(a.get("max_fill"))))} · {E(_("stop {p}", p=lvl(a.get("stop"))))} · {E(lev_txt(a.get("leverage") or t.get("leverage") or 1))}'
+                   f'{E(_(", smaller size")) if (a.get("leverage") or 0) < (t.get("leverage") or 0) else ""}</span></p>')
     if t.get("parent_id"):
-        out.append(f'<p class="meta">This is the “missed it” follow-up plan of idea {E(t["parent_id"])}'
-                   f'{" (" + E(t.get("plan_type")) + ")" if t.get("plan_type") else ""}'
-                   f'{": " + E(t.get("trigger")) if t.get("trigger") else ""}.</p>')
+        out.append('<p class="meta">' + E(_("This is the “missed it” follow-up plan of idea {id}", id=t["parent_id"]))
+                   + f'{" (" + E(_(t.get("plan_type"))) + ")" if t.get("plan_type") else ""}'
+                   + f'{": " + free(t, "trigger") if t.get("trigger") else ""}.</p>')
     mi, mp = t.get("missed_it") or {}, t.get("missed_plan") or {}
     if t["status"] == "pending" and (mi or mp):
-        out.append('<h3>If you missed the entry</h3>')
+        out.append(f'<h3>{E(_("If you missed the entry"))}</h3>')
         if mi.get("note"):
-            out.append(f'<p>{E(mi["note"])}{" (missed-it limit: " + lvl(mi["max_entry"]) + ")" if mi.get("max_entry") else ""}</p>')
+            out.append(f'<p>{free(mi, "note")}{E(_(" (missed-it limit: {lvl})", lvl=lvl(mi["max_entry"]))) if mi.get("max_entry") else ""}</p>')
         if mp and mp.get("type") != "none":
             mz = mp.get("entry_zone") or {}
-            out.append(f'<p><b>Plan B ({E(mp.get("type"))}):</b> {E(mp.get("trigger"))}. Zone {lvl(mz.get("low"))}–{lvl(mz.get("high"))}, '
-                       f'stop {lvl(mp.get("stop"))}, target {lvl(mp.get("target"))}, {E(lev_txt(mp.get("leverage") or t.get("leverage") or 1))}'
-                       f'{". " + E(mp["size_note"]) if mp.get("size_note") else ""}.</p>')
+            out.append(f'<p><b>{E(_("Plan B ({type}):", type=_(mp.get("type"))))}</b> {free(mp, "trigger")}. '
+                       + E(_("Zone {lo}–{hi}, stop {stop}, target {target}, {lev}", lo=lvl(mz.get("low")), hi=lvl(mz.get("high")), stop=lvl(mp.get("stop")),
+                             target=lvl(mp.get("target")), lev=lev_txt(mp.get("leverage") or t.get("leverage") or 1)))
+                       + f'{". " + free(mp, "size_note") if mp.get("size_note") else ""}.</p>')
             if mp.get("reasoning"):
-                out.append(f'<p class="meta">{E(mp["reasoning"])}</p>')
+                out.append(f'<p class="meta">{free(mp, "reasoning")}</p>')
         elif mp.get("type") == "none":
-            out.append(f'<p>{E(mp.get("reasoning"))}</p>')
+            out.append(f'<p>{free(mp, "reasoning")}</p>')
     if t.get("reasoning"):
-        out.append(f'<details class="why"><summary>Why this idea</summary><p>{E(t["reasoning"])}</p></details>')
+        out.append(f'<details class="why"><summary>{E(_("Why this idea"))}</summary><p>{free(t, "reasoning")}</p></details>')
     out.append("</div>")
     return "".join(out)
 
 
-def build():
+def head_i18n(path, langs):
+    """hreflang alternates + og:locale for a page at `path` (relative to a language root)."""
+    alt = i18n.alternates(path, langs)
+    loc = f'<meta property="og:locale" content="{L.meta.get("og_locale", "en_US")}">'
+    loc += "".join(f'\n<meta property="og:locale:alternate" content="{x.meta.get("og_locale")}">' for x in langs if x.code != L.code)
+    return alt + "\n" + loc
+
+
+def i18n_scripts(R):
+    """assets/i18n.js (switcher memory + language suggestion) and, on translated pages, the string bundle."""
+    V = VERSION
+    return (("" if L.en else f'<script src="{R}assets/i18n/{L.code}.js?v={V}" defer></script>\n')  # strings first
+            + f'<script src="{R}assets/i18n.js?v={V}" defer></script>\n')
+
+
+VERSION = "1"
+
+
+def coin_pages_block(pre, nav_items):
+    links = " ".join(f'<a href="{pre}{s}/" data-coin="{c}">{E(sy)}</a>' for c, s, sy in nav_items)
+    block = f'{BEGIN}\n<div class="wrap coin-pages" id="coin-pages"><span>{_("Coin analysis &amp; how to buy:")}</span> {links}</div>\n{END}'
+    fblock = f'{FBEGIN}\n  <p class="foot-coins">{E(_("Coin pages:"))} ' + " · ".join(
+        f'<a href="{pre}{s}/">{E(_("{sym} price analysis", sym=sy))}</a>' for c, s, sy in nav_items) + f'</p>\n  {FEND}'
+    return block, fblock
+
+
+def replace_blocks(cur, pre, nav_items):
+    block, fblock = coin_pages_block(pre, nav_items)
+    new = cur
+    for b, e, blk in ((BEGIN, END, block), (FBEGIN, FEND, fblock)):
+        if b in new and e in new:
+            new = new[:new.index(b)] + blk + new[new.index(e) + len(e):]
+    return new
+
+
+IHEAD = ("<!-- i18n-head:start (generated by scripts/build_pages.py) -->", "<!-- i18n-head:end -->")
+ISW = ("<!-- lang-switch:start (generated by scripts/build_pages.py) -->", "<!-- lang-switch:end -->")
+
+
+def set_block(src, marks, body):
+    b, e = marks
+    if b in src and e in src:
+        return src[:src.index(b)] + b + "\n" + body + "\n" + src[src.index(e):]
+    return src
+
+
+INDEX_TITLE = "Lumi Trades: AI paper-trading crypto dashboard (XRP, XLM, HBAR, BTC, ETH, SOL)"
+INDEX_DESC = ("Lumi is an AI running a public paper-trading experiment: live crypto prices, RSI/MACD/EMA signals, a daily trade slate "
+              "with entry zones and stops, and a full track record, losses included. Paper trades, not financial advice.")
+INDEX_OG_TITLE = "Lumi Trades: an AI's public paper-trading crypto dashboard"
+INDEX_IMG_ALT = "Lumi Trades card: today's paper-trade slate with entry zones and the current track record"
+DATASET_DESC = ("Crypto prices (30-day hourly history), technical signals (RSI, MACD, EMA, Bollinger, StochRSI, volume on 1h/4h/1d), "
+                "an AI's paper-trade ideas with entries, stops, targets and results, and a signal backtest. Updated several times a day. "
+                "Paper trades only; not financial advice.")
+
+
+def lang_index(en_src, langs):
+    """/<lang>/index.html from the English shell: translated text, head (lang, title, meta, canonical, hreflang, og:locale,
+    JSON-LD), asset paths one level up. The generated blocks are refilled by the caller in this language."""
+    url = f"{SITE}{L.prefix}"
+    src = en_src.replace('<html lang="en" data-root="">', f'<html lang="{L.code}" data-root="../" data-home="">', 1)
+    head, body = src.split("</head>", 1)
+
+    def meta(h, attr, name, val):
+        return re.sub(rf'(<meta {attr}="{re.escape(name)}" content=")[^"]*(">)', lambda m: m.group(1) + E(val) + m.group(2), h, count=1)
+    head = re.sub(r"<title>[^<]*</title>", f"<title>{E(_(INDEX_TITLE))}</title>", head, count=1)
+    head = meta(head, "name", "description", _(INDEX_DESC))
+    head = meta(head, "name", "author", _("Lumi Trades (an AI trader, paper trading only)"))
+    for k in ("og:title", "twitter:title"):
+        head = meta(head, "property" if k.startswith("og") else "name", k, _(INDEX_OG_TITLE))
+    for k in ("og:image:alt", "twitter:image:alt"):
+        head = meta(head, "property" if k.startswith("og") else "name", k, _(INDEX_IMG_ALT))
+    head = meta(head, "property", "og:url", url)
+    head = head.replace('<link rel="canonical" href="https://lumitrades.io/">', f'<link rel="canonical" href="{url}">', 1)
+    head = re.sub(r'<meta property="og:locale" content="[^"]*">\n?', "", head)
+    head = re.sub(r'<meta property="og:locale:alternate" content="[^"]*">\n?', "", head)
+
+    def ld(m):
+        try:
+            data = json.loads(m.group(1))
+        except ValueError:
+            return m.group(0)
+        for x in data:
+            if x.get("@type") == "WebSite":
+                x.update({"url": url, "description": _(INDEX_DESC), "inLanguage": L.code})
+            elif x.get("@type") == "Dataset":
+                x.update({"url": url, "description": _(DATASET_DESC), "inLanguage": L.code})
+        return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+    head = re.sub(r'<script type="application/ld\+json">(.*?)</script>', ld, head, count=1, flags=re.S)
+    # generated blocks are refilled in this language by the caller: empty them so their English isn't translated
+    for b0, b1 in [(BEGIN, END), (FBEGIN, FEND), ISW] + [(f"<!-- snap-{k}:start (generated by scripts/build_pages.py) -->", f"<!-- snap-{k}:end -->") for k in ("glance", "slate", "score")]:
+        if b0 in body and b1 in body:
+            body = body[:body.index(b0) + len(b0)] + "\n" + body[body.index(b1):]
+    body = i18n.translate_html(body, L)
+    # asset / root paths: one level up (pages like xrp/ and trades/ stay relative, i.e. inside this language)
+    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|classic/|data/))', r"\1../", h)
+    head, body = fix(head), fix(body)
+    head = head.replace('<script src="../assets/i18n.js', f'<script src="../assets/i18n/{L.code}.js?v={VERSION}" defer></script>\n<script src="../assets/i18n.js', 1)
+    return head + "</head>" + body
+
+
+def build(dry=False):
+    """Render every page in every language. dry=True renders without writing (used by `i18n.py check`); returns the
+    Lang objects (with their missing-key sets) in that case, else the list of changed paths."""
+    global L, VERSION
     prices, analysis, trades, coins, cfg = load("prices.json"), load("analysis.json"), load("trades.json"), load("coins.json"), load("config.json")
     try:
-        signals = load("signals.json").get("coins", {})
+        signals_all = load("signals.json")
     except Exception:
-        signals = {}
+        signals_all = {}
+    signals = signals_all.get("coins", {})
     aff = cfg.get("affiliate", {})
     coin_cfg = {c["id"]: c for c in coins["coins"]}
     with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as f:
         index = f.read()
     m = re.search(r"\?v=([0-9]{8}-[0-9]+)", index)
-    V = m.group(1) if m else "1"
+    V = VERSION = m.group(1) if m else "1"
     pages = [(cid, slug) for cid, slug in PAGES if cid in prices["assets"] and cid in analysis.get("coins", {})]
     as_of = analysis.get("as_of") or prices.get("updated_utc")
-    upd_date = ctime(as_of, False)
-    price_time = ctime(prices.get("updated_utc"))
     gen_date = dt.datetime.now(dt.timezone.utc).date().isoformat()
     by_id = {t["id"]: t for t in trades.get("trades", [])}
     slate = trades.get("slate", {}).get("coins", {})
     nav_items = [(cid, slug, prices["assets"][cid]["symbol"]) for cid, slug in pages]
     changed = []
+    langs = i18n.all_langs()
 
     def write(rel, content):
+        if dry:
+            return
         p = os.path.join(ROOT, rel)
         old = None
         if os.path.exists(p):
@@ -255,140 +405,162 @@ def build():
                 f.write(content)
             changed.append(rel)
 
-    for cid, slug in pages:
-        a, an = prices["assets"][cid], analysis["coins"][cid]
-        sym, name = a["symbol"], a["name"]
-        url = f"{SITE}{slug}/"
-        price = a.get("price")
-        sup, res = an.get("support") or [], an.get("resistance") or []
-        proj = an.get("projection") or {}
-        sl = slate.get(cid) or {}
-        t = by_id.get(sl.get("trade_id")) if sl.get("trade_id") else None
-        closed = [x for x in trades.get("trades", []) if x.get("coin") == cid and x.get("status") not in ("pending", "open")]
-        closed.sort(key=lambda x: x.get("closed_at") or x.get("opened_at") or "", reverse=True)
-        sig = signals.get(cid) or {}
-        us, intl, cb, kp, up = venues(cid, sym, coin_cfg.get(cid, {}), aff)
+    trade_sm = []
+    trade_pages = None
+    try:
+        import trade_pages
+    except Exception as e:
+        print(f"build_pages: WARNING trade pages unavailable: {e!r}", file=sys.stderr)
 
-        h1 = f"{sym} Price Analysis &amp; Levels to Watch, updated {E(upd_date)}"
-        title = f"{sym} Price Analysis Today & {name} Price Prediction | Lumi Trades" if name != sym else f"{sym} Price Analysis Today & Price Prediction | Lumi Trades"
-        s1, r1 = (lvl(sup[0]) if sup else "n/a"), (lvl(res[0]) if res else "n/a")
-        desc = (f"{name} ({sym}) {fp(price)}, {pct_txt(a.get('change_24h'))} 24h. "
-                f"Support {s1}, resistance {r1}"
-                + (f"; {proj['horizon_days']}-day range {lvl(proj['bear'])}–{lvl(proj['bull'])}" if proj else "")
-                + f". Lumi's paper-trade idea and where to buy {sym} in the US.")
+    for L in langs:
+        R = "../../" if not L.en else "../"   # coin page -> site root (assets, data, classic)
+        H = "../"                             # coin page -> this language's home
+        upd_date = ctime(as_of, False)
+        price_time = ctime(prices.get("updated_utc"))
+        sig_time = ctime(signals_all.get("generated_utc"))
+        for cid, slug in pages:
+            a, an = prices["assets"][cid], analysis["coins"][cid]
+            sym, name = a["symbol"], a["name"]
+            url = f"{SITE}{L.prefix}{slug}/"
+            price = a.get("price")
+            sup, res = an.get("support") or [], an.get("resistance") or []
+            proj = an.get("projection") or {}
+            sl = slate.get(cid) or {}
+            t = by_id.get(sl.get("trade_id")) if sl.get("trade_id") else None
+            closed = [x for x in trades.get("trades", []) if x.get("coin") == cid and x.get("status") not in ("pending", "open")]
+            closed.sort(key=lambda x: x.get("closed_at") or x.get("opened_at") or "", reverse=True)
+            sig = signals.get(cid) or {}
+            us, intl, cb, kp, up = venues(cid, sym, coin_cfg.get(cid, {}), aff)
 
-        # ---- FAQ (same text visible on the page and in FAQPage JSON-LD) ----
-        faq = []
-        if us:
-            faq.append((f"Where can I buy {sym} in the US?",
-                        f"{sym} is listed for US customers on " + ", ".join(us) + "."
-                        + ("" if cb else f" It isn't listed on Coinbase.")
-                        + " Availability varies by state (for example, Uphold doesn't serve New York), so check the exchange's own list before signing up."))
-        faq.append((f"Where can I buy {sym} outside the US?",
-                    "Outside the US, " + " and ".join(intl) + " list it. Availability depends on your country; check the exchange's supported-regions page."))
-        if sup or res:
-            faq.append((f"What are the key {sym} support and resistance levels right now?",
-                        f"As of Lumi's {upd_date} update, support is at " + ", ".join(lvl(x) for x in sup[:3])
-                        + " and resistance at " + ", ".join(lvl(x) for x in res[:3]) + f". {sym} last traded at {fp(price)} ({price_time})."))
-        if proj:
-            faq.append((f"What is Lumi's {sym} price prediction?",
-                        f"Lumi's {proj['horizon_days']}-day projection is a range, not a promise: bull case {lvl(proj['bull'])}, base case {lvl(proj['base'])}, "
-                        f"bear case {lvl(proj['bear'])}. It's an AI's paper-trading read of the levels and signals, reviewed at 6 AM, 12 PM, 6 PM and 11 PM CT, and not financial advice."))
-        if t:
-            zz = t.get("entry_zone") or {}
-            faq.append((f"Is there an active {sym} trade idea?",
-                        f"Yes: paper idea {t['id']} is a {t['direction']} ({'spot, 1x' if t.get('leverage') == 1 else str(t.get('leverage')) + 'x'}), status {t['status']}, "
-                        + (f"filled at {lvl(t.get('entry'))}" if t["status"] == "open" else f"entry zone {lvl(zz.get('low'))}–{lvl(zz.get('high'))}")
-                        + f", stop {lvl(t.get('current_stop') or t.get('stop'))}, targets " + " / ".join(lvl(x) for x in t.get("targets") or []) + ". Paper trade only."))
-        else:
-            faq.append((f"Is there an active {sym} trade idea?", f"Not right now. {sl.get('note') or 'Lumi has no setup for ' + sym + ' at the moment.'}"))
-        faq = faq[:5]
+            h1 = _("{sym} Price Analysis &amp; Levels to Watch, updated {date}", sym=sym, date=E(upd_date))
+            title = (_("{sym} Price Analysis Today & {name} Price Prediction | Lumi Trades", sym=sym, name=name) if name != sym
+                     else _("{sym} Price Analysis Today & Price Prediction | Lumi Trades", sym=sym))
+            s1, r1 = (lvl(sup[0]) if sup else _("n/a")), (lvl(res[0]) if res else _("n/a"))
+            desc = (_("{name} ({sym}) {price}, {chg} 24h. ", name=name, sym=sym, price=fp(price), chg=pct_txt(a.get('change_24h')))
+                    + _("Support {s}, resistance {r}", s=s1, r=r1)
+                    + (_("; {n}-day range {lo}–{hi}", n=proj['horizon_days'], lo=lvl(proj['bear']), hi=lvl(proj['bull'])) if proj else "")
+                    + _(". Lumi's paper-trade idea and where to buy {sym} in the US.", sym=sym))
 
-        # ---- sections ----
-        stats = [("Price", fp(price)), ("24h", pc(a.get("change_24h"))), ("7d", pc(a.get("change_7d"))), ("30d", pc(a.get("change_30d"))),
-                 ("24h range", f'{lvl(a.get("low_24h"))} – {lvl(a.get("high_24h"))}'),
-                 ("Market cap", f'${a["market_cap"] / 1e9:,.2f}B' if (a.get("market_cap") or 0) >= 1e9 else f'${(a.get("market_cap") or 0) / 1e6:,.0f}M'),
-                 ("24h volume", f'${(a.get("volume_24h") or 0) / 1e6:,.1f}M'), ("Rank", f'#{a["market_cap_rank"]}' if a.get("market_cap_rank") else "n/a")]
-        stat_html = "".join(f'<div><small>{k}</small><b class="mono">{v if k in ("24h", "7d", "30d") else E(v)}</b></div>' for k, v in stats)
-        lv_html = (f'<div class="levels"><div class="lv sup"><small>Support</small><b>{E(" / ".join(lvl(x) for x in sup) or "—")}</b></div>'
-                   f'<div class="lv res"><small>Resistance</small><b>{E(" / ".join(lvl(x) for x in res) or "—")}</b></div></div>')
-        proj_html = ""
-        if proj:
-            proj_html = (f'<h3>Lumi\'s {proj["horizon_days"]}-day projection</h3><div class="cp-proj">'
-                         f'<div class="bull"><small>Bull</small><b class="mono">{lvl(proj["bull"])}</b><span>{pct_txt((proj["bull"] / price - 1) * 100) if price else ""}</span></div>'
-                         f'<div class="base"><small>Base</small><b class="mono">{lvl(proj["base"])}</b><span>{pct_txt((proj["base"] / price - 1) * 100) if price else ""}</span></div>'
-                         f'<div class="bear"><small>Bear</small><b class="mono">{lvl(proj["bear"])}</b><span>{pct_txt((proj["bear"] / price - 1) * 100) if price else ""}</span></div></div>'
-                         f'<p class="meta">A scenario range from the levels above, not a forecast you can rely on. % vs {fp(price)}.</p>')
-        sig_html = ""
-        if sig.get("timeframes"):
-            rows = []
-            for tf in ("1h", "4h", "1d"):
-                x = sig["timeframes"].get(tf)
-                if not x:
-                    continue
-                ind = x.get("indicators", {})
-                rsi = (ind.get("rsi") or {}).get("value")
-                rows.append(f'<tr><th>{tf}</th><td><b>{E(x.get("label"))}</b></td><td class="mono">{E(rsi if rsi is not None else "—")}</td>'
-                            f'<td>{E((ind.get("ema") or {}).get("state", ""))}</td><td>{E((ind.get("macd") or {}).get("state", ""))}</td></tr>')
-            sig_html = (f'<h3>Signals ({E(sig.get("label", ""))} overall)</h3><div class="cp-tablewrap"><table class="cp-table"><thead><tr><th>TF</th><th>Signal</th><th>RSI</th><th>EMA trend</th><th>MACD</th></tr></thead>'
-                        f'<tbody>{"".join(rows)}</tbody></table></div><p class="meta">Computed from {E(sig.get("source", "exchange"))} candles at {E(ctime(load("signals.json").get("generated_utc")))}. '
-                        f'The site\'s backtest shows none of these indicators has a reliable edge on its own.</p>')
-        cats = an.get("catalysts") or []
-        cat_html = ""
-        if cats:
-            cat_html = '<section class="card cp-sec"><h2>Recent ' + E(sym) + ' news &amp; catalysts</h2><ul class="cp-list">' + "".join(
-                f'<li><span class="mono muted">{E(c.get("date"))}</span> {E(c.get("text"))} '
-                f'<a href="{E(c.get("url"))}" rel="noopener nofollow" target="_blank">{E(c.get("source") or "source")}</a></li>' for c in cats) + "</ul></section>"
-        srcs = an.get("sources") or []
-        src_html = ("<details class=\"cp-src\"><summary>Sources Lumi read for this update</summary><ul>" + "".join(
-            f'<li><a href="{E(s.get("url"))}" rel="noopener nofollow" target="_blank">{E(s.get("title"))}</a></li>' for s in srcs) + "</ul></details>") if srcs else ""
-        trade_sec = trade_html(t, sym, price) if t else f'<p>No active idea for {E(sym)}. {E(sl.get("note") or "")}</p>'
-        hist_html = ""
-        if closed:
-            hist_html = '<h3>Past ' + E(sym) + ' ideas</h3><ul class="cp-list">' + "".join(
-                f'<li><a class="mono" href="../trades/{E(x["id"])}/">{E(x["id"])}</a> {E(x["direction"])} · <b>{E(x["status"])}</b>'
-                f'{" · " + pct_txt(x["pnl_pct"]) if x.get("pnl_pct") is not None else ""} · {E(ctime(x.get("closed_at") or x.get("opened_at"), False))}'
-                f'{" · " + E(x.get("cancel_reason")) if x.get("cancel_reason") else ""}</li>' for x in closed[:5]) + "</ul>"
+            # ---- FAQ (same text visible on the page and in FAQPage JSON-LD) ----
+            faq = []
+            if us:
+                faq.append((_("Where can I buy {sym} in the US?", sym=sym),
+                            _("{sym} is listed for US customers on {venues}.", sym=sym, venues=", ".join(us))
+                            + ("" if cb else _(" It isn't listed on Coinbase."))
+                            + _(" Availability varies by state (for example, Uphold doesn't serve New York), so check the exchange's own list before signing up.")))
+            faq.append((_("Where can I buy {sym} outside the US?", sym=sym),
+                        _("Outside the US, {venues} list it. Availability depends on your country; check the exchange's supported-regions page.", venues=_(" and ").join(intl))))
+            if sup or res:
+                faq.append((_("What are the key {sym} support and resistance levels right now?", sym=sym),
+                            _("As of Lumi's {date} update, support is at {sup} and resistance at {res}. {sym} last traded at {price} ({time}).",
+                              date=upd_date, sup=", ".join(lvl(x) for x in sup[:3]), res=", ".join(lvl(x) for x in res[:3]), sym=sym, price=fp(price), time=price_time)))
+            if proj:
+                faq.append((_("What is Lumi's {sym} price prediction?", sym=sym),
+                            _("Lumi's {n}-day projection is a range, not a promise: bull case {bull}, base case {base}, bear case {bear}. It's an AI's paper-trading read of the levels and signals, reviewed at 6 AM, 12 PM, 6 PM and 11 PM CT, and not financial advice.",
+                              n=proj['horizon_days'], bull=lvl(proj['bull']), base=lvl(proj['base']), bear=lvl(proj['bear']))))
+            if t:
+                zz = t.get("entry_zone") or {}
+                faq.append((_("Is there an active {sym} trade idea?", sym=sym),
+                            _("Yes: paper idea {id} is a {dir} ({lev}), status {status}, ", id=t['id'], dir=dir_txt(t['direction']),
+                              lev=_('spot, 1x') if t.get('leverage') == 1 else str(t.get('leverage')) + 'x', status=_(t['status']))
+                            + (_("filled at {p}", p=lvl(t.get('entry'))) if t["status"] == "open" else _("entry zone {lo}–{hi}", lo=lvl(zz.get('low')), hi=lvl(zz.get('high'))))
+                            + _(", stop {stop}, targets {targets}. Paper trade only.", stop=lvl(t.get('current_stop') or t.get('stop')), targets=" / ".join(lvl(x) for x in t.get("targets") or []))))
+            else:
+                note, note_en = L.loc(sl, "note")
+                faq.append((_("Is there an active {sym} trade idea?", sym=sym), _("Not right now.") + " " + (note or _("Lumi has no setup for {sym} at the moment.", sym=sym))))
+            faq = faq[:5]
 
-        us_li = "".join(f"<li>{E(x)}</li>" for x in us) or "<li>No US exchange in our list carries it.</li>"
-        intl_li = "".join(f"<li>{E(x)}</li>" for x in intl)
-        pair_hint = cb or kp or f"{sym}/USD"
-        buy_html = f"""<section class="card cp-sec" id="how-to-buy"><h2>How to buy {E(sym)} ({E(name)})</h2>
-<div class="cp-cols"><div><h3>In the US</h3><ul class="cp-list">{us_li}</ul></div><div><h3>Outside the US</h3><ul class="cp-list">{intl_li}</ul></div></div>
+            # ---- sections ----
+            stats = [("Price", fp(price)), ("24h", pc(a.get("change_24h"))), ("7d", pc(a.get("change_7d"))), ("30d", pc(a.get("change_30d"))),
+                     ("24h range", f'{lvl(a.get("low_24h"))} – {lvl(a.get("high_24h"))}'),
+                     ("Market cap", f'${a["market_cap"] / 1e9:,.2f}B' if (a.get("market_cap") or 0) >= 1e9 else f'${(a.get("market_cap") or 0) / 1e6:,.0f}M'),
+                     ("24h volume", f'${(a.get("volume_24h") or 0) / 1e6:,.1f}M'), ("Rank", f'#{a["market_cap_rank"]}' if a.get("market_cap_rank") else _("n/a"))]
+            stat_html = "".join(f'<div><small>{E(_(k))}</small><b class="mono">{v if k in ("24h", "7d", "30d") else E(v)}</b></div>' for k, v in stats)
+            lv_html = (f'<div class="levels"><div class="lv sup"><small>{E(_("Support"))}</small><b>{E(" / ".join(lvl(x) for x in sup) or "—")}</b></div>'
+                       f'<div class="lv res"><small>{E(_("Resistance"))}</small><b>{E(" / ".join(lvl(x) for x in res) or "—")}</b></div></div>')
+            proj_html = ""
+            if proj:
+                proj_html = f'<h3>{_("Lumi\'s {n}-day projection", n=proj["horizon_days"])}</h3><div class="cp-proj">'
+                proj_html += (f'<div class="bull"><small>{E(_("Bull"))}</small><b class="mono">{lvl(proj["bull"])}</b><span>{pct_txt((proj["bull"] / price - 1) * 100) if price else ""}</span></div>'
+                              f'<div class="base"><small>{E(_("Base"))}</small><b class="mono">{lvl(proj["base"])}</b><span>{pct_txt((proj["base"] / price - 1) * 100) if price else ""}</span></div>'
+                              f'<div class="bear"><small>{E(_("Bear"))}</small><b class="mono">{lvl(proj["bear"])}</b><span>{pct_txt((proj["bear"] / price - 1) * 100) if price else ""}</span></div></div>'
+                              f'<p class="meta">{E(_("A scenario range from the levels above, not a forecast you can rely on. % vs {price}.", price=fp(price)))}</p>')
+            sig_html = ""
+            if sig.get("timeframes"):
+                rows = []
+                for tf in ("1h", "4h", "1d"):
+                    x = sig["timeframes"].get(tf)
+                    if not x:
+                        continue
+                    ind = x.get("indicators", {})
+                    rsi = (ind.get("rsi") or {}).get("value")
+                    rows.append(f'<tr><th>{tf}</th><td><b>{E(_(x.get("label")))}</b></td><td class="mono">{E(rsi if rsi is not None else "—")}</td>'
+                                f'<td>{E(L.state((ind.get("ema") or {}).get("state", "")))}</td><td>{E(L.state((ind.get("macd") or {}).get("state", "")))}</td></tr>')
+                sig_html = (f'<h3>{E(_("Signals ({label} overall)", label=_(sig.get("label", ""))))}</h3><div class="cp-tablewrap"><table class="cp-table"><thead><tr><th>{E(_("TF"))}</th><th>{E(_("Signal"))}</th><th>RSI</th><th>{E(_("EMA trend"))}</th><th>MACD</th></tr></thead>'
+                            f'<tbody>{"".join(rows)}</tbody></table></div><p class="meta">{E(_("Computed from {source} candles at {time}.", source=sig.get("source", "exchange"), time=sig_time))} '
+                            f'{_("The site\'s backtest shows none of these indicators has a reliable edge on its own.")}</p>')
+            cats = an.get("catalysts") or []
+            cat_html = ""
+            if cats:
+                cat_html = '<section class="card cp-sec"><h2>' + _("Recent {sym} news &amp; catalysts", sym=E(sym)) + '</h2>' + en_note().replace(_("Lumi writes this commentary in English; numbers and levels are the same in every language."), _("News items are listed in English, as published by their sources.")) + '<ul class="cp-list">' + "".join(
+                    f'<li><span class="mono muted">{E(c.get("date"))}</span> {free(c, "text")} '
+                    f'<a href="{E(c.get("url"))}" rel="noopener nofollow" target="_blank">{E(c.get("source") or _("source"))}</a></li>' for c in cats) + "</ul></section>"
+            srcs = an.get("sources") or []
+            src_html = ("<details class=\"cp-src\"><summary>" + E(_("Sources Lumi read for this update")) + "</summary><ul>" + "".join(
+                f'<li><a href="{E(s.get("url"))}" rel="noopener nofollow" target="_blank">{E(s.get("title"))}</a></li>' for s in srcs) + "</ul></details>") if srcs else ""
+            trade_sec = trade_html(t, sym, price, H) if t else f'<p>{E(_("No active idea for {sym}.", sym=sym))} {free(sl, "note")}</p>'
+            hist_html = ""
+            if closed:
+                hist_html = '<h3>' + E(_("Past {sym} ideas", sym=sym)) + '</h3><ul class="cp-list">' + "".join(
+                    f'<li><a class="mono" href="{H}trades/{E(x["id"])}/">{E(x["id"])}</a> {E(dir_txt(x["direction"]))} · <b>{E(_(x["status"]))}</b>'
+                    f'{" · " + pct_txt(x["pnl_pct"]) if x.get("pnl_pct") is not None else ""} · {E(ctime(x.get("closed_at") or x.get("opened_at"), False))}'
+                    f'{" · " + free(x, "cancel_reason") if x.get("cancel_reason") else ""}</li>' for x in closed[:5]) + "</ul>"
+
+            us_li = "".join(f"<li>{E(x)}</li>" for x in us) or f"<li>{E(_('No US exchange in our list carries it.'))}</li>"
+            intl_li = "".join(f"<li>{E(x)}</li>" for x in intl)
+            pair_hint = cb or kp or f"{sym}/USD"
+            step1 = (T("Coinbase doesn't list {sym}, so US buyers use {venues}.", sym=sym, venues=_(" or ").join(v.split(" (")[0] for v in us))
+                     if (not cb and us) else E(_("Compare fees and the trading pair before you sign up.")))
+            buy_html = f"""<section class="card cp-sec" id="how-to-buy"><h2>{E(_("How to buy {sym} ({name})", sym=sym, name=name))}</h2>
+<div class="cp-cols"><div><h3>{E(_("In the US"))}</h3><ul class="cp-list">{us_li}</ul></div><div><h3>{E(_("Outside the US"))}</h3><ul class="cp-list">{intl_li}</ul></div></div>
 <ol class="cp-steps">
-<li><b>Pick an exchange that lists {E(sym)} where you live.</b> {"Coinbase doesn't list " + E(sym) + ", so US buyers use " + E(" or ".join(v.split(" (")[0] for v in us)) + "." if (not cb and us) else "Compare fees and the trading pair before you sign up."}</li>
-<li><b>Create an account and verify your identity.</b> Regulated exchanges ask for ID and proof of address before you can deposit.</li>
-<li><b>Fund it.</b> A bank transfer (ACH/SEPA) is usually the cheapest; cards cost more.</li>
-<li><b>Buy {E(sym)} on the spot market</b> ({E(pair_hint)}). A limit order at a level you chose (see the support levels above) avoids paying the spread on a market order.</li>
-<li><b>Decide where to keep it.</b> For long-term holdings, consider moving it to your own wallet (below). When you withdraw, pick the {E(name)} network your wallet supports: sending on the wrong network can lose the funds.</li>
+<li><b>{E(_("Pick an exchange that lists {sym} where you live.", sym=sym))}</b> {step1}</li>
+<li><b>{E(_("Create an account and verify your identity."))}</b> {E(_("Regulated exchanges ask for ID and proof of address before you can deposit."))}</li>
+<li><b>{E(_("Fund it."))}</b> {E(_("A bank transfer (ACH/SEPA) is usually the cheapest; cards cost more."))}</li>
+<li>{_("<b>Buy {sym} on the spot market</b> ({pair}). A limit order at a level you chose (see the support levels above) avoids paying the spread on a market order.", sym=E(sym), pair=E(pair_hint))}</li>
+<li><b>{E(_("Decide where to keep it."))}</b> {E(_("For long-term holdings, consider moving it to your own wallet (below). When you withdraw, pick the {name} network your wallet supports: sending on the wrong network can lose the funds.", name=name))}</li>
 </ol>
 <div class="aff-wrap cp-buy" id="aff-coin" data-coin="{E(cid)}" data-sym="{E(sym)}" data-cb="{E(cb or "")}" data-perp="{1 if cid in BITUNIX_PERP else 0}" hidden></div>
-<h3>Self-custody: keeping {E(sym)} in your own wallet</h3>
-<p>{"Keep long-term holdings in a hardware wallet like Ledger. " if aff.get("ledger_url") else ""}Coins on an exchange are an IOU from that exchange. A hardware wallet keeps the private keys on a small offline device, so you approve every transfer yourself. Before you send {E(sym)} to any wallet, check that it supports the {E(name)} network, write the recovery phrase on paper (never in a photo or a cloud note), and send a small test amount first.</p>
+<h3>{E(_("Self-custody: keeping {sym} in your own wallet", sym=sym))}</h3>
+<p>{E(_("Keep long-term holdings in a hardware wallet like Ledger. ")) if aff.get("ledger_url") else ""}{E(_("Coins on an exchange are an IOU from that exchange. A hardware wallet keeps the private keys on a small offline device, so you approve every transfer yourself. Before you send {sym} to any wallet, check that it supports the {name} network, write the recovery phrase on paper (never in a photo or a cloud note), and send a small test amount first.", sym=sym, name=name))}</p>
 <div class="aff-wrap" id="aff-ledger" hidden></div>
-<p class="meta">Spot buying only. Lumi's ideas are paper trades; leverage magnifies losses. Not financial advice.</p></section>"""
+<p class="meta">{T("Spot buying only. Lumi's ideas are paper trades; leverage magnifies losses. Not financial advice.")}</p></section>"""
 
-        faq_html = '<section class="card cp-sec" id="faq"><h2>' + E(sym) + ' FAQ</h2>' + "".join(
-            f"<details class=\"cp-faq\"{' open' if i == 0 else ''}><summary>{E(q)}</summary><p>{E(ans)}</p></details>" for i, (q, ans) in enumerate(faq)) + "</section>"
-        others = "".join(
-            f'<a href="../{s}/"><b>{E(prices["assets"][c]["symbol"])}</b> <span class="mono">{fp(prices["assets"][c].get("price"))}</span> {pc(prices["assets"][c].get("change_24h"), 1)}</a>'
-            for c, s in pages if c != cid)
-        tk_pages = ",".join(f"{c}:{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
-        nav = "".join(f'<a href="../{s}/"{" aria-current=\"page\"" if c == cid else ""}>{E(sy)}</a>' for c, s, sy in nav_items)
+            faq_html = '<section class="card cp-sec" id="faq"><h2>' + E(_("{sym} FAQ", sym=sym)) + '</h2>' + "".join(
+                f"<details class=\"cp-faq\"{' open' if i == 0 else ''}><summary>{E(q)}</summary><p>{E(ans)}</p></details>" for i, (q, ans) in enumerate(faq)) + "</section>"
+            others = "".join(
+                f'<a href="{H}{s}/"><b>{E(prices["assets"][c]["symbol"])}</b> <span class="mono">{fp(prices["assets"][c].get("price"))}</span> {pc(prices["assets"][c].get("change_24h"), 1)}</a>'
+                for c, s in pages if c != cid)
+            tk_pages = ",".join(f"{c}:{L.prefix}{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js, relative to the site root)
+            nav = "".join(f'<a href="{H}{s}/"{" aria-current=\"page\"" if c == cid else ""}>{E(sy)}</a>' for c, s, sy in nav_items)
 
-        ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": html.unescape(h1), "url": url, "description": desc,
-               "dateModified": as_of, "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": SITE},
-               "about": {"@type": "Thing", "name": f"{name} ({sym})"}, "publisher": {"@type": "Organization", "name": "Lumi Trades", "url": SITE,
-               "logo": SITE + "assets/brand/logo.png"}},
-              {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-                  {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": SITE},
-                  {"@type": "ListItem", "position": 2, "name": f"{sym} analysis", "item": url}]},
-              {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-                  {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": ans}} for q, ans in faq]}]
-        ld_txt = json.dumps(ld, ensure_ascii=False).replace("</", "<\\/")
+            ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": html.unescape(h1), "url": url, "description": desc,
+                   "dateModified": as_of, "inLanguage": L.code, "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": SITE + L.prefix},
+                   "about": {"@type": "Thing", "name": f"{name} ({sym})"}, "publisher": {"@type": "Organization", "name": "Lumi Trades", "url": SITE,
+                   "logo": SITE + "assets/brand/logo.png"}},
+                  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                      {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": SITE + L.prefix},
+                      {"@type": "ListItem", "position": 2, "name": _("{sym} analysis", sym=sym), "item": url}]},
+                  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+                      {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": ans}} for q, ans in faq]}]
+            ld_txt = json.dumps(ld, ensure_ascii=False).replace("</", "<\\/")
+            og_t = _("{sym} price analysis &amp; levels to watch ({date})", sym=E(sym), date=E(upd_date))
+            commentary = (f'<div class="cp-text">{paragraphs(L.loc(an, "commentary")[0])}</div>' if not L.loc(an, "commentary")[1]
+                          else f'{en_note()}<div class="cp-text" lang="en">{paragraphs(an.get("commentary"))}</div>')
+            bias = L.free(an, "bias", E) or E(_("no bias set"))
 
-        page = f"""<!doctype html>
-<html lang="en">
+            page = f"""<!doctype html>
+<html lang="{L.code}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -396,10 +568,11 @@ def build():
 <meta name="description" content="{E(desc)}">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="{url}">
+{head_i18n(slug + "/", langs)}
 <meta name="theme-color" content="#070a10">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Lumi Trades">
-<meta property="og:title" content="{E(sym)} price analysis &amp; levels to watch ({E(upd_date)})">
+<meta property="og:title" content="{og_t}">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{SITE}assets/og.png?v={V}">
@@ -408,93 +581,122 @@ def build():
 <meta property="article:modified_time" content="{E(as_of)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@lumisinsite">
-<meta name="twitter:title" content="{E(sym)} price analysis &amp; levels to watch ({E(upd_date)})">
+<meta name="twitter:title" content="{og_t}">
 <meta name="twitter:description" content="{E(desc)}">
 <meta name="twitter:image" content="{SITE}assets/og.png?v={V}">
-<link rel="icon" href="../favicon.ico?v={V}" sizes="any">
-<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png?v={V}" sizes="180x180">
+<link rel="icon" href="{R}favicon.ico?v={V}" sizes="any">
+<link rel="apple-touch-icon" href="{R}assets/apple-touch-icon.png?v={V}" sizes="180x180">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v={V}">
+<link rel="stylesheet" href="{R}assets/style.css?v={V}">
 <script type="application/ld+json">{ld_txt}</script>
-<script src="../assets/affiliate.js?v={V}" defer></script>
-<script src="../assets/newsletter.js?v={V}" defer></script>
-<script src="../assets/schedule.js?v={V}" defer></script>
-<script src="../assets/live.js?v={V}" defer></script>
-<script src="../assets/ticker.js?v={V}" defer></script>
+{i18n_scripts(R)}<script src="{R}assets/affiliate.js?v={V}" defer></script>
+<script src="{R}assets/newsletter.js?v={V}" defer></script>
+<script src="{R}assets/schedule.js?v={V}" defer></script>
+<script src="{R}assets/live.js?v={V}" defer></script>
+<script src="{R}assets/ticker.js?v={V}" defer></script>
 </head>
 <body class="cp">
 <div class="bg-glow" aria-hidden="true"></div>
 <header class="cp-top"><div class="wrap cp-top-inner">
-  <a class="cp-brand" href="../"><img src="../assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>
-  <a class="cp-dash" href="../#slate">Dashboard &amp; trade ideas →</a>
+  <a class="cp-brand" href="{H}"><img src="{R}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>
+  <span class="cp-top-r">{i18n.switcher(L, slug + "/", langs)}<a class="cp-dash" href="{H}#slate">{_("Dashboard &amp; trade ideas →")}</a></span>
 </div></header>
-<div class="ticker lt-ticker" role="region" aria-label="Live crypto prices" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
-<nav class="nav" aria-label="Coin pages"><div class="wrap nav-inner"><a href="../">Dashboard</a><a href="../trades/">Trade history</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Newsletter ↗</a></div></nav>
+<div class="ticker lt-ticker" role="region" aria-label="{E(_("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
+<nav class="nav" aria-label="{E(_("Coin pages"))}"><div class="wrap nav-inner"><a href="{H}">{E(_("Dashboard"))}</a><a href="{H}trades/">{E(_("Trade history"))}</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Newsletter ↗"))}</a></div></nav>
 <main class="wrap cp-main">
-<p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(sym)} analysis</p>
+<p class="cp-crumb"><a href="{H}">Lumi Trades</a> › {E(_("{sym} analysis", sym=sym))}</p>
 <h1>{h1}</h1>
-<p class="cp-lede">{E(name)} ({E(sym)}) is at <b class="mono">{fp(price)}</b>, {pc(a.get("change_24h"))} over 24 hours and {pc(a.get("change_7d"))} over 7 days. Lumi's read: <b>{E(an.get("bias") or "no bias set")}</b>.</p>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>Not financial advice. Paper trading only.</strong> Lumi is an AI; the analysis and trade ideas are generated and logged publicly, and no real money is traded.</span></div>
+<p class="cp-lede">{_("{name} ({sym}) is at <b class=\"mono\">{price}</b>, {d24} over 24 hours and {d7} over 7 days.", name=E(name), sym=E(sym), price=fp(price), d24=pc(a.get("change_24h")), d7=pc(a.get("change_7d")))} {_("Lumi's read:")} <b>{bias}</b>.</p>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_("<strong>Not financial advice. Paper trading only.</strong> Lumi is an AI; the analysis and trade ideas are generated and logged publicly, and no real money is traded.")}</span></div>
 
-<section class="card cp-sec" id="price"><h2>{E(sym)} price today</h2>
+<section class="card cp-sec" id="price"><h2>{E(_("{sym} price today", sym=sym))}</h2>
 <div class="cp-stats">{stat_html}</div>
 {chart_svg(a, an, t)}
-<p class="meta">Prices: CoinGecko snapshot, {E(price_time)}. The <a href="../classic/#coin-{E(cid)}">full detail view</a> streams live prices.</p></section>
+<p class="meta">{_("Prices: CoinGecko snapshot, {time}. The <a href=\"{href}\">full detail view</a> streams live prices.", time=E(price_time), href=f"{R}classic/#coin-{E(cid)}")}</p></section>
 
-<section class="card cp-sec" id="levels"><h2>{E(sym)} support &amp; resistance levels to watch</h2>
+<section class="card cp-sec" id="levels"><h2>{_("{sym} support &amp; resistance levels to watch", sym=E(sym))}</h2>
 {lv_html}
 {proj_html}
 {sig_html}</section>
 
-<section class="card cp-sec" id="outlook"><h2>Lumi's {E(sym)} outlook</h2>
-<p class="meta">Update of {E(ctime(as_of))} · {E(analysis.get("author") or "Lumi")}</p>
-<div class="cp-text">{paragraphs(an.get("commentary"))}</div>
+<section class="card cp-sec" id="outlook"><h2>{_("Lumi's {sym} outlook", sym=E(sym))}</h2>
+<p class="meta">{E(_("Update of {when} · {author}", when=ctime(as_of), author=analysis.get("author") or "Lumi"))}</p>
+{commentary}
 {src_html}</section>
 
-<section class="card cp-sec" id="trade"><h2>{E(sym)} paper-trade idea</h2>
-{SCHEDULE_NOTE}
+<section class="card cp-sec" id="trade"><h2>{E(_("{sym} paper-trade idea", sym=sym))}</h2>
+{SCHEDULE_NOTE()}
 {trade_sec}
 {hist_html}
-<p class="meta">Every idea is tracked against 5-minute candles and logged, losses included. See the <a href="../#score">scorecard</a> and the <a href="../trades/">full trade history</a>{(' (this idea: <a href="../trades/' + E(t["id"]) + '/">' + E(t["id"]) + ' page</a>)') if t else ""}.</p></section>
+<p class="meta">{_("Every idea is tracked against 5-minute candles and logged, losses included. See the <a href=\"{h}#score\">scorecard</a> and the <a href=\"{h}trades/\">full trade history</a>", h=H)}{(_(' (this idea: <a href="{href}">{id} page</a>)', href=f'{H}trades/{E(t["id"])}/', id=E(t["id"]))) if t else ""}.</p></section>
 
 {cat_html}
 {buy_html}
 {faq_html}
 
-{NEWSLETTER_BLOCK}
+{NEWSLETTER_BLOCK()}
 
-<section class="card cp-sec" id="more"><h2>More coin analysis</h2><div class="cp-others">{others}</div>
-<p><a href="../">← Back to the Lumi Trades dashboard</a> (market at a glance, signals, the trade slate and the scorecard; the <a href="../classic/">full detail view</a> has live prices and the backtest).</p></section>
+<section class="card cp-sec" id="more"><h2>{E(_("More coin analysis"))}</h2><div class="cp-others">{others}</div>
+<p>{_("<a href=\"{h}\">← Back to the Lumi Trades dashboard</a> (market at a glance, signals, the trade slate and the scorecard; the <a href=\"{r}classic/\">full detail view</a> has live prices and the backtest).", h=H, r=R)}</p></section>
 </main>
 <footer class="wrap footer">
-  <p class="foot-brand"><b>Lumi Trades</b>: a public paper-trading experiment run by an AI. <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">Follow @lumisinsite</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">Trade with Lumi on YouTube</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">Free daily newsletter</a></p>
-  <p>Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {E(gen_date)} · Paper trades, not financial advice.</p>
+  <p class="foot-brand">{_("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Trade with Lumi on YouTube"))}</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Free daily newsletter"))}</a></p>
+  <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))}</p>
   <p class="aff-foot" id="aff-foot" hidden></p>
 </footer>
 </body>
 </html>
 """
-        write(f"{slug}/index.html", page)
+            write(f"{L.prefix}{slug}/index.html", page)
 
-    # ---- trade history (/trades/ + /trades/<ID>/), see scripts/trade_pages.py ----
-    h = types.SimpleNamespace(E=E, fp=fp, lvl=lvl, pc=pc, pct_txt=pct_txt, ctime=ctime, CT=CT, SITE=SITE, NEWSLETTER_URL=NEWSLETTER_URL)
-    coin_slug = {c: s for c, s in pages}
-    trade_sm = []
-    try:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import trade_pages
-        trade_sm = trade_pages.build(h, prices, trades, nav_items, coin_slug, V, gen_date, write)
-    except Exception as e:  # never block the coin pages / data publish
-        trade_pages = None
-        print(f"build_pages: WARNING trade pages failed: {e!r}", file=sys.stderr)
+        # ---- trade history (/trades/ + /trades/<ID>/), see scripts/trade_pages.py ----
+        h = types.SimpleNamespace(E=E, fp=fp, lvl=lvl, pc=pc, pct_txt=pct_txt, ctime=ctime, CT=CT, SITE=SITE, NEWSLETTER_URL=NEWSLETTER_URL,
+                                  L=L, _=_, langs=langs, i18n=i18n, i18n_scripts=i18n_scripts, head_i18n=head_i18n, dir_txt=dir_txt)
+        coin_slug = {c: s for c, s in pages}
+        if trade_pages:
+            try:
+                sm_l = trade_pages.build(h, prices, trades, nav_items, coin_slug, V, gen_date, write)
+                if L.en:
+                    trade_sm = sm_l
+            except Exception as e:  # never block the coin pages / data publish
+                print(f"build_pages: WARNING trade pages failed ({L.code}): {e!r}", file=sys.stderr)
+                if L.en:
+                    trade_pages = None
 
-    # ---- sitemap ----
-    sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-          f'  <url><loc>{SITE}</loc><lastmod>{gen_date}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>']
-    sm += [f'  <url><loc>{SITE}{s}/</loc><lastmod>{gen_date}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>' for _, s in pages]
-    sm += [f'  <url><loc>{SITE}{p}</loc><lastmod>{lm}</lastmod><changefreq>{fq}</changefreq><priority>{pr}</priority></url>' for p, lm, fq, pr in trade_sm]
+        # ---- the dashboard in this language (/<lang>/index.html from the English shell) ----
+        if not L.en:
+            try:
+                li = lang_index(index, langs)
+                li = replace_blocks(li, "", nav_items)
+                li = set_block(li, IHEAD, head_i18n("", langs))
+                li = set_block(li, ISW, i18n.switcher(L, "", langs))
+                if trade_pages:
+                    li = trade_pages.snapshot(h, li, prices, trades, analysis)
+                write(f"{L.prefix}index.html", li)
+            except Exception as e:
+                print(f"build_pages: WARNING {L.code} dashboard failed: {e!r}", file=sys.stderr)
+    L = langs[0]
+    if dry:
+        return langs
+
+    # ---- sitemap (every language, with xhtml:link hreflang alternates) ----
+    def url_el(p, lm, fq, pr):
+        out = []
+        for x in langs:
+            alts = "".join(f'<xhtml:link rel="alternate" hreflang="{y.code}" href="{SITE}{y.prefix}{p}"/>' for y in langs) + \
+                (f'<xhtml:link rel="alternate" hreflang="x-default" href="{SITE}{p}"/>' if len(langs) > 1 else "")
+            out.append(f'  <url><loc>{SITE}{x.prefix}{p}</loc><lastmod>{lm}</lastmod><changefreq>{fq}</changefreq><priority>{pr}</priority>'
+                       + (alts if len(langs) > 1 else "") + '</url>')
+        return out
+    sm = ['<?xml version="1.0" encoding="UTF-8"?>',
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' + (' xmlns:xhtml="http://www.w3.org/1999/xhtml"' if len(langs) > 1 else "") + '>']
+    sm += url_el("", gen_date, "hourly", "1.0")
+    for _c, s in pages:
+        sm += url_el(f"{s}/", gen_date, "daily", "0.8")
+    for p, lm, fq, pr in trade_sm:
+        sm += url_el(p, lm, fq, pr)
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
 
     # ---- link blocks in the main page (index.html, root) and the classic view (classic/index.html, one level down) ----
@@ -504,33 +706,40 @@ def build():
             continue
         with open(fp_, encoding="utf-8") as f:
             cur = f.read()
-        links = " ".join(f'<a href="{pre}{s}/" data-coin="{c}">{E(sy)}</a>' for c, s, sy in nav_items)
-        block = f'{BEGIN}\n<div class="wrap coin-pages" id="coin-pages"><span>Coin analysis &amp; how to buy:</span> {links}</div>\n{END}'
-        fblock = f'{FBEGIN}\n  <p class="foot-coins">Coin pages: ' + " · ".join(
-            f'<a href="{pre}{s}/">{E(sy)} price analysis</a>' for c, s, sy in nav_items) + f'</p>\n  {FEND}'
-        new = cur
-        for b, e, blk in ((BEGIN, END, block), (FBEGIN, FEND, fblock)):
-            if b in new and e in new:
-                new = new[:new.index(b)] + blk + new[new.index(e) + len(e):]
-        if path == "index.html" and trade_pages:
-            try:
-                new = trade_pages.snapshot(h, new, prices, trades, analysis)
-            except Exception as e:
-                print(f"build_pages: WARNING index snapshot failed: {e!r}", file=sys.stderr)
+        new = replace_blocks(cur, pre, nav_items)
+        if path == "index.html":
+            new = set_block(new, IHEAD, head_i18n("", langs))
+            new = set_block(new, ISW, i18n.switcher(L, "", langs))
+            if trade_pages:
+                try:
+                    h.L, h._ = L, _
+                    new = trade_pages.snapshot(h, new, prices, trades, analysis)
+                except Exception as e:
+                    print(f"build_pages: WARNING index snapshot failed: {e!r}", file=sys.stderr)
         if new != cur:
             write(path, new)
+    changed += i18n.bundle(langs)
     return changed
+
+
+def lang_dirs():
+    return [c for c in i18n.codes() if c != "en"]
 
 
 if __name__ == "__main__":
     ch = build()
     if "--paths" in sys.argv:
         # for publish.sh: every generated page + sitemap (unchanged ones are no-ops for git add), index.html only if changed
-        outs = [f"{slug}/index.html" for _, slug in PAGES if os.path.exists(os.path.join(ROOT, slug, "index.html"))] + ["sitemap.xml"]
-        tdir = os.path.join(ROOT, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
-        if os.path.isdir(tdir):
-            outs += ["trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
-                f"trades/{d}/index.html" for d in os.listdir(tdir) if os.path.exists(os.path.join(tdir, d, "index.html")))
+        outs = []
+        for pre in [""] + [c + "/" for c in lang_dirs()]:
+            outs += [f"{pre}{slug}/index.html" for _c, slug in PAGES if os.path.exists(os.path.join(ROOT, pre, slug, "index.html"))]
+            if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
+                outs.append(f"{pre}index.html")
+            tdir = os.path.join(ROOT, pre, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
+            if os.path.isdir(tdir):
+                outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
+                    f"{pre}trades/{d}/index.html" for d in os.listdir(tdir) if os.path.exists(os.path.join(tdir, d, "index.html")))
+        outs.append("sitemap.xml")
         print("\n".join(outs + [x for x in ch if x not in outs]))
     elif "--quiet" in sys.argv:
         print("\n".join(ch))
