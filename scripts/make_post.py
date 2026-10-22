@@ -123,6 +123,12 @@ def gather(now=None):
                 row["past_missed_it"] = (now_p > mx) if long_ else (now_p < mx)
         else:
             row["entry"] = t["entry"]; row["unrealized_pct"] = t.get("unrealized_pnl_pct")
+        ae = t.get("alt_entry") or {}
+        if ae.get("trigger_rule") and (ae.get("status") or "watching") == "watching" and t["status"] == "pending":
+            row["alt_entry"] = {"type": ae.get("type"), "close_beyond": ae["trigger_rule"].get("level"), "max_fill": ae.get("max_fill"),
+                                "stop": ae.get("stop"), "lev": ae.get("leverage")}
+        if t.get("entry_type"):
+            row["entry_type"] = t["entry_type"]
         if t.get("parent_id"):
             row["missed_plan_of"] = t["parent_id"]; row["plan_type"] = t.get("plan_type"); row["size_note"] = t.get("size_note")
         mp = missed_plan_facts(t, now_p)

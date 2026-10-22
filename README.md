@@ -174,7 +174,8 @@ a fixed 3x because it is a uniform historical test of the indicator rules, not L
 - Every run sets `last_checked` (ISO) / `last_checked_ms` per trade and `tracked_utc`, so it is **idempotent**: a
   re-run never double-counts a candle. `data/log.json` gets an entry **only when an event happens**.
 - Prints `{"checked_utc","events":[...],"publish":bool,"active":[...],"sources","errors","slate_warnings"}`.
-  Event types: `filled`, `target1_hit`/`target2_hit`, `stopped`, `won`, `lost`, `cancelled`.
+  Event types: `filled` (with `entry_type` pullback / breakdown / breakout), `target1_hit`/`target2_hit`, `stopped`, `won`, `lost`, `cancelled`.
+  New fills record `entry_type` on the trade (older trades don't have it and are not back-filled).
 - Stats: win rate = won / closed; cumulative P&L = simple sum of closed trades' P&L %.
 
 ### Missed-it plans (`missed_plan` on a trade)
@@ -208,6 +209,40 @@ are never auto-activated. Plan scanning starts at the first full hour after the 
 The slate card shows a collapsible "Missed it?" block (trigger, zone, stop, target, leverage, R:R worst/best, size note,
 live distance to the plan zone or trigger, and the reasoning). It highlights and opens itself while price is past the
 missed-it limit or the plan is armed, unless the reader has toggled it.
+
+### Breakdown / breakout entry (`alt_entry` on a trade, from Oct 22, 2026)
+Optional second way into the **same** idea when the trend is strong, so a short that never rallies into its zone (or a
+long that never dips) is not simply missed. Ideas without it behave exactly as before. Example: T003 (XLM short, zone
+0.1895–0.1915) fell straight to ~0.1777 without a retest and stayed pending; a breakdown entry would have taken a 1h
+close below the base support instead. T003 itself is not changed (no back-dating).
+
+- **When:** only a strong DAILY trend on the idea's side: 1d EMA stack (short: price < EMA20 < EMA50), 1d beyond EMA200
+  and 1d label Sell/Strong Sell (long: mirrored, Buy/Strong Buy). The 4h is not required (a pullback short is usually
+  written while the 4h bounces; the breakdown close is the short-term confirmation). `scripts/alt_entry.py` checks this
+  against data/signals.json and proposes the entry; if the gate fails, no level fits or R:R is too low it offers nothing.
+- **Trigger:** a COMPLETED 1h close below `trigger_rule.level` (breakdown; breakout = close above), never a wick. The level
+  ("base") is the nearest analysis.json support or 24h 1h-swing low below price (long: resistance / swing high above)
+  that sits between the zone and T1.
+- **Fill:** at that 1h close, only if the close is not past `max_fill` (the worst fill that still gives **R:R >= 1.5 to T1**
+  with the alt stop, and at most ~1 ATR past the level); a more extended close is skipped and it keeps watching.
+- **Stop:** back on the other side of the broken level (level ± max(0.75 × 1h ATR(14), 0.3%)).
+- **Size:** one leverage step lower than the idea (leveraged ideas keep >= 2x since 1x = spot), conviction one step lower.
+- **One fill per idea:** a zone touch first = `entry_type: "pullback"` (the alt entry becomes `void`); the trigger first =
+  `entry_type: "breakdown"|"breakout"` and the idea takes the alt `stop`/`leverage`/`conviction`/`leverage_reason`
+  (originals kept in `planned_entry`, `planned_stop`, `planned_leverage`, `planned_conviction`, `planned_leverage_reason`).
+  A breakdown/breakout fill also voids the idea's missed-it plan (the idea filled). Expiry = the idea's `expiry`.
+- Only 1h closes after the tracker first sees the alt entry count (`active_from`). Invalid alt entries (slate_warnings) never fill.
+
+```json
+"alt_entry":{"type":"breakdown","trigger":"1h close below 0.1766 (loses the support); fills at that close if it is not past 0.1753",
+  "trigger_rule":{"tf":"1h","kind":"close_below","level":0.1766},"max_fill":0.1753,"stop":0.1776,"leverage":2,"conviction":"low",
+  "leverage_reason":"...","size_note":"smaller size than the pullback entry","trend":"1d Strong Sell (...); 4h ... - signals.json <time>",
+  "reasoning":"..."}
+```
+Workflow: draft the idea, run `python3 scripts/alt_entry.py --idea '<idea json>'` and paste its `alt_entry` only if
+`"offered": true` (or `python3 scripts/alt_entry.py T009 --apply` for a pending idea), then run `track_trades.py` and check
+`slate_warnings`. Tracker-written fields: `status` (watching / filled / void / expired / cancelled), `active_from(_ms)`,
+`filled_at`, `ended_at`, `end_reason`. The card shows one line: "Or on a 1h close below 0.1766 · stop 0.1776 · 2x, smaller size".
 
 ### Locking
 `track_trades.py`, `update_prices.py`, `publish.sh` and `locked.sh` all take an exclusive `flock` on `state/lock`
@@ -426,7 +461,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261022-3`) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
+`?v=` version (currently `20261022-4`) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
 (coin pages copy the version from index.html at build time).
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
