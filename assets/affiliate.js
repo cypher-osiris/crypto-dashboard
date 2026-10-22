@@ -157,7 +157,7 @@
     if (!box || !dcent) return;
     const btn = (u, t, cls) => `<a class="aff-btn ${cls}" href="${esc(u)}" rel="sponsored noopener" target="_blank">${esc(t)}<span aria-hidden="true"> ↗</span></a>`;
     box.innerHTML = `<div class="w-ico" aria-hidden="true">🔐</div><div><h3>Keep your crypto safe</h3>` +
-      `<p class="w-copy">Don't leave long-term holdings on an exchange. A hardware wallet keeps your keys offline. Lumi's pick: <b>D'CENT Biometric Wallet</b>.</p>` +
+      `<p class="w-copy">Don't leave long-term holdings on an exchange. A hardware wallet keeps your keys offline. Lumi's pick: <b>D'CENT Biometric Wallet</b>. Our link gets you <b>50% off</b> (about $79 instead of $159).</p>` +
       `<div class="w-btns">${btn(dcent, String(a.dcent_label || "Get the D'CENT Biometric Wallet"), "sm")}` +
       (ledger ? btn(ledger, String(a.ledger_label || "Or choose Ledger"), "sm") : "") +
       `<a class="aff-tag" href="#aff-foot">Affiliate link · disclosure</a></div></div>`;

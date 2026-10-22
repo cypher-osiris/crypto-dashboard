@@ -261,7 +261,7 @@ link (`https://shop.ledger.com/pages/referral-program?referral_code=GR4WE2W9HKCA
 says "Receive up to $20 worth of Bitcoin when you purchase your Ledger device", $5-$20 by model). When set it shows: "Or choose
 Ledger" in this section, the footer line "Holding long term? Self-custody with Ledger" (`#aff-ledger-foot`), and a
 "Get a Ledger" button (`ledger_page_label`) in every coin page's self-custody section; all visitors, no geo gate, with
-`ledger_note` as the disclosure (keep it in line with Ledger's page if their offer changes). Empty ⇒ all hidden. Never mention D'CENT's card product. Empty `dcent_url` ⇒ section hidden.
+`ledger_note` as the disclosure (keep it in line with Ledger's page if their offer changes). Empty ⇒ all hidden. Never mention D'CENT's card product. The referral link gives 50% off ($79 vs $159 as of Oct 22, 2026); update the copy in affiliate.js if that changes. Empty `dcent_url` ⇒ section hidden.
 **Geo-gated (assets/affiliate.js).** Bitunix bans US users, so Bitunix links are shown only to visitors confirmed
 NON-US. US visitors (incl. PR/GU/VI/AS/MP/UM) get Coinbase in the same places instead: "Trade on Coinbase Advanced"
 (`coinbase_advanced_url`) as the header button, calculator button and per-trade button (neutral wording, no "setup"/leverage
