@@ -30,6 +30,8 @@ PRICES = [
     ("Yen carry-trade watch (USD/JPY, Nikkei)", "GET /v1/macro/yen", "$0.015"),
     ("Market slate (today's paper-trade ideas)", "GET /v1/slate", "$0.02"),
     ("BTC + macro market backdrop", "GET /v1/market", "$0.02"),
+    ("Crypto events calendar (next 48 hours)", "GET /v1/events", "$0.01"),
+    ("Active trade ideas with entries, stops and targets", "GET /v1/trades", "$0.02"),
     ("Daily crypto market brief", "GET /v1/brief", "$0.03"),
     ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.25"),
     ("Detailed vendor report (full observation history)", "GET /v1/trust/vendors/{id}/report", "$0.02"),

@@ -26,6 +26,8 @@
 - `GET /v1/macro/yen`: Yen carry-trade watch (USD/JPY, Nikkei), $0.015 per call
 - `GET /v1/slate`: Market slate (today's paper-trade ideas), $0.02 per call
 - `GET /v1/market`: BTC + macro market backdrop, $0.02 per call
+- `GET /v1/events`: Crypto events calendar (next 48 hours), $0.01 per call
+- `GET /v1/trades`: Active trade ideas with entries, stops and targets, $0.02 per call
 - `GET /v1/brief`: Daily crypto market brief, $0.03 per call
 - `GET /v1/institutional`: Daily Institutional & Policy Brief, $0.25 per call
 - `GET /v1/trust/vendors/{id}/report`: Detailed vendor report (full observation history), $0.02 per call

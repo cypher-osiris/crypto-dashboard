@@ -40,7 +40,7 @@ PAGES = [("xdce-crowd-sale", "xdc"), ("ripple", "xrp"), ("stellar", "xlm"), ("he
          ("axelar", "axl"), ("zebec-network", "zbcn"), ("bitcoin", "btc"), ("ethereum", "eth"), ("solana", "sol")]
 # Bitunix markets (non-US), checked 2026-10-21 via Bitunix public APIs: all have USDT spot; all but XDC have a USDT perpetual
 BITUNIX_PERP = {"ripple", "stellar", "hedera-hashgraph", "axelar", "zebec-network", "bitcoin", "ethereum", "solana"}
-SCHED_HTML = 'Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> · fills, targets &amp; stops tracked every 30 min'
+SCHED_HTML = 'Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> · levels checked every 30 min'
 NEWSLETTER_URL = "https://trade-with-lumi.kit.com/67c20c56b8"  # Kit hosted page (form 10079883)
 
 
@@ -327,13 +327,17 @@ def set_block(src, marks, body):
     return src
 
 
-INDEX_TITLE = "Lumi Trades: AI crypto dashboard, signals & pay-per-call API for AI agents"
-INDEX_DESC = ("Crypto signals and trading signals for XRP, XLM, HBAR and BTC: live prices, RSI/MACD/EMA, support and resistance, "
-              "Fear & Greed and an AI's paper-trade slate, plus a pay-per-call x402 API and MCP server for AI agents. Not financial advice.")
-INDEX_OG_TITLE = "Lumi Trades: an AI's public paper-trading crypto dashboard"
+INDEX_TITLE = "Lumi Trades: AI crypto dashboard, signals and pay-per-call API for AI agents"
+INDEX_DESC = ("Crypto signals for XRP, XLM, HBAR and BTC: live prices, RSI, MACD and EMA readings, support and resistance, "
+              "the Fear and Greed index and AI trade ideas, plus a pay-per-call x402 API and MCP server for AI agents. Not financial advice.")
+# x402scan and some unfurlers read <title>, og:title and the meta description without decoding HTML entities: keep "&", quotes
+# and angle brackets out of these three (and the og/twitter description); use "and".
+INDEX_OG_TITLE = INDEX_TITLE
+INDEX_OG_DESC = ("Live crypto prices, signals, support and resistance and AI trade ideas for XRP, XLM, HBAR and BTC, "
+                 "plus a pay-per-call x402 API and MCP server for AI agents. Not financial advice.")
 INDEX_IMG_ALT = "Lumi Trades card: today's paper-trade slate with entry zones and stops"
 DATASET_DESC = ("Crypto prices (30-day hourly history), technical signals (RSI, MACD, EMA, Bollinger, StochRSI, volume on 1h/4h/1d), "
-                "an AI's active paper-trade ideas with entries, stops and targets, and a signal backtest. Updated several times a day. "
+                "an AI's active paper-trade ideas with entries, stops and targets, and indicator statistics. Updated several times a day. "
                 "Paper trades only; not financial advice.")
 
 
@@ -351,6 +355,8 @@ def lang_index(en_src, langs):
     head = meta(head, "name", "author", _("Lumi Trades (an AI trader, paper trading only)"))
     for k in ("og:title", "twitter:title"):
         head = meta(head, "property" if k.startswith("og") else "name", k, _(INDEX_OG_TITLE))
+    for k in ("og:description", "twitter:description"):
+        head = meta(head, "property" if k.startswith("og") else "name", k, _(INDEX_OG_DESC))
     for k in ("og:image:alt", "twitter:image:alt"):
         head = meta(head, "property" if k.startswith("og") else "name", k, _(INDEX_IMG_ALT))
     head = meta(head, "property", "og:url", url)
@@ -625,7 +631,7 @@ def build(dry=False):
 <p class="cp-crumb"><a href="{H}">Lumi Trades</a> › {E(_("{sym} analysis", sym=sym))}</p>
 <h1>{h1}</h1>
 <p class="cp-lede">{_("{name} ({sym}) is at <b class=\"mono\">{price}</b>, {d24} over 24 hours and {d7} over 7 days.", name=E(name), sym=E(sym), price=fp(price), d24=pc(a.get("change_24h")), d7=pc(a.get("change_7d")))} {_("Lumi's read:")} <b>{bias}</b>.</p>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_("<strong>Not financial advice. Paper trading only.</strong> Lumi is an AI; the analysis and trade ideas are generated and logged publicly, and no real money is traded.")}</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_("<strong>Not financial advice. Paper trading only.</strong> Lumi is an AI; its analysis and trade ideas are for information only, and no real money is traded.")}</span></div>
 
 <section class="card cp-sec" id="price"><h2>{E(_("{sym} price today", sym=sym))}</h2>
 <div class="cp-stats">{stat_html}</div>
