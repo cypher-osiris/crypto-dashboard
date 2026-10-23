@@ -1,7 +1,7 @@
 {
  "_readme": "Hand-edited by the analysis run. Prices are NOT stored here (see prices.json). levels: arrays of numbers drawn as horizontal lines. projection: bull/base/bear price targets at horizon_days ahead, drawn as a band from the latest price.",
- "as_of": "2026-10-23T11:25:00Z",
- "author": "Lumi",
+ "as_of": "2026-10-23T17:30:00Z",
+ "author": "Lumi (midday update, 12:30 PM CT)",
  "label": "Evening update, Oct 22 2026 ~6:20 PM CT. Levels/projections from Coinbase/Kraken 1h and daily candles plus the cited sources.",
  "backdrop": {
   "coin": "bitcoin",
@@ -149,8 +149,28 @@
     "base": 1.31,
     "bear": 1.26
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): XRP ~$1.32 (-0.9% 24h; 24h $1.30-$1.33) held the $1.30 floor overnight (24h low $1.30) and is drifting with BTC. Structure: the 20-, 50- and 200-day EMAs are stacked overhead at ~$1.361 / $1.370 / $1.374, just under the Oct 21-22 high (~$1.389); below, the Oct lows are $1.26-1.28 (30-day low ~$1.259). Signals: 1d Strong Sell (price < EMA20 < EMA50, below EMA200), 4h Sell under the 4h EMAs (~$1.325-1.331), 1h Neutral (RSI ~44). New: T011, a medium-conviction 3x swing short that only fills on a relief rally into $1.355-1.37 (the daily EMA cluster), stop $1.392 above the Oct 21-22 high, targets $1.30 / $1.265. No chase from here: a short at $1.32 has only ~1.5% to the floor. News is constructive but slow-moving: Arf (~$10B annual settlement volume) is bringing RLUSD settlement financing for licensed payment firms to XRPL, though no committed XRPL volume was disclosed (crypto.news); CryptEscrow announced a real-estate settlement partnership with Ripple (GlobeNewswire); US spot XRP ETFs took in a small $3.55M on Oct 22 (SoSoValue via Odaily). The XRPL fixCleanup amendment activates Nov 4. A daily close above $1.39 would void the bearish read; a daily close under $1.30 opens $1.26-1.28.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): XRP ~$1.31 (-0.2% 24h; 24h $1.30-$1.33) is defending the $1.30 floor; FXStreet notes a daily close under $1.30 would open $1.12, while the 50/100/200-day EMAs cap rallies. Signals: 1h Strong Sell, 4h Sell under the 4h EMAs (~$1.323-1.330), 1d Strong Sell under the daily EMAs (~$1.360-1.370). Adoption: Ripple and Arf (about $10B a year in payment volume) will use RLUSD for short-term settlement liquidity on the XRPL, but the native XRPL lending amendment still lacked validator support (19 of 29 needed on an Oct 20 snapshot, Coinpaper). Singapore's BLOOM stablecoin and tokenized-deposit initiative, where Ripple tests RLUSD trade payments, added the central banks of Malaysia and Thailand (The Block). XRP ETFs took in ~$3.6M on Oct 22 while BTC and ETH funds bled (Cointelegraph). T011 still waits for a rally into $1.355-1.37.",
    "sources": [
+    {
+     "title": "FXStreet: XRP defends $1.30 support as Ripple partners with Arf (Oct 23 2026)",
+     "url": "https://www.fxstreet.com/cryptocurrencies/news/xrp-defends-130-support-as-ripple-partners-with-arf-to-bring-rlusd-settlement-liquidity-to-xrpl-202610231213"
+    },
+    {
+     "title": "Coinpaper: Ripple and Arf target $10B payment market; XRPL lending awaits validator votes (Oct 23 2026)",
+     "url": "https://coinpaper.com/37771/ripple-and-arf-target-10-b-payment-market-with-rlusd-as-xrp-ledger-lending-awaits-validator-approval"
+    },
+    {
+     "title": "The Block: Malaysia and Thailand central banks join Singapore's BLOOM stablecoin initiative (Oct 23 2026)",
+     "url": "https://www.theblock.co/news/regulation/2026-10-23-singapore-malaysia-and-thailand-central-banks-expand-cross-border-stablecoin-initiative-involving-ripple-visa-and-mastercard-426492"
+    },
+    {
+     "title": "Cointelegraph: Bitcoin ETFs lose $635M as October flows turn negative (Oct 23 2026)",
+     "url": "https://cointelegraph.com/markets/bitcoin-etfs-erase-october-gains-outflow"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "crypto.news: Ripple teams up with payments firm Arf to expand RLUSD use on XRPL (Oct 22 2026)",
      "url": "https://crypto.news/ripple-arf-rlusd-settlement-liquidity-xrpl/"
@@ -162,26 +182,6 @@
     {
      "title": "Odaily: US spot XRP ETFs net inflow $3.55M on Oct 22 (SoSoValue data)",
      "url": "https://www.odaily.news/zh-CN/newsflash/526855"
-    },
-    {
-     "title": "FXPremiere: Bitcoin price today, BTC at $81,645 (Oct 23 2026)",
-     "url": "https://www.fxpremiere.com/bitcoin-price-today-btc-81645-20-day-range-october-23-2026/"
-    },
-    {
-     "title": "CoinDesk: Bitcoin recovers to $81,700 as memecoins lead altcoin rebound (Oct 23 2026)",
-     "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-steadies-near-usd81-700-as-altcoins-rebound-pepe-climbs-13"
-    },
-    {
-     "title": "CryptoWatchDesk ETF Desk: bitcoin ETFs -$635.6M, ether -$110.6M on Oct 22 (Farside data)",
-     "url": "https://cryptowatchdesk.com/news/etf-desk-oct-22-bitcoin-etfs-636-million-outflow-biggest-since-june-october-negative"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
-    },
-    {
-     "title": "CoinDesk: XRP Ledger bug fix moved to November after validator support dipped (Oct 22 2026)",
-     "url": "https://www.coindesk.com/tech/2026/10/22/xrp-ledger-bug-fix-moved-to-november-after-validator-support-dipped-for-two-hours"
     }
    ],
    "catalysts": [
@@ -241,8 +241,20 @@
     "base": 0.078,
     "bear": 0.075
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): HBAR ~$0.0791 (-2.0% 24h, -8.4% week; 24h $0.0786-$0.0816) bounced overnight into the broken $0.0815 floor, where the T008 short filled (midnight CT), and has rolled back to the 30-day low area ($0.0786-0.0788). Signals: 1h Strong Sell with a fresh bearish MACD cross, 4h Sell under the 4h EMAs (~$0.0819/$0.0839), 1d Sell under the daily EMAs (~$0.0865-0.0868); the 1d StochRSI is deeply oversold (~5), so sharp relief bounces remain likely even in the downtrend. T008's stop stays $0.084 (above the 4h EMA cluster) with targets $0.0778 / $0.0755. A 4h close back above $0.0845 would mean the breakdown failed. No new project catalyst this morning; recent items are developer tooling (Network MCP on testnet, mainnet v0.78.1, TokenPost).",
+   "commentary": "Midday (12:30 PM CT, Oct 23): HBAR ~$0.0788 (-0.7% 24h; 24h $0.0786-$0.0816) is printing fresh 30-day lows (-11.7% over 30 days) and is the weakest of the watchlist today. Signals: 1h Strong Sell (fresh bearish MACD cross, RSI ~37), 4h Sell under the 4h EMAs (~$0.0813-0.0836, StochRSI oversold), 1d Sell under the daily EMAs (~$0.0865-0.0867). The open T008 short (from $0.0815) has T1 at $0.0778 just below. News is developer-side, not a near-term price driver: Hedera's Network MCP for AI agents is live on testnet only, with Agent Accounts targeting mainnet in Q2 2027 (Bitrue), and the v0.78.1 upgrade ships cross-ledger (CLPR) code still switched off (Coinburn).",
    "sources": [
+    {
+     "title": "Bitrue: Hedera launches Network MCP on testnet for AI agents (Oct 23 2026)",
+     "url": "https://www.bitrue.com/blog/hedera-network-mcp-testnet-ai-blockchain-actions"
+    },
+    {
+     "title": "Coinburn: Hedera deploys v0.78.1 with cross-ledger protocol still disabled (Oct 18 2026)",
+     "url": "https://coinburn.com/news/hedera-v0781-clpr-code-disabled"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "TokenPost: Hedera launches Network MCP on testnet as mainnet upgrade completes",
      "url": "https://www.tokenpost.com/news/technology/38619"
@@ -256,20 +268,12 @@
      "url": "https://cryptowatchdesk.com/news/etf-desk-oct-22-bitcoin-etfs-636-million-outflow-biggest-since-june-october-negative"
     },
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
-    },
-    {
      "title": "CryptoCompass: Hedera opens its network to AI coding agents, on testnet for now",
      "url": "https://cryptocompass.com/articles/hedera-opens-its-network-to-ai-coding-agents-on-testnet-for-now"
     },
     {
      "title": "CryptoWatchDesk: Nasdaq drops 2.6% on AI selloff; Bitcoin hits $80,814, ends near $81,400 (Oct 22 2026)",
      "url": "https://cryptowatchdesk.com/news/market-read-22-oct-us-close-nasdaq-ai-selloff-bitcoin-80814-ends-81400"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 23:19 UTC Oct 22",
-     "url": "https://lumitrades.io/data/signals.json"
     }
    ],
    "catalysts": [
@@ -301,8 +305,16 @@
     "base": 0.175,
     "bear": 0.168
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): XLM ~$0.1761 (-1.0% 24h; 24h $0.1747-$0.1787) is holding the bottom of its base after Thursday's drop (24h low $0.1747), with the 30-day low ($0.1720) about 2% below. Signals: 1d Strong Sell under the daily EMAs (~$0.188-0.192), 4h Sell under the 4h EMAs (~$0.179-0.181), 1h Neutral (RSI ~40). The pending T003 short (zone $0.1895-0.1915) never got its rally and expires unfilled at noon CT today; it can't be re-entered for its levels (price is already past T1). No new setup: a short this close to the 30-day low has little room, and a long needs the base to hold and a reclaim of ~$0.1807 first. Adoption news keeps building: U.S. Bank completed a live pilot transaction with its USBDC stablecoin on Stellar, and Stellar stablecoin volume rose 121% in Q3 (TokenPost); OpenZeppelin released audited confidential-token contracts for Stellar (TokenPost). Dated events: Meridian (Oct 28-29), the Bell / Protocol 30 testnet vote Nov 3 and the mainnet validator vote Nov 23, 17:00 UTC (ad-hoc-news citing CryptoTicker).",
+   "commentary": "Midday (12:30 PM CT, Oct 23): XLM ~$0.1767 (+0.9% 24h; 24h $0.1747-$0.1787) is still basing above the $0.172 30-day low. The T003 short (zone $0.1895-0.1915) expired unfilled at noon CT without the rally it needed. Signals: 1h Neutral (RSI ~46, on the 1h EMAs), 4h Sell under the 4h EMAs (~$0.178-0.181), 1d Strong Sell under the daily EMAs (~$0.188-0.192). No new setup: a short this close to the base has little room, and a long needs a reclaim of ~$0.1807 first. Adoption keeps building (U.S. Bank's live USBDC pilot on Stellar, Q3 stablecoin volume +121%, TokenPost), and the GENIUS Act rule published today gives bank stablecoin issuers a firmer US framework (Federal Register). Dated events: Meridian Oct 28-29, Protocol 30 testnet vote Nov 3, mainnet validator vote Nov 23.",
    "sources": [
+    {
+     "title": "Federal Register: OCC final rule implementing the GENIUS Act (Oct 23 2026)",
+     "url": "https://www.federalregister.gov/documents/2026/10/23/2026-21706/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "TokenPost: U.S. Bank completes live USBDC stablecoin pilot on Stellar (Oct 23 2026)",
      "url": "https://www.tokenpost.com/news/business/38832"
@@ -318,10 +330,6 @@
     {
      "title": "CoinDesk: Bitcoin recovers to $81,700 as memecoins lead altcoin rebound (Oct 23 2026)",
      "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-steadies-near-usd81-700-as-altcoins-rebound-pepe-climbs-13"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
     },
     {
      "title": "FXStreet: XRP and XLM recovery stalls below EMAs (Oct 22 2026)",
@@ -384,10 +392,10 @@
     "base": 0.0022,
     "bear": 0.002
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): ZBCN ~$0.002224 (-3.6% 24h; 24h $0.002149-$0.002331) tagged $0.00233 overnight and faded back to its daily EMA20 (~$0.002222). The daily EMA50 (~$0.002157) is support below and the EMA200 (~$0.002271) caps it above. Signals: 1d Sell (mild), 4h Sell, 1h Neutral (RSI ~47); momentum is flat rather than weak. No setup: the $0.00215-0.00227 band has no edge either way. A long needs a daily close above $0.0023; a test of $0.00205-0.00214 that holds would be the dip to buy. No new project news found this morning; the Q3 buyback (40.5M ZBCN) and tokenized stocks in the SuperApp remain background.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): ZBCN ~$0.00225 (+2.3% 24h; 24h $0.00215-$0.00228) is firming on the 1h (Strong Buy) but the 4h and 1d are Neutral, with price on the daily EMA20 (~$0.00222) between the EMA50 (~$0.00216) and the ~$0.00227 EMA200 area. No setup: wait for a daily close above $0.0023 or a held test of $0.00205-0.00214. No new Zebec news found today.",
    "sources": [
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
      "url": "https://lumitrades.io/data/signals.json"
     },
     {
@@ -397,10 +405,6 @@
     {
      "title": "CryptoWatchDesk: Nasdaq drops 2.6% on AI selloff; Bitcoin hits $80,814, ends near $81,400 (Oct 22 2026)",
      "url": "https://cryptowatchdesk.com/news/market-read-22-oct-us-close-nasdaq-ai-selloff-bitcoin-80814-ends-81400"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 23:19 UTC Oct 22",
-     "url": "https://lumitrades.io/data/signals.json"
     },
     {
      "title": "CoinDesk: Bitcoin slumps below $82,000 as markets go risk off on AI selloff, oil surge (Oct 22)",
@@ -435,23 +439,19 @@
     "base": 0.047,
     "bear": 0.0435
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): AXL ~$0.04744 (-3.0% 24h, -13.9% week; 24h $0.04729-$0.04931) printed another 30-day low and is just under the $0.0475 line that held the October range. Signals: 4h Sell (RSI ~31.5) under the 4h EMAs (~$0.0509/$0.0532), 1d Sell under the daily EMA20 (~$0.0533) and EMA200 (~$0.0530), 1h Neutral. A daily close under $0.0475 ends the range thesis and opens ~$0.045, then ~$0.0435. No setup: shorting a 4h-oversold 30-day low has poor risk/reward, and a long needs a 4h close back above $0.0505. Project news is technical (Proposal #500, the Interchain Token Service batch migration, passed Oct 22) and isn't moving price.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): AXL ~$0.0483 (+0.7% 24h; 24h $0.0473-$0.0491) is bouncing a little off Thursday's 30-day low ($0.0474) but is still -11% on the week. Signals: 1h Neutral (back at the 1h EMA20 ~$0.0483), 4h Sell under the 4h EMAs (~$0.0505-0.0529, RSI ~36), 1d Sell. No setup: too stretched to short at the low, and a long needs a 4h close back above $0.0505. No fresh Axelar-specific news found today.",
    "sources": [
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "Axelar explorer: Proposal #500, Interchain Token Service batch migration (passed Oct 22)",
      "url": "https://axelar.valopers.com/proposals/500"
     },
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
-    },
-    {
      "title": "CryptoWatchDesk: Nasdaq drops 2.6% on AI selloff; Bitcoin hits $80,814, ends near $81,400 (Oct 22 2026)",
      "url": "https://cryptowatchdesk.com/news/market-read-22-oct-us-close-nasdaq-ai-selloff-bitcoin-80814-ends-81400"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 23:19 UTC Oct 22",
-     "url": "https://lumitrades.io/data/signals.json"
     },
     {
      "title": "CoinDesk: Bitcoin slumps below $82,000 as markets go risk off on AI selloff, oil surge (Oct 22)",
@@ -504,8 +504,16 @@
     "base": 0.036,
     "bear": 0.03
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): XDC ~$0.03466 (-1.5% 24h, +2.8% week; 24h $0.03367-$0.03505) bounced from the 4h EMAs back above the $0.034 shelf and is again the relative-strength coin on the watchlist: 4h Strong Buy (RSI ~61), 1d Buy above the EMA20 (~$0.03345), EMA200 (~$0.0326) and EMA50 (~$0.0319), 1h Buy. The T006 spot position (filled $0.03495, stop $0.033, targets $0.0383 / $0.044, time stop Dec 21) is intact; a daily close under $0.0330 would invalidate it, and a daily close above $0.0360 would clear the October ceiling. Fundamentals: monthly transactions hit a record 27.7M (Token Terminal via PipsWire), tokenized real-world assets on XDC are about $1.7B, and the SBI/Shinhan yen-stablecoin MOU is still an exploratory pilot with no launch date (Bitrue). Asia's stablecoin build-out (HSBC's HKD RedCoin went live this week, CoinDesk) is the policy backdrop for that thesis.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): XDC ~$0.0348 (+1.7% 24h; 24h $0.0337-$0.0354) is the strongest watchlist chart: 1h Strong Buy, 4h Buy and 1d Buy, above the 4h EMAs (~$0.0338-0.0341) and the daily EMAs (~$0.0319-0.0335). It is still under the $0.0355-0.0360 ceiling; the T006 spot position (stop $0.0330) stays open. Background adoption: Concordium was picked as the Know-Your-Agent identity layer for AI agents on XDC, XDC was featured on CNBC Brazil for tokenization (about BRL 8B of tokenized assets in Brazil), and Robinhood added XDC earlier this month (XDC Weekly).",
    "sources": [
+    {
+     "title": "XDC Network: XDC Weekly Oct 11-17, 2026",
+     "url": "https://xdc.org/articles/xdc-weekly-oct-11"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "PipsWire: XDC Network reaches record 27.7 million monthly transactions (Oct 22 2026)",
      "url": "https://pipswire.com/xdc-network-reaches-record-27-7-million-monthly-transactions/"
@@ -519,20 +527,8 @@
      "url": "https://www.coindesk.com/business/2026/10/23/hsbc-rolls-out-its-first-stablecoin-to-over-3-million-everyday-app-users"
     },
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
-    },
-    {
-     "title": "Bitrue: XDC Network powers Shinhan yen stablecoin payment pilot",
-     "url": "https://www.bitrue.com/blog/xdc-shinhan-yen-stablecoin-pilot"
-    },
-    {
      "title": "CryptoWatchDesk: Nasdaq drops 2.6% on AI selloff; Bitcoin hits $80,814, ends near $81,400 (Oct 22 2026)",
      "url": "https://cryptowatchdesk.com/news/market-read-22-oct-us-close-nasdaq-ai-selloff-bitcoin-80814-ends-81400"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 23:19 UTC Oct 22",
-     "url": "https://lumitrades.io/data/signals.json"
     },
     {
      "title": "BeInCrypto: MoneyGram makes another big blockchain move with XDC Network",
@@ -588,8 +584,16 @@
     2476,
     2513
    ],
-   "commentary": "Morning (Oct 23): ETH ~$2,395 (-0.3% 24h; 24h $2,373-$2,414). 4h Sell under the 4h EMA20/50 (~$2,418/$2,432), 1d Sell under the daily EMA20/50 (~$2,473-2,476), 1h Neutral. ETH ETFs lost $110.6M on Oct 22, led by ETHA (-$75.5M), and are -$225.1M for the week (Farside via CryptoWatchDesk). The T010 short still waits for a rally into $2,420-2,445 (stop $2,485); the Oct low $2,336 is the next support.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): ETH ~$2,409 (+1.4% 24h; 24h $2,373-$2,414) bounced into the bottom of the 4h EMA band (~$2,416-2,431). ETH ETFs lost ~$111M on Oct 22 (Cointelegraph). Signals: 1h Buy, 4h Sell, 1d Sell under the daily EMAs (~$2,474-2,477). The T010 short zone ($2,420-2,445) is just overhead.",
    "sources": [
+    {
+     "title": "Cointelegraph: Bitcoin ETFs lose $635M as October flows turn negative (Oct 23 2026)",
+     "url": "https://cointelegraph.com/markets/bitcoin-etfs-erase-october-gains-outflow"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "CryptoWatchDesk ETF Desk: bitcoin ETFs -$635.6M, ether -$110.6M on Oct 22 (Farside data)",
      "url": "https://cryptowatchdesk.com/news/etf-desk-oct-22-bitcoin-etfs-636-million-outflow-biggest-since-june-october-negative"
@@ -597,10 +601,6 @@
     {
      "title": "CoinDesk: Bitcoin recovers to $81,700 as memecoins lead altcoin rebound (Oct 23 2026)",
      "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-steadies-near-usd81-700-as-altcoins-rebound-pepe-climbs-13"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
     }
    ],
    "projection": {
@@ -623,8 +623,16 @@
     105.5,
     107.7
    ],
-   "commentary": "Morning (Oct 23): SOL ~$104.0 (-0.5% 24h; 24h $103.0-$105.1). 4h and 1d Sell, 1h Neutral, under the 4h EMAs (~$104.8-105.5) and the daily EMA20 (~$107.7). Solana ETFs lost $8.9M on Oct 22 (Farside via CryptoWatchDesk). The 30-day floor is $100.75. No setup: a long needs a reclaim of $105.5-107.7; a short has ~3% to the floor.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): SOL ~$104.6 (+1.1% 24h; 24h $103.0-$105.1) sits just under the 4h EMAs ($104.8-105.4); 1h Buy, 4h Sell, 1d Sell. Solana ETFs lost ~$9M on Oct 22 (Cointelegraph). Still no setup between the $100.75 floor and the $105.5-107.7 reclaim.",
    "sources": [
+    {
+     "title": "Cointelegraph: Bitcoin ETFs lose $635M as October flows turn negative (Oct 23 2026)",
+     "url": "https://cointelegraph.com/markets/bitcoin-etfs-erase-october-gains-outflow"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "CryptoWatchDesk ETF Desk: bitcoin ETFs -$635.6M, ether -$110.6M on Oct 22 (Farside data)",
      "url": "https://cryptowatchdesk.com/news/etf-desk-oct-22-bitcoin-etfs-636-million-outflow-biggest-since-june-october-negative"
@@ -632,10 +640,6 @@
     {
      "title": "FXPremiere: Bitcoin price today, BTC at $81,645 (Oct 23 2026)",
      "url": "https://www.fxpremiere.com/bitcoin-price-today-btc-81645-20-day-range-october-23-2026/"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
     }
    ],
    "projection": {
@@ -658,15 +662,15 @@
     0.0809,
     0.0835
    ],
-   "commentary": "Morning (Oct 23): DOGE ~$0.0799 (+0.7% 24h; 24h $0.0781-$0.0806), helped by the memecoin rebound CoinDesk notes. 1h Buy, 4h Sell under the 4h EMAs (~$0.0801-0.0809), 1d Strong Sell under the daily EMAs (~$0.0835-0.0902). No setup: the 30-day low ($0.0763) is ~4.5% below and the 4h EMAs cap it just overhead.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): DOGE ~$0.0799 (+2.0% 24h; 24h $0.0781-$0.0806) is pressing the 4h EMA20 (~$0.0801) with the EMA50 at ~$0.0808; 4h and 1d Strong Sell, 1h Buy. No clean edge ~4.7% above the $0.0763 30-day low.",
    "sources": [
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "CoinDesk: Bitcoin recovers to $81,700 as memecoins lead altcoin rebound (Oct 23 2026)",
      "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-steadies-near-usd81-700-as-altcoins-rebound-pepe-climbs-13"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
     }
    ],
    "projection": {
@@ -688,10 +692,10 @@
     0.2232,
     0.229
    ],
-   "commentary": "Morning (Oct 23): ADA ~$0.2153 (-0.8% 24h, -6.7% week; 24h $0.2103-$0.2173). 4h and 1d Sell, 1h Neutral, under the 4h EMAs (~$0.218-0.223) and the daily EMA50/EMA200 (~$0.227/$0.233). The $0.2103-0.211 30-day low held overnight. No setup: wait for a reclaim of $0.2232 or a clean break of $0.21 with room below.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): ADA ~$0.2160 (+2.2% 24h; 24h $0.2103-$0.2183) bounced off the 30-day low area; 1h Neutral, 4h and 1d Sell under the EMAs ($0.218-0.223 on the 4h). Wait for a reclaim of $0.2232 or a clean break of $0.21.",
    "sources": [
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
      "url": "https://lumitrades.io/data/signals.json"
     }
    ],
@@ -715,10 +719,10 @@
     12.28,
     12.57
    ],
-   "commentary": "Morning (Oct 23): LINK ~$12.05 (-0.2% 24h; 24h $11.85-$12.25). 4h and 1d Sell, 1h Neutral, under the 4h EMAs (~$12.16-12.28) and the daily EMA20 (~$12.57). Oct lows $11.56-11.82 below. No setup: no clean edge between that support and $12.16-12.28 resistance.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): LINK ~$12.04 (+1.6% 24h; 24h $11.85-$12.25) is mid-range under the 4h EMAs ($12.14-12.27); Sell on all three timeframes. No clean edge between $11.56-11.85 and $12.16-12.28.",
    "sources": [
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
      "url": "https://lumitrades.io/data/signals.json"
     }
    ],
@@ -742,10 +746,10 @@
     1.013,
     1.032
    ],
-   "commentary": "Morning (Oct 23): SUI ~$0.989 (+0.1% 24h; 24h $0.967-$1.001). 4h Sell under the 4h EMAs (~$0.999-1.013), 1d Neutral (under the EMA20 ~$1.032, above the EMA50 ~$0.985 and EMA200 ~$0.948), 1h Neutral. No setup: wait for a reclaim of $1.00-1.013 or a test of the $0.941-0.952 floor that holds.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): SUI ~$0.990 (+1.7% 24h; 24h $0.967-$1.001) is testing the 4h EMA20 (~$0.998) just under $1.00; 1h Neutral, 4h Sell, 1d Neutral. Wait for a reclaim of $1.00-1.013 or a held test of $0.941-0.952.",
    "sources": [
     {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
      "url": "https://lumitrades.io/data/signals.json"
     }
    ],
@@ -777,63 +781,39 @@
     "base": 81500,
     "bear": 78800
    },
-   "commentary": "Morning (6:25 AM CT, Oct 23): BTC ~$81.56K (-0.4% 24h; 24h $80.99K-$81.93K) is steadying after Thursday's slide (Oct 22 low $80.82K, Investing.com BRTI); CoinDesk has it back near $81.7K with altcoins rebounding a little faster and traders looking to the Fed's Oct 27-28 meeting. Flows turned: US spot BTC ETFs lost a net $635.6M on Oct 22, the largest daily outflow since Jun 25 (week to date still +$439.1M); ETH funds lost $110.6M (Farside via CryptoWatchDesk). Macro is still the driver: US futures are mixed after the AI-led tech selloff, Brent is near $114 and WTI above $100 (AP, Yahoo Finance). Signals: 1h Neutral, 4h Sell under the 4h EMAs (~$82.1K-82.3K), 1d Neutral (under the EMA20 ~$82.45K, above the EMA50 ~$80.8K). Fear & Greed 48 (neutral), OKX funding ~0.01%. Yen: USD/JPY ~156.9 (Yahoo; day range 156.07-157.16), down from 158.5 on Oct 20, about a 1% yen gain in three sessions; that is firm but not a disorderly carry unwind, and 155 hasn't broken. Japan's September core CPI was 2.1% (in line) and core-core 2.4% (above the 2.3% forecast), which firms a December BOJ hike while next week's Oct 29-30 meeting is expected to hold at 1.25% (Nikkei Asia/Reuters, FXStreet). The Nikkei is ~62,700 after a 1,713-point drop on Oct 22 (OANDA). A fast move toward 155 or a hawkish BOJ surprise is the risk to watch, so leverage stays low. Policy: the CLARITY market-structure bill is still stalled, with the SEC and CFTC moving on rules under existing authority (CFTC comments due Dec 14; The Block, Baker Botts). In Asia, HSBC's licensed HKD stablecoin RedCoin went live on PayMe for 3.3M users (CoinDesk), a steady adoption signal rather than a price driver. The T009 swing long still waits at $79.9K-80.4K; a 4h close under $79.5K before it fills would cancel the idea.",
+   "commentary": "Midday (12:30 PM CT, Oct 23): BTC ~$81.7K (+0.7% 24h; 24h $80.99K-$81.94K) is holding the $81K area in a tight range after Thursday's drop. Flows: US spot BTC ETFs lost $635.6M on Oct 22, the largest daily outflow since June 25, led by IBIT (-$254.1M) and FBTC (-$217.5M); the week is still +$442.7M and October about -$175M (The Block, Cointelegraph). ETH funds lost ~$111M; XRP funds added ~$3.6M. Signals: 1h Neutral, 4h Sell under the 4h EMAs (~$82.0K-82.2K), 1d Neutral (under the EMA20 ~$82.5K, above the EMA50 ~$80.8K). Fear & Greed 48 (neutral), OKX funding ~0.008%. Yen: USD/JPY ~156.9 (Yahoo); it touched a five-week low of 156.08 in Asia (BOJ fixing 156.45) and rebounded toward 157 as Japanese yields fell. Swaps price ~2% odds of a BOJ hike on Oct 30 and ~80% for Dec 18 (BBH via FXStreet), and banks see a 155-160 range. No sharp yen move, and 155 holds, so carry-unwind risk is elevated, not acute. Policy: JPMorgan analysts expect the stalled CLARITY Act to be unlikely to pass in 2026, with agency steps supporting institutions in the meantime (TokenPost); the OCC published its final GENIUS Act stablecoin rule, effective Jan 18, 2027 (Federal Register). The Fed (Oct 27-28) and BOJ (Oct 29-30) are next. T009 still waits for the 79.9K-80.4K floor.",
    "sources": [
+    {
+     "title": "The Block: Bitcoin ETFs swing back to net outflows, $636M (Oct 23 2026)",
+     "url": "https://www.theblock.co/news/markets/2026-10-23-bitcoin-etfs-swing-back-to-net-outflows-erase-previous-day-inflows-426483"
+    },
+    {
+     "title": "Cointelegraph: Bitcoin ETFs lose $635M as October flows turn negative (Oct 23 2026)",
+     "url": "https://cointelegraph.com/markets/bitcoin-etfs-erase-october-gains-outflow"
+    },
+    {
+     "title": "FXStreet: Japanese Yen pares gains as bond yields fall (Oct 23 2026)",
+     "url": "https://www.fxstreet.com/news/japanese-yen-pares-gains-as-bond-yields-fall-despite-stronger-inflation-202610231458"
+    },
+    {
+     "title": "Bank of Japan: Foreign exchange rates, Oct 23 2026",
+     "url": "https://www.boj.or.jp/en/statistics/market/forex/fxdaily/fxlist/fx261023.pdf"
+    },
+    {
+     "title": "TokenPost: JPMorgan says agency actions cannot replace CLARITY Act (Oct 23 2026)",
+     "url": "https://www.tokenpost.com/news/regulation/39006"
+    },
+    {
+     "title": "Federal Register: OCC final rule implementing the GENIUS Act (Oct 23 2026)",
+     "url": "https://www.federalregister.gov/documents/2026/10/23/2026-21706/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the"
+    },
+    {
+     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 17:19 UTC Oct 23",
+     "url": "https://lumitrades.io/data/signals.json"
+    },
     {
      "title": "CoinDesk: Bitcoin recovers to $81,700 as memecoins lead altcoin rebound (Oct 23 2026)",
      "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-steadies-near-usd81-700-as-altcoins-rebound-pepe-climbs-13"
-    },
-    {
-     "title": "CryptoWatchDesk ETF Desk: bitcoin ETFs -$635.6M, ether -$110.6M on Oct 22 (Farside data)",
-     "url": "https://cryptowatchdesk.com/news/etf-desk-oct-22-bitcoin-etfs-636-million-outflow-biggest-since-june-october-negative"
-    },
-    {
-     "title": "Farside Investors: Bitcoin ETF flow",
-     "url": "https://farside.co.uk/BTC/"
-    },
-    {
-     "title": "Investing.com: Bitcoin Real-Time (BRTI) historical data",
-     "url": "https://www.investing.com/indices/bitcoin-real-time-historical-data"
-    },
-    {
-     "title": "AP: World shares are mixed and oil prices push higher (Oct 23 2026)",
-     "url": "https://apnews.com/article/stocks-markets-ai-oil-inflation-7b47ef3b037bfba4e34f685329b9b963"
-    },
-    {
-     "title": "Yahoo Finance live: Dow, S&P 500, Nasdaq wobble after sharp tech sell-off (Oct 23 2026)",
-     "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-23-dow-sp-500-nasdaq-tesla-meta-093000521.html"
-    },
-    {
-     "title": "Nikkei Asia / Reuters: Japan core inflation exceeds BOJ target, cements near-term rate hike chance (Oct 23 2026)",
-     "url": "https://asia.nikkei.com/economy/japan-core-inflation-exceeds-boj-target-cements-near-term-rate-hike-chance"
-    },
-    {
-     "title": "FXStreet: Japanese Yen gathers strength as CPI exceeds target (Oct 23 2026)",
-     "url": "https://www.fxstreet.com/news/japanese-yen-gathers-strength-as-cpi-inflation-exceeds-target-backing-boj-rate-hikes-202610230028"
-    },
-    {
-     "title": "OANDA: September national CPI, USD/JPY and Nikkei reaction (Oct 23 2026, Japanese)",
-     "url": "https://www.oanda.jp/lab-education/market_news/jpcpi-sep-2026-review/"
-    },
-    {
-     "title": "Yahoo Finance: USD/JPY (JPY=X) and Nikkei 225",
-     "url": "https://finance.yahoo.com/quote/JPY=X/"
-    },
-    {
-     "title": "The Block: JPMorgan on crypto regulatory moves and CLARITY Act risks (Oct 22 2026)",
-     "url": "https://www.theblock.co/news/regulation/2026-10-22-jpmorgan-crypto-regulatory-moves-clarity-act-failure-risks-423473"
-    },
-    {
-     "title": "Baker Botts: CFTC launches crypto market structure rulemaking as SEC advances its own framework (Oct 2026)",
-     "url": "https://www.bakerbotts.com/thought-leadership/publications/2026/october/cftc-launches-crypto-market-structure-rulemaking-as-sec-advances-its-own-digital-asset-framework"
-    },
-    {
-     "title": "CoinDesk: HSBC rolls out its first stablecoin to over 3 million app users (Oct 23 2026)",
-     "url": "https://www.coindesk.com/business/2026/10/23/hsbc-rolls-out-its-first-stablecoin-to-over-3-million-everyday-app-users"
-    },
-    {
-     "title": "Lumi Trades signals.json (Coinbase/Kraken candles), 11:21 UTC Oct 23",
-     "url": "https://lumitrades.io/data/signals.json"
     }
    ],
    "catalysts": [

@@ -1,6 +1,6 @@
 {
- "generated_utc": "2026-10-23T17:00:02Z",
- "elapsed_s": 0.68,
+ "generated_utc": "2026-10-23T17:19:58Z",
+ "elapsed_s": 0.86,
  "disclaimer": "Mechanical indicator readings only - not predictions or financial advice.",
  "method": {
   "timeframe_weights": {
@@ -15,51 +15,51 @@
   "hedera-hashgraph": {
    "symbol": "HBAR",
    "source": "coinbase",
-   "price": 0.07899,
+   "price": 0.0788,
    "score": -0.525,
    "label": "Strong Sell",
    "timeframes": {
     "1h": {
-     "price": 0.07899,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 0.0788,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 38.3,
+       "value": 36.8,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.000502594,
-       "signal": -0.000485214,
-       "hist": -1.73804e-05,
+       "value": -0.000532723,
+       "signal": -0.000495737,
+       "hist": -3.69864e-05,
        "cross": "bearish",
        "state": "fresh bearish cross",
        "points": -1.5
       },
       "ema": {
-       "ema20": 0.079861,
-       "ema50": 0.0809266,
+       "ema20": 0.0797531,
+       "ema50": 0.0808401,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.17,
-       "bandwidth_pct": 3.58,
-       "upper": 0.0813682,
-       "lower": 0.0785078,
+       "pct_b": 0.14,
+       "bandwidth_pct": 3.79,
+       "upper": 0.0814129,
+       "lower": 0.0783851,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 25.2,
-       "d": 37.3,
-       "state": "neutral",
+       "k": 18.2,
+       "d": 27.3,
+       "state": "oversold",
        "points": 0
       },
       "volume": {
-       "ratio": 1.15,
+       "ratio": 1.0,
        "state": "normal volume",
        "points": 0
       }
@@ -70,41 +70,41 @@
      "label": "Strong Sell"
     },
     "4h": {
-     "price": 0.07899,
+     "price": 0.0788,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 36.7,
+       "value": 36.1,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00132729,
-       "signal": -0.00103522,
-       "hist": -0.000292071,
+       "value": -0.00134245,
+       "signal": -0.00103825,
+       "hist": -0.000304197,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.0813553,
-       "ema50": 0.0835662,
+       "ema20": 0.0813372,
+       "ema50": 0.0835588,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.16,
-       "bandwidth_pct": 11.11,
-       "upper": 0.0866145,
-       "lower": 0.0774955,
+       "pct_b": 0.15,
+       "bandwidth_pct": 11.18,
+       "upper": 0.0866312,
+       "lower": 0.0774598,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 10.6,
-       "d": 17.3,
+       "k": 9.7,
+       "d": 17.0,
        "state": "oversold",
        "points": 0
       },
@@ -120,39 +120,39 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 0.07891,
+     "price": 0.07881,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 36.9,
+       "value": 36.8,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00287922,
-       "signal": -0.00154475,
-       "hist": -0.00133447,
+       "value": -0.0028872,
+       "signal": -0.00154635,
+       "hist": -0.00134085,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.086751,
-       "ema50": 0.0865177,
+       "ema20": 0.0867414,
+       "ema50": 0.0865138,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "ema200": {
-       "ema200": 0.086784,
+       "ema200": 0.086783,
        "state": "below EMA200",
        "points": -1
       },
       "bb": {
        "pct_b": 0.14,
-       "bandwidth_pct": 30.89,
-       "upper": 0.102413,
-       "lower": 0.0750126,
+       "bandwidth_pct": 30.92,
+       "upper": 0.102423,
+       "lower": 0.0749932,
        "squeeze": false,
        "state": "lower half",
        "points": 0
@@ -179,51 +179,51 @@
   "stellar": {
    "symbol": "XLM",
    "source": "coinbase",
-   "price": 0.176373,
+   "price": 0.1766,
    "score": -0.433,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 0.176373,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 0.1766,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 44.1,
+       "value": 46.1,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.000358721,
-       "signal": -0.000470397,
-       "hist": 0.000111676,
+       "value": -0.000347905,
+       "signal": -0.000446779,
+       "hist": 9.8874e-05,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 0.176894,
-       "ema50": 0.177932,
+       "ema20": 0.17686,
+       "ema50": 0.177877,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.43,
-       "bandwidth_pct": 2.19,
-       "upper": 0.178564,
-       "lower": 0.1747,
+       "pct_b": 0.47,
+       "bandwidth_pct": 2.02,
+       "upper": 0.17849,
+       "lower": 0.174929,
        "squeeze": true,
        "state": "lower half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 37.0,
-       "d": 49.8,
+       "k": 29.9,
+       "d": 40.0,
        "state": "neutral",
        "points": 0
       },
       "volume": {
-       "ratio": 1.02,
+       "ratio": 0.79,
        "state": "normal volume",
        "points": 0
       }
@@ -234,42 +234,42 @@
      "label": "Neutral"
     },
     "4h": {
-     "price": 0.176373,
+     "price": 0.1766,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 42.6,
+       "value": 43.2,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.000995116,
-       "signal": -0.000623924,
-       "hist": -0.000371192,
+       "value": -0.000977008,
+       "signal": -0.000620303,
+       "hist": -0.000356706,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.178361,
-       "ema50": 0.181111,
+       "ema20": 0.178383,
+       "ema50": 0.18112,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.25,
-       "bandwidth_pct": 7.34,
-       "upper": 0.186333,
-       "lower": 0.17314,
+       "pct_b": 0.26,
+       "bandwidth_pct": 7.32,
+       "upper": 0.186322,
+       "lower": 0.173173,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 19.5,
-       "d": 21.7,
-       "state": "oversold",
+       "k": 20.2,
+       "d": 21.9,
+       "state": "neutral",
        "points": 0
       },
       "volume": {
@@ -284,46 +284,46 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 0.176402,
+     "price": 0.1766,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 38.3,
+       "value": 38.5,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00697131,
-       "signal": -0.00542924,
-       "hist": -0.00154206,
+       "value": -0.00695551,
+       "signal": -0.00542608,
+       "hist": -0.00152943,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.187954,
-       "ema50": 0.191825,
+       "ema20": 0.187973,
+       "ema50": 0.191833,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "ema200": {
-       "ema200": 0.190414,
+       "ema200": 0.190416,
        "state": "below EMA200",
        "points": -1
       },
       "bb": {
        "pct_b": 0.24,
-       "bandwidth_pct": 28.92,
-       "upper": 0.218245,
-       "lower": 0.163103,
+       "bandwidth_pct": 28.9,
+       "upper": 0.218235,
+       "lower": 0.163134,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 24.4,
-       "d": 28.4,
+       "k": 24.9,
+       "d": 28.6,
        "state": "neutral",
        "points": 0
       },
@@ -343,96 +343,96 @@
   "ripple": {
    "symbol": "XRP",
    "source": "coinbase",
-   "price": 1.3082,
-   "score": -0.458,
-   "label": "Sell",
+   "price": 1.3108,
+   "score": -0.558,
+   "label": "Strong Sell",
    "timeframes": {
     "1h": {
-     "price": 1.3082,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 1.3108,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 39.0,
+       "value": 41.9,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00341195,
-       "signal": -0.00342244,
-       "hist": 1.04877e-05,
-       "cross": null,
-       "state": "above signal",
-       "points": 1
+       "value": -0.00353818,
+       "signal": -0.00344431,
+       "hist": -9.38696e-05,
+       "cross": "bearish",
+       "state": "fresh bearish cross",
+       "points": -1.5
       },
       "ema": {
-       "ema20": 1.3174,
-       "ema50": 1.3237,
+       "ema20": 1.31678,
+       "ema50": 1.3232,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.19,
-       "bandwidth_pct": 1.92,
-       "upper": 1.32871,
-       "lower": 1.30341,
+       "pct_b": 0.27,
+       "bandwidth_pct": 1.85,
+       "upper": 1.32842,
+       "lower": 1.30412,
        "squeeze": true,
        "state": "lower half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 11.1,
-       "d": 32.4,
+       "k": 6.1,
+       "d": 17.1,
        "state": "oversold",
        "points": 0
       },
       "volume": {
-       "ratio": 2.02,
-       "state": "high volume on red candle",
-       "points": -0.5
+       "ratio": 0.62,
+       "state": "normal volume",
+       "points": 0
       }
      },
-     "points": -1.0,
+     "points": -3.0,
      "max_points": 5.0,
-     "score": -0.2,
-     "label": "Sell"
+     "score": -0.6,
+     "label": "Strong Sell"
     },
     "4h": {
-     "price": 1.3082,
+     "price": 1.3108,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 43.7,
+       "value": 44.6,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00232772,
-       "signal": 0.00155926,
-       "hist": -0.00388698,
+       "value": -0.00212032,
+       "signal": 0.00160074,
+       "hist": -0.00372106,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 1.32282,
-       "ema50": 1.32986,
+       "ema20": 1.32306,
+       "ema50": 1.32996,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.23,
-       "bandwidth_pct": 6.85,
-       "upper": 1.37888,
-       "lower": 1.28759,
+       "pct_b": 0.25,
+       "bandwidth_pct": 6.81,
+       "upper": 1.37874,
+       "lower": 1.28799,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 11.6,
-       "d": 15.9,
+       "k": 12.5,
+       "d": 16.2,
        "state": "oversold",
        "points": 0
       },
@@ -448,26 +448,26 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 1.3088,
+     "price": 1.3092,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 40.6,
+       "value": 40.7,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.0326765,
-       "signal": -0.0280687,
-       "hist": -0.00460785,
+       "value": -0.0326446,
+       "signal": -0.0280623,
+       "hist": -0.00458232,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 1.35994,
-       "ema50": 1.37006,
+       "ema20": 1.35997,
+       "ema50": 1.37007,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
@@ -479,15 +479,15 @@
       "bb": {
        "pct_b": 0.27,
        "bandwidth_pct": 20.06,
-       "upper": 1.50871,
-       "lower": 1.2336,
+       "upper": 1.50869,
+       "lower": 1.23366,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 63.9,
-       "d": 65.7,
+       "k": 64.1,
+       "d": 65.8,
        "state": "neutral",
        "points": 0
       },
@@ -507,46 +507,46 @@
   "zebec-network": {
    "symbol": "ZBCN",
    "source": "kraken",
-   "price": 0.002255,
+   "price": 0.002247,
    "score": 0.127,
    "label": "Neutral",
    "timeframes": {
     "1h": {
-     "price": 0.002255,
+     "price": 0.002247,
      "candle_time": "2026-10-23T17:00:00Z",
      "bars": 721,
      "indicators": {
       "rsi": {
-       "value": 53.0,
+       "value": 51.2,
        "state": "bullish momentum",
        "points": 0.5
       },
       "macd": {
-       "value": 2.61592e-06,
-       "signal": -6.7738e-07,
-       "hist": 3.2933e-06,
+       "value": 1.97774e-06,
+       "signal": -8.05016e-07,
+       "hist": 2.78276e-06,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 0.00224237,
-       "ema50": 0.00224191,
+       "ema20": 0.00224161,
+       "ema50": 0.0022416,
        "state": "price > EMA20 > EMA50 (uptrend)",
        "points": 1
       },
       "bb": {
-       "pct_b": 0.69,
-       "bandwidth_pct": 4.19,
-       "upper": 0.00228369,
-       "lower": 0.00218991,
+       "pct_b": 0.61,
+       "bandwidth_pct": 4.15,
+       "upper": 0.0022828,
+       "lower": 0.00219,
        "squeeze": true,
        "state": "upper half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 43.4,
-       "d": 41.6,
+       "k": 38.0,
+       "d": 39.8,
        "state": "neutral",
        "points": 0
       },
@@ -562,41 +562,41 @@
      "label": "Strong Buy"
     },
     "4h": {
-     "price": 0.002255,
+     "price": 0.002247,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 721,
      "indicators": {
       "rsi": {
-       "value": 52.6,
+       "value": 51.9,
        "state": "bullish momentum",
        "points": 0.5
       },
       "macd": {
-       "value": 1.45952e-05,
-       "signal": 2.04069e-05,
-       "hist": -5.81174e-06,
+       "value": 1.3957e-05,
+       "signal": 2.02793e-05,
+       "hist": -6.32228e-06,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.00223571,
-       "ema50": 0.002224,
+       "ema20": 0.00223495,
+       "ema50": 0.00222369,
        "state": "price > EMA20 > EMA50 (uptrend)",
        "points": 1
       },
       "bb": {
-       "pct_b": 0.48,
-       "bandwidth_pct": 15.73,
-       "upper": 0.00243964,
-       "lower": 0.00208396,
+       "pct_b": 0.46,
+       "bandwidth_pct": 15.74,
+       "upper": 0.00243933,
+       "lower": 0.00208347,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 21.0,
-       "d": 20.4,
+       "k": 20.1,
+       "d": 20.1,
        "state": "neutral",
        "points": 0
       },
@@ -612,47 +612,47 @@
      "label": "Neutral"
     },
     "1d": {
-     "price": 0.002255,
+     "price": 0.002247,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 374,
      "indicators": {
       "rsi": {
-       "value": 52.1,
+       "value": 51.8,
        "state": "bullish momentum",
        "points": 0.5
       },
       "macd": {
-       "value": 4.08586e-07,
-       "signal": 1.61404e-05,
-       "hist": -1.57318e-05,
+       "value": -2.29591e-07,
+       "signal": 1.60128e-05,
+       "hist": -1.62424e-05,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.00222564,
-       "ema50": 0.00215824,
+       "ema20": 0.00222488,
+       "ema50": 0.00215793,
        "state": "price > EMA20 > EMA50 (uptrend)",
        "points": 1
       },
       "ema200": {
-       "ema200": 0.00227091,
+       "ema200": 0.00227083,
        "state": "below EMA200",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.45,
-       "bandwidth_pct": 25.7,
-       "upper": 0.00257465,
-       "lower": 0.00198835,
+       "pct_b": 0.44,
+       "bandwidth_pct": 25.72,
+       "upper": 0.00257441,
+       "lower": 0.00198779,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 80.3,
-       "d": 62.2,
-       "state": "overbought",
+       "k": 79.3,
+       "d": 61.9,
+       "state": "neutral",
        "points": 0
       },
       "volume": {
@@ -671,96 +671,96 @@
   "axelar": {
    "symbol": "AXL",
    "source": "coinbase",
-   "price": 0.0486,
-   "score": -0.292,
+   "price": 0.0482,
+   "score": -0.367,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 0.0486,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 0.0482,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 51.2,
-       "state": "bullish momentum",
-       "points": 0.5
+       "value": 46.6,
+       "state": "bearish momentum",
+       "points": -0.5
       },
       "macd": {
-       "value": -0.00026051,
-       "signal": -0.000494316,
-       "hist": 0.000233806,
+       "value": -0.000254248,
+       "signal": -0.000448855,
+       "hist": 0.000194607,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 0.0482841,
-       "ema50": 0.0495121,
-       "state": "mixed, below EMA50",
-       "points": -0.5
+       "ema20": 0.0482589,
+       "ema50": 0.0494531,
+       "state": "price < EMA20 < EMA50 (downtrend)",
+       "points": -1
       },
       "bb": {
-       "pct_b": 0.85,
-       "bandwidth_pct": 3.24,
-       "upper": 0.0488382,
-       "lower": 0.0472818,
+       "pct_b": 0.61,
+       "bandwidth_pct": 3.04,
+       "upper": 0.0487651,
+       "lower": 0.0473049,
        "squeeze": true,
        "state": "upper half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 93.6,
-       "d": 93.3,
-       "state": "overbought",
+       "k": 76.1,
+       "d": 88.7,
+       "state": "neutral",
        "points": 0
       },
       "volume": {
-       "ratio": 1.47,
+       "ratio": 1.03,
        "state": "normal volume",
        "points": 0
       }
      },
-     "points": 1.0,
+     "points": -0.5,
      "max_points": 5.0,
-     "score": 0.2,
-     "label": "Buy"
+     "score": -0.1,
+     "label": "Neutral"
     },
     "4h": {
-     "price": 0.0486,
+     "price": 0.0482,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 37.5,
+       "value": 36.2,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00187691,
-       "signal": -0.00174972,
-       "hist": -0.000127194,
+       "value": -0.00190882,
+       "signal": -0.0017561,
+       "hist": -0.000152721,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.0505105,
-       "ema50": 0.0528769,
+       "ema20": 0.0504724,
+       "ema50": 0.0528612,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.29,
-       "bandwidth_pct": 21.59,
-       "upper": 0.0564392,
-       "lower": 0.0454408,
+       "pct_b": 0.25,
+       "bandwidth_pct": 21.74,
+       "upper": 0.0564559,
+       "lower": 0.0453841,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 28.7,
-       "d": 19.2,
+       "k": 26.4,
+       "d": 18.4,
        "state": "neutral",
        "points": 0
       },
@@ -776,46 +776,46 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 0.0484,
+     "price": 0.0482,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 41.8,
+       "value": 41.4,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": 0.000185529,
-       "signal": 0.00133504,
-       "hist": -0.00114951,
+       "value": 0.000169575,
+       "signal": 0.00133185,
+       "hist": -0.00116227,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.0533585,
-       "ema50": 0.05081,
+       "ema20": 0.0533395,
+       "ema50": 0.0508021,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "ema200": {
-       "ema200": 0.0530239,
+       "ema200": 0.0530219,
        "state": "below EMA200",
        "points": -1
       },
       "bb": {
-       "pct_b": -0.01,
-       "bandwidth_pct": 21.53,
-       "upper": 0.0602173,
-       "lower": 0.0485127,
+       "pct_b": -0.02,
+       "bandwidth_pct": 21.69,
+       "upper": 0.0602485,
+       "lower": 0.0484615,
        "squeeze": false,
        "state": "below lower band (stretched)",
        "points": 0.5
       },
       "stochrsi": {
-       "k": 2.5,
-       "d": 2.6,
+       "k": 1.9,
+       "d": 2.4,
        "state": "oversold",
        "points": 0
       },
@@ -999,96 +999,96 @@
   "bitcoin": {
    "symbol": "BTC",
    "source": "coinbase",
-   "price": 81599.6,
-   "score": -0.19,
-   "label": "Sell",
+   "price": 81672.2,
+   "score": -0.14,
+   "label": "Neutral",
    "timeframes": {
     "1h": {
-     "price": 81599.6,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 81672.2,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 46.6,
+       "value": 48.5,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -90.6821,
-       "signal": -146.691,
-       "hist": 56.0094,
+       "value": -79.9279,
+       "signal": -133.199,
+       "hist": 53.2713,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 81659.9,
-       "ema50": 81971.4,
-       "state": "price < EMA20 < EMA50 (downtrend)",
-       "points": -1
+       "ema20": 81662.0,
+       "ema50": 81960.1,
+       "state": "mixed, below EMA50",
+       "points": -0.5
       },
       "bb": {
-       "pct_b": 0.54,
-       "bandwidth_pct": 0.92,
-       "upper": 81943.9,
-       "lower": 81192.1,
+       "pct_b": 0.62,
+       "bandwidth_pct": 0.9,
+       "upper": 81951.3,
+       "lower": 81215.1,
        "squeeze": true,
        "state": "upper half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 49.1,
-       "d": 68.5,
+       "k": 44.3,
+       "d": 54.6,
        "state": "neutral",
        "points": 0
       },
       "volume": {
-       "ratio": 2.09,
-       "state": "high volume on red candle",
-       "points": -0.5
+       "ratio": 1.03,
+       "state": "normal volume",
+       "points": 0
       }
      },
-     "points": -1.0,
+     "points": 0.0,
      "max_points": 5.0,
-     "score": -0.2,
-     "label": "Sell"
+     "score": 0.0,
+     "label": "Neutral"
     },
     "4h": {
-     "price": 81599.6,
+     "price": 81672.2,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 44.3,
+       "value": 45.1,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -210.203,
-       "signal": -66.151,
-       "hist": -144.052,
+       "value": -204.41,
+       "signal": -64.9924,
+       "hist": -139.418,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 82040.3,
-       "ema50": 82229.8,
+       "ema20": 82047.2,
+       "ema50": 82232.7,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.29,
-       "bandwidth_pct": 4.83,
-       "upper": 84437.0,
-       "lower": 80457.2,
+       "pct_b": 0.3,
+       "bandwidth_pct": 4.81,
+       "upper": 84434.7,
+       "lower": 80466.8,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 13.6,
-       "d": 12.8,
+       "k": 14.6,
+       "d": 13.1,
        "state": "oversold, turning up",
        "points": 0.5
       },
@@ -1104,46 +1104,46 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 81594.1,
+     "price": 81674.4,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 47.2,
+       "value": 47.5,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -27.7253,
-       "signal": 187.506,
-       "hist": -215.232,
+       "value": -21.3235,
+       "signal": 188.787,
+       "hist": -210.11,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 82455.8,
-       "ema50": 80812.1,
+       "ema20": 82463.5,
+       "ema50": 80815.3,
        "state": "mixed, above EMA50",
        "points": 0.5
       },
       "ema200": {
-       "ema200": 75924.9,
+       "ema200": 75925.7,
        "state": "above EMA200",
        "points": 1
       },
       "bb": {
-       "pct_b": 0.29,
-       "bandwidth_pct": 7.31,
-       "upper": 85879.2,
-       "lower": 79823.5,
+       "pct_b": 0.3,
+       "bandwidth_pct": 7.29,
+       "upper": 85876.7,
+       "lower": 79834.0,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 36.9,
-       "d": 53.4,
+       "k": 37.8,
+       "d": 53.7,
        "state": "neutral",
        "points": 0
       },
@@ -1163,46 +1163,46 @@
   "ethereum": {
    "symbol": "ETH",
    "source": "coinbase",
-   "price": 2404.15,
-   "score": -0.242,
+   "price": 2405.84,
+   "score": -0.192,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 2404.15,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 2405.84,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 49.9,
-       "state": "bearish momentum",
-       "points": -0.5
+       "value": 51.0,
+       "state": "bullish momentum",
+       "points": 0.5
       },
       "macd": {
-       "value": -1.7583,
-       "signal": -4.31108,
-       "hist": 2.55277,
+       "value": -1.33863,
+       "signal": -3.71761,
+       "hist": 2.37898,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 2402.23,
-       "ema50": 2411.88,
+       "ema20": 2402.56,
+       "ema50": 2411.64,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "bb": {
-       "pct_b": 0.66,
-       "bandwidth_pct": 1.38,
-       "upper": 2415.29,
-       "lower": 2382.18,
+       "pct_b": 0.69,
+       "bandwidth_pct": 1.36,
+       "upper": 2415.86,
+       "lower": 2383.15,
        "squeeze": true,
        "state": "upper half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 71.8,
-       "d": 80.1,
+       "k": 69.8,
+       "d": 74.9,
        "state": "neutral",
        "points": 0
       },
@@ -1212,47 +1212,47 @@
        "points": 0
       }
      },
-     "points": 0.0,
+     "points": 1.0,
      "max_points": 5.0,
-     "score": 0.0,
-     "label": "Neutral"
+     "score": 0.2,
+     "label": "Buy"
     },
     "4h": {
-     "price": 2404.15,
+     "price": 2405.84,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 46.1,
+       "value": 46.5,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -7.88292,
-       "signal": -4.18563,
-       "hist": -3.69729,
+       "value": -7.7481,
+       "signal": -4.15867,
+       "hist": -3.58944,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 2415.76,
-       "ema50": 2430.7,
+       "ema20": 2415.92,
+       "ema50": 2430.76,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.31,
-       "bandwidth_pct": 5.8,
-       "upper": 2500.7,
-       "lower": 2359.83,
+       "pct_b": 0.33,
+       "bandwidth_pct": 5.79,
+       "upper": 2500.66,
+       "lower": 2360.03,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 20.1,
-       "d": 18.8,
+       "k": 20.7,
+       "d": 19.0,
        "state": "neutral",
        "points": 0
       },
@@ -1268,46 +1268,46 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 2404.65,
+     "price": 2408.68,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 40.9,
+       "value": 41.3,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -46.2999,
-       "signal": -38.3253,
-       "hist": -7.97459,
+       "value": -45.9785,
+       "signal": -38.261,
+       "hist": -7.71741,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 2476.94,
-       "ema50": 2473.57,
+       "ema20": 2477.33,
+       "ema50": 2473.73,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "ema200": {
-       "ema200": 2319.46,
+       "ema200": 2319.5,
        "state": "above EMA200",
        "points": 1
       },
       "bb": {
-       "pct_b": 0.29,
-       "bandwidth_pct": 16.59,
-       "upper": 2698.79,
-       "lower": 2285.39,
+       "pct_b": 0.3,
+       "bandwidth_pct": 16.56,
+       "upper": 2698.66,
+       "lower": 2285.93,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 53.3,
-       "d": 58.4,
+       "k": 55.0,
+       "d": 59.0,
        "state": "neutral",
        "points": 0
       },
@@ -1327,51 +1327,51 @@
   "solana": {
    "symbol": "SOL",
    "source": "coinbase",
-   "price": 104.52,
+   "price": 104.55,
    "score": -0.192,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 104.52,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 104.55,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 51.1,
+       "value": 51.5,
        "state": "bullish momentum",
        "points": 0.5
       },
       "macd": {
-       "value": 0.00197422,
-       "signal": -0.117759,
-       "hist": 0.119733,
+       "value": 0.0125286,
+       "signal": -0.091574,
+       "hist": 0.104103,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 104.379,
-       "ema50": 104.699,
+       "ema20": 104.396,
+       "ema50": 104.694,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "bb": {
-       "pct_b": 0.7,
-       "bandwidth_pct": 1.63,
-       "upper": 105.037,
-       "lower": 103.337,
+       "pct_b": 0.69,
+       "bandwidth_pct": 1.57,
+       "upper": 105.053,
+       "lower": 103.419,
        "squeeze": true,
        "state": "upper half \u00b7 squeeze",
        "points": 0
       },
       "stochrsi": {
-       "k": 72.7,
-       "d": 82.0,
+       "k": 68.1,
+       "d": 75.5,
        "state": "neutral",
        "points": 0
       },
       "volume": {
-       "ratio": 1.12,
+       "ratio": 0.66,
        "state": "normal volume",
        "points": 0
       }
@@ -1382,40 +1382,40 @@
      "label": "Buy"
     },
     "4h": {
-     "price": 104.52,
+     "price": 104.55,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 47.5,
+       "value": 47.7,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.244613,
-       "signal": -0.112339,
-       "hist": -0.132275,
+       "value": -0.24222,
+       "signal": -0.11186,
+       "hist": -0.13036,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 104.826,
-       "ema50": 105.425,
+       "ema20": 104.829,
+       "ema50": 105.427,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.34,
+       "pct_b": 0.35,
        "bandwidth_pct": 5.36,
-       "upper": 108.242,
-       "lower": 102.588,
+       "upper": 108.241,
+       "lower": 102.592,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 27.2,
+       "k": 27.5,
        "d": 23.5,
        "state": "neutral",
        "points": 0
@@ -1432,7 +1432,7 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 104.58,
+     "price": 104.56,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
@@ -1442,35 +1442,35 @@
        "points": -0.5
       },
       "macd": {
-       "value": -2.03734,
-       "signal": -1.5017,
-       "hist": -0.53564,
+       "value": -2.03893,
+       "signal": -1.50202,
+       "hist": -0.536916,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 107.736,
+       "ema20": 107.734,
        "ema50": 106.537,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "ema200": {
-       "ema200": 97.7338,
+       "ema200": 97.7336,
        "state": "above EMA200",
        "points": 1
       },
       "bb": {
-       "pct_b": 0.32,
-       "bandwidth_pct": 21.74,
-       "upper": 120.79,
-       "lower": 97.102,
+       "pct_b": 0.31,
+       "bandwidth_pct": 21.75,
+       "upper": 120.791,
+       "lower": 97.0995,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 54.5,
+       "k": 54.3,
        "d": 51.3,
        "state": "neutral",
        "points": 0
@@ -1491,96 +1491,96 @@
   "dogecoin": {
    "symbol": "DOGE",
    "source": "coinbase",
-   "price": 0.07988,
-   "score": -0.368,
+   "price": 0.07991,
+   "score": -0.393,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 0.07988,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 0.07991,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 51.3,
+       "value": 51.7,
        "state": "bullish momentum",
        "points": 0.5
       },
       "macd": {
-       "value": 0.00011376,
-       "signal": 3.37447e-05,
-       "hist": 8.00152e-05,
+       "value": 0.000103103,
+       "signal": 4.71058e-05,
+       "hist": 5.59972e-05,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 0.0797991,
-       "ema50": 0.0799507,
+       "ema20": 0.0798062,
+       "ema50": 0.0799476,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "bb": {
        "pct_b": 0.61,
-       "bandwidth_pct": 2.74,
-       "upper": 0.0807204,
-       "lower": 0.0785396,
+       "bandwidth_pct": 2.54,
+       "upper": 0.0806985,
+       "lower": 0.0786765,
        "squeeze": false,
        "state": "upper half",
        "points": 0
       },
       "stochrsi": {
-       "k": 43.0,
-       "d": 60.3,
+       "k": 34.0,
+       "d": 46.5,
        "state": "neutral",
        "points": 0
       },
       "volume": {
-       "ratio": 1.63,
-       "state": "high volume on green candle",
-       "points": 0.5
+       "ratio": 1.0,
+       "state": "normal volume",
+       "points": 0
       }
      },
-     "points": 1.5,
+     "points": 1.0,
      "max_points": 5.0,
-     "score": 0.3,
+     "score": 0.2,
      "label": "Buy"
     },
     "4h": {
-     "price": 0.07988,
+     "price": 0.07991,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 47.9,
+       "value": 48.1,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.000210168,
-       "signal": -0.000159203,
-       "hist": -5.09642e-05,
+       "value": -0.000207774,
+       "signal": -0.000158725,
+       "hist": -4.90496e-05,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.0800785,
-       "ema50": 0.0808395,
+       "ema20": 0.0800813,
+       "ema50": 0.0808407,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.36,
+       "pct_b": 0.37,
        "bandwidth_pct": 6.73,
-       "upper": 0.0833292,
-       "lower": 0.0779008,
+       "upper": 0.0833291,
+       "lower": 0.0779039,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 36.9,
-       "d": 34.7,
+       "k": 37.1,
+       "d": 34.8,
        "state": "neutral",
        "points": 0
       },
@@ -1596,46 +1596,46 @@
      "label": "Strong Sell"
     },
     "1d": {
-     "price": 0.07992,
+     "price": 0.07989,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 39.8,
+       "value": 39.7,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00269809,
-       "signal": -0.002337,
-       "hist": -0.000361086,
+       "value": -0.00270048,
+       "signal": -0.00233748,
+       "hist": -0.000363,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.0834969,
-       "ema50": 0.085219,
+       "ema20": 0.083494,
+       "ema50": 0.0852178,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "ema200": {
-       "ema200": 0.0902238,
+       "ema200": 0.0902235,
        "state": "below EMA200",
        "points": -1
       },
       "bb": {
        "pct_b": 0.29,
-       "bandwidth_pct": 24.72,
-       "upper": 0.0947359,
-       "lower": 0.0738941,
+       "bandwidth_pct": 24.73,
+       "upper": 0.0947369,
+       "lower": 0.0738901,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 49.5,
-       "d": 50.5,
+       "k": 49.2,
+       "d": 50.4,
        "state": "neutral",
        "points": 0
       },
@@ -1655,52 +1655,52 @@
   "cardano": {
    "symbol": "ADA",
    "source": "coinbase",
-   "price": 0.21604,
+   "price": 0.2159,
    "score": -0.375,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 0.21604,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 0.2159,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 49.9,
+       "value": 49.4,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -2.32709e-06,
-       "signal": -0.00032277,
-       "hist": 0.000320443,
+       "value": -2.97061e-05,
+       "signal": -0.000267858,
+       "hist": 0.000238152,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 0.215874,
-       "ema50": 0.21714,
+       "ema20": 0.215851,
+       "ema50": 0.217081,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "bb": {
-       "pct_b": 0.62,
-       "bandwidth_pct": 3.4,
-       "upper": 0.21885,
-       "lower": 0.211528,
+       "pct_b": 0.58,
+       "bandwidth_pct": 3.11,
+       "upper": 0.218717,
+       "lower": 0.212027,
        "squeeze": false,
        "state": "upper half",
        "points": 0
       },
       "stochrsi": {
-       "k": 39.7,
-       "d": 61.6,
+       "k": 25.9,
+       "d": 41.6,
        "state": "neutral",
        "points": 0
       },
       "volume": {
-       "ratio": 1.29,
-       "state": "normal volume",
+       "ratio": 0.45,
+       "state": "low volume",
        "points": 0
       }
      },
@@ -1710,41 +1710,41 @@
      "label": "Neutral"
     },
     "4h": {
-     "price": 0.21604,
+     "price": 0.2159,
      "candle_time": "2026-10-23T16:00:00Z",
      "bars": 88,
      "indicators": {
       "rsi": {
-       "value": 43.7,
+       "value": 43.4,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00189247,
-       "signal": -0.00167607,
-       "hist": -0.000216403,
+       "value": -0.00190364,
+       "signal": -0.0016783,
+       "hist": -0.000225338,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.218035,
-       "ema50": 0.222828,
+       "ema20": 0.218021,
+       "ema50": 0.222823,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.32,
-       "bandwidth_pct": 9.28,
-       "upper": 0.229939,
-       "lower": 0.20955,
+       "pct_b": 0.31,
+       "bandwidth_pct": 9.29,
+       "upper": 0.229942,
+       "lower": 0.209533,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 35.4,
-       "d": 34.4,
+       "k": 35.1,
+       "d": 34.3,
        "state": "neutral",
        "points": 0
       },
@@ -1760,46 +1760,46 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 0.21603,
+     "price": 0.21573,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 41.3,
+       "value": 41.1,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.00556207,
-       "signal": -0.00253031,
-       "hist": -0.00303176,
+       "value": -0.00558601,
+       "signal": -0.0025351,
+       "hist": -0.00305091,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 0.229147,
-       "ema50": 0.227234,
+       "ema20": 0.229118,
+       "ema50": 0.227222,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "ema200": {
-       "ema200": 0.233429,
+       "ema200": 0.233426,
        "state": "below EMA200",
        "points": -1
       },
       "bb": {
        "pct_b": 0.21,
-       "bandwidth_pct": 29.07,
-       "upper": 0.270113,
-       "lower": 0.201562,
+       "bandwidth_pct": 29.1,
+       "upper": 0.270133,
+       "lower": 0.201512,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 16.4,
-       "d": 17.2,
+       "k": 16.0,
+       "d": 17.1,
        "state": "oversold",
        "points": 0
       },
@@ -1819,96 +1819,96 @@
   "chainlink": {
    "symbol": "LINK",
    "source": "coinbase",
-   "price": 12.022,
-   "score": -0.367,
+   "price": 12.043,
+   "score": -0.342,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 12.022,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 12.043,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 44.4,
+       "value": 46.3,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.0206278,
-       "signal": -0.0173361,
-       "hist": -0.00329166,
-       "cross": "bearish",
-       "state": "fresh bearish cross",
-       "points": -1.5
-      },
-      "ema": {
-       "ema20": 12.0736,
-       "ema50": 12.1236,
-       "state": "price < EMA20 < EMA50 (downtrend)",
-       "points": -1
-      },
-      "bb": {
-       "pct_b": 0.36,
-       "bandwidth_pct": 3.07,
-       "upper": 12.2607,
-       "lower": 11.8894,
-       "squeeze": false,
-       "state": "lower half",
-       "points": 0
-      },
-      "stochrsi": {
-       "k": 4.6,
-       "d": 12.2,
-       "state": "oversold",
-       "points": 0
-      },
-      "volume": {
-       "ratio": 2.21,
-       "state": "high volume on green candle",
-       "points": 0.5
-      }
-     },
-     "points": -2.5,
-     "max_points": 5.0,
-     "score": -0.5,
-     "label": "Sell"
-    },
-    "4h": {
-     "price": 12.022,
-     "candle_time": "2026-10-23T16:00:00Z",
-     "bars": 88,
-     "indicators": {
-      "rsi": {
-       "value": 44.7,
-       "state": "bearish momentum",
-       "points": -0.5
-      },
-      "macd": {
-       "value": -0.0441001,
-       "signal": -0.0226422,
-       "hist": -0.021458,
+       "value": -0.0205468,
+       "signal": -0.01794,
+       "hist": -0.00260684,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 12.1383,
-       "ema50": 12.2655,
+       "ema20": 12.071,
+       "ema50": 12.1206,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.27,
-       "bandwidth_pct": 7.07,
-       "upper": 12.6548,
-       "lower": 11.7907,
+       "pct_b": 0.4,
+       "bandwidth_pct": 2.93,
+       "upper": 12.2569,
+       "lower": 11.9029,
+       "squeeze": true,
+       "state": "lower half \u00b7 squeeze",
+       "points": 0
+      },
+      "stochrsi": {
+       "k": 10.6,
+       "d": 9.1,
+       "state": "oversold, turning up",
+       "points": 0.5
+      },
+      "volume": {
+       "ratio": 1.34,
+       "state": "normal volume",
+       "points": 0
+      }
+     },
+     "points": -2.0,
+     "max_points": 5.0,
+     "score": -0.4,
+     "label": "Sell"
+    },
+    "4h": {
+     "price": 12.043,
+     "candle_time": "2026-10-23T16:00:00Z",
+     "bars": 88,
+     "indicators": {
+      "rsi": {
+       "value": 45.4,
+       "state": "bearish momentum",
+       "points": -0.5
+      },
+      "macd": {
+       "value": -0.0424249,
+       "signal": -0.0223071,
+       "hist": -0.0201178,
+       "cross": null,
+       "state": "below signal",
+       "points": -1
+      },
+      "ema": {
+       "ema20": 12.1403,
+       "ema50": 12.2664,
+       "state": "price < EMA20 < EMA50 (downtrend)",
+       "points": -1
+      },
+      "bb": {
+       "pct_b": 0.29,
+       "bandwidth_pct": 7.04,
+       "upper": 12.654,
+       "lower": 11.7936,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 18.9,
-       "d": 25.2,
+       "k": 20.0,
+       "d": 25.5,
        "state": "oversold",
        "points": 0
       },
@@ -1924,46 +1924,46 @@
      "label": "Sell"
     },
     "1d": {
-     "price": 12.032,
+     "price": 12.043,
      "candle_time": "2026-10-23T00:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 42.4,
+       "value": 42.6,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": -0.261139,
-       "signal": -0.153216,
-       "hist": -0.107923,
+       "value": -0.260261,
+       "signal": -0.15304,
+       "hist": -0.107221,
        "cross": null,
        "state": "below signal",
        "points": -1
       },
       "ema": {
-       "ema20": 12.5691,
-       "ema50": 12.3819,
+       "ema20": 12.5701,
+       "ema50": 12.3823,
        "state": "mixed, below EMA50",
        "points": -0.5
       },
       "ema200": {
-       "ema200": 10.8919,
+       "ema200": 10.892,
        "state": "above EMA200",
        "points": 1
       },
       "bb": {
        "pct_b": 0.24,
-       "bandwidth_pct": 21.23,
-       "upper": 14.088,
-       "lower": 11.3844,
+       "bandwidth_pct": 21.21,
+       "upper": 14.0874,
+       "lower": 11.3861,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 29.7,
-       "d": 33.5,
+       "k": 30.2,
+       "d": 33.7,
        "state": "neutral",
        "points": 0
       },
@@ -1983,96 +1983,96 @@
   "sui": {
    "symbol": "SUI",
    "source": "coinbase",
-   "price": 0.9911,
-   "score": -0.175,
+   "price": 0.9889,
+   "score": -0.2,
    "label": "Sell",
    "timeframes": {
     "1h": {
-     "price": 0.9911,
-     "candle_time": "2026-10-23T16:00:00Z",
+     "price": 0.9889,
+     "candle_time": "2026-10-23T17:00:00Z",
      "bars": 350,
      "indicators": {
       "rsi": {
-       "value": 49.6,
+       "value": 47.9,
        "state": "bearish momentum",
        "points": -0.5
       },
       "macd": {
-       "value": 0.000149207,
-       "signal": -0.000842966,
-       "hist": 0.000992173,
+       "value": -0.000220156,
+       "signal": -0.000749037,
+       "hist": 0.00052888,
        "cross": null,
        "state": "above signal",
        "points": 1
       },
       "ema": {
-       "ema20": 0.990881,
-       "ema50": 0.99556,
-       "state": "mixed, below EMA50",
-       "points": -0.5
-      },
-      "bb": {
-       "pct_b": 0.57,
-       "bandwidth_pct": 3.47,
-       "upper": 1.00577,
-       "lower": 0.971474,
-       "squeeze": false,
-       "state": "upper half",
-       "points": 0
-      },
-      "stochrsi": {
-       "k": 33.5,
-       "d": 52.6,
-       "state": "neutral",
-       "points": 0
-      },
-      "volume": {
-       "ratio": 1.08,
-       "state": "normal volume",
-       "points": 0
-      }
-     },
-     "points": 0.0,
-     "max_points": 5.0,
-     "score": 0.0,
-     "label": "Neutral"
-    },
-    "4h": {
-     "price": 0.9911,
-     "candle_time": "2026-10-23T16:00:00Z",
-     "bars": 88,
-     "indicators": {
-      "rsi": {
-       "value": 45.8,
-       "state": "bearish momentum",
-       "points": -0.5
-      },
-      "macd": {
-       "value": -0.00570297,
-       "signal": -0.00419798,
-       "hist": -0.00150499,
-       "cross": null,
-       "state": "below signal",
-       "points": -1
-      },
-      "ema": {
-       "ema20": 0.997865,
-       "ema50": 1.01184,
+       "ema20": 0.990485,
+       "ema50": 0.995209,
        "state": "price < EMA20 < EMA50 (downtrend)",
        "points": -1
       },
       "bb": {
-       "pct_b": 0.33,
-       "bandwidth_pct": 9.2,
-       "upper": 1.05347,
-       "lower": 0.960855,
+       "pct_b": 0.49,
+       "bandwidth_pct": 3.27,
+       "upper": 1.0053,
+       "lower": 0.972963,
        "squeeze": false,
        "state": "lower half",
        "points": 0
       },
       "stochrsi": {
-       "k": 33.7,
-       "d": 34.2,
+       "k": 17.9,
+       "d": 33.2,
+       "state": "oversold",
+       "points": 0
+      },
+      "volume": {
+       "ratio": 0.86,
+       "state": "normal volume",
+       "points": 0
+      }
+     },
+     "points": -0.5,
+     "max_points": 5.0,
+     "score": -0.1,
+     "label": "Neutral"
+    },
+    "4h": {
+     "price": 0.9889,
+     "candle_time": "2026-10-23T16:00:00Z",
+     "bars": 88,
+     "indicators": {
+      "rsi": {
+       "value": 45.0,
+       "state": "bearish momentum",
+       "points": -0.5
+      },
+      "macd": {
+       "value": -0.00587847,
+       "signal": -0.00423308,
+       "hist": -0.00164539,
+       "cross": null,
+       "state": "below signal",
+       "points": -1
+      },
+      "ema": {
+       "ema20": 0.997656,
+       "ema50": 1.01175,
+       "state": "price < EMA20 < EMA50 (downtrend)",
+       "points": -1
+      },
+      "bb": {
+       "pct_b": 0.3,
+       "bandwidth_pct": 9.23,
+       "upper": 1.05352,
+       "lower": 0.960583,
+       "squeeze": false,
+       "state": "lower half",
+       "points": 0
+      },
+      "stochrsi": {
+       "k": 32.6,
+       "d": 33.9,
        "state": "neutral",
        "points": 0
       },
