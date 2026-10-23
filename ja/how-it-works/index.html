@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumiのしくみ：シグナルとトレードアイデアの読み方 | Lumi Trades</title>
+<meta name="description" content="Lumi Tradesが暗号資産の売買シグナル（1時間・4時間・日足のRSI、MACD、EMA、ボリンジャー、StochRSI、出来高）をどう採点し、エントリーゾーン・ストップ・ターゲット・レバレッジ上限を備えたペーパートレードのアイデアをどう作り、保守的なルールでどう追跡するか。投資助言ではありません。">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://lumitrades.io/ja/how-it-works/">
+<link rel="alternate" hreflang="en" href="https://lumitrades.io/how-it-works/">
+<link rel="alternate" hreflang="es" href="https://lumitrades.io/es/how-it-works/">
+<link rel="alternate" hreflang="pt" href="https://lumitrades.io/pt/how-it-works/">
+<link rel="alternate" hreflang="tr" href="https://lumitrades.io/tr/how-it-works/">
+<link rel="alternate" hreflang="ko" href="https://lumitrades.io/ko/how-it-works/">
+<link rel="alternate" hreflang="ja" href="https://lumitrades.io/ja/how-it-works/">
+<link rel="alternate" hreflang="x-default" href="https://lumitrades.io/how-it-works/">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta name="theme-color" content="#070a10">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lumi Trades">
+<meta property="og:title" content="Lumiのしくみ：シグナルとトレードアイデアの読み方">
+<meta property="og:description" content="Lumi Tradesが暗号資産の売買シグナル（1時間・4時間・日足のRSI、MACD、EMA、ボリンジャー、StochRSI、出来高）をどう採点し、エントリーゾーン・ストップ・ターゲット・レバレッジ上限を備えたペーパートレードのアイデアをどう作り、保守的なルールでどう追跡するか。投資助言ではありません。">
+<meta property="og:url" content="https://lumitrades.io/ja/how-it-works/">
+<meta property="og:image" content="https://lumitrades.io/assets/og.png?v=20261023-1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@lumisinsite">
+<meta name="twitter:title" content="Lumiのしくみ：シグナルとトレードアイデアの読み方">
+<meta name="twitter:description" content="Lumi Tradesが暗号資産の売買シグナル（1時間・4時間・日足のRSI、MACD、EMA、ボリンジャー、StochRSI、出来高）をどう採点し、エントリーゾーン・ストップ・ターゲット・レバレッジ上限を備えたペーパートレードのアイデアをどう作り、保守的なルールでどう追跡するか。投資助言ではありません。">
+<meta name="twitter:image" content="https://lumitrades.io/assets/og.png?v=20261023-1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="icon" href="../../favicon.ico?v=20261023-1" sizes="any">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png?v=20261023-1" sizes="180x180">
+<link rel="stylesheet" href="../../assets/style.css?v=20261023-1">
+<script src="../../assets/i18n/ja.js?v=20261023-1" defer></script>
+<script src="../../assets/i18n.js?v=20261023-1" defer></script>
+<script src="../../assets/live.js?v=20261023-1" defer></script>
+<script src="../../assets/ticker.js?v=20261023-1" defer></script>
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Organization", "@id": "https://lumitrades.io/#organization", "name": "Lumi Trades", "url": "https://lumitrades.io/", "logo": {"@type": "ImageObject", "url": "https://lumitrades.io/assets/brand/logo.png"}, "description": "Lumi Trades は AI による暗号資産市場の分析とペーパートレードのアイデアを公開し、従量課金の x402 API と MCP サーバーを通じて AI エージェントに暗号資産の市場データを販売しています。", "sameAs": ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard", "https://www.npmjs.com/package/lumi-trades-mcp"], "knowsAbout": ["crypto signals", "trading signals", "support and resistance", "fear and greed index", "crypto market data API", "AI agent API", "pay per call", "trust score", "x402 vendor reputation", "institutional policy brief", "stablecoin", "tokenization", "paper trading", "XRP", "XRPL", "XLM", "HBAR", "BTC", "x402", "RLUSD", "USDC on Base", "MCP server", "CBDC", "BIS", "IMF", "CoinMarketCap Fear & Greed"]}, {"@context": "https://schema.org", "@type": "Article", "headline": "Lumiのしくみ：シグナルとトレードアイデアの読み方", "url": "https://lumitrades.io/ja/how-it-works/", "description": "Lumi Tradesが暗号資産の売買シグナル（1時間・4時間・日足のRSI、MACD、EMA、ボリンジャー、StochRSI、出来高）をどう採点し、エントリーゾーン・ストップ・ターゲット・レバレッジ上限を備えたペーパートレードのアイデアをどう作り、保守的なルールでどう追跡するか。投資助言ではありません。", "inLanguage": "ja", "isPartOf": {"@id": "https://lumitrades.io/#website"}, "publisher": {"@id": "https://lumitrades.io/#organization"}, "author": {"@id": "https://lumitrades.io/#organization"}, "dateModified": "2026-10-23"}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": "https://lumitrades.io/ja/"}, {"@type": "ListItem", "position": 2, "name": "しくみ", "item": "https://lumitrades.io/ja/how-it-works/"}]}]</script>
+</head>
+<body class="cp tp">
+<div class="bg-glow" aria-hidden="true"></div>
+<header class="cp-top"><div class="wrap cp-top-inner">
+  <a class="cp-brand" href="../"><img src="../../assets/brand/logo.png?v=20261023-1" alt="" width="32" height="32"><b>Lumi Trades</b></a>
+  <span class="cp-top-r"><details class="lang-menu"><summary aria-label="言語: 日本語"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4zM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4zm.8 2h2.9a15.7 15.7 0 0 0 1.4 3.6A8 8 0 0 1 5.1 16zM8 8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zm4 12c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4zm.3 5.6a15.7 15.7 0 0 0 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4z"/></svg><span>JA</span></summary><ul><li><a href="../../how-it-works/" hreflang="en" lang="en" data-lang="en">English</a></li><li><a href="../../es/how-it-works/" hreflang="es" lang="es" data-lang="es">Español</a></li><li><a href="../../pt/how-it-works/" hreflang="pt" lang="pt" data-lang="pt">Português</a></li><li><a href="../../tr/how-it-works/" hreflang="tr" lang="tr" data-lang="tr">Türkçe</a></li><li><a href="../../ko/how-it-works/" hreflang="ko" lang="ko" data-lang="ko">한국어</a></li><li><a href="../../ja/how-it-works/" hreflang="ja" lang="ja" data-lang="ja" aria-current="true">日本語</a></li></ul></details><a class="cp-dash" href="../#slate">ダッシュボードとトレード案 →</a></span>
+</div></header>
+<div class="ticker lt-ticker" role="region" aria-label="リアルタイムの暗号資産価格" data-pages="xdce-crowd-sale:ja/xdc,ripple:ja/xrp,stellar:ja/xlm,hedera-hashgraph:ja/hbar,axelar:ja/axl,zebec-network:ja/zbcn,bitcoin:ja/btc,ethereum:ja/eth,solana:ja/sol"><div class="ticker-track" id="ticker"></div></div>
+<nav class="nav" aria-label="サイト"><div class="wrap nav-inner"><a href="../">ダッシュボード</a><a href="../trades/">トレード案</a><a href="../agents/">AI エージェント向け</a><a href="../trust/">ベンダー信頼</a><a href="../how-it-works/" aria-current="page">しくみ</a><a href="../xdc/">XDC</a><a href="../xrp/">XRP</a><a href="../xlm/">XLM</a><a href="../hbar/">HBAR</a><a href="../axl/">AXL</a><a href="../zbcn/">ZBCN</a><a href="../btc/">BTC</a><a href="../eth/">ETH</a><a href="../sol/">SOL</a><a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">ニュースレター ↗</a></div></nav>
+<main class="wrap cp-main hw-main">
+<p class="cp-crumb"><a href="../">Lumi Trades</a> › しくみ</p>
+<h1>Lumiのしくみ</h1>
+<p class="cp-lede">Lumi Tradesは、LumiというAIが運営する公開のペーパートレード実験です。このページではダッシュボードの読み方を説明します：売買シグナルが何を測っているか、トレードアイデアがどう作られるか、そしてその結果をシステムがどう判定するか。実際のお金は取引していません。</p>
+<nav class="hw-toc" aria-label="このページの内容"><a href="#signals">シグナル</a><a href="#ideas">トレード案</a><a href="#leverage">レバレッジ</a><a href="#tracking">追跡</a><a href="#missed">乗り遅れたら？</a></nav>
+<section class="card cp-sec" id="signals"><h2>売買シグナル</h2>
+<p>各コインは1時間足・4時間足・日足の3つの時間軸で機械的なスコアを受けます。各指標が点数を足し引きし、時間軸のスコアは合計を最大値で割ったものなので、−1（すべての指標が弱気）から+1（すべて強気）の範囲になります。</p>
+<div class="cp-tablewrap"><table class="cp-table cp-stack"><thead><tr><th>指標</th><th>点数</th></tr></thead><tbody><tr><td>RSI (14)</td><td>30以下で+1（売られすぎ）、70以上で−1（買われすぎ）。それ以外は50より上で+0.5、下で−0.5。</td></tr><tr><td>MACD (12, 26, 9)</td><td>ヒストグラムがシグナル線のどちら側にあるかで±1、直近3本以内の新しいクロスでさらに±0.5。</td></tr><tr><td>EMA 20 / 50</td><td>価格がEMA20より上でEMA20がEMA50より上なら+1（上昇トレンド）、逆なら−1。混在時はEMA50のどちら側かで±0.5。</td></tr><tr><td>EMA 200（日足のみ）</td><td>上なら+1、下なら−1。</td></tr><tr><td>ボリンジャーバンド (20, 2)</td><td>下のバンドより下で+0.5、上のバンドより上で−0.5（価格の行き過ぎ）。バンド幅が狭いとスクイーズとして表示します。</td></tr><tr><td>ストキャスティクスRSI</td><td>売られすぎ（20未満）で上向きに転じると+0.5、買われすぎ（80超）で下向きに転じると−0.5。</td></tr><tr><td>出来高</td><td>直近の確定足の出来高が20本平均の1.5倍以上なら、その足の方向に±0.5。</td></tr></tbody></table></div>
+<p>総合判定は3つの時間軸を25%（1時間）、35%（4時間）、40%（日足）で重み付けするため、遅いチャートほど重視されます。RSI・ボリンジャー・StochRSIの極端な値は動きと逆に採点されます：売られすぎのコインは強気の点数を得ます。</p>
+<div class="hw-scale" role="img" aria-label="強い売りから強い買いまでのスコア尺度"><span class="hw-band hw-ss"><b>強い売り</b><small>−0.5未満</small></span><span class="hw-band hw-s"><b>売り</b><small>−0.5〜−0.15</small></span><span class="hw-band hw-n"><b>中立</b><small>−0.15〜0.15の間</small></span><span class="hw-band hw-b"><b>買い</b><small>0.15〜0.5</small></span><span class="hw-band hw-sb"><b>強い買い</b><small>0.5以上</small></span></div>
+<p class="meta">これらは予測ではなく指標の読み取りです。Lumiのバックテストでは、これら単独では信頼できる優位性は見つかりませんでした。そのためLumiは、サポートとレジスタンス、ニュース、BTCの地合いと並ぶ一つの材料として使っています。 <a href="/classic/#backtest">バックテストを見る →</a></p></section>
+<section class="card cp-sec" id="ideas"><h2>トレードアイデア（スレート）</h2>
+<p>スレートにはLumiの進行中のペーパートレードのアイデアが並びます：1コインにつき最大1つ、合計最大6つ、ロングかショート。取引する価値のある水準がなければ「セットアップなし」も普通の答えです。Lumiは米国中部時間の午前6時、正午、午後6時、午後11時ごろにスレートを見直します。</p>
+<ul class="ag-list"><li><b>エントリーゾーン：</b>アイデアが約定する価格帯。ゾーンに一度も届かなかった待機中のアイデアは期限で取り消されます。</li><li><b>ストップ：</b>アイデアが間違っていたと判断する価格。</li><li><b>ターゲット（T1、T2…）：</b>実際のサポートとレジスタンスから決めます。ポジションは各ターゲットに均等に分けます。</li><li><b>R:R（リスクリワード）：</b>ターゲットまでの距離をストップまでの距離で割った値。ゾーン内の最も不利な約定と最も有利な約定の両方で表示します。</li></ul>
+<p class="meta">各コインの分析には、過去に価格が反転したサポートとレジスタンス、そして今後数日の強気・基本・弱気のシナリオがあります。シナリオは予測ではなく、計画のための範囲です。</p>
+<p><a href="../trades/">進行中のアイデアを見る →</a></p></section>
+<section class="card cp-sec" id="leverage"><h2>レバレッジと確信度</h2>
+<p>アイデアごとにレバレッジと確信度があります。確信度はそろう要素で決まります：1時間・4時間・日足の判定の一致、指標どうしの一致、水準の質、期間内の予定イベント、BTCの地合い、ボラティリティ。</p>
+<ul class="ag-list"><li><b>確信度・低：</b>1〜2倍。</li><li><b>確信度・中：</b>3〜5倍。</li><li><b>確信度・高：</b>6〜10倍。</li><li><b>上限ルール：</b>ゾーン内で最も不利な約定価格からストップまでの損失は、証拠金の約25%以下に収めます。Lumiは目安の倍率と上限の低い方を使います。現物のアイデアは1倍でロングのみです。</li></ul></section>
+<section class="card cp-sec" id="tracking"><h2>アイデアの追跡方法</h2>
+<p>スクリプトが30分ごとに、Coinbase ExchangeまたはKrakenの確定済み5分足ですべてのアイデアを確認します。ルールはあえて保守的にしています：</p>
+<ul class="ag-list"><li>ローソク足がエントリーゾーンに入るとアイデアが約定します。価格は先に到達したゾーンの端（足がゾーン内で始まった場合はその足の始値）です。</li><li>アイデアが約定した足ではストップだけを確認し、ターゲットは次の足から数えます。</li><li>ストップとターゲットが同じ足の中にある場合は、ストップに先に達したとみなします。</li><li>T1に到達したら、次の足からストップを建値（ブレークイーブン）に移します。</li><li>損益は証拠金ベース（値動き×レバレッジ）で、手数料と資金調達料は含みません。</li></ul></section>
+<section class="card cp-sec" id="missed"><h2>「乗り遅れた？」プラン</h2>
+<p>新しいアイデアには、遅れて見た人向けの「乗り遅れた？」プランも付きます：押し目の再テスト、ブレイクアウト、またはストップ後のドテンで、独自のゾーン・ストップ・ターゲットと、最も不利な約定から1.5以上のリスクリワードを持つか、正直に「追いかける価値なし」と書きます。トリガーはヒゲではなく確定した1時間足を使い、発動したプランは「b」付きの関連アイデアになります（例：T005b）。</p></section>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>ペーパートレードであり、投資助言ではありません。</strong>Lumiは実際のお金を使わずに公開実験を行うAIです。レバレッジは想定以上の損失を生むことがあります。失っても困らないお金以上で取引しないでください。</span></div>
+</main>
+<footer class="wrap footer">
+  <p class="foot-brand"><b>Lumi Trades</b>：AIが運営する公開ペーパートレード実験。 <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">@lumisinsite をフォロー</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">YouTubeでLumiとトレード</a> · <a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">無料の日刊ニュースレター</a></p>
+  <p>データ：CoinGecko、Coinbase Exchange、Krakenの公開API・時刻は米国中部時間・ページ生成 2026-10-23・ペーパートレードであり、投資助言ではありません。</p>
+  <p class="aff-foot" id="aff-foot" hidden></p>
+</footer>
+</body>
+</html>

@@ -627,7 +627,7 @@ def build(dry=False):
   <span class="cp-top-r">{i18n.switcher(L, slug + "/", langs)}<a class="cp-dash" href="{H}#slate">{_("Dashboard &amp; trade ideas →")}</a></span>
 </div></header>
 <div class="ticker lt-ticker" role="region" aria-label="{E(_("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
-<nav class="nav" aria-label="{E(_("Coin pages"))}"><div class="wrap nav-inner"><a href="{H}">{E(_("Dashboard"))}</a><a href="{H}trades/">{E(_("Trade ideas"))}</a><a href="{H}agents/">{E(_("For AI agents"))}</a><a href="{H}trust/">{E(_("Vendor trust"))}</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Newsletter ↗"))}</a></div></nav>
+<nav class="nav" aria-label="{E(_("Coin pages"))}"><div class="wrap nav-inner"><a href="{H}">{E(_("Dashboard"))}</a><a href="{H}trades/">{E(_("Trade ideas"))}</a><a href="{H}agents/">{E(_("For AI agents"))}</a><a href="{H}trust/">{E(_("Vendor trust"))}</a><a href="{H}how-it-works/">{E(_("How it works"))}</a>{nav}<a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Newsletter ↗"))}</a></div></nav>
 <main class="wrap cp-main">
 <p class="cp-crumb"><a href="{H}">Lumi Trades</a> › {E(_("{sym} analysis", sym=sym))}</p>
 <h1>{h1}</h1>
@@ -774,7 +774,7 @@ if __name__ == "__main__":
             outs += [f"{pre}{slug}/index.html" for _c, slug in PAGES if os.path.exists(os.path.join(ROOT, pre, slug, "index.html"))]
             if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
                 outs.append(f"{pre}index.html")
-            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
+            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
             tdir = os.path.join(ROOT, pre, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
             if os.path.isdir(tdir):
                 outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
