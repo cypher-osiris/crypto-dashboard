@@ -177,5 +177,35 @@ class TikTokLink(unittest.TestCase):
                     self.assertIn(self.A, f.read(), pre + page)
 
 
+class OrgAltName(unittest.TestCase):
+    """Organization JSON-LD carries the YouTube channel name as alternateName and TikTok in sameAs, on every page that has it."""
+    def test_generator(self):
+        import seo
+        org = seo.organization(lambda x: x)
+        self.assertEqual(org["alternateName"], "Trade with Lumi")
+        self.assertIn("https://www.tiktok.com/@lumitradesio", org["sameAs"])
+
+    def test_every_org_node(self):
+        bad, n = [], 0
+        for d, _dirs, files in os.walk(ROOT):
+            if "/.git" in d or "/state" in d:
+                continue
+            for f in files:
+                if not f.endswith(".html"):
+                    continue
+                p = os.path.join(d, f)
+                with open(p, encoding="utf-8") as fh:
+                    src = fh.read()
+                for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>', src, re.S):
+                    data = json.loads(m.group(1))
+                    for node in data if isinstance(data, list) else [data]:
+                        if node.get("@id") == "https://lumitrades.io/#organization":
+                            n += 1
+                            if node.get("alternateName") != "Trade with Lumi" or "https://www.tiktok.com/@lumitradesio" not in node.get("sameAs", []):
+                                bad.append(os.path.relpath(p, ROOT))
+        self.assertGreater(n, 0)
+        self.assertEqual(bad, [])
+
+
 if __name__ == "__main__":
     unittest.main()

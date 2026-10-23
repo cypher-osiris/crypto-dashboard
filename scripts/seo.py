@@ -11,6 +11,7 @@ ORG_ID = SITE + "#organization"
 SITE_ID = SITE + "#website"
 API_ID = API + "/#api"
 LOGO = SITE + "assets/brand/logo.png"
+ORG_ALT_NAME = "Trade with Lumi"   # the YouTube channel name (brand alias for search)
 SAME_AS = ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard",
            "https://www.npmjs.com/package/lumi-trades-mcp"]
 
@@ -47,7 +48,8 @@ def keywords(t, page, en):
 
 
 def organization(t):
-    return {"@context": "https://schema.org", "@type": "Organization", "@id": ORG_ID, "name": "Lumi Trades", "url": SITE,
+    return {"@context": "https://schema.org", "@type": "Organization", "@id": ORG_ID, "name": "Lumi Trades",
+            "alternateName": ORG_ALT_NAME, "url": SITE,
             "logo": {"@type": "ImageObject", "url": LOGO}, "description": t(ORG_DESC), "sameAs": SAME_AS,
             "knowsAbout": KW_GENERIC + KW_NAMES}
 
