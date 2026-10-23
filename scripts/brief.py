@@ -5,7 +5,8 @@ Daily brief + event calendar for the Lumi API (api.lumitrades.io /v1/brief, /v1/
 Inputs (all optional; a missing input is simply left out, nothing is invented):
   - newsletter: newest dated *.md in $LUMI_NEWSLETTER_DIR (default ../newsletter next to this repo): subject, preview, TL;DR and the
     "What happened" / "Levels I'm watching" / "What's next" bullets (markdown, links kept).
-  - news:   $LUMI_NEWS_JSON   (default ../shorts/notes/news.json): the sourced "Crypto News Today" items of the Shorts.
+  - news:   $LUMI_NEWS_JSON   (default ../shorts/notes/news.json): the sourced "Institutional Watch" items of the 12:30 PM Short
+            (schema: ../shorts/notes/README.md; old keys why/coins and new keys why_it_matters/tokens both read).
   - events: $LUMI_EVENTS_JSON (default ../shorts/notes/events.json): sourced, dated macro/crypto events (at_ct = America/Chicago).
     Rows are converted to UTC and kept for 3 days after they happen; the API filters upcoming vs. recent at request time.
 Only facts already published in the newsletter/Shorts are copied. Personal-holdings wording is dropped here, and the API's
@@ -75,13 +76,18 @@ def newsletter():
 
 def news():
     d = load(NEWS_JSON)
-    if not d or not isinstance(d.get("items"), list):
-        return None
+    if not d or not isinstance(d.get("items"), list) or d.get("sample"):
+        return None  # sample files hold placeholder items, never publish them
     items = []
     for it in d["items"]:
         if not it.get("headline") or not it.get("source_url"):
             continue  # only sourced items
-        items.append({k: it[k] for k in ("date", "headline", "summary", "why", "coins", "source_name", "source_url") if it.get(k)})
+        it = dict(it, why=it.get("why_it_matters") or it.get("why"), coins=it.get("tokens") or it.get("coins"))
+        row = {k: it[k] for k in ("date", "headline", "summary", "why", "coins", "source_name", "source_url",
+                                  "institution", "category") if it.get(k)}
+        if it.get("use_case_match"):
+            row["use_case_match"] = True  # the token's stated use case matches; not a confirmed partnership
+        items.append(row)
     return {"date": d.get("date"), "items": items} if items else None
 
 
