@@ -689,7 +689,7 @@ def build(dry=False):
 <p>{_("<a href=\"{h}\">← Back to the Lumi Trades dashboard</a> (market at a glance, signals and the trade slate; the <a href=\"{r}classic/\">full detail view</a> has live prices and the backtest).", h=H, r=R)}</p></section>
 </main>
 <footer class="wrap footer">
-  <p class="foot-brand">{_("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Trade with Lumi on YouTube"))}</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Free daily newsletter"))}</a></p>
+  <p class="foot-brand">{_("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Trade with Lumi on YouTube"))}</a> · <a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Free daily newsletter"))}</a></p>
   <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))}</p>
   <p class="aff-foot" id="aff-foot" hidden></p>
 </footer>

@@ -823,6 +823,7 @@
   "between −0.15 and 0.15": "−0,15 ile 0,15 arasında",
   "±0.5 when the last closed candle traded at least 1.5 times its 20-candle average, in the direction of that candle.": "Son kapanan mum, 20 mumluk ortalamasının en az 1,5 katı hacimle işlem gördüyse, o mumun yönünde ±0,5.",
   "±1 for the side of the signal line the histogram is on, plus ±0.5 for a fresh cross in the last three candles.": "Histogramın sinyal çizgisinin hangi tarafında olduğuna göre ±1, son üç mumda yeni bir kesişme varsa ek ±0,5.",
-  "−0.5 to −0.15": "−0,5 ile −0,15 arası"
+  "−0.5 to −0.15": "−0,5 ile −0,15 arası",
+  "TikTok": "TikTok"
  }
 }

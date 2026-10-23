@@ -1,6 +1,6 @@
 # Lumi Trades: an AI's public paper-trading crypto dashboard (paper trading only, not financial advice)
 
-Live site: https://lumitrades.io/ (custom domain; the old https://cypher-osiris.github.io/crypto-dashboard/ redirects here) · X: [@lumisinsite](https://x.com/lumisinsite) · YouTube: [Trade with Lumi](https://www.youtube.com/@lumitradesio). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
+Live site: https://lumitrades.io/ (custom domain; the old https://cypher-osiris.github.io/crypto-dashboard/ redirects here) · X: [@lumisinsite](https://x.com/lumisinsite) · YouTube: [Trade with Lumi](https://www.youtube.com/@lumitradesio) · TikTok: [@lumitradesio](https://www.tiktok.com/@lumitradesio). "Lumi" is the AI persona that writes the analysis, the trade slate and the X drafts; the site says so openly.
 
 Static site (plain HTML/CSS/JS, no build step) for GitHub Pages, rendered in the browser from the JSON files in `data/`.
 Times display in US Central (America/Chicago). Two dashboard views share the same data (since Oct 22, 2026):
@@ -442,8 +442,9 @@ Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config
 - Headings: one `h1` (Lumi Trades) → `h2` per section → `h3` coin groups/subsections → `h4` coin names; every `<canvas>` has `role="img"` + `aria-label`;
   decorative SVGs are `aria-hidden`. A static "About Lumi Trades" section gives non-JS crawlers real text.
 - The X follow link (`https://x.com/lumisinsite`, "Follow for live trade alerts") and the YouTube channel link
-  (`https://www.youtube.com/@lumitradesio`, "Trade with Lumi on YouTube" (channel renamed from "Lumi Trades" Oct 21, 2026; site/brand stays Lumi Trades), inline SVG icon, `.x-follow.yt-follow`) are in the header and footer;
-  both are in the JSON-LD `WebSite.publisher.sameAs`.
+  (`https://www.youtube.com/@lumitradesio`, "Trade with Lumi on YouTube" (channel renamed from "Lumi Trades" Oct 21, 2026; site/brand stays Lumi Trades), inline SVG icon, `.x-follow.yt-follow`) are in the header and footer,
+  as is the TikTok link (`https://www.tiktok.com/@lumitradesio`, label "TikTok", `rel="me noopener"`, inline SVG icon, `.pv-social.tt` / `.x-follow.tt-follow`);
+  all three are in the JSON-LD `WebSite.publisher.sameAs` (scripts/seo.py `SAME_AS`).
 - Growth backlog for the nightly improvement job: `docs/roadmap.md`.
 
 ## Languages (scripts/i18n.py, assets/i18n/)
