@@ -66,6 +66,52 @@ class SitePages(unittest.TestCase):
 
 
 
+class CoinPageWording(unittest.TestCase):
+    """Audit 2026-10-23b L-13: coin pages show scenario levels as an outlook, never a projection or price prediction."""
+    SLUGS = ["xdc", "xrp", "xlm", "hbar", "axl", "zbcn", "btc", "eth", "sol"]
+    BANNED = re.compile(r"projection|(?<!not a )price prediction", re.I)
+
+    def test_generator_has_no_prediction_wording(self):
+        with open(os.path.join(ROOT, "scripts", "build_pages.py"), encoding="utf-8") as f:
+            src = f.read()
+        self.assertNotIn("Price Prediction", src)
+        self.assertNotIn("price prediction?", src)
+        self.assertNotIn("-day projection", src)
+        self.assertIn("{n}-day outlook (scenario levels)", src)
+
+    def test_built_coin_pages_all_languages(self):
+        for lang in [""] + [l + "/" for l in LANGS]:
+            for slug in self.SLUGS:
+                p = os.path.join(ROOT, lang, slug, "index.html")
+                if not os.path.exists(p):
+                    continue
+                with open(p, encoding="utf-8") as f:
+                    h = f.read()
+                if not lang:
+                    m = self.BANNED.search(h)
+                    self.assertIsNone(m, (slug, m and m.group(0)))
+                    if "cp-proj" in h:
+                        self.assertIn("-day outlook (scenario levels)", h, slug)
+                elif "cp-proj" in h:
+                    head = i18n(lang[:-1])["{n}-day outlook (scenario levels)"]
+                    for part in filter(None, (x.strip() for x in head.split("{n}"))):
+                        self.assertIn(part, h, (lang, slug, part))
+
+    def test_outlook_translations_exist(self):
+        keys = ["{n}-day outlook (scenario levels)", "What is Lumi's {n}-day outlook for {sym}?",
+                "{sym} Price Analysis Today & {name} Outlook | Lumi Trades", "{sym} Price Analysis Today & Outlook | Lumi Trades"]
+        old = ["Lumi's {n}-day projection", "What is Lumi's {sym} price prediction?",
+               "{sym} Price Analysis Today & {name} Price Prediction | Lumi Trades"]
+        for lang in LANGS:
+            d = i18n(lang)
+            for k in keys:
+                self.assertTrue(d.get(k), (lang, k))
+                for ph in re.findall(r"\{\w+\}", k):
+                    self.assertIn(ph, d[k], (lang, k, ph))
+            for k in old:
+                self.assertNotIn(k, d, (lang, k))
+
+
 class Beacon(unittest.TestCase):
     """Cloudflare Web Analytics: lumitrades.io is DNS-only (GitHub Pages), so every page needs the manual beacon."""
     def test_every_page_has_beacon(self):
