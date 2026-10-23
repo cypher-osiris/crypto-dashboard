@@ -232,9 +232,6 @@ def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None, keywo
 <meta name="twitter:title" content="{h.E(title.replace(' | Lumi Trades', ''))}">
 <meta name="twitter:description" content="{h.E(desc)}">
 <meta name="twitter:image" content="{h.SITE}assets/og.png?v={V}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
 """+ "{ASSETS}" + f"""<script type="application/ld+json">{ld}</script>
 </head>
 """
@@ -244,7 +241,7 @@ def chrome(h, pre, home, nav_items, V, path, current="trades"):
     """Header + nav for pages under /trades/, /agents/, /trust/ (pre = path prefix to the site root, home = to this language's home)."""
     nav = "".join(f'<a href="{home}{s}/">{h.E(sy)}</a>' for c, s, sy in nav_items)
     tk_pages = ",".join(f"{c}:{h.L.prefix}{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
-    return (f'<body class="cp tp">\n<div class="bg-glow" aria-hidden="true"></div>\n'
+    return (f'<body class="cp tp lgw">\n<div class="bg-glow" aria-hidden="true"></div>\n'
             f'<header class="cp-top"><div class="wrap cp-top-inner">\n'
             f'  <a class="cp-brand" href="{home}"><img src="{pre}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>\n'
             f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}#slate">{h._("Dashboard &amp; trade ideas →")}</a></span>\n</div></header>\n'
@@ -269,7 +266,10 @@ def footer(h, pre, gen_date):
 def assets(h, pre, V):
     return (f'<link rel="icon" href="{pre}favicon.ico?v={V}" sizes="any">\n'
             f'<link rel="apple-touch-icon" href="{pre}assets/apple-touch-icon.png?v={V}" sizes="180x180">\n'
+            f'<link rel="preload" href="{pre}assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>\n'
+            f'<link rel="preload" href="{pre}assets/fonts/sora-var.woff2" as="font" type="font/woff2" crossorigin>\n'
             f'<link rel="stylesheet" href="{pre}assets/style.css?v={V}">\n'
+            f'<link rel="stylesheet" href="{pre}assets/glow.css?v={V}">\n'
             + h.i18n_scripts(pre) +
             f'<script src="{pre}assets/live.js?v={V}" defer></script>\n'
             f'<script src="{pre}assets/ticker.js?v={V}" defer></script>\n')

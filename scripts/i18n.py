@@ -180,7 +180,7 @@ def _norm(s):
 
 def translate_html(src, L):
     """Translate a fragment of the English shell: elements marked data-i18n (inner HTML = key), every other text node,
-    and aria-label/placeholder/title/alt attributes. Script/style/comments are left alone."""
+    and aria-label/placeholder/title/alt attributes. Script/style/comments and elements marked translate="no" are left alone."""
     toks = TOK.split(src)
     out, i = [], 0
 
@@ -196,6 +196,17 @@ def translate_html(src, L):
             out.append(tk); i += 1; continue
         if tk.startswith("<"):
             m = re.match(r"<([a-zA-Z0-9]+)", tk)
+            if m and ' translate="no"' in tk and not tk.startswith("</") and not tk.endswith("/>"):
+                # code, tickers and other literal text: copied through untranslated (attributes included)
+                name = m.group(1).lower()
+                depth, j = 1, i + 1
+                while j < len(toks) and depth:
+                    mm = re.match(r"<(/?)([a-zA-Z0-9]+)", toks[j])
+                    if mm and mm.group(2).lower() == name and not toks[j].endswith("/>"):
+                        depth += -1 if mm.group(1) else 1
+                    j += 1
+                out.extend(toks[i:j]); i = j
+                continue
             if m and " data-i18n" in tk and not tk.startswith("</"):
                 name = m.group(1).lower()
                 depth, j = 1, i + 1
