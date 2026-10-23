@@ -488,8 +488,8 @@ def build(dry=False):
             us, intl, cb, kp, up = venues(cid, sym, coin_cfg.get(cid, {}), aff)
 
             h1 = _("{sym} Price Analysis &amp; Levels to Watch, updated {date}", sym=sym, date=E(upd_date))
-            title = (_("{sym} Price Analysis Today & {name} Price Prediction | Lumi Trades", sym=sym, name=name) if name != sym
-                     else _("{sym} Price Analysis Today & Price Prediction | Lumi Trades", sym=sym))
+            title = (_("{sym} Price Analysis Today & {name} Outlook | Lumi Trades", sym=sym, name=name) if name != sym
+                     else _("{sym} Price Analysis Today & Outlook | Lumi Trades", sym=sym))
             s1, r1 = (lvl(sup[0]) if sup else _("n/a")), (lvl(res[0]) if res else _("n/a"))
             desc = (_("{name} ({sym}) {price}, {chg} 24h. ", name=name, sym=sym, price=fp(price), chg=pct_txt(a.get('change_24h')))
                     + _("Support {s}, resistance {r}", s=s1, r=r1)
@@ -510,8 +510,8 @@ def build(dry=False):
                             _("As of Lumi's {date} update, support is at {sup} and resistance at {res}. {sym} last traded at {price} ({time}).",
                               date=upd_date, sup=", ".join(lvl(x) for x in sup[:3]), res=", ".join(lvl(x) for x in res[:3]), sym=sym, price=fp(price), time=price_time)))
             if proj:
-                faq.append((_("What is Lumi's {sym} price prediction?", sym=sym),
-                            _("Lumi's {n}-day projection is a range, not a promise: bull case {bull}, base case {base}, bear case {bear}. It's an AI's paper-trading read of the levels and signals, reviewed at 6 AM, 12 PM, 6 PM and 11 PM CT, and not financial advice.",
+                faq.append((_("What is Lumi's {n}-day outlook for {sym}?", n=proj['horizon_days'], sym=sym),
+                            _("Lumi's {n}-day outlook is a set of scenario levels, not a price prediction: bull case {bull}, base case {base}, bear case {bear}. It's an AI's paper-trading read of the levels and signals, reviewed at 6 AM, 12 PM, 6 PM and 11 PM CT, and not financial advice.",
                               n=proj['horizon_days'], bull=lvl(proj['bull']), base=lvl(proj['base']), bear=lvl(proj['bear']))))
             if t:
                 zz = t.get("entry_zone") or {}
@@ -535,7 +535,7 @@ def build(dry=False):
                        f'<div class="lv res"><small>{E(_("Resistance"))}</small><b>{E(" / ".join(lvl(x) for x in res) or "—")}</b></div></div>')
             proj_html = ""
             if proj:
-                proj_html = f'<h3>{_("Lumi\'s {n}-day projection", n=proj["horizon_days"])}</h3><div class="cp-proj">'
+                proj_html = f'<h3>{_("{n}-day outlook (scenario levels)", n=proj["horizon_days"])}</h3><div class="cp-proj">'
                 proj_html += (f'<div class="bull"><small>{E(_("Bull"))}</small><b class="mono">{lvl(proj["bull"])}</b><span>{pct_txt((proj["bull"] / price - 1) * 100) if price else ""}</span></div>'
                               f'<div class="base"><small>{E(_("Base"))}</small><b class="mono">{lvl(proj["base"])}</b><span>{pct_txt((proj["base"] / price - 1) * 100) if price else ""}</span></div>'
                               f'<div class="bear"><small>{E(_("Bear"))}</small><b class="mono">{lvl(proj["bear"])}</b><span>{pct_txt((proj["bear"] / price - 1) * 100) if price else ""}</span></div></div>'
