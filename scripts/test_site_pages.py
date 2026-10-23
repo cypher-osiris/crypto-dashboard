@@ -89,5 +89,13 @@ class Beacon(unittest.TestCase):
         self.assertEqual(once.count("beacon.min.js"), 1)
         self.assertEqual(bp.with_beacon(once), once)
 
+    def test_with_beacon_refreshes_old_token(self):
+        import build_pages as bp
+        stale = bp.CF_BEACON.replace(bp.CF_BEACON_TOKEN, "0" * 32)
+        out = bp.with_beacon("<html><head>" + stale + "\n</head><body></body></html>")
+        self.assertIn(bp.CF_BEACON, out)
+        self.assertNotIn("0" * 32, out)
+        self.assertEqual(out.count("beacon.min.js"), 1)
+
 if __name__ == "__main__":
     unittest.main()
