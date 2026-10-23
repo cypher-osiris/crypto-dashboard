@@ -264,7 +264,7 @@ def footer(h, pre, gen_date):
             f'<a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{h.E(h._("Trade with Lumi on YouTube"))}</a> · '
             f'<a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · '
             f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{h.E(h._("Free daily newsletter"))}</a></p>\n'
-            f'  <p>{h._("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=h.E(gen_date))}</p>\n'
+            f'  <p>{h._("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=h.E(gen_date))} · <a href="{pre}{h.L.prefix}privacy/">{h.E(h._("Privacy Policy"))}</a></p>\n'
             f'  <p class="aff-foot" id="aff-foot" hidden></p>\n</footer>\n</body>\n</html>\n')
 
 

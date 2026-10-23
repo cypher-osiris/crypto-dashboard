@@ -303,13 +303,16 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 
 
 def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
-    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
+    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html, how-it-works/, privacy/ and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
     P = h.L.prefix
     write(f"{P}agents/index.html", agents_page(h, tp, nav_items, V, gen_date, vendors_doc))
     write(f"{P}trust/index.html", trust_page(h, tp, nav_items, V, gen_date, vendors_doc))
     import how_page
     write(f"{P}how-it-works/index.html", how_page.build_page(h, tp, nav_items, V, gen_date, _page))
+    import privacy_page
+    write(f"{P}privacy/index.html", privacy_page.build_page(h, tp, nav_items, V, gen_date, _page))
     if h.L.en:
         write("llms.txt", seo.llms_txt(PRICES, PLANS))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
-    return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7")]
+    return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
+            ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3")]
