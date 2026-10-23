@@ -2,8 +2,8 @@
 
 > Crypto market data for people and AI agents: live prices, crypto and trading signals (RSI, MACD, EMA), support and resistance
 > levels, CoinMarketCap Fear & Greed, an AI's paper-trade ideas, a daily market brief and a daily Institutional & Policy Brief
-> (BIS, IMF, CBDCs, stablecoins, tokenization). AI agents buy the data per call with x402 (USDC on Base, or XRP, RLUSD or USDC on
-> the XRP Ledger); no account or API key. A free x402 vendor trust list records test-buys of other pay-per-call endpoints.
+> (BIS, IMF, CBDCs, stablecoins, tokenization). AI agents buy the data per call with x402 (USDC on Base or Stellar, or XRP, RLUSD or
+> USDC on the XRP Ledger); no account or API key. A free x402 vendor trust list records test-buys of other pay-per-call endpoints.
 > Data from a paper-trading experiment, not financial advice.
 
 ## API docs (api.lumitrades.io)
