@@ -702,4 +702,6 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 #tr-status{margin:10px 0}
 .ag-home{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start}
 .ag-home ul{margin:6px 0 0 18px;padding:0}.ag-home li{margin:3px 0}
+.ag-home p{margin:0 0 8px}.ag-home .ag-fact{color:var(--dim);font-size:.86rem}.ag-home .ag-span{grid-column:1/-1;margin:0;padding-top:10px;border-top:1px solid var(--line);font-size:.86rem}
+.ag-home code{overflow-wrap:anywhere}
 @media (max-width:720px){.ag-home{grid-template-columns:1fr}}

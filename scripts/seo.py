@@ -120,7 +120,7 @@ FAQ = [
      "The signals are data from an AI's paper-trading experiment, not financial advice."),
     ("Is there a pay-per-call crypto API for AI agents?",
      "Yes. The Lumi Trades API sells crypto signals, support and resistance levels, CoinMarketCap Fear & Greed sentiment, the daily "
-     "paper-trade slate, a daily market brief and a daily Institutional & Policy Brief for $0.01 to $0.25 per call. There is no account, "
+     "paper-trade slate, a daily market brief and a daily Institutional & Policy Brief for $0.003 to $0.25 per call. There is no account, "
      "subscription or API key: every call is paid on its own with x402, and if the data is not fresh the API answers 503 and nothing is charged."),
     ("What is x402?",
      "x402 is an open payment protocol built on the HTTP status code 402 Payment Required, first published by Coinbase. A server answers "
@@ -149,7 +149,7 @@ FAQ = [
      "banks and tokenization firms are doing on stablecoins, CBDCs and tokenization, and how each item relates to XRP, XLM, XDC, QNT, AXL "
      "and HBAR, marking confirmed links apart from indirect ones. One call costs $0.25 at GET /v1/institutional."),
     ("Where does the Fear & Greed reading come from?",
-     "Only from the CoinMarketCap Fear & Greed Index. GET /v1/sentiment ($0.01) returns it together with BTC funding and market breadth."),
+     "Only from the CoinMarketCap Fear & Greed Index. GET /v1/sentiment ($0.005) returns it together with BTC funding and market breadth."),
 ]
 
 
@@ -164,9 +164,10 @@ def faq_html(t, E):
     return f'<section class="card cp-sec" id="faq"><h2>{E(t("Questions agents and developers ask"))}</h2>{items}</section>'
 
 
-def llms_txt(prices):
+def llms_txt(prices, plans=()):
     """/llms.txt (llmstxt.org format): where an LLM or agent finds the API docs and the human pages. English only."""
     rows = "\n".join(f"- `{e}`: {n}, {p if p == 'free' else p + ' per call'}" for n, e, p in prices)
+    plan_rows = "\n".join(f"- {n}: {fmt.format(p=p)}. {d}" for n, (fmt, p), d in plans)
     return f"""# Lumi Trades
 
 > Crypto market data for people and AI agents: live prices, crypto and trading signals (RSI, MACD, EMA), support and resistance
@@ -190,6 +191,10 @@ def llms_txt(prices):
 
 ## Prices (USD per call)
 {rows}
+
+## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
+{plan_rows}
+- [Seller monitoring](https://api.lumitrades.io/v1/monitor) · [Trust data feed](https://api.lumitrades.io/v1/feed) · [Feed licence](https://api.lumitrades.io/v1/feed/license)
 
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free
