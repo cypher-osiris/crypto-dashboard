@@ -823,6 +823,7 @@
   "between −0.15 and 0.15": "−0.15 ~ 0.15 사이",
   "±0.5 when the last closed candle traded at least 1.5 times its 20-candle average, in the direction of that candle.": "마지막 마감 봉의 거래량이 20봉 평균의 1.5배 이상이면 그 봉의 방향으로 ±0.5.",
   "±1 for the side of the signal line the histogram is on, plus ±0.5 for a fresh cross in the last three candles.": "히스토그램이 시그널선의 어느 쪽에 있는지에 따라 ±1, 최근 세 봉 안에 새 교차가 있으면 ±0.5 추가.",
-  "−0.5 to −0.15": "−0.5 ~ −0.15"
+  "−0.5 to −0.15": "−0.5 ~ −0.15",
+  "TikTok": "TikTok"
  }
 }

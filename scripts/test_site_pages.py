@@ -143,5 +143,39 @@ class Beacon(unittest.TestCase):
         self.assertNotIn("0" * 32, out)
         self.assertEqual(out.count("beacon.min.js"), 1)
 
+
+class TikTokLink(unittest.TestCase):
+    """Lumi's TikTok sits wherever the X and YouTube links are: footers, header socials, JSON-LD sameAs, all 6 languages."""
+    TT = "https://www.tiktok.com/@lumitradesio"
+    A = '<a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a>'
+
+    def test_same_as(self):
+        import seo
+        self.assertIn(self.TT, seo.SAME_AS)
+
+    def test_every_page_with_youtube_has_tiktok(self):
+        missing = []
+        for d, _dirs, files in os.walk(ROOT):
+            if "/.git" in d or "/state" in d:
+                continue
+            for f in files:
+                if f.endswith(".html"):
+                    p = os.path.join(d, f)
+                    with open(p, encoding="utf-8") as fh:
+                        src = fh.read()
+                    yt = src.count('href="https://www.youtube.com/@lumitradesio"')
+                    if yt and src.count(f'href="{self.TT}" rel="me noopener"') != yt:
+                        missing.append(os.path.relpath(p, ROOT))
+                    if '"sameAs": ["https://x.com/lumisinsite"' in src and f'"{self.TT}"' not in src:
+                        missing.append(os.path.relpath(p, ROOT) + " (sameAs)")
+        self.assertEqual(missing, [])
+
+    def test_footers_all_languages(self):
+        for pre in [""] + [l + "/" for l in LANGS]:
+            for page in ("index.html", "xrp/index.html", "how-it-works/index.html", "trades/index.html", "trust/index.html"):
+                with open(os.path.join(ROOT, pre + page), encoding="utf-8") as f:
+                    self.assertIn(self.A, f.read(), pre + page)
+
+
 if __name__ == "__main__":
     unittest.main()

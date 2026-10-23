@@ -823,6 +823,7 @@
   "between −0.15 and 0.15": "entre −0,15 e 0,15",
   "±0.5 when the last closed candle traded at least 1.5 times its 20-candle average, in the direction of that candle.": "±0,5 quando a última vela fechada negociou pelo menos 1,5 vez a média de 20 velas, na direção dessa vela.",
   "±1 for the side of the signal line the histogram is on, plus ±0.5 for a fresh cross in the last three candles.": "±1 conforme o lado da linha de sinal em que está o histograma, mais ±0,5 por um cruzamento recente nas últimas três velas.",
-  "−0.5 to −0.15": "de −0,5 a −0,15"
+  "−0.5 to −0.15": "de −0,5 a −0,15",
+  "TikTok": "TikTok"
  }
 }

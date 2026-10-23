@@ -11,7 +11,7 @@ ORG_ID = SITE + "#organization"
 SITE_ID = SITE + "#website"
 API_ID = API + "/#api"
 LOGO = SITE + "assets/brand/logo.png"
-SAME_AS = ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard",
+SAME_AS = ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard",
            "https://www.npmjs.com/package/lumi-trades-mcp"]
 
 # keyword terms: generic ones are translated (and the English kept too), names / protocols / tickers are not
