@@ -307,7 +307,9 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     P = h.L.prefix
     write(f"{P}agents/index.html", agents_page(h, tp, nav_items, V, gen_date, vendors_doc))
     write(f"{P}trust/index.html", trust_page(h, tp, nav_items, V, gen_date, vendors_doc))
+    import how_page
+    write(f"{P}how-it-works/index.html", how_page.build_page(h, tp, nav_items, V, gen_date, _page))
     if h.L.en:
         write("llms.txt", seo.llms_txt(PRICES, PLANS))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
-    return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7")]
+    return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7")]

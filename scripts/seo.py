@@ -187,6 +187,7 @@ def llms_txt(prices, plans=()):
 ## Pages
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
+- [How Lumi works](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
 - [Dashboard](https://lumitrades.io/): live prices, signals and today's paper-trade ideas (also in es, pt, tr, ko, ja)
 
 ## Prices (USD per call)

@@ -254,7 +254,7 @@ def chrome(h, pre, home, nav_items, V, path, current="trades"):
             f'<nav class="nav" aria-label="{h.E(h._("Site"))}"><div class="wrap nav-inner"><a href="{home}">{h.E(h._("Dashboard"))}</a>'
             f'<a href="{home}trades/"{" aria-current=\"page\"" if current == "trades" else ""}>{h.E(h._("Trade ideas"))}</a>'
             f'<a href="{home}agents/"{" aria-current=\"page\"" if current == "agents" else ""}>{h.E(h._("For AI agents"))}</a>'
-            f'<a href="{home}trust/"{" aria-current=\"page\"" if current == "trust" else ""}>{h.E(h._("Vendor trust"))}</a>{nav}'
+            f'<a href="{home}trust/"{" aria-current=\"page\"" if current == "trust" else ""}>{h.E(h._("Vendor trust"))}</a><a href="{home}how-it-works/"{" aria-current=\"page\"" if current == "how" else ""}>{h.E(h._("How it works"))}</a>{nav}'
             f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{h.E(h._("Newsletter ↗"))}</a></div></nav>\n')
 
 
