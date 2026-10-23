@@ -856,7 +856,6 @@
   "Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, and an x402 trust API for AI agents. Not financial advice.": "暗号資産の日次レベルとペーパートレードのスレート、XRPLを筆頭とする機関投資家の採用ニュース、AIエージェント向けのx402トラストAPI。投資助言ではありません。",
   "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "登録すると、<a href=\"privacy/\">プライバシーポリシー</a>に同意したものとみなされます。",
   "Get your badge": "バッジを入手",
-  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Lumiがテストしたx402エンドポイントを販売していますか？それを示しましょう。無料の「Tested by Lumi」バッジは、Lumiが保存しているあなたのサービスの最新の有料テスト購入の判定と日付、そしてチェーン（XRPLまたはBase）を表示し、日付入りのテスト結果と反論の権利を載せた公開結果ページにリンクします。登録は不要で、Lumiに支払っても結果が変わることはありません。",
   "Example (a real vendor):": "例（実在の販売者）：",
   "<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.": "<b>delivered</b>（緑）：有料レスポンスにデータが含まれていた · <b>not delivered</b>（赤）：販売者は使えるデータなしで応答した · <b>inconclusive</b>（グレー）：Lumiが応答を確認できなかった。Lumi側の結果で、販売者に不利には数えません · <b>not yet tested</b>：Lumiに保存された結果がありません。",
   "Find your key": "キーを確認",
@@ -872,6 +871,10 @@
   "a supported exchange ({sym}/USDT spot and perpetual futures)": "対応取引所（{sym}/USDTの現物と無期限先物）",
   "a supported exchange ({sym}/USDT spot)": "対応取引所（{sym}/USDTの現物）",
   "A supported exchange ({sym}/USDT spot and perpetual futures)": "対応取引所（{sym}/USDTの現物と無期限先物）",
-  "A supported exchange ({sym}/USDT spot)": "対応取引所（{sym}/USDTの現物）"
+  "A supported exchange ({sym}/USDT spot)": "対応取引所（{sym}/USDTの現物）",
+  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL, Base or Stellar), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Lumiがテストしたx402エンドポイントを販売していますか？それを示しましょう。無料の「Tested by Lumi」バッジは、Lumiが保存しているあなたのサービスの最新の有料テスト購入の判定と日付、そしてチェーン（XRPL、BaseまたはStellar）を表示し、日付入りのテスト結果と反論の権利を載せた公開結果ページにリンクします。登録は不要で、Lumiに支払っても結果が変わることはありません。",
+  "How Lumi tests x402 sellers": "Lumiによるx402販売者のテスト方法",
+  "Lumi test-buys paid x402 agent services with real payments on XRPL, Base and Stellar, and publishes the dated results with a signed receipt for each purchase. Paying Lumi never changes a score, and every seller has a right to reply, shown next to the findings.": "Lumiは、有料のx402エージェントサービスをXRPL、Base、Stellar上の実際の支払いでテスト購入し、購入ごとの署名付きレシートとともに日付入りの結果を公開します。Lumiに支払ってもスコアが変わることはなく、すべての販売者には結果の横に表示される反論の権利があります。",
+  "The “Tested by Lumi” badge": "「Tested by Lumi」バッジ"
  }
 }
