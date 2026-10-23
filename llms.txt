@@ -25,7 +25,7 @@
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free
 - `POST /v1/trust/receipts/verify`: Verify a signed test-buy receipt, free
 - `GET /v1/signal/{coin}`: Signal per coin (buy/sell read, RSI/MACD/EMA), $0.01 per call
-- `GET /v1/levels/{coin}`: Support / resistance levels + 7-day projection, $0.01 per call
+- `GET /v1/levels/{coin}`: Support / resistance and 7-day scenario levels (not forecasts), $0.01 per call
 - `GET /v1/scan`: All-coins scan (50 signals in one call), $0.02 per call
 - `GET /v1/lite/{coin}`: Lite signal per coin (label, score, price), $0.004 per call
 - `GET /v1/slate`: Market slate (today's paper-trade ideas), $0.02 per call
