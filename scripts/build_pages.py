@@ -48,7 +48,7 @@ def SCHEDULE_NOTE():  # assets/schedule.js adds local times + next review
     return f'<p class="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> {_(SCHED_HTML)}</p>'
 
 
-def NEWSLETTER_BLOCK():
+def NEWSLETTER_BLOCK(home=""):
     return f"""<section class="nl" id="newsletter" aria-labelledby="nl-h">
   <div class="nl-copy"><h2 id="nl-h">{T("Get Lumi's daily crypto outlook free")}</h2>
   <p class="nl-sub">{T("Key levels, the day's paper-trade ideas and the news that matters, in one email each morning.")}</p></div>
@@ -56,7 +56,7 @@ def NEWSLETTER_BLOCK():
     <label for="nl-email">{E(_("Email address"))}</label>
     <input id="nl-email" type="email" name="email_address" placeholder="{E(_("you@example.com"))}" autocomplete="email" required>
     <button type="submit">{E(_("Subscribe free"))}</button>
-    <p class="nl-fine">{E(_("No spam, unsubscribe anytime. Email only, handled by Kit. Not financial advice."))}</p>
+    <p class="nl-fine">{E(_("No spam, unsubscribe anytime. Email only, handled by Kit. Not financial advice."))} {_("By subscribing you agree to our <a href=\"{href}\">Privacy Policy</a>.", href=E(home + "privacy/"))}</p>
     <p class="nl-msg" role="status" aria-live="polite"></p>
   </form>
 </section>"""
@@ -329,13 +329,12 @@ def set_block(src, marks, body):
 
 
 INDEX_TITLE = "Lumi Trades: AI crypto dashboard, signals and pay-per-call API for AI agents"
-INDEX_DESC = ("Crypto signals for XRP, XLM, HBAR and BTC: live prices, RSI, MACD and EMA readings, support and resistance, "
-              "the Fear and Greed index and AI trade ideas, plus a pay-per-call x402 API and MCP server for AI agents. Not financial advice.")
+INDEX_DESC = ("Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, "
+              "and an x402 trust API for AI agents. Not financial advice.")   # keep under ~155 characters (search snippets)
 # x402scan and some unfurlers read <title>, og:title and the meta description without decoding HTML entities: keep "&", quotes
 # and angle brackets out of these three (and the og/twitter description); use "and".
 INDEX_OG_TITLE = INDEX_TITLE
-INDEX_OG_DESC = ("Live crypto prices, signals, support and resistance and AI trade ideas for XRP, XLM, HBAR and BTC, "
-                 "plus a pay-per-call x402 API and MCP server for AI agents. Not financial advice.")
+INDEX_OG_DESC = INDEX_DESC
 INDEX_IMG_ALT = "Lumi Trades card: today's paper-trade slate with entry zones and stops"
 DATASET_DESC = ("Crypto prices (30-day hourly history), technical signals (RSI, MACD, EMA, Bollinger, StochRSI, volume on 1h/4h/1d), "
                 "an AI's active paper-trade ideas with entries, stops and targets, and indicator statistics. Updated several times a day. "
@@ -683,14 +682,14 @@ def build(dry=False):
 {buy_html}
 {faq_html}
 
-{NEWSLETTER_BLOCK()}
+{NEWSLETTER_BLOCK(H)}
 
 <section class="card cp-sec" id="more"><h2>{E(_("More coin analysis"))}</h2><div class="cp-others">{others}</div>
 <p>{_("<a href=\"{h}\">← Back to the Lumi Trades dashboard</a> (market at a glance, signals and the trade slate; the <a href=\"{r}classic/\">full detail view</a> has live prices and the backtest).", h=H, r=R)}</p></section>
 </main>
 <footer class="wrap footer">
   <p class="foot-brand">{_("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Trade with Lumi on YouTube"))}</a> · <a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Free daily newsletter"))}</a></p>
-  <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))}</p>
+  <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))} · <a href="{H}privacy/">{E(_("Privacy Policy"))}</a></p>
   <p class="aff-foot" id="aff-foot" hidden></p>
 </footer>
 </body>
@@ -807,7 +806,7 @@ if __name__ == "__main__":
             outs += [f"{pre}{slug}/index.html" for _c, slug in PAGES if os.path.exists(os.path.join(ROOT, pre, slug, "index.html"))]
             if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
                 outs.append(f"{pre}index.html")
-            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
+            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
             tdir = os.path.join(ROOT, pre, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
             if os.path.isdir(tdir):
                 outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(

@@ -13,7 +13,7 @@ API_ID = API + "/#api"
 LOGO = SITE + "assets/brand/logo.png"
 ORG_ALT_NAME = "Trade with Lumi"   # the YouTube channel name (brand alias for search)
 SAME_AS = ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard",
-           "https://www.npmjs.com/package/lumi-trades-mcp"]
+           "https://github.com/cypher-osiris/lumi-api", "https://www.npmjs.com/package/lumi-trades-mcp"]
 
 # keyword terms: generic ones are translated (and the English kept too), names / protocols / tickers are not
 KW_GENERIC = ["crypto signals", "trading signals", "support and resistance", "fear and greed index", "crypto market data API",

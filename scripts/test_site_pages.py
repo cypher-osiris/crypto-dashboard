@@ -207,5 +207,50 @@ class OrgAltName(unittest.TestCase):
         self.assertEqual(bad, [])
 
 
+class PrivacyPage(unittest.TestCase):
+    """/privacy/ (scan 2026-10-23 #1): exists in every language, is linked from every footer and newsletter form, names no exchange."""
+    def test_pages_exist_translated_and_in_sitemap(self):
+        import privacy_page as pp
+        with open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8") as f:
+            sm = f.read()
+        for lang in [""] + [l + "/" for l in LANGS]:
+            path = os.path.join(ROOT, lang, "privacy", "index.html")
+            with open(path, encoding="utf-8") as f:
+                h = f.read()
+            self.assertIn("hello@lumitrades.io", h)
+            self.assertIn(pp.UPDATED.isoformat(), h)
+            self.assertNotIn("bitunix", h.lower())
+            self.assertIn(f"<loc>https://lumitrades.io/{lang}privacy/</loc>", sm)
+            if lang:
+                self.assertNotIn(pp.LEDE[:60], h)
+        for lang in LANGS:
+            tr = i18n(lang)
+            for k in [pp.TITLE, pp.DESC, pp.LEDE] + [x for _, head, ps in pp.SECTIONS for x in [head] + ps]:
+                self.assertIn(k, tr, (lang, k[:40]))
+
+    def test_every_footer_and_newsletter_links_privacy(self):
+        bad = []
+        for dp, _, files in os.walk(ROOT):
+            if "/." in dp or "/node_modules" in dp:
+                continue
+            for fn in files:
+                if not fn.endswith(".html"):
+                    continue
+                with open(os.path.join(dp, fn), encoding="utf-8") as f:
+                    h = f.read()
+                foot = re.findall(r"<footer.*?</footer>", h, re.S)
+                fine = re.findall(r'<p class="nl-fine">.*?</p>', h, re.S)
+                if any("privacy/" not in x for x in foot + fine):
+                    bad.append(os.path.relpath(os.path.join(dp, fn), ROOT))
+        self.assertEqual(bad, [])
+
+    def test_homepage_description_short_and_current(self):
+        import build_pages as bp
+        self.assertLessEqual(len(bp.INDEX_DESC), 155)
+        self.assertNotIn("XLM, HBAR", bp.INDEX_DESC)
+        for lang in LANGS:
+            self.assertLessEqual(len(i18n(lang)[bp.INDEX_DESC]), 155, lang)
+
+
 if __name__ == "__main__":
     unittest.main()
