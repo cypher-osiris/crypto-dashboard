@@ -92,7 +92,8 @@
 <p class="meta">Çağrı başına fiyatlar USD cinsindendir. Veri güncel değilse API 503 yanıtı verir ve ücret alınmaz. Ücretsiz: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.</p></section>
 <section class="card cp-sec" id="pay"><h2>Nasıl ödenir</h2>
 <ul class="ag-list"><li><b>Base üzerinde USDC</b> (eip155:8453), Coinbase'in x402 aracısı üzerinden takas edilir. Coinbase AgentKit ve tüm x402 istemcileriyle çalışır.</li>
-<li><b>XRP Ledger</b>: XRP, RLUSD veya USDC, defter üzerinde doğrulanır.</li></ul>
+<li><b>XRP Ledger</b>: XRP, RLUSD veya USDC, defter üzerinde doğrulanır.</li>
+<li><b>Stellar üzerinde USDC</b> (stellar:pubnet), ağ ücretleri karşılanarak OpenZeppelin x402 aracısı üzerinden ödenir. Base ile aynı USD fiyatları.</li></ul>
 <p class="meta">402 teklifi kabul edilen her ağı, varlığı, tutarı ve ödeme adresini listeler; birini seçin. Başlıklar: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.</p></section>
 <section class="card cp-sec" id="flow"><h2>İki çağrıda 402 akışı</h2>
 <pre class="ag-code"><code># 1. ask: no key, no account. The API answers 402 with a quote

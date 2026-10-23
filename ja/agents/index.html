@@ -92,7 +92,8 @@
 <p class="meta">1 回あたりの価格（USD）。データが最新でない場合、API は 503 を返し、料金はかかりません。無料: <code>/v1/coins</code>、<code>/openapi.json</code>、<code>/skill.md</code>、<code>/.well-known/x402</code>。</p></section>
 <section class="card cp-sec" id="pay"><h2>支払い方法</h2>
 <ul class="ag-list"><li><b>Base 上の USDC</b>（eip155:8453）。Coinbase の x402 ファシリテーターで決済されます。Coinbase AgentKit やあらゆる x402 クライアントで使えます。</li>
-<li><b>XRP Ledger</b>: XRP、RLUSD または USDC。レジャー上で検証されます。</li></ul>
+<li><b>XRP Ledger</b>: XRP、RLUSD または USDC。レジャー上で検証されます。</li>
+<li><b>Stellar上のUSDC</b>（stellar:pubnet）。OpenZeppelinのx402ファシリテーターで決済され、ネットワーク手数料はスポンサー負担です。Baseと同じUSD価格です。</li></ul>
 <p class="meta">402 見積もりには受け付けるすべてのネットワーク、資産、金額、受取アドレスが記載されているので、1 つを選びます。ヘッダー: <code>PAYMENT-REQUIRED</code>、<code>PAYMENT-SIGNATURE</code>、<code>PAYMENT-RESPONSE</code>。</p></section>
 <section class="card cp-sec" id="flow"><h2>2 回の呼び出しで完結する 402 フロー</h2>
 <pre class="ag-code"><code># 1. ask: no key, no account. The API answers 402 with a quote

@@ -268,7 +268,8 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
 <section class="card cp-sec" id="pay"><h2>{E(_t("How to pay"))}</h2>
 <ul class="ag-list"><li>{_t("<b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.")}</li>
-<li>{_t("<b>XRP Ledger</b>: XRP, RLUSD or USDC, verified on-ledger.")}</li></ul>
+<li>{_t("<b>XRP Ledger</b>: XRP, RLUSD or USDC, verified on-ledger.")}</li>
+<li>{_t("<b>USDC on Stellar</b> (stellar:pubnet), settled through the OpenZeppelin x402 facilitator with network fees sponsored. Same USD prices as Base.")}</li></ul>
 <p class="meta">{_t("The 402 quote lists every accepted network, asset, amount and pay-to address; pick one. Headers: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.")}</p></section>
 <section class="card cp-sec" id="flow"><h2>{E(_t("The 402 flow in two calls"))}</h2>
 <pre class="ag-code"><code>{E(CURL)}</code></pre></section>
