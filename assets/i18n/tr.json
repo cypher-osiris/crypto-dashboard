@@ -856,7 +856,6 @@
   "Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, and an x402 trust API for AI agents. Not financial advice.": "Günlük kripto seviyeleri ve sanal işlem listesi, XRPL öncelikli kurumsal benimseme haberleri ve yapay zekâ ajanları için x402 güven API’si.",
   "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "Abone olarak <a href=\"privacy/\">Gizlilik Politikamızı</a> kabul etmiş olursunuz.",
   "Get your badge": "Rozetinizi alın",
-  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Lumi'nin test ettiği bir x402 uç noktası mı satıyorsunuz? Gösterin. Ücretsiz “Tested by Lumi” rozeti, Lumi'nin hizmetiniz için kayıtlı en son ücretli test alımının sonucunu ve tarihini, ayrıca zinciri (XRPL veya Base) gösterir ve tarihli testlerin ve yanıt hakkınızın yer aldığı herkese açık bir sonuç sayfasına bağlanır. Kayıt gerekmez ve Lumi'ye ödeme yapmak sonucu asla değiştirmez.",
   "Example (a real vendor):": "Örnek (gerçek bir satıcı):",
   "<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.": "<b>delivered</b> (yeşil): ücretli yanıt veri içeriyordu · <b>not delivered</b> (kırmızı): satıcı kullanılabilir veri olmadan yanıt verdi · <b>inconclusive</b> (gri): Lumi hiç yanıt görmedi; Lumi tarafındaki bu sonuç aleyhinize sayılmaz · <b>not yet tested</b>: Lumi'nin kayıtlı bir sonucu yok.",
   "Find your key": "Anahtarınızı bulun",
@@ -872,6 +871,10 @@
   "a supported exchange ({sym}/USDT spot and perpetual futures)": "desteklenen bir borsa ({sym}/USDT spot ve vadeli sürekli kontratlar)",
   "a supported exchange ({sym}/USDT spot)": "desteklenen bir borsa ({sym}/USDT spot)",
   "A supported exchange ({sym}/USDT spot and perpetual futures)": "Desteklenen bir borsa ({sym}/USDT spot ve vadeli sürekli kontratlar)",
-  "A supported exchange ({sym}/USDT spot)": "Desteklenen bir borsa ({sym}/USDT spot)"
+  "A supported exchange ({sym}/USDT spot)": "Desteklenen bir borsa ({sym}/USDT spot)",
+  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL, Base or Stellar), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Lumi'nin test ettiği bir x402 uç noktası mı satıyorsunuz? Gösterin. Ücretsiz “Tested by Lumi” rozeti, Lumi'nin hizmetiniz için kayıtlı en son ücretli test alımının sonucunu ve tarihini, ayrıca zinciri (XRPL, Base veya Stellar) gösterir ve tarihli testlerin ve yanıt hakkınızın yer aldığı herkese açık bir sonuç sayfasına bağlanır. Kayıt gerekmez ve Lumi'ye ödeme yapmak sonucu asla değiştirmez.",
+  "How Lumi tests x402 sellers": "Lumi x402 satıcılarını nasıl test eder",
+  "Lumi test-buys paid x402 agent services with real payments on XRPL, Base and Stellar, and publishes the dated results with a signed receipt for each purchase. Paying Lumi never changes a score, and every seller has a right to reply, shown next to the findings.": "Lumi, ücretli x402 ajan hizmetlerinden XRPL, Base ve Stellar üzerinde gerçek ödemelerle test alımları yapar ve tarihli sonuçları her alım için imzalı bir makbuzla yayımlar. Lumi'ye ödeme yapmak bir puanı asla değiştirmez ve her satıcının, bulguların yanında gösterilen bir yanıt hakkı vardır.",
+  "The “Tested by Lumi” badge": "“Tested by Lumi” rozeti"
  }
 }

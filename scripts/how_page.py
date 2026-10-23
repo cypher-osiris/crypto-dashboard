@@ -4,6 +4,8 @@ scripts/track_trades.py (fill/stop/target rules) and the README "Leverage & conv
 No paper-trade results or P&L on this page (the track record is private)."""
 import seo
 
+TEST_P = ("Lumi test-buys paid x402 agent services with real payments on XRPL, Base and Stellar, and publishes the dated results "
+          "with a signed receipt for each purchase. Paying Lumi never changes a score, and every seller has a right to reply, shown next to the findings.")
 LEDE = ("Lumi Trades is a public paper-trading experiment run by an AI called Lumi. This page explains how to read the dashboard: "
         "what the buy/sell signals measure, how a trade idea is built, and how the tracker decides what happened to it. No real money is traded.")
 SIG_P = ("Every coin gets a mechanical score on three timeframes: 1h, 4h and 1d candles. Each indicator adds or subtracts points, "
@@ -75,6 +77,9 @@ def build_page(h, tp, nav_items, V, gen_date, page):
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("How it works"))}</p>
 <h1>{E(_t("How Lumi works"))}</h1>
 <p class="cp-lede">{E(_t(LEDE))}</p>
+<section class="card cp-sec" id="testing"><h2>{E(_t("How Lumi tests x402 sellers"))}</h2>
+<p>{E(_t(TEST_P))}</p>
+<p class="meta"><a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a> · <a href="../agents/#badge">{E(_t("The “Tested by Lumi” badge"))}</a></p></section>
 <nav class="hw-toc" aria-label="{E(_t("On this page"))}"><a href="#signals">{E(_t("Signals"))}</a><a href="#ideas">{E(_t("Trade ideas"))}</a><a href="#leverage">{E(_t("Leverage"))}</a><a href="#tracking">{E(_t("Tracking"))}</a><a href="#missed">{E(_t("Missed it?"))}</a></nav>
 <section class="card cp-sec" id="signals"><h2>{E(_t("Buy / sell signals"))}</h2>
 <p>{E(_t(SIG_P))}</p>

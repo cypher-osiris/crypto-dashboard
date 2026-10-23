@@ -856,7 +856,6 @@
   "Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, and an x402 trust API for AI agents. Not financial advice.": "Níveis cripto diários e operações simuladas, notícias de adoção institucional (XRPL primeiro) e uma API de confiança x402 para agentes de IA.",
   "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "Ao assinar, você concorda com a nossa <a href=\"privacy/\">Política de privacidade</a>.",
   "Get your badge": "Obtenha seu selo",
-  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Vende um endpoint x402 que a Lumi testou? Mostre isso. O selo gratuito “Tested by Lumi” mostra o veredito e a data da compra de teste paga mais recente que a Lumi tem registrada do seu serviço, além da rede (XRPL ou Base), e leva a uma página pública de resultados com os testes datados e o seu direito de resposta. Sem cadastro, e pagar a Lumi nunca muda o resultado.",
   "Example (a real vendor):": "Exemplo (um vendedor real):",
   "<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.": "<b>delivered</b> (verde): a resposta paga continha dados · <b>not delivered</b> (vermelho): o vendedor respondeu sem dados utilizáveis · <b>inconclusive</b> (cinza): a Lumi nunca viu uma resposta, um resultado do lado da Lumi que não conta contra você · <b>not yet tested</b>: a Lumi não tem nenhum resultado registrado.",
   "Find your key": "Encontre sua chave",
@@ -872,6 +871,10 @@
   "a supported exchange ({sym}/USDT spot and perpetual futures)": "uma exchange compatível ({sym}/USDT à vista e futuros perpétuos)",
   "a supported exchange ({sym}/USDT spot)": "uma exchange compatível ({sym}/USDT à vista)",
   "A supported exchange ({sym}/USDT spot and perpetual futures)": "Uma exchange compatível ({sym}/USDT à vista e futuros perpétuos)",
-  "A supported exchange ({sym}/USDT spot)": "Uma exchange compatível ({sym}/USDT à vista)"
+  "A supported exchange ({sym}/USDT spot)": "Uma exchange compatível ({sym}/USDT à vista)",
+  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL, Base or Stellar), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Vende um endpoint x402 que a Lumi testou? Mostre isso. O selo gratuito “Tested by Lumi” mostra o veredito e a data da compra de teste paga mais recente que a Lumi tem registrada do seu serviço, além da rede (XRPL, Base ou Stellar), e leva a uma página pública de resultados com os testes datados e o seu direito de resposta. Sem cadastro, e pagar a Lumi nunca muda o resultado.",
+  "How Lumi tests x402 sellers": "Como a Lumi testa vendedores x402",
+  "Lumi test-buys paid x402 agent services with real payments on XRPL, Base and Stellar, and publishes the dated results with a signed receipt for each purchase. Paying Lumi never changes a score, and every seller has a right to reply, shown next to the findings.": "A Lumi faz compras de teste de serviços x402 pagos para agentes com pagamentos reais em XRPL, Base e Stellar, e publica os resultados datados com um recibo assinado de cada compra. Pagar a Lumi nunca muda uma pontuação, e todo vendedor tem direito de resposta, exibido ao lado dos resultados.",
+  "The “Tested by Lumi” badge": "O selo “Tested by Lumi”"
  }
 }
