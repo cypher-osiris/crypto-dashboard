@@ -252,5 +252,35 @@ class PrivacyPage(unittest.TestCase):
             self.assertLessEqual(len(i18n(lang)[bp.INDEX_DESC]), 155, lang)
 
 
+class NoBitunixInStaticHtml(unittest.TestCase):
+    """Bitunix doesn't serve US users: the static HTML (served to everyone) never names it; affiliate.js adds it for non-US visitors."""
+    SLUGS = CoinPageWording.SLUGS
+
+    def test_scrubber(self):
+        from i18n import no_us_hidden_names as f
+        self.assertEqual(f("venues (Bitunix, Binance, OKX) list no perp"), "venues (Binance, OKX) list no perp")
+        self.assertEqual(f("on Kraken or Bitunix."), "on Kraken.")
+        self.assertEqual(f("Bitunix lists it"), "a supported exchange lists it")
+        self.assertEqual(f("no exchange here"), "no exchange here")
+
+    def test_coin_and_trade_pages(self):
+        for lang in [""] + [l + "/" for l in LANGS]:
+            paths = [os.path.join(ROOT, lang, s, "index.html") for s in self.SLUGS]
+            tdir = os.path.join(ROOT, lang, "trades")
+            if os.path.isdir(tdir):
+                paths += [os.path.join(tdir, d, "index.html") for d in os.listdir(tdir) if os.path.isfile(os.path.join(tdir, d, "index.html"))]
+            for path in paths:
+                with open(path, encoding="utf-8") as f:
+                    self.assertNotIn("bitunix", f.read().lower(), path)
+
+    def test_generic_exchange_translated(self):
+        keys = ["a supported exchange ({sym}/USDT spot and perpetual futures)", "a supported exchange ({sym}/USDT spot)",
+                "A supported exchange ({sym}/USDT spot and perpetual futures)", "A supported exchange ({sym}/USDT spot)"]
+        for lang in LANGS:
+            for k in keys:
+                self.assertIn(k, i18n(lang), (lang, k))
+                self.assertNotIn("bitunix", i18n(lang)[k].lower())
+
+
 if __name__ == "__main__":
     unittest.main()

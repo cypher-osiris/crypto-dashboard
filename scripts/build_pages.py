@@ -184,10 +184,15 @@ def venues(cid, sym, coin_cfg, aff):
         us.append(f"Kraken ({kp}{_(', Kraken’s ticker for {sym}', sym=sym) if kp.split('/')[0] != sym else ''})")
     if up:
         us.append(f"Uphold ({up})")
-    intl.append(f"Bitunix ({sym}/USDT {_('spot')}{_(' and perpetual futures') if cid in BITUNIX_PERP else ''})")
+    # The exchange is named only client-side, to non-US visitors (assets/affiliate.js fills #aff-coin); the static HTML,
+    # FAQ and JSON-LD are served to US visitors too, so they say "a supported exchange" (scan 2026-10-23 follow-up).
+    perp = cid in BITUNIX_PERP
+    intl = [_("a supported exchange ({sym}/USDT spot and perpetual futures)" if perp else "a supported exchange ({sym}/USDT spot)", sym=sym)]
+    intl_list = [_("A supported exchange ({sym}/USDT spot and perpetual futures)" if perp else "A supported exchange ({sym}/USDT spot)", sym=sym)]
     if kp:
         intl.append(_("Kraken in many countries"))
-    return us, intl, cb, kp, up
+        intl_list.append(_("Kraken in many countries"))
+    return us, intl, intl_list, cb, kp, up
 
 
 def lev_txt(lev):
@@ -484,7 +489,7 @@ def build(dry=False):
             if t and t.get("status") not in ("pending", "open"):
                 t = None  # closed ideas aren't shown with their outcome (the track record is private since Oct 22, 2026)
             sig = signals.get(cid) or {}
-            us, intl, cb, kp, up = venues(cid, sym, coin_cfg.get(cid, {}), aff)
+            us, intl, intl_list, cb, kp, up = venues(cid, sym, coin_cfg.get(cid, {}), aff)
 
             h1 = _("{sym} Price Analysis &amp; Levels to Watch, updated {date}", sym=sym, date=E(upd_date))
             title = (_("{sym} Price Analysis Today & {name} Outlook | Lumi Trades", sym=sym, name=name) if name != sym
@@ -564,7 +569,7 @@ def build(dry=False):
                 f'<li><a href="{E(s.get("url"))}" rel="noopener nofollow" target="_blank">{E(s.get("title"))}</a></li>' for s in srcs) + "</ul></details>") if srcs else ""
             trade_sec = trade_html(t, sym, price, H) if t else f'<p>{E(_("No active idea for {sym}.", sym=sym))} {free(sl, "note")}</p>'
             us_li = "".join(f"<li>{E(x)}</li>" for x in us) or f"<li>{E(_('No US exchange in our list carries it.'))}</li>"
-            intl_li = "".join(f"<li>{E(x)}</li>" for x in intl)
+            intl_li = "".join(f"<li>{E(x)}</li>" for x in intl_list)
             pair_hint = cb or kp or f"{sym}/USD"
             step1 = (T("Coinbase doesn't list {sym}, so US buyers use {venues}.", sym=sym, venues=_(" or ").join(v.split(" (")[0] for v in us))
                      if (not cb and us) else E(_("Compare fees and the trading pair before you sign up.")))

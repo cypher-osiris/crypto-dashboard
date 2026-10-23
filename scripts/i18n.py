@@ -27,6 +27,19 @@ def codes():
     return ["en"] + [c for c in ORDER[1:] if os.path.exists(os.path.join(DIR, f"{c}.json"))]
 
 
+
+# Bitunix doesn't serve US users, so the site names it only client-side to non-US visitors (assets/affiliate.js).
+# Static HTML is served to everyone, so Lumi's free text (trade reasoning etc. from data/*.json) is scrubbed here:
+# in a list of venues the name is dropped, anywhere else it becomes "a supported exchange".
+_HIDDEN_LIST = re.compile(r"\bBitunix\s*(?:,\s*|\s+(?:and|or|/)\s+)|(?:,\s*|\s+(?:and|or|/)\s+)Bitunix\b", re.I)
+_HIDDEN = re.compile(r"\bBitunix\b", re.I)
+
+
+def no_us_hidden_names(txt):
+    if not txt or "itunix" not in txt.lower():
+        return txt
+    return _HIDDEN.sub("a supported exchange", _HIDDEN_LIST.sub("", txt))
+
 class Lang:
     def __init__(self, code):
         self.code = code
@@ -80,6 +93,7 @@ class Lang:
     def free(self, obj, field, E, default="", tag="span", cls=""):
         """Escaped free text; untranslated English on a non-English page is wrapped in lang="en" with the .i18n-en marker."""
         txt, en = self.loc(obj, field, default)
+        txt = no_us_hidden_names(txt)
         if not txt:
             return ""
         return f'<{tag} lang="en" class="i18n-en{(" " + cls) if cls else ""}">{E(txt)}</{tag}>' if en else (

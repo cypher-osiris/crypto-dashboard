@@ -867,6 +867,10 @@
   "HTML": "HTML",
   "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "事実に基づくテストの証拠であり、推奨や保証ではありません。新しいテストから1時間以内に更新されます。質問や異議申し立て：<a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>。",
   "Badge docs": "バッジのドキュメント",
-  "How Lumi tests": "Lumiのテスト方法"
+  "How Lumi tests": "Lumiのテスト方法",
+  "a supported exchange ({sym}/USDT spot and perpetual futures)": "対応取引所（{sym}/USDTの現物と無期限先物）",
+  "a supported exchange ({sym}/USDT spot)": "対応取引所（{sym}/USDTの現物）",
+  "A supported exchange ({sym}/USDT spot and perpetual futures)": "対応取引所（{sym}/USDTの現物と無期限先物）",
+  "A supported exchange ({sym}/USDT spot)": "対応取引所（{sym}/USDTの現物）"
  }
 }

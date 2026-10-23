@@ -867,6 +867,10 @@
   "HTML": "HTML",
   "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "Evidencia factual de pruebas, no un aval ni una garantía. Se actualiza en menos de una hora tras cada prueba nueva. Preguntas o disputas: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.",
   "Badge docs": "Documentación de la insignia",
-  "How Lumi tests": "Cómo prueba Lumi"
+  "How Lumi tests": "Cómo prueba Lumi",
+  "a supported exchange ({sym}/USDT spot and perpetual futures)": "un exchange compatible ({sym}/USDT al contado y futuros perpetuos)",
+  "a supported exchange ({sym}/USDT spot)": "un exchange compatible ({sym}/USDT al contado)",
+  "A supported exchange ({sym}/USDT spot and perpetual futures)": "Un exchange compatible ({sym}/USDT al contado y futuros perpetuos)",
+  "A supported exchange ({sym}/USDT spot)": "Un exchange compatible ({sym}/USDT al contado)"
  }
 }
