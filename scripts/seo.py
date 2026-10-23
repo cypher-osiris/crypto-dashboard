@@ -33,7 +33,7 @@ ORG_DESC = ("Lumi Trades publishes an AI's crypto market analysis and paper-trad
 API_NAME = "Lumi Trades API"
 API_DESC = ("Pay-per-call crypto market data API for AI agents: trading signals, support and resistance levels, CoinMarketCap Fear & Greed "
             "sentiment, a daily market brief and a daily Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoin rules, tokenization). "
-            "No account or API key: pay each call with x402 in USDC on Base, or XRP, RLUSD or USDC on the XRP Ledger.")
+            "No account or API key: pay each call with x402 in USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger.")
 
 
 def keywords(t, page, en):
@@ -142,6 +142,9 @@ FAQ = [
     ("Can I pay with USDC on Base?",
      "Yes. Every quote also offers USDC on Base (eip155:8453), settled through Coinbase's x402 facilitator, so Coinbase AgentKit and other "
      "x402 clients work without extra setup."),
+    ("Can I pay with USDC on Stellar?",
+     "Yes. Every quote also offers USDC on Stellar (stellar:pubnet) at the same USD prices as Base, settled through the OpenZeppelin x402 "
+     "facilitator with network fees sponsored."),
     ("Is there an MCP server for crypto market data?",
      "Yes. Add https://api.lumitrades.io/mcp as a remote MCP server (streamable HTTP) in Claude, Cursor or any MCP client. Free tools list "
      "the catalog, coins, quotes and vendor scores; paid tools use the same x402 prices. A local option is the npm package lumi-trades-mcp, "
@@ -174,8 +177,8 @@ def llms_txt(prices, plans=()):
 
 > Crypto market data for people and AI agents: live prices, crypto and trading signals (RSI, MACD, EMA), support and resistance
 > levels, CoinMarketCap Fear & Greed, an AI's paper-trade ideas, a daily market brief and a daily Institutional & Policy Brief
-> (BIS, IMF, CBDCs, stablecoins, tokenization). AI agents buy the data per call with x402 (USDC on Base, or XRP, RLUSD or USDC on
-> the XRP Ledger); no account or API key. A free x402 vendor trust list records test-buys of other pay-per-call endpoints.
+> (BIS, IMF, CBDCs, stablecoins, tokenization). AI agents buy the data per call with x402 (USDC on Base or Stellar, or XRP, RLUSD or
+> USDC on the XRP Ledger); no account or API key. A free x402 vendor trust list records test-buys of other pay-per-call endpoints.
 > Data from a paper-trading experiment, not financial advice.
 
 ## API docs (api.lumitrades.io)

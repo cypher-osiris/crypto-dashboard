@@ -78,7 +78,7 @@ PLANS = MONITOR_PLANS + FEED_PLANS
 CURL = """# 1. ask: no key, no account. The API answers 402 with a quote
 curl -i https://api.lumitrades.io/v1/signal/XRP
 #    HTTP/2 402
-#    PAYMENT-REQUIRED: <base64 JSON: price, networks (Base USDC, XRPL XRP/RLUSD/USDC), payTo>
+#    PAYMENT-REQUIRED: <base64 JSON: price, networks (Base USDC, XRPL XRP/RLUSD/USDC, Stellar USDC), payTo>
 
 # 2. pay with any x402 client, then repeat the call with the signed payment
 curl https://api.lumitrades.io/v1/signal/XRP -H "PAYMENT-SIGNATURE: <payment payload>"
@@ -192,7 +192,7 @@ def _page(h, tp, path, title, desc, ld, body, V, gen_date, nav_items, current, e
 
 AGENTS_DESC = ("Pay-per-call crypto API for AI agents: trading signals, support and resistance levels, CoinMarketCap Fear & Greed, "
                "a daily brief and an Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Pay with x402 in USDC "
-               "on Base or XRP and RLUSD on the XRPL. MCP server, no API key.")
+               "on Base or Stellar, or XRP and RLUSD on the XRPL. MCP server, no API key.")
 TRUST_DESC = ("x402 vendor reputation: free trust scores for pay-per-call endpoints from Lumi's automated 402-quote checks and small "
               "paid test-buys, with on-ledger evidence on XRPL, Base and Stellar. Observations, not a rating or review of any business.")
 
@@ -247,7 +247,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
     body = f"""<main class="wrap cp-main ag-main">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("For AI agents"))}</p>
 <h1>{E(_t("Lumi for AI agents: x402 trust checks and crypto data"))}</h1>
-<p class="cp-lede">{_t("Lumi tests x402 sellers independently: real on-ledger test-buys, a signed receipt for each one, and coverage across chains with a focus on the XRP Ledger. Agents can check a seller before they pay it, sellers can have their own endpoints monitored, and platforms can license the data. Lumi also sells crypto market data one call at a time. No account and no API key: the API answers <code>402 Payment Required</code> with a quote, the agent pays, and gets the answer.")}</p>
+<p class="cp-lede">{_t("Lumi tests x402 sellers independently: real on-ledger test-buys, a signed receipt for each one, and coverage on the XRP Ledger, Base and Stellar. Agents can check a seller before they pay it, sellers can have their own endpoints monitored, and platforms can license the data. Lumi also sells crypto market data one call at a time. No account and no API key: the API answers <code>402 Payment Required</code> with a quote, the agent pays, and gets the answer.")}</p>
 <section class="card cp-sec" id="trust"><h2>{E(_t("Check a seller before you pay"))}</h2>
 <p>{_t("Call <code>GET /v1/trust/check?url=</code> with the x402 URL your agent is about to pay (optionally with the payTo and price you were quoted). It answers allow, warn or block with coded reasons, built from Lumi's index of Coinbase's x402 Bazaar, free 402-quote checks and Lumi's own test-buys. Where Lumi has bought from that seller, the paid answer carries Lumi's signed test-buy receipts, which anyone can verify for free. The vendor trust list is free. Paying Lumi, for a check or for monitoring, never changes a score.")}</p>
 {f"<p>{sweep_html(h, vendors_doc)}</p>" if sweep_html(h, vendors_doc) else ""}
@@ -311,7 +311,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
     body = f"""<main class="wrap cp-main">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("Vendor trust"))}</p>
 <h1>{E(_t("x402 vendor trust list"))}</h1>
-<p class="cp-lede">{_t("Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys. Each paid test-buy links to its transaction on a public ledger explorer. The list is free; a detailed report on one vendor costs $0.02.")}</p>
+<p class="cp-lede">{_t("Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys. Each paid test-buy links to its transaction on a public ledger explorer (XRPL, Base or Stellar). The list is free; a detailed report on one vendor costs $0.02.")}</p>
 <div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Automated observations, not a rating or review of any business.</strong> Scores summarize what Lumi's own checks saw over the last 30 days. Few samples = low confidence.")} <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a></span></div>
 <section class="card cp-sec">
 <h2>{E(_t("Vendors"))} <span class="muted" id="tr-count">{f"({len(vendors)})" if vendors else ""}</span></h2>
