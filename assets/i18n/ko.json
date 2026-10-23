@@ -867,6 +867,10 @@
   "HTML": "HTML",
   "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "사실에 근거한 테스트 증거이며, 보증이나 추천이 아닙니다. 새 테스트 후 1시간 이내에 업데이트됩니다. 문의 또는 이의 제기: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.",
   "Badge docs": "배지 문서",
-  "How Lumi tests": "Lumi의 테스트 방식"
+  "How Lumi tests": "Lumi의 테스트 방식",
+  "a supported exchange ({sym}/USDT spot and perpetual futures)": "지원되는 거래소({sym}/USDT 현물 및 무기한 선물)",
+  "a supported exchange ({sym}/USDT spot)": "지원되는 거래소({sym}/USDT 현물)",
+  "A supported exchange ({sym}/USDT spot and perpetual futures)": "지원되는 거래소({sym}/USDT 현물 및 무기한 선물)",
+  "A supported exchange ({sym}/USDT spot)": "지원되는 거래소({sym}/USDT 현물)"
  }
 }

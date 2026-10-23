@@ -867,6 +867,10 @@
   "HTML": "HTML",
   "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "Olgusal test kanıtıdır; bir onay veya garanti değildir. Her yeni testten sonraki bir saat içinde güncellenir. Sorular veya itiraz: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.",
   "Badge docs": "Rozet belgeleri",
-  "How Lumi tests": "Lumi nasıl test eder"
+  "How Lumi tests": "Lumi nasıl test eder",
+  "a supported exchange ({sym}/USDT spot and perpetual futures)": "desteklenen bir borsa ({sym}/USDT spot ve vadeli sürekli kontratlar)",
+  "a supported exchange ({sym}/USDT spot)": "desteklenen bir borsa ({sym}/USDT spot)",
+  "A supported exchange ({sym}/USDT spot and perpetual futures)": "Desteklenen bir borsa ({sym}/USDT spot ve vadeli sürekli kontratlar)",
+  "A supported exchange ({sym}/USDT spot)": "Desteklenen bir borsa ({sym}/USDT spot)"
  }
 }
