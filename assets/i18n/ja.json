@@ -291,7 +291,9 @@
   "reply ({n})": "返信（{n}）",
   "low": "低",
   "medium": "中",
-  "high": "高"
+  "high": "高",
+  "Not a valid key: use a vendor id or a host name like api.example.com.": "無効なキーです：販売者IDか、api.example.com のようなホスト名を使ってください。",
+  "Result page": "結果ページ"
  },
  "pages": {
   " (filled {when})": "（{when}に約定）",
@@ -851,6 +853,20 @@
   "The site is not aimed at children. If this policy changes, this page is updated and the date at the top changes.": "このサイトは子ども向けではありません。このポリシーを変更した場合は、このページを更新し、冒頭の日付を変更します。",
   "By subscribing you agree to our <a href=\"{href}\">Privacy Policy</a>.": "登録すると、<a href=\"{href}\">プライバシーポリシー</a>に同意したものとみなされます。",
   "Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, and an x402 trust API for AI agents. Not financial advice.": "暗号資産の日次レベルとペーパートレードのスレート、XRPLを筆頭とする機関投資家の採用ニュース、AIエージェント向けのx402トラストAPI。投資助言ではありません。",
-  "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "登録すると、<a href=\"privacy/\">プライバシーポリシー</a>に同意したものとみなされます。"
+  "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "登録すると、<a href=\"privacy/\">プライバシーポリシー</a>に同意したものとみなされます。",
+  "Get your badge": "バッジを入手",
+  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Lumiがテストしたx402エンドポイントを販売していますか？それを示しましょう。無料の「Tested by Lumi」バッジは、Lumiが保存しているあなたのサービスの最新の有料テスト購入の判定と日付、そしてチェーン（XRPLまたはBase）を表示し、日付入りのテスト結果と反論の権利を載せた公開結果ページにリンクします。登録は不要で、Lumiに支払っても結果が変わることはありません。",
+  "Example (a real vendor):": "例（実在の販売者）：",
+  "<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.": "<b>delivered</b>（緑）：有料レスポンスにデータが含まれていた · <b>not delivered</b>（赤）：販売者は使えるデータなしで応答した · <b>inconclusive</b>（グレー）：Lumiが応答を確認できなかった。Lumi側の結果で、販売者に不利には数えません · <b>not yet tested</b>：Lumiに保存された結果がありません。",
+  "Find your key": "キーを確認",
+  "Your key is your Lumi vendor id (shown on the vendor trust list) or the exact host of the x402 URL Lumi bought, for example <code>api.example.com</code>. Paste your endpoint URL, host or vendor id:": "キーは、Lumiの販売者ID（販売者トラストリストに表示）か、Lumiが購入したx402 URLの正確なホスト名です（例：<code>api.example.com</code>）。エンドポイントURL、ホスト名、または販売者IDを貼り付けてください：",
+  "https://api.example.com/v1/data or a vendor id": "https://api.example.com/v1/data または販売者ID",
+  "Endpoint URL, host or vendor id": "エンドポイントURL、ホスト名、または販売者ID",
+  "Make my badge": "バッジを作成",
+  "Markdown (README.md)": "Markdown（README.md）",
+  "HTML": "HTML",
+  "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "事実に基づくテストの証拠であり、推奨や保証ではありません。新しいテストから1時間以内に更新されます。質問や異議申し立て：<a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>。",
+  "Badge docs": "バッジのドキュメント",
+  "How Lumi tests": "Lumiのテスト方法"
  }
 }

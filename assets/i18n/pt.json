@@ -291,7 +291,9 @@
   "reply ({n})": "resposta ({n})",
   "low": "baixa",
   "medium": "média",
-  "high": "alta"
+  "high": "alta",
+  "Not a valid key: use a vendor id or a host name like api.example.com.": "Chave inválida: use um id de vendedor ou um nome de host como api.example.com.",
+  "Result page": "Página de resultados"
  },
  "pages": {
   " (filled {when})": " (executada {when})",
@@ -851,6 +853,20 @@
   "The site is not aimed at children. If this policy changes, this page is updated and the date at the top changes.": "O site não é voltado para crianças. Se esta política mudar, esta página é atualizada e a data no topo muda.",
   "By subscribing you agree to our <a href=\"{href}\">Privacy Policy</a>.": "Ao assinar, você concorda com a nossa <a href=\"{href}\">Política de privacidade</a>.",
   "Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, and an x402 trust API for AI agents. Not financial advice.": "Níveis cripto diários e operações simuladas, notícias de adoção institucional (XRPL primeiro) e uma API de confiança x402 para agentes de IA.",
-  "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "Ao assinar, você concorda com a nossa <a href=\"privacy/\">Política de privacidade</a>."
+  "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "Ao assinar, você concorda com a nossa <a href=\"privacy/\">Política de privacidade</a>.",
+  "Get your badge": "Obtenha seu selo",
+  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Vende um endpoint x402 que a Lumi testou? Mostre isso. O selo gratuito “Tested by Lumi” mostra o veredito e a data da compra de teste paga mais recente que a Lumi tem registrada do seu serviço, além da rede (XRPL ou Base), e leva a uma página pública de resultados com os testes datados e o seu direito de resposta. Sem cadastro, e pagar a Lumi nunca muda o resultado.",
+  "Example (a real vendor):": "Exemplo (um vendedor real):",
+  "<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.": "<b>delivered</b> (verde): a resposta paga continha dados · <b>not delivered</b> (vermelho): o vendedor respondeu sem dados utilizáveis · <b>inconclusive</b> (cinza): a Lumi nunca viu uma resposta, um resultado do lado da Lumi que não conta contra você · <b>not yet tested</b>: a Lumi não tem nenhum resultado registrado.",
+  "Find your key": "Encontre sua chave",
+  "Your key is your Lumi vendor id (shown on the vendor trust list) or the exact host of the x402 URL Lumi bought, for example <code>api.example.com</code>. Paste your endpoint URL, host or vendor id:": "Sua chave é o seu id de vendedor na Lumi (exibido na lista de confiança de vendedores) ou o host exato da URL x402 que a Lumi comprou, por exemplo <code>api.example.com</code>. Cole a URL do seu endpoint, o host ou o id de vendedor:",
+  "https://api.example.com/v1/data or a vendor id": "https://api.example.com/v1/data ou um id de vendedor",
+  "Endpoint URL, host or vendor id": "URL do endpoint, host ou id de vendedor",
+  "Make my badge": "Gerar meu selo",
+  "Markdown (README.md)": "Markdown (README.md)",
+  "HTML": "HTML",
+  "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "Evidência factual de testes, não um endosso nem uma garantia. Atualizado em até uma hora após cada novo teste. Dúvidas ou contestação: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.",
+  "Badge docs": "Documentação do selo",
+  "How Lumi tests": "Como a Lumi testa"
  }
 }

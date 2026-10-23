@@ -197,6 +197,33 @@ TRUST_DESC = ("x402 vendor reputation: free trust scores for pay-per-call endpoi
               "paid test-buys, with on-ledger evidence on Base and the XRP Ledger. Observations, not a rating or review of any business.")
 
 
+BADGE_EXAMPLE = "printmoneylab"  # a real curated vendor with delivered test-buys (checked live Oct 23 2026)
+
+
+def badge_section(h):
+    """/agents/#badge: the free "Tested by Lumi" badge (api.lumitrades.io/badge/{key}.svg) with an example and a
+    client-side "find your key" helper (assets/badge.js builds the URLs; no listing or search of the catalog)."""
+    E, _t = h.E, h._
+    k = BADGE_EXAMPLE
+    img, page = f"{API}/badge/{k}.svg", f"{API}/trust/v/{k}"
+    alt = "Tested by Lumi: latest dated x402 test-buy result"
+    md = f"[![{alt}]({API}/badge/{{key}}.svg)]({API}/trust/v/{{key}})"
+    html_s = f'<a href="{API}/trust/v/{{key}}"><img src="{API}/badge/{{key}}.svg" alt="{alt}" height="20"></a>'
+    lk = lambda href, txt: f'<a href="{href}" target="_blank" rel="noopener">{E(txt)}</a>'
+    return f"""<section class="card cp-sec" id="badge"><h2>{E(_t("Get your badge"))}</h2>
+<p>{_t("Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.")}</p>
+<p class="ag-badge-ex">{E(_t("Example (a real vendor):"))} <a href="{page}" target="_blank" rel="noopener"><img src="{img}" alt="{E(alt)}" height="20" loading="lazy" style="vertical-align:middle"></a></p>
+<p class="meta">{_t("<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.")}</p>
+<h3>{E(_t("Find your key"))}</h3>
+<p>{_t("Your key is your Lumi vendor id (shown on the vendor trust list) or the exact host of the x402 URL Lumi bought, for example <code>api.example.com</code>. Paste your endpoint URL, host or vendor id:")}</p>
+<form id="bd-form" class="ag-badge-form" autocomplete="off"><input id="bd-key" type="text" inputmode="url" maxlength="300" placeholder="{E(_t("https://api.example.com/v1/data or a vendor id"))}" aria-label="{E(_t("Endpoint URL, host or vendor id"))}" style="min-width:min(100%,340px);padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:rgba(5,8,14,.6);color:inherit"> <button type="submit" class="btn">{E(_t("Make my badge"))}</button></form>
+<p id="bd-out" class="ag-badge-ex" hidden></p>
+<p class="muted" id="bd-err" hidden></p>
+<p class="meta">{E(_t("Markdown (README.md)"))}</p><pre class="ag-code"><code id="bd-md">{E(md)}</code></pre>
+<p class="meta">{E(_t("HTML"))}</p><pre class="ag-code"><code id="bd-html">{E(html_s)}</code></pre>
+<p class="meta">{_t("Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.")} {lk(API + "/badge", _t("Badge docs"))} · <a href="../how-it-works/">{E(_t("How Lumi tests"))}</a></p></section>"""
+
+
 def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
     E, _t = h.E, h._
     row = lambda p, ep, pr: f'<tr><td>{E(_t(p))}</td><td class="mono">{E(ep)}</td><td class="num mono">{E(_t(pr) if pr == "free" else pr)}</td></tr>'
@@ -230,6 +257,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <p>{_t("Prove you control your payTo wallet by signing a challenge (XRPL or Base; Lumi never asks for keys or seeds), enrol your endpoints for free, then pay a plan with x402. Lumi test-buys your endpoints with real payments and alerts you by webhook or email when something breaks: no data, errors, timeouts, or a changed payTo, price or response schema.")}</p>
 {ptable(MONITOR_PLANS)}
 <p class="meta">{_t("Each test-buy is capped at $0.10 and funded from the plan fee. A paid plan is disclosed on the seller's public entry, findings stay public with the seller's reply next to them, and the badge is removed automatically when a test fails or the plan lapses. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
+{badge_section(h)}
 <section class="card cp-sec" id="feed"><h2>{E(_t("Trust data feed and licence"))}</h2>
 <p>{_t("Keyed, licensed access to Lumi's trust observations for facilitators, wallets and agent frameworks: bulk lookups of up to 50 URLs or payTo addresses per request, a status-change feed and, on Feed Pro, a full snapshot export.")}</p>
 {ptable(FEED_PLANS)}
@@ -258,7 +286,8 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas come from an AI's paper-trading experiment; no real money is traded.")}</span></div>
 </main>
 """
-    return _page(h, tp, "agents/", title, desc, ld, body, V, gen_date, nav_items, "agents", keywords=seo.keywords(_t, "agents", h.L.en))
+    js = '<script src="{R}assets/badge.js?v={V}" defer></script>\n'
+    return _page(h, tp, "agents/", title, desc, ld, body, V, gen_date, nav_items, "agents", extra_js=js, keywords=seo.keywords(_t, "agents", h.L.en))
 
 
 def trust_page(h, tp, nav_items, V, gen_date, doc):
