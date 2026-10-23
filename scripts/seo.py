@@ -91,7 +91,7 @@ def web_api(t, lang, prices, page_url=None, full=True):
 
 TRUST_DS_NAME = "Lumi x402 vendor trust list"
 TRUST_DS_DESC = ("Automated observations of x402 pay-per-call endpoints that AI agents can buy from: free checks that each endpoint "
-                 "returns a valid 402 payment quote, small paid test-buys with links to the on-ledger transactions (Base, XRP Ledger), "
+                 "returns a valid 402 payment quote, small paid test-buys with links to the on-ledger transactions (XRPL, Base, Stellar), "
                  "and a 30-day trust score with a confidence level per vendor. Updated regularly; free to read as JSON. "
                  "Observations, not a rating or review of any business.")
 
