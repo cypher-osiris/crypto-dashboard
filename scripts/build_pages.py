@@ -345,15 +345,21 @@ DATASET_DESC = ("Crypto prices (30-day hourly history), technical signals (RSI, 
 # Cloudflare Web Analytics. lumitrades.io is DNS-only to GitHub Pages (not proxied), so Cloudflare's automatic setup cannot
 # inject the beacon here (it only reaches proxied hosts such as api.lumitrades.io): every page carries the manual JS snippet.
 # The site token is public by design (it is in the page source). Site: Cloudflare dash > Web Analytics > lumitrades.io.
-CF_BEACON_TOKEN = "bb04df7104dc42b98ed683b5711cf149"
+CF_BEACON_TOKEN = "0212d2464cb04c11b35401da715265c6"
 CF_BEACON = ("<!-- Cloudflare Web Analytics --><script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
              "data-cf-beacon='{\"token\": \"" + CF_BEACON_TOKEN + "\"}'></script><!-- End Cloudflare Web Analytics -->")
 # hand-made pages the generators never write; build() keeps the beacon in them too
 STATIC_PAGES = ("classic/index.html", "preview/index.html")
 
 
+_CF_BEACON_RE = re.compile(r"<!-- Cloudflare Web Analytics -->.*?<!-- End Cloudflare Web Analytics -->", re.S)
+
+
 def with_beacon(html_src):
-    """The page with the Cloudflare Web Analytics beacon just before </head> (idempotent; pages without a head are left alone)."""
+    """The page with the Cloudflare Web Analytics beacon just before </head> (idempotent; pages without a head are left alone).
+    An existing beacon snippet is rewritten to the current CF_BEACON, so changing CF_BEACON_TOKEN updates every page."""
+    if _CF_BEACON_RE.search(html_src):
+        return _CF_BEACON_RE.sub(lambda m: CF_BEACON, html_src)
     if "static.cloudflareinsights.com/beacon.min.js" in html_src or "</head>" not in html_src:
         return html_src
     return html_src.replace("</head>", CF_BEACON + "\n</head>", 1)
