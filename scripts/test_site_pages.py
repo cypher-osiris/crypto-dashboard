@@ -19,7 +19,7 @@ class SitePages(unittest.TestCase):
         c = sp.route_counts()
         self.assertEqual(c["m"], len(sp.MARKET_PRICES))
         self.assertEqual(c["t"], 2)
-        self.assertEqual((c["lo"], c["hi"]), ("$0.003", "$0.25"))
+        self.assertEqual((c["lo"], c["hi"]), ("$0.003", "$0.10"))
         txt = sp.AGENTS_ROUTES_TEXT.format(**c)
         self.assertIn(f"{len(sp.MARKET_PRICES)} paid market routes", txt)
         self.assertNotIn("17 paid routes", txt)

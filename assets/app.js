@@ -258,12 +258,6 @@
   const lev = (t) => +t.leverage || 1; // per-idea leverage, 1x-10x by conviction (every record carries it)
   const levTxt = (L) => (+L === 1 ? "SPOT" : `${L}x`); // 1x = spot (no leverage, long only)
   const movePct = (t, p, from = t.entry) => (dirSign(t) * (p - from) / from) * 100;
-  function livePnl(t, price) {
-    // blended across targets, same rule as the update script (targets already hit are locked in)
-    const n = t.targets.length, hits = (t.targets_hit || []).map((h) => h.price);
-    const legs = hits.concat(Array(Math.max(0, n - hits.length)).fill(price));
-    return legs.reduce((a, p) => a + movePct(t, p) * lev(t), 0) / n;
-  }
   function zoneOf(t) { const z = t.entry_zone || {}; return { lo: z.low ?? t.entry, hi: z.high ?? t.entry }; }
   function zoneDistance(t, price) {
     const { lo, hi } = zoneOf(t);
@@ -424,7 +418,7 @@
         <div><small>${t.status === "open" ? "Filled" : "Entry zone"}</small>${t.status === "open" ? num(t.entry) : zoneTxt}</div>
         <div><small>Stop</small>${num(t.current_stop ?? t.stop)} <span class="down">${(movePct(t, t.current_stop ?? t.stop, ref) * L).toFixed(1)}%</span></div>
         ${tg}
-        <div class="pnl-cell"><small>${closed ? "Result" : t.status === "open" ? "Unrealized P&L" : "If filled now"}</small><b class="mono" data-upnl>${closed && t.pnl_pct != null ? pct(t.pnl_pct) : "—"}</b></div>
+        ${t.status === "pending" ? `<div class="pnl-cell"><small>If filled now</small><b class="mono" data-upnl>—</b></div>` : ""}
       </div>
       ${altLine(t)}
       ${t.parent_id ? `<p class="mp-linked">↯ Missed-it plan of <b class="mono">${esc(t.parent_id)}</b>${t.plan_type ? ` (${esc(t.plan_type)})` : ""}${t.trigger ? `: ${esc(t.trigger)}` : ""}${t.size_note ? `. ${esc(t.size_note)}` : ""}</p>` : ""}
@@ -452,12 +446,11 @@
         // hypothetical P&L is meaningless before a fill: show R:R from the zone midpoint instead
         const { lo, hi } = zoneOf(t), mid = (lo + hi) / 2;
         const rr = Math.abs(t.targets[0] - mid) / Math.abs(mid - t.stop);
-        up.innerHTML = `<span class="muted">R:R to T1 ${rr.toFixed(2)}</span>`;
+        if (up) up.innerHTML = `<span class="muted">R:R to T1 ${rr.toFixed(2)}</span>`;
       } else if (t.status === "open") {
-        const v = livePnl(t, price);
-        dist.className = "slate-dist " + (v >= 0 ? "in" : "away");
-        dist.textContent = `${(movePct(t, price) >= 0 ? "+" : "")}${movePct(t, price).toFixed(2)}% from fill`;
-        up.innerHTML = pct(v);
+        // no live P&L / return figure: the track record and P&L stay private
+        dist.className = "slate-dist in";
+        dist.textContent = `open · filled at ${num(t.entry)}`;
       }
     });
     document.querySelectorAll("[data-exp]").forEach((e) => (e.textContent = countdown(e.dataset.exp)));
@@ -487,9 +480,8 @@
         <td>${t.targets.map((x, i) => (t.targets_hit || [])[i] ? `<b class="up">${num(x)}✓</b>` : num(x)).join(" / ")}</td>
         <td><span class="status s-${esc(t.status)}">${esc(t.status)}</span>${t.closed_at ? `<br><small class="meta">${esc(ct(t.closed_at))}</small>` : ""}</td>
         <td>${t.exit_price != null ? num(t.exit_price) : t.mark_price != null ? `<small class="meta">mark <span data-lp="${t.coin}">${num(t.mark_price)}</span></small>` : "—"}</td>
-        <td data-row-pnl="${esc(t.id)}">${t.pnl_pct != null ? pct(t.pnl_pct) : t.status === "open" && t.unrealized_pnl_pct != null ? pct(t.unrealized_pnl_pct) : "—"}</td>
       </tr>`;
-    }).join("") || '<tr><td colspan="10">No active ideas right now.</td></tr>';
+    }).join("") || '<tr><td colspan="9">No active ideas right now.</td></tr>';
   }
 
   /* ---------- live wiring ---------- */
@@ -510,9 +502,6 @@
     document.querySelectorAll(`[data-src="${t.id}"]`).forEach((e) => { e.textContent = `${window.Live?.SOURCE_LABEL[t.source] || t.source} ${t.source === "coingecko" ? "· 60s poll" : "· live"}`; e.className = "src-tag " + (t.source === "coingecko" ? "poll" : "ws"); });
     updateSlateLive(t.id, t.price);
     // open-trade rows in the table
-    (Dash.state.trades.trades || []).filter((x) => x.coin === t.id && x.status === "open").forEach((x) => {
-      const td = document.querySelector(`[data-row-pnl="${x.id}"]`); if (td) td.innerHTML = pct(livePnl(x, t.price)) + ' <small class="meta">live</small>';
-    });
     updateChart(t.id, t.price);
     if (t.id === st.backdrop) updateChart("__backdrop", t.price);
     document.dispatchEvent(new CustomEvent("live:tick", { detail: t }));

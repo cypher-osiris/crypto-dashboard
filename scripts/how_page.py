@@ -47,7 +47,7 @@ TRACK_LIST = [
     "In the candle that fills the idea, only the stop is checked; targets are not credited until the next candle.",
     "If the stop and a target are both inside the same candle, the tracker assumes the stop was hit first.",
     "After T1 is hit, the stop moves to the entry price (breakeven) from the next candle.",
-    "P&amp;L is measured on margin (price move times leverage), without fees or funding.",
+    "Target and stop distances are measured on margin (price move times leverage), without fees or funding.",
 ]
 MISSED_P = ("Every new idea also comes with a \"Missed it?\" plan for people who see it late: a pullback retest, a breakout, or a flip after a stop, "
             "with its own zone, stop and target, and a reward-to-risk of at least 1.5 from the worst fill, or an honest \"no good chase\". "

@@ -45,20 +45,21 @@ MARKET_PRICES = [
     ("CoinMarketCap Fear & Greed with history", "GET /v1/fear-greed", "$0.003"),
     ("Events in the next 48 hours", "GET /v1/events/next48h", "$0.003"),
     ("Paper-trade history", "GET /v1/trades", "$0.02"),
-    ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.25"),
+    ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.10"),
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES
 AGENTS_ROUTES_TEXT = ("Live signals for the top 50 coins, support and resistance levels, the paper-trade slate, and market and policy briefs: "
                       "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
-                      "on every paid route except the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
+                      "on every paid route, including the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
                       "or an activated XRP Ledger account; one trial per wallet, nothing is moved).")
 
 
 def route_counts():
     """Paid route counts and price range, computed from the tables above (the /agents/ text and the homepage use these)."""
-    paid = [float(x[2].lstrip("$")) for x in PRICES if x[2] != "free"]
+    paid = [x[2] for x in PRICES if x[2] != "free"]
+    num = lambda s: float(s.lstrip("$"))
     return {"m": len(MARKET_PRICES), "t": sum(1 for x in TRUST_PRICES if x[2] != "free"),
-            "lo": f"${min(paid):g}", "hi": f"${max(paid):g}"}
+            "lo": min(paid, key=num), "hi": max(paid, key=num)}
 
 
 # (plan, price, what you get). Live: GET /v1/monitor and GET /v1/feed. 30-day plans, no auto-renew.

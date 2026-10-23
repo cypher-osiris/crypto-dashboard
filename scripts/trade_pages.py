@@ -37,10 +37,8 @@ def outcome(t, h=None):
     """(css class, short label) for a trade's state (label translated when `h` is given)."""
     tr = (lambda x: h._(x)) if h else (lambda x: x)
     s = t.get("status")
-    if s in WON or (s == "closed" and (t.get("pnl_pct") or 0) > 0):
-        return "win", tr("Won")
-    if s in LOST or (s == "closed" and (t.get("pnl_pct") or 0) <= 0):
-        return "loss", tr("Stopped" if s == "stopped" else "Lost")
+    if s in WON or s in LOST or s == "closed":  # no win/loss outcome is published
+        return "void", tr("Closed")
     if s == "open":
         return "open", tr("T1 hit · open" if any(t.get("targets_hit") or []) else "Open")
     if s == "pending":
@@ -60,13 +58,13 @@ def lev_word(lev, h):
 
 
 def result_txt(t, h):
-    if t.get("pnl_pct") is not None:
-        return h.pct_txt(t["pnl_pct"], 2), h._("realized, at the idea's leverage")
-    if t.get("unrealized_pnl_pct") is not None:
-        return h.pct_txt(t["unrealized_pnl_pct"], 2), h._("unrealized at the last check ({when})", when=h.ctime(t.get("last_checked")))
+    """(value, note) for the "Result" slot. Never a P&L, return or win/loss figure, realized or unrealized, on any page
+    or language (standing rule since Oct 22, 2026: the track record and P&L stay private), even if the data has one."""
+    if t.get("status") == "pending":
+        return "—", h._("not filled yet")
     if t.get("status") == "cancelled":
-        return "—", h._("never filled, so no P&L")
-    return "—", h._("not filled yet")
+        return "—", h._("never filled")
+    return "—", h._("results are not published")
 
 
 def trade_chart(a, t, h):
@@ -120,7 +118,7 @@ def trade_chart(a, t, h):
     elif not t.get("filled_at") and t.get("status") not in ("pending", "cancelled") and t_open and t0 <= t_open <= t1 and t.get("entry") is not None:
         g.append(f'<circle cx="{X(t_open):.1f}" cy="{Y(t["entry"]):.1f}" r="5" fill="#38bdf8" stroke="#0b1220" stroke-width="2"><title>{h.E(h._("Entered at {p}", p=h.lvl(t["entry"])))}</title></circle>')
     if t_close and t.get("exit_price") is not None and t0 <= t_close <= t1:
-        c = "#22c55e" if (t.get("pnl_pct") or 0) > 0 else "#f43f5e"
+        c = "#94a3b8"  # neutral: the exit dot must not say win or loss
         g.append(f'<circle cx="{X(t_close):.1f}" cy="{Y(t["exit_price"]):.1f}" r="5" fill="{c}" stroke="#0b1220" stroke-width="2"><title>{h.E(h._("Exit {p}", p=h.lvl(t["exit_price"])))}</title></circle>')
     for i in range(4):
         x = t0 + (t1 - t0) * i / 3
@@ -135,7 +133,7 @@ def trade_chart(a, t, h):
           ([f'<span><i class="sw stop"></i>{h.E(h._("Stop"))} {h.lvl(stop)}</span>'] if stop is not None else []) + \
           [f'<span><i class="sw tg"></i>T{i + 1} {h.lvl(x)}</span>' for i, x in enumerate(tg)] + \
           ([f'<span><i class="sw dot fill"></i>{h.E(h._("Fill"))} {h.lvl(t["entry"])}</span>'] if t.get("filled_at") or (t.get("status") not in ("pending", "cancelled") and t.get("entry") is not None) else []) + \
-          ([f'<span><i class="sw dot {"win" if (t.get("pnl_pct") or 0) > 0 else "loss"}"></i>{h.E(h._("Exit"))} {h.lvl(t["exit_price"])}</span>'] if t.get("exit_price") is not None else []) + \
+          ([f'<span><i class="sw dot" style="background:#94a3b8"></i>{h.E(h._("Exit"))} {h.lvl(t["exit_price"])}</span>'] if t.get("exit_price") is not None else []) + \
           [f'<span class="muted">{h.E(h._("Dotted lines: posted / closed"))} · {h.E(win)}</span>']
     col = "#7dd3fc"
     label = (h._("{sym} hourly price around paper idea {id}: entry zone (amber), stop (red), targets (green)", sym=a["symbol"], id=t["id"])
@@ -279,7 +277,6 @@ def assets(h, pre, V):
 
 def mini_card(t, a, h, pre):
     cls, lab = outcome(t, h)
-    res, _r = result_txt(t, h)
     z = t.get("entry_zone") or {}
     when = h.ctime(t.get("closed_at") or t.get("opened_at"), False)
     arrow = "▲" if t.get("direction") != "short" else "▼"
@@ -287,7 +284,7 @@ def mini_card(t, a, h, pre):
     return (f'<a class="tp-card o-{cls}" href="{pre}trades/{h.E(t["id"])}/">'
             f'<span class="tp-card-top"><b>{h.E(a.get("symbol", t["coin"]))}</b> <span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{arrow} {h.E(side_txt(t, h))}</span>'
             f'<span class="mono muted">{h.E(t["id"])}</span></span>'
-            f'<span class="tp-card-res"><span class="tp-badge o-{cls}">{h.E(lab)}</span><b class="mono">{h.E(res)}</b></span>'
+            f'<span class="tp-card-res"><span class="tp-badge o-{cls}">{h.E(lab)}</span></span>'
             f'<span class="tp-card-meta muted">{h.E(zone)} · {h.E(h._("stop {p}", p=h.lvl(t.get("stop"))))} · {h.E(when)}</span></a>')
 
 
@@ -319,12 +316,12 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
         posted = h.ctime(t.get("opened_at"), False)
         side = side_txt(t, h)
         title = (_t("Paper trade {id}: {sym} {side}, {status}", id=tid, sym=sym, side=side.replace(" · ", " "), status=lab.lower() if Lg.en or Lg.code in ("es", "pt", "tr") else lab)
-                 + (f" ({res})" if t.get("pnl_pct") is not None else "") + " | Lumi Trades")
+                 + " | Lumi Trades")
         desc = (_t("Lumi's {full} {dir} idea {id}, posted {date}: ", full=full, dir=h.dir_txt(t.get("direction")), id=tid, date=posted)
                 + (_t("entry zone {lo}–{hi}", lo=h.lvl(z.get('low')), hi=h.lvl(z.get('high'))) if z else _t("entry {p}", p=h.lvl(t.get('entry'))))
                 + _t(", stop {stop}, targets {targets}. ", stop=h.lvl(t.get('stop')), targets=' / '.join(h.lvl(x) for x in t.get('targets') or []))
                 + _t("Status: {status}", status=lab.lower() if Lg.en or Lg.code in ("es", "pt", "tr") else lab)
-                + (_t(", {res} at {lev}x", res=res, lev=t.get('leverage', 1)) if t.get("pnl_pct") is not None else "") + _t(". Paper trade, not financial advice."))
+                + _t(". Paper trade, not financial advice."))
         rr = risk_reward(t, h)
         grid = []
         if z:
@@ -459,7 +456,7 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("Trade ideas"))}</p>
 <h1>{_t("Lumi's active paper-trade ideas")}</h1>
 <p class="cp-lede">{_t("Every idea Lumi has open or waiting for entry, with its own page: entry zone, stop, targets, chart and reasoning. Updated {when}.", when=E(h.ctime(trades.get("tracked_utc") or trades.get("evaluated_utc"))))}</p>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trading only, not financial advice.</strong> P&amp;L on open ideas is the price move at the idea's leverage on margin, without fees or funding.")}</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trading only, not financial advice.</strong> Target and stop distances are price moves at the idea's leverage on margin, without fees or funding. Results are not published.")}</span></div>
 <section class="card cp-sec"><h2>{E(_t("Active now ({n})", n=len(live)))}</h2><div class="tp-cards">{"".join(map(card, newest)) or "<p>" + E(_t("No active ideas right now.")) + "</p>"}</div></section>
 <p class="tp-links"><a href="../#slate">{_t("Today's trade ideas →")}</a> <a href="../agents/">{E(_t("Lumi's data for AI agents →"))}</a></p>
 </main>
@@ -508,12 +505,10 @@ def snapshot(h, index, prices, trades, analysis):
         a = A.get(t["coin"], {})
         cls, lab = outcome(t, h)
         z = t.get("entry_zone") or {}
-        res, _r = result_txt(t, h)
         lv = (_t("Fill {p}", p=h.lvl(t.get("entry"))) if t.get("status") == "open" else _t("Zone {lo}–{hi}", lo=h.lvl(z.get("low")), hi=h.lvl(z.get("high"))))
         lv += " · " + _t("Stop {p}", p=h.lvl(t.get("stop"))) + " · " + _t("Targets {list}", list=" / ".join(h.lvl(x) for x in t.get("targets") or []))
         cards.append(f'<article class="pv-card snap-trade o-{cls}"><p class="snap-tt"><b>{E(a.get("symbol"))}</b> <span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{E(side_txt(t, h))}</span> <span class="tp-badge o-{cls}">{E(lab)}</span></p>'
-                     f'<p class="mono snap-lv">{E(lv)}'
-                     f'{" · " + E(_t("P&L {res}", res=res)) if t.get("status") == "open" else ""}</p>'
+                     f'<p class="mono snap-lv">{E(lv)}</p>'
                      f'<a href="trades/{E(t["id"])}/">{E(_t("Trade {id} details →", id=t["id"]))}</a></article>')
     slate = "".join(cards) or f'<p class="muted">{E(_t("No active ideas right now."))}</p>'
     out = index

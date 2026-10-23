@@ -240,8 +240,8 @@
     const [cls, lbl] = statusOf(t), long = t.direction !== "short", L = lev(t);
     const page = D.pages.has(a.symbol.toLowerCase()) ? `<a class="pv-more-link" href="${HOME}${a.symbol.toLowerCase()}/">${tr("{sym} analysis &amp; levels", { sym: esc(a.symbol) })} ${ICON.arrow}</a>` : "";
     let live = "";
-    if (t.status === "open" && t.unrealized_pnl_pct != null) live = `<span class="pv-pnl">P&amp;L ${pctSpan(t.unrealized_pnl_pct)}<small> (${t.last_checked ? ct(t.last_checked, { month: undefined, day: undefined }) : tr("tracker")})</small></span>`;
-    else if (t.status === "pending" && t.expiry) live = `<span class="muted pv-exp">${ICON.clock} ${tr("expires {when}", { when: ct(t.expiry) })}</span>`;
+    // never a P&L / return figure (track record and P&L stay private)
+    if (t.status === "pending" && t.expiry) live = `<span class="muted pv-exp">${ICON.clock} ${tr("expires {when}", { when: ct(t.expiry) })}</span>`;
     return `<article class="slate-card pv-trade ${esc(t.status)}" data-slate="${esc(t.id)}" data-coin="${esc(t.coin)}" data-sym="${esc(a.symbol)}" data-lev="${L}" data-dir="${esc(t.direction)}" data-cb="${esc(D.cb[t.coin] || "")}">
       <div class="pv-trade-top">
         <span class="pv-dir ${long ? "long" : "short"}" title="${long ? tr("Long") : tr("Short")}">${long ? ICON.up : ICON.down}</span>
