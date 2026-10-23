@@ -291,7 +291,9 @@
   "reply ({n})": "yanıt ({n})",
   "low": "düşük",
   "medium": "orta",
-  "high": "yüksek"
+  "high": "yüksek",
+  "Not a valid key: use a vendor id or a host name like api.example.com.": "Geçersiz anahtar: bir satıcı kimliği veya api.example.com gibi bir host adı kullanın.",
+  "Result page": "Sonuç sayfası"
  },
  "pages": {
   " (filled {when})": " ({when} gerçekleşti)",
@@ -851,6 +853,20 @@
   "The site is not aimed at children. If this policy changes, this page is updated and the date at the top changes.": "Site çocuklara yönelik değildir. Bu politika değişirse bu sayfa güncellenir ve en üstteki tarih değişir.",
   "By subscribing you agree to our <a href=\"{href}\">Privacy Policy</a>.": "Abone olarak <a href=\"{href}\">Gizlilik Politikamızı</a> kabul etmiş olursunuz.",
   "Daily crypto levels and a paper-trade slate, institutional-adoption news with XRPL first, and an x402 trust API for AI agents. Not financial advice.": "Günlük kripto seviyeleri ve sanal işlem listesi, XRPL öncelikli kurumsal benimseme haberleri ve yapay zekâ ajanları için x402 güven API’si.",
-  "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "Abone olarak <a href=\"privacy/\">Gizlilik Politikamızı</a> kabul etmiş olursunuz."
+  "By subscribing you agree to our <a href=\"privacy/\">Privacy Policy</a>.": "Abone olarak <a href=\"privacy/\">Gizlilik Politikamızı</a> kabul etmiş olursunuz.",
+  "Get your badge": "Rozetinizi alın",
+  "Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL or Base), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.": "Lumi'nin test ettiği bir x402 uç noktası mı satıyorsunuz? Gösterin. Ücretsiz “Tested by Lumi” rozeti, Lumi'nin hizmetiniz için kayıtlı en son ücretli test alımının sonucunu ve tarihini, ayrıca zinciri (XRPL veya Base) gösterir ve tarihli testlerin ve yanıt hakkınızın yer aldığı herkese açık bir sonuç sayfasına bağlanır. Kayıt gerekmez ve Lumi'ye ödeme yapmak sonucu asla değiştirmez.",
+  "Example (a real vendor):": "Örnek (gerçek bir satıcı):",
+  "<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.": "<b>delivered</b> (yeşil): ücretli yanıt veri içeriyordu · <b>not delivered</b> (kırmızı): satıcı kullanılabilir veri olmadan yanıt verdi · <b>inconclusive</b> (gri): Lumi hiç yanıt görmedi; Lumi tarafındaki bu sonuç aleyhinize sayılmaz · <b>not yet tested</b>: Lumi'nin kayıtlı bir sonucu yok.",
+  "Find your key": "Anahtarınızı bulun",
+  "Your key is your Lumi vendor id (shown on the vendor trust list) or the exact host of the x402 URL Lumi bought, for example <code>api.example.com</code>. Paste your endpoint URL, host or vendor id:": "Anahtarınız, Lumi satıcı kimliğiniz (satıcı güven listesinde gösterilir) ya da Lumi'nin satın aldığı x402 URL'sinin tam host adıdır, örneğin <code>api.example.com</code>. Uç nokta URL'nizi, host adınızı veya satıcı kimliğinizi yapıştırın:",
+  "https://api.example.com/v1/data or a vendor id": "https://api.example.com/v1/data veya bir satıcı kimliği",
+  "Endpoint URL, host or vendor id": "Uç nokta URL'si, host veya satıcı kimliği",
+  "Make my badge": "Rozetimi oluştur",
+  "Markdown (README.md)": "Markdown (README.md)",
+  "HTML": "HTML",
+  "Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.": "Olgusal test kanıtıdır; bir onay veya garanti değildir. Her yeni testten sonraki bir saat içinde güncellenir. Sorular veya itiraz: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.",
+  "Badge docs": "Rozet belgeleri",
+  "How Lumi tests": "Lumi nasıl test eder"
  }
 }
