@@ -3,18 +3,21 @@
 #   scripts/publish.sh                    # stage everything under data/
 #   scripts/publish.sh data/trades.json data/log.json data/signals.json   # stage only these paths
 #   PUBLISH_MSG="custom message" scripts/publish.sh
-# Steps: take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push.
+# Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push.
 # Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export GIT_TERMINAL_PROMPT=0 GIT_EDITOR=true
+# Network steps are bounded so a stalled GitHub connection can't hold state/lock forever (124 = timed out).
+GIT_NET_TIMEOUT="${GIT_NET_TIMEOUT:-120}"
+gitnet() { timeout -k 10 "$GIT_NET_TIMEOUT" git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 "$@"; }
 mkdir -p state
 paths=("$@"); [ ${#paths[@]} -eq 0 ] && paths=(data)
 
 exec 9>>state/lock
 if ! flock -w 300 9; then echo "publish: could not acquire state/lock" >&2; exit 3; fi
 
-git pull --rebase --autostash --quiet
+gitnet pull --rebase --autostash --quiet
 
 # Data publishes first scrub paper-trade results out of the public files (scripts/privacy.py; the full trades doc is
 # state/trades_full.json, git-ignored). A failed scrub stops the publish so results never go out by accident.
@@ -50,8 +53,8 @@ fi
 msg="${PUBLISH_MSG:-Data update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')}"
 git commit --quiet -m "$msg" -- "${paths[@]}"
 for i in 1 2 3; do
-  if git push --quiet; then echo "publish: pushed $(git rev-parse --short HEAD) — $msg"; exit 0; fi
+  if gitnet push --quiet; then echo "publish: pushed $(git rev-parse --short HEAD) — $msg"; exit 0; fi
   echo "publish: push failed (attempt $i), rebasing and retrying" >&2
-  sleep $((i * 3)); git pull --rebase --autostash --quiet
+  sleep $((i * 3)); gitnet pull --rebase --autostash --quiet
 done
 exit 1
