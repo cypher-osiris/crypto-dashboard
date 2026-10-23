@@ -522,7 +522,7 @@ git commit -m "Update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')"
 git push                                # non-interactive via gh credential helper (gh auth setup-git)
 ```
 Data-only updates need nothing else (JSON is fetched with a cache-busting query). If you change CSS/JS, bump the
-`?v=` version (currently `20261022-9`; build_pages.py reads it from index.html) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
+`?v=` version (currently `20261022-10`; build_pages.py reads it from index.html) on the asset links in `index.html` **and `classic/index.html`** so browsers pick up the new files
 (coin pages copy the version from index.html at build time).
 A Pages rebuild usually takes under a minute; check with
 `gh api repos/cypher-osiris/crypto-dashboard/pages/builds/latest --jq .status`.
