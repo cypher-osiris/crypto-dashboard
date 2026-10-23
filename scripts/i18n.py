@@ -40,6 +40,17 @@ def no_us_hidden_names(txt):
         return txt
     return _HIDDEN.sub("a supported exchange", _HIDDEN_LIST.sub("", txt))
 
+_PNL = re.compile(r"\b(?:un)?reali[sz]ed\s+P&L\b|\bP&L\b|\bprofit/loss\b|\bprofit and loss\b", re.I)
+
+
+def no_pnl(txt):
+    """Free text (reasoning, notes) never shows a P&L label on any page or language: the track record and P&L stay private.
+    Planned target/stop distances in the prose stay, but are called a move, not P&L."""
+    if not txt or not _PNL.search(txt):
+        return txt
+    return _PNL.sub(lambda m: "Move" if (m.start() == 0 or txt[:m.start()].rstrip().endswith((".", ":", ";", "(", "!", "?"))) else "move", txt)
+
+
 class Lang:
     def __init__(self, code):
         self.code = code
@@ -93,7 +104,7 @@ class Lang:
     def free(self, obj, field, E, default="", tag="span", cls=""):
         """Escaped free text; untranslated English on a non-English page is wrapped in lang="en" with the .i18n-en marker."""
         txt, en = self.loc(obj, field, default)
-        txt = no_us_hidden_names(txt)
+        txt = no_pnl(no_us_hidden_names(txt))
         if not txt:
             return ""
         return f'<{tag} lang="en" class="i18n-en{(" " + cls) if cls else ""}">{E(txt)}</{tag}>' if en else (

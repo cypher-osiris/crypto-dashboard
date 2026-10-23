@@ -39,7 +39,7 @@
 - `GET /v1/fear-greed`: CoinMarketCap Fear & Greed with history, $0.003 per call
 - `GET /v1/events/next48h`: Events in the next 48 hours, $0.003 per call
 - `GET /v1/trades`: Paper-trade history, $0.02 per call
-- `GET /v1/institutional`: Daily Institutional & Policy Brief, $0.25 per call
+- `GET /v1/institutional`: Daily Institutional & Policy Brief, $0.10 per call
 
 ## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
 - Monitor: $9 per 30 days. 1 endpoint: one test-buy per term (plus one recheck after a failure) and alerts

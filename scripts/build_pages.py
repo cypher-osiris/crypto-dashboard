@@ -213,8 +213,6 @@ def trade_html(t, sym, price, H):
     rows = []
     if t["status"] == "open":
         rows.append((_("Filled at"), lvl(t.get("entry")) + (_(" (filled {when})", when=ctime(t.get("filled_at"))) if t.get("filled_at") else "")))
-        if t.get("unrealized_pnl_pct") is not None:
-            rows.append((_("Unrealized P&L (paper)"), _("{pct} at the last check", pct=pct_txt(t["unrealized_pnl_pct"]))))
     else:
         rows.append((_("Entry zone"), f'{lvl(z.get("low"))} – {lvl(z.get("high"))}' if z else lvl(t.get("entry"))))
         if t.get("expiry"):

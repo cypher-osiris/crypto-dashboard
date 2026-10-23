@@ -122,7 +122,7 @@ FAQ = [
      "The signals are data from an AI's paper-trading experiment, not financial advice."),
     ("Is there a pay-per-call crypto API for AI agents?",
      "Yes. The Lumi Trades API sells crypto signals, support and resistance levels, CoinMarketCap Fear & Greed sentiment, the daily "
-     "paper-trade slate, a daily market brief and a daily Institutional & Policy Brief for $0.003 to $0.25 per call. There is no account, "
+     "paper-trade slate, a daily market brief and a daily Institutional & Policy Brief for $0.003 to $0.10 per call. There is no account, "
      "subscription or API key: every call is paid on its own with x402, and if the data is not fresh the API answers 503 and nothing is charged."),
     ("What is x402?",
      "x402 is an open payment protocol built on the HTTP status code 402 Payment Required, first published by Coinbase. A server answers "
@@ -152,7 +152,7 @@ FAQ = [
     ("What does the Institutional & Policy Brief cover?",
      "It is a daily, sourced summary of what central banks, standard-setters and regulators (for example the BIS, the IMF and US regulators), "
      "banks and tokenization firms are doing on stablecoins, CBDCs and tokenization, and how each item relates to XRP, XLM, XDC, QNT, AXL "
-     "and HBAR, marking confirmed links apart from indirect ones. One call costs $0.25 at GET /v1/institutional."),
+     "and HBAR, marking confirmed links apart from indirect ones. One call costs $0.10 at GET /v1/institutional."),
     ("Where does the Fear & Greed reading come from?",
      "Only from the CoinMarketCap Fear & Greed Index. GET /v1/sentiment ($0.005) returns it together with BTC funding and market breadth."),
 ]
