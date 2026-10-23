@@ -31,10 +31,18 @@ class SitePages(unittest.TestCase):
         self.assertIn(f'{c["m"]} market + {c["t"]} trust paid routes', h)
         self.assertNotIn("17 paid routes", h)
 
-    def test_trial_text_is_base_only(self):
-        self.assertIn("new Base wallets", sp.AGENTS_ROUTES_TEXT)
+    def test_trial_text_covers_base_and_xrpl(self):
+        self.assertIn("new Base and XRPL wallets", sp.AGENTS_ROUTES_TEXT)
         self.assertIn("0.01 USDC", sp.AGENTS_ROUTES_TEXT)
-        self.assertIn("XRPL-only wallets get no trial", sp.AGENTS_ROUTES_TEXT)
+        self.assertIn("activated XRP Ledger account", sp.AGENTS_ROUTES_TEXT)
+        self.assertIn("one trial per wallet", sp.AGENTS_ROUTES_TEXT)
+        self.assertNotIn("no trial", sp.AGENTS_ROUTES_TEXT)
+
+    def test_homepage_trial_text_covers_xrpl(self):
+        with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as f:
+            h = f.read()
+        self.assertIn("New Base and XRPL wallets get <b>3 free calls</b>", h)
+        self.assertNotIn("no trial", h)
 
     def test_no_projection_wording_for_levels(self):
         lv = [p for p in sp.MARKET_PRICES if p[1] == "GET /v1/levels/{coin}"][0][0]

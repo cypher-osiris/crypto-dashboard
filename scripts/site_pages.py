@@ -49,9 +49,9 @@ MARKET_PRICES = [
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES
 AGENTS_ROUTES_TEXT = ("Live signals for the top 50 coins, support and resistance levels, the paper-trade slate, and market and policy briefs: "
-                      "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base wallets get 3 free calls "
-                      "on every paid route except the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC; "
-                      "nothing is moved). XRPL-only wallets get no trial.")
+                      "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
+                      "on every paid route except the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
+                      "or an activated XRP Ledger account; one trial per wallet, nothing is moved).")
 
 
 def route_counts():
