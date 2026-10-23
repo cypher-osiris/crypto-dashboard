@@ -1,209 +1,176 @@
 {
   "product": "lumi-trades/institutional-policy-brief",
   "schema_version": 1,
-  "generated_utc": "2026-10-22T16:20:32Z",
-  "date": "2026-10-22",
+  "generated_utc": "2026-10-23T10:04:14Z",
+  "date": "2026-10-23",
   "coverage_window": {
-    "from": "2026-10-14",
-    "to": "2026-10-22"
+    "from": "2026-10-21",
+    "to": "2026-10-23"
   },
   "big_picture": [
-    "US stablecoin rules moved closer to taking effect this week: the OCC issued its final GENIUS Act rule (effective Jan 18, 2027), and comment periods on Treasury's GENIUS issuance rule and the SEC's proposed Regulation Crypto Assets both closed.",
-    "Banks and their partners kept putting regulated digital dollars onto public chains: JPMorgan's JPM Coin deposit token went live on Ethereum, and Cross River and DriveWealth both added Ripple's RLUSD on the XRP Ledger.",
-    "Global standard-setters (BIS, IMF) kept pushing the same message: tokenised deposits, regulated stablecoins and CBDCs should be interoperable and anchored to central bank money."
+    "Regulated digital dollars kept spreading through bank and fintech rails: SoFi launched a consumer tokenized deposit that converts 1:1 into its bank-issued stablecoin, and Anchorage Digital Bank became the direct stablecoin mint and redemption partner for Securitize.",
+    "On the XRP Ledger, Ripple and Swiss liquidity provider Arf announced RLUSD settlement financing for licensed payment companies, while a separate XRPL bug fix was pushed back to Nov 4 after validator support briefly dipped.",
+    "The SEC's Regulation Crypto Assets comment file closed with sharply split views: Ripple and a six-network coalition (including the Stellar Development Foundation and Hedera) asked for adoption with changes, while state securities regulators and the New York Attorney General asked for withdrawal.",
+    "In Asia, SBI's XDC joint venture and SBI VC Trade signed an MOU with Korea's Shinhan Card to explore yen-stablecoin and cross-border payments, adding to the regional push for stablecoin payment corridors."
   ],
   "items": [
     {
-      "entity": "US Treasury / OCC",
-      "headline": "OCC issues final GENIUS Act rule for payment stablecoin issuers; effective Jan 18, 2027. Treasury's GENIUS issuance NPRM closed for comment Oct 19",
-      "date": "2026-10-21",
-      "source_url": "https://occ.gov/news-issuances/news-releases/2026/nr-occ-2026-92.html",
-      "additional_sources": [
-        "https://www.federalregister.gov/documents/2026/08/18/2026-16796/genius-act-regulations-on-payment-stablecoin-issuance-offer-and-sale"
-      ],
-      "why_it_matters": "Gives bank-chartered stablecoin issuers a clear compliance path covering reserves, redemption, custody and licensing. BSA/AML rules will follow separately, and the application start date has not been announced.",
-      "coins": [
-        "RLUSD",
-        "USDC",
-        "XRP",
-        "XLM",
-        "HBAR"
-      ],
-      "impact": "bullish",
-      "confidence": "high",
-      "link_type": "context",
-      "link_basis": "Sector-wide US stablecoin rule; applies to regulated USD stablecoins such as RLUSD and USDC, names no token."
-    },
-    {
-      "entity": "SEC",
-      "headline": "Comment period on proposed Regulation Crypto Assets closes with 100+ submissions",
-      "date": "2026-10-20",
-      "source_url": "https://www.theblock.co/news/regulation/2026-10-20-sec-regulation-crypto-assets-comment-period-hyperliquid-sifma-aima-421444",
-      "additional_sources": [
-        "https://cointelegraph.com/news/bitwise-hyperliquid-seek-sec-rule-changes-for-token-trading-airdrops",
-        "https://www.theblock.co/news/markets/2026-10-17-coreweave-broadcom-verizon-among-nine-companies-objecting-to-tokenized-trading-of-their-shares-on-okxice-418859"
-      ],
-      "why_it_matters": "The final text will shape token classification and secondary trading. No timetable has been set and one letter asked for withdrawal. Separately, nine issuers used objection rights against tokenized trading of their shares on OKXICE.",
-      "coins": [
-        "ETH",
-        "SOL",
-        "broad-altcoins"
-      ],
-      "impact": "neutral",
-      "confidence": "high",
-      "link_type": "context"
-    },
-    {
-      "entity": "CFTC",
-      "headline": "ANPRM on Regulation Crypto Asset Transactions and Crypto Asset Markets published in the Federal Register",
-      "date": "2026-10-13",
-      "source_url": "https://www.federalregister.gov/documents/2026/10/13/2026-20888/regulation-crypto-asset-transactions-and-regulation-crypto-asset-markets",
-      "why_it_matters": "Starts a framework for retail leveraged and margined crypto trading, with comments due Dec 14. Agencies are writing their own rules while legislation stays stalled.",
-      "coins": [
-        "BTC",
-        "ETH"
-      ],
-      "impact": "neutral",
-      "confidence": "medium",
-      "link_type": "context"
-    },
-    {
-      "entity": "JPMorgan (Kinexys / JPM Coin)",
-      "headline": "JPM Coin (JPMD) USD deposit token goes live on Ethereum L1 for institutional clients",
-      "date": "2026-10-19",
-      "source_url": "https://www.jpmorgan.com/payments/newsroom/jpm-coin-live-on-ethereum",
-      "additional_sources": [
-        "https://www.theblock.co/news/business/2026-10-19-jpmorgan-jpm-coin-deposit-token-ethereum-418874"
-      ],
-      "why_it_matters": "A large bank is using public chains to settle deposit tokens. JPMorgan says Kinexys has processed over $4T cumulatively, averaging about $7B a day. JPMD also competes with public stablecoins.",
-      "coins": [
-        "ETH"
-      ],
-      "impact": "bullish",
-      "confidence": "high",
-      "link_type": "confirmed",
-      "link_basis": "JPMorgan announced JPM Coin live on Ethereum."
-    },
-    {
-      "entity": "Cross River Bank",
-      "headline": "Cross River builds Ripple's RLUSD on the XRP Ledger into its core banking OS",
-      "date": "2026-10-15",
-      "source_url": "https://www.crossriver.com/newsroom/cross-river-embeds-ripple-usd-stablecoin-on-the-xrp-ledger-into-its-core-banking-infrastructure-expanding-faster-payment-capabilities-for-businesses",
-      "why_it_matters": "Fintechs get RLUSD alongside ACH, wires and real-time payments through one API. The release puts RLUSD above $2.5B market cap, with more than $1B on XRPL. Service is available only in limited states.",
-      "coins": [
-        "XRP",
-        "RLUSD"
-      ],
-      "impact": "bullish",
-      "confidence": "high",
-      "link_type": "confirmed",
-      "link_basis": "Cross River announced RLUSD on the XRP Ledger in its core banking stack."
-    },
-    {
       "entity": "Ripple",
-      "headline": "DriveWealth partners with Ripple for RLUSD settlement, payments, custody and equity financing",
-      "date": "2026-10-14",
-      "source_url": "https://ripple.com/ripple-press/drivewealth-and-ripple-partner-to-bring-institutional-digital-asset-infrastructure-to-global-investing/",
-      "why_it_matters": "Brings stablecoin funding to brokerage infrastructure, starting in Europe with plans for the US. No launch date was given.",
+      "headline": "Ripple and Arf partner to bring RLUSD settlement liquidity for licensed payment companies to the XRP Ledger",
+      "date": "2026-10-22",
+      "source_url": "https://crypto.news/ripple-arf-rlusd-settlement-liquidity-xrpl/",
+      "additional_sources": [
+        "https://arf.one/tag/press-release/",
+        "https://news.bitcoin.com/crypto-news/ripple-teams-arf-bring-rlusd-lending-xrp-ledger/"
+      ],
+      "why_it_matters": "Arf, a Zug-based settlement liquidity provider reporting about $10B in annual settlement volume, will lend RLUSD as short-term working capital (typically repaid in one to five days) to licensed cross-border payment firms. A later phase would move to XRPL's native lending (XLS-65 vaults and XLS-66 lending), which still lacks the validator support needed to activate. Coverage notes XRP covers network fees and reserves.",
       "coins": [
         "XRP",
         "RLUSD"
       ],
       "impact": "bullish",
-      "confidence": "medium",
+      "confidence": "high",
       "link_type": "confirmed",
-      "link_basis": "Ripple and DriveWealth announced the partnership (RLUSD on XRPL settlement)."
+      "link_basis": "Arf and Ripple announced RLUSD settlement financing on the XRP Ledger."
     },
     {
-      "entity": "SBI Holdings",
-      "headline": "SBI XDC Network APAC, SBI VC Trade and Shinhan Card sign MOU for a yen-stablecoin payment trial",
+      "entity": "XRP Ledger (network)",
+      "headline": "XRPL fixCleanup3_4_0 amendment delayed from Oct 23 to Nov 4 after validator support briefly fell below threshold",
+      "date": "2026-10-22",
+      "source_url": "https://www.coindesk.com/tech/2026/10/22/xrp-ledger-bug-fix-moved-to-november-after-validator-support-dipped-for-two-hours",
+      "why_it_matters": "Support dropped to 26 of 35 trusted validators for about two hours, resetting the two-week activation countdown; it has since recovered to 31 (29 needed). The separate Lending Protocol amendment, which Arf's planned native-lending phase relies on, is not yet active.",
+      "coins": [
+        "XRP"
+      ],
+      "impact": "neutral",
+      "confidence": "high",
+      "link_type": "confirmed",
+      "link_basis": "Protocol-level change on the XRP Ledger."
+    },
+    {
+      "entity": "SBI Holdings / XDC Network",
+      "headline": "SBI XDC Network APAC and SBI VC Trade sign MOU with Shinhan Card on blockchain payments, including JPY stablecoin proofs of concept",
       "date": "2026-10-21",
       "source_url": "https://www.sbigroup.co.jp/english/news/pdf/2026/1021_a_en.pdf",
       "additional_sources": [
-        "https://www.ajupress.com/view/20261021112470875"
+        "https://en.fnnews.com/news/202610211431492932"
       ],
-      "why_it_matters": "Proof of concept for cross-border yen-stablecoin card payments and trade settlement on XDC infrastructure. Any commercial launch depends on regulation in Japan and Korea.",
+      "why_it_matters": "Shinhan Card (about 20 million card members) and SBI's XDC joint venture will support XDC Network infrastructure, explore JPY-stablecoin in-store payments and run proofs of concept, then look at cross-border trade settlement between Japan and Korea. It is an MOU: no product or launch date was announced.",
       "coins": [
         "XDC"
       ],
       "impact": "bullish",
-      "confidence": "medium",
+      "confidence": "high",
       "link_type": "confirmed",
-      "link_basis": "SBI XDC Network APAC is a named party to the MOU."
+      "link_basis": "The SBI release names the XDC Network as the ecosystem the parties will support."
     },
     {
-      "entity": "XDC Network",
-      "headline": "XDC listed on Robinhood; Concordium selected as Know-Your-Agent layer",
-      "date": "2026-10-15",
-      "source_url": "https://www.globenewswire.com/news-release/2026/10/15/3382096/0/en/xdc-now-listed-on-robinhood-expanding-access-to-millions-of-u-s-users.html",
+      "entity": "SEC",
+      "headline": "Regulation Crypto Assets comment file closes split: Ripple urges adoption; NASAA and the New York Attorney General ask for withdrawal; staff publish Innovation Exemption FAQ",
+      "date": "2026-10-22",
+      "source_url": "https://finance.yahoo.com/markets/crypto/articles/state-regulators-fear-sec-crypto-182042977.html",
       "additional_sources": [
-        "https://xdc.org/articles/xdc-weekly-oct-11"
+        "https://www.sec.gov/comments/S7-2026-27/s7202627-1102200-3881828.pdf",
+        "https://www.lowenstein.com/news-insights/newsletters/crypto-brief-october-22-2026"
       ],
-      "why_it_matters": "Opens access to US retail investors and adds an identity layer for AI-agent payments.",
-      "coins": [
-        "XDC"
-      ],
-      "impact": "bullish",
-      "confidence": "medium",
-      "link_type": "confirmed"
-    },
-    {
-      "entity": "Stellar",
-      "headline": "Bell (Protocol 30) upgrade announced: W-addresses, millisecond ledger timing, post-quantum signatures",
-      "date": "2026-10-20",
-      "source_url": "https://coinedition.com/crypto-live-news/stellar-announces-bell-upgrade-ahead-of-november-23-validator-vote/",
-      "why_it_matters": "Lets institutions manage many customer balances through one smart contract. Testnet upgrades Nov 3; mainnet vote Nov 23.",
-      "coins": [
-        "XLM"
-      ],
-      "impact": "bullish",
-      "confidence": "medium",
-      "link_type": "confirmed"
-    },
-    {
-      "entity": "BIS",
-      "headline": "BIS publishes central-bank speeches on trusted digital money and interoperability (MAS keynote, Central Bank of Ireland)",
-      "date": "2026-10-19",
-      "source_url": "https://www.bis.org/speeches/20261019-building-trusted-foundations-digital-finance",
-      "additional_sources": [
-        "https://www.bis.org/speeches/20261020-transitioning-through-trust-securing-future-payments"
-      ],
-      "why_it_matters": "Treats deposit tokens, regulated stablecoins and CBDC as complementary, with a 'network of networks' linked by interoperability standards and agentic-finance safeguards.",
+      "why_it_matters": "Ripple's 20-page letter supports the proposal, argues the investment contract rather than the token is the security, and asks for protections for secondary trading, holding, lending, collateral use and staking. State regulators argue the exemptions weaken investor protections. On Oct 21 SEC Trading and Markets staff also published an Innovation Exemption FAQ on the 30-day notice and issuer-objection process for tokenized securities venues. No final-rule timetable has been set.",
       "coins": [
         "XRP",
         "XLM",
         "HBAR",
-        "XDC",
-        "AXL"
+        "broad-altcoins"
+      ],
+      "impact": "mixed",
+      "confidence": "high",
+      "link_type": "context",
+      "link_basis": "Sector-wide rulemaking; Ripple filed its own comment letter."
+    },
+    {
+      "entity": "Stellar / Hedera",
+      "headline": "Stellar Development Foundation, Hedera and four other networks ask SEC to presume secondary resales of digital commodities are not investment contracts",
+      "date": "2026-10-20",
+      "source_url": "https://www.sec.gov/comments/S7-2026-27/s7202627-1103179-3882886.pdf",
+      "additional_sources": [
+        "https://www.tokenpost.com/news/regulation/38080"
+      ],
+      "why_it_matters": "The coalition (SDF, Hedera, Aptos Labs, Ava Labs, Cardano Foundation, Chainlink Labs) wants a binding digital-commodity definition and class-wide relief, without Form TR filings, for the six assets the SEC's March interpretation named as digital commodities, including XLM and HBAR. It is a request, not a ruling.",
+      "coins": [
+        "XLM",
+        "HBAR"
       ],
       "impact": "neutral",
       "confidence": "high",
-      "link_type": "indirect_alignment",
-      "link_basis": "Lumi's analysis: the speeches describe a 'network of networks' of deposit tokens, stablecoins and CBDC linked by interoperability standards, which matches the stated missions of interoperable settlement networks (XRPL, Stellar, Hedera, XDC) and cross-chain messaging (Axelar). No token is named."
+      "link_type": "confirmed",
+      "link_basis": "SDF and Hedera are named signatories."
     },
     {
-      "entity": "IMF",
-      "headline": "G-24/AFI roundtable at the IMF/World Bank Annual Meetings focuses on proportionate crypto rules",
-      "date": "2026-10-20",
-      "source_url": "https://afi-global.org/news/proportionate-crypto-regulation-takes-centre-stage-at-g-24-afi-roundtable/",
-      "why_it_matters": "Emerging-market policymakers flagged stablecoin risks to monetary policy and financial integrity, a signal for future global rules.",
+      "entity": "Hedera",
+      "headline": "Hedera launches hosted Network MCP on testnet so AI coding agents can build Hedera transactions",
+      "date": "2026-10-22",
+      "source_url": "https://docs.hedera.com/solutions/ai/hosted-mcp-server",
+      "additional_sources": [
+        "https://www.tokenpost.com/news/technology/38619"
+      ],
+      "why_it_matters": "AI coding agents get 40+ tools to build Hedera transactions, while users sign every transaction in their own wallet. It is testnet only for now; mainnet separately upgraded to v0.78.1. A small step toward agent-driven use of the network, not an institutional deal.",
       "coins": [
-        "USDT",
-        "USDC"
+        "HBAR"
       ],
       "impact": "neutral",
       "confidence": "medium",
+      "link_type": "confirmed"
+    },
+    {
+      "entity": "Securitize / Anchorage Digital",
+      "headline": "Anchorage Digital Bank becomes direct mint and redemption partner for stablecoins on Securitize",
+      "date": "2026-10-20",
+      "source_url": "https://www.anchorage.com/press-room/anchorage-digital-brings-federally-issued-stablecoins-to-securitize-the-worlds-largest-tokenization-platform",
+      "why_it_matters": "The cash leg of tokenized-fund trades on Securitize (over $4B on platform; funds from Apollo, BlackRock, BNY, KKR and others) can now be minted, custodied and redeemed by one federally chartered bank. It reflects the settlement-asset question the IMF and BIS keep raising: who supplies safe on-chain dollars.",
+      "coins": [
+        "USDtb",
+        "USAT"
+      ],
+      "impact": "neutral",
+      "confidence": "high",
       "link_type": "context"
     },
     {
-      "entity": "Axelar",
-      "headline": "Governance proposal #499 passes; #500 (ITS batch migration) in voting through Oct 22",
-      "date": "2026-10-15",
-      "source_url": "https://axelar.valopers.com/proposals/499",
-      "additional_sources": [
-        "https://axelar.valopers.com/proposals/500"
+      "entity": "SoFi Bank",
+      "headline": "SoFi launches SOFIE, a consumer tokenized deposit that converts 1:1 into its SoFiUSD stablecoin",
+      "date": "2026-10-22",
+      "source_url": "https://www.sofi.com/newsroom/sofi-launches-sofi-earn-sofie-the-first-and-only-national-bank-issued-tokenized-deposit-for-consumers/",
+      "why_it_matters": "A national bank now offers both a FDIC-insured, interest-bearing tokenized deposit (4.40% APY, variable) and a bank-issued stablecoin, the two-instrument model BIS describes. SoFi says SoFiUSD already settles its card program on Mastercard's network.",
+      "coins": [
+        "stablecoins"
       ],
-      "why_it_matters": "Routine protocol maintenance; no major announcements.",
+      "impact": "neutral",
+      "confidence": "high",
+      "link_type": "context"
+    },
+    {
+      "entity": "US Treasury / OCC",
+      "headline": "OCC's GENIUS Act final rule published in the Federal Register; Treasury's AML/sanctions rule for stablecoin issuers still a proposal",
+      "date": "2026-10-23",
+      "source_url": "https://www.federalregister.gov/documents/2026/10/23/2026-21706/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the",
+      "additional_sources": [
+        "https://occ.gov/news-issuances/news-releases/2026/nr-occ-2026-92.html",
+        "https://www.fincen.gov/news/news-releases/treasury-proposes-rule-implement-genius-acts-requirements-counter-illicit"
+      ],
+      "why_it_matters": "Formal publication of the Oct 21 rule (effective Jan 18, 2027). The OCC still has to announce when it will accept issuer applications and waiver requests, and the FinCEN/OFAC program rule remains unfinalised.",
+      "coins": [
+        "RLUSD",
+        "USDC"
+      ],
+      "impact": "neutral",
+      "confidence": "high",
+      "link_type": "context",
+      "link_basis": "Sector-wide stablecoin rule; names no token or chain."
+    },
+    {
+      "entity": "Axelar",
+      "headline": "Governance proposal #500 (Interchain Token Service batch migration) passes",
+      "date": "2026-10-22",
+      "source_url": "https://axelar.valopers.com/proposals/500",
+      "why_it_matters": "Moves native interchain token mintership to token managers; passed with 100% yes on 46% turnout. Routine maintenance, no new institutional announcements.",
       "coins": [
         "AXL"
       ],
@@ -212,67 +179,124 @@
       "link_type": "confirmed"
     }
   ],
+  "alignments": [
+    {
+      "entity": "IMF",
+      "coin": "XRP",
+      "theme": "pre-funding / settlement liquidity",
+      "institution_says": "IMF Fintech Note 2023/001 notes that \"many banks in lower-income countries have to pre-fund nostro balances with correspondent banks.\"",
+      "institution_source_url": "https://www.imf.org/en/-/media/files/publications/ftn063/2023/english/ftnea2023001.pdf",
+      "token_says": "Ripple and Arf describe RLUSD credit on the XRP Ledger as short-term working capital for licensed payment firms, typically repaid within one to five days as payments settle, so firms avoid prefunding destination accounts (paraphrased from coverage).",
+      "token_source_url": "https://cryptobriefing.com/arf-ripple-rlusd-xrp-ledger-liquidity/",
+      "overlap": "Lumi's analysis: both describe the cost of capital trapped while cross-border payments settle. This is indirect alignment, not an IMF endorsement or partnership. Counterpoint: IMF GFSR Oct 2026 Ch.3 notes atomic settlement can increase intraday liquidity needs by requiring prefunding.",
+      "confidence": "medium",
+      "link_type": "indirect_alignment"
+    },
+    {
+      "entity": "BIS",
+      "coin": "RLUSD",
+      "theme": "deposit tokens and stablecoins coexisting",
+      "institution_says": "BIS (Oct 19 speech): \"There is unlikely to be a single form of digital money... deposit tokens will find acceptance in banking-related use cases in cash management and payments, while stablecoins may find wider adoption on crypto exchanges and in fintech payments.\"",
+      "institution_source_url": "https://www.bis.org/speeches/20261019-building-trusted-foundations-digital-finance",
+      "token_says": "SoFi pairs an FDIC-insured tokenized deposit (SOFIE) with its SoFiUSD stablecoin; Ripple positions RLUSD on the XRP Ledger for fintech settlement financing via Arf.",
+      "token_source_url": "https://www.sofi.com/newsroom/sofi-launches-sofi-earn-sofie-the-first-and-only-national-bank-issued-tokenized-deposit-for-consumers/",
+      "overlap": "Lumi's analysis: this week's launches follow the BIS split, with deposits for banking and stablecoins for fintech payments. Indirect alignment only; BIS names no product or chain.",
+      "confidence": "medium",
+      "link_type": "indirect_alignment"
+    }
+  ],
+  "theses": [
+    {
+      "title": "Interoperability layer: private ledgers connecting to shared public rails",
+      "text": "Analytical thesis, not fact: IMF and BIS papers describe national or bank ledgers interoperating through shared settlement infrastructure, and some observers read this as private XRPL-style ledgers linking to the public XRP Ledger, with Quant positioned as interoperability middleware. No IMF or BIS document names XRPL or Quant in that role.",
+      "evidence_this_window": "No new IMF or BIS architecture paper in the window. New use-case data points were application-level (Arf/RLUSD settlement liquidity on XRPL, SBI/XDC payment corridor MOU), not interoperability between central-bank ledgers.",
+      "sources": [
+        "https://www.bis.org/speeches/20261019-building-trusted-foundations-digital-finance",
+        "https://www.imf.org/en/publications/gfsr/issues/2026/10/13/global-financial-stability-report-october-2026"
+      ]
+    }
+  ],
   "no_notable_news": [
     {
       "entity": "Federal Reserve",
-      "note": "No notable news in window; stablecoin-subsidiary application proposal comments due Nov 30."
+      "note": "No notable news in window; GENIUS Act stablecoin proposals open for comment until Nov 30."
     },
     {
-      "entity": "Securitize",
-      "note": "No notable news in window; latest: Oct 6 LG CNS Korea MOU, Oct 8 tokenized US stocks on Solana."
+      "entity": "CFTC",
+      "note": "No new action in window; Oct 13 ANPRM (Regulation CTX/CAM) comments due Dec 14."
+    },
+    {
+      "entity": "BIS",
+      "note": "No new publication in window; latest is the Oct 19 speech on BLOOM and trusted settlement assets."
+    },
+    {
+      "entity": "IMF",
+      "note": "No new paper in window; Oct 2026 GFSR Ch.3 on tokenization remains the latest reference."
+    },
+    {
+      "entity": "JPMorgan (Kinexys)",
+      "note": "No notable news in window; latest is JPM Coin live on Ethereum (Oct 19)."
+    },
+    {
+      "entity": "Cross River Bank",
+      "note": "No new primary announcement in window; Oct 15 RLUSD-on-XRPL integration still being covered."
     },
     {
       "entity": "R3 Corda",
-      "note": "No notable news in window; latest: Oct 7 interview on Solana yield vaults."
+      "note": "No notable news in window."
     },
     {
-      "entity": "Hedera",
-      "note": "No notable news in window; latest: Oct 8 Agent Accounts (x402-compatible) announcement."
+      "entity": "Quant",
+      "note": "No notable news in window; The Clearing House On-Chain Money work targets first institutions in 2027."
+    },
+    {
+      "entity": "Stellar (protocol)",
+      "note": "No protocol news beyond the SEC letter; Bell (Protocol 30) testnet vote Nov 3."
+    },
+    {
+      "entity": "DTCC",
+      "note": "No confirmed go-live date for its tokenization service; DTCC still says October 2026."
     }
   ],
   "connections": [
     {
-      "theme": "stablecoin_rules",
-      "text": "The OCC final rule and the closed Treasury comment period give bank-linked issuers a legal path. This week's Cross River and DriveWealth integrations show existing demand for regulated dollars on XRPL.",
+      "theme": "settlement_liquidity",
+      "text": "Ripple/Arf targets the pre-funding cost of cross-border payments with RLUSD credit on XRPL, the same pain point Visa's and Mastercard's recent stablecoin products address on other rails.",
       "entities": [
-        "US Treasury / OCC",
-        "Cross River Bank",
-        "Ripple"
+        "Ripple",
+        "XRP Ledger (network)"
       ]
     },
     {
       "theme": "tokenized_deposits_vs_stablecoins",
-      "text": "JPM Coin on Ethereum is the deposit-token model BIS/MAS describe for banking use cases. RLUSD and USDC fill the stablecoin role in fintech and on exchanges. Both settle on public chains.",
+      "text": "SoFi's SOFIE/SoFiUSD pairing and Anchorage minting directly for Securitize show banks supplying both instruments, in line with BIS's coexistence view and ahead of the Jan 18, 2027 GENIUS effective date.",
       "entities": [
-        "JPMorgan (Kinexys / JPM Coin)",
+        "SoFi Bank",
+        "Securitize / Anchorage Digital",
         "BIS",
+        "US Treasury / OCC"
+      ]
+    },
+    {
+      "theme": "token_classification",
+      "text": "XLM and HBAR were named digital commodities in the SEC's March interpretation, and their foundations want that locked into the final rule; XRP's issuer Ripple argued the investment contract, not the token, is the security.",
+      "entities": [
+        "SEC",
+        "Stellar / Hedera",
         "Ripple"
       ]
     },
     {
-      "theme": "settlement_rails_interoperability",
-      "text": "BIS/MAS favour a multi-ledger world, which supports cross-chain messaging (AXL) and multi-rail issuers. No new ISO 20022-specific developments surfaced this week.",
+      "theme": "asia_payment_corridors",
+      "text": "The SBI/XDC/Shinhan MOU joins SBI's broader stablecoin work in Japan, pointing to Japan-Korea retail and trade payment pilots on XDC.",
       "entities": [
-        "BIS",
-        "Axelar",
-        "Stellar",
-        "XDC Network"
-      ]
-    },
-    {
-      "theme": "tokenized_securities",
-      "text": "Issuer objections on OKXICE and the final Reg Crypto text will shape tokenized equity/treasury venues such as Securitize.",
-      "entities": [
-        "SEC",
-        "Securitize"
+        "SBI Holdings / XDC Network"
       ]
     },
     {
       "theme": "agentic_payments",
-      "text": "MAS SAFR, XDC's Know-Your-Agent layer and Hedera's x402-compatible Agent Accounts all point to AI-agent spending running on regulated stablecoins.",
+      "text": "Hedera's testnet MCP lets AI agents build network transactions, adding to Agent Accounts (x402-compatible) from earlier this month.",
       "entities": [
-        "BIS",
-        "XDC Network",
         "Hedera"
       ]
     }
@@ -281,7 +305,7 @@
     {
       "date": "2026-10-27",
       "end_date": "2026-10-29",
-      "event": "Ripple Swell 2026 (DriveWealth session Oct 28)",
+      "event": "Ripple Swell 2026, New York (watch for announcements; speaker lineup not independently confirmed)",
       "source_url": "https://ripple.com/ripple-press/drivewealth-and-ripple-partner-to-bring-institutional-digital-asset-infrastructure-to-global-investing/"
     },
     {
@@ -296,13 +320,18 @@
       "source_url": "https://coinedition.com/crypto-live-news/stellar-announces-bell-upgrade-ahead-of-november-23-validator-vote/"
     },
     {
+      "date": "2026-11-04",
+      "event": "XRPL fixCleanup3_4_0 expected activation if validator support holds",
+      "source_url": "https://www.coindesk.com/tech/2026/10/22/xrp-ledger-bug-fix-moved-to-november-after-validator-support-dipped-for-two-hours"
+    },
+    {
       "date": "2026-11-23",
       "event": "Stellar Bell mainnet validator vote",
       "source_url": "https://coinedition.com/crypto-live-news/stellar-announces-bell-upgrade-ahead-of-november-23-validator-vote/"
     },
     {
       "date": "2026-11-30",
-      "event": "Fed comment deadline: stablecoin-subsidiary application procedures",
+      "event": "Fed comment deadline: GENIUS Act stablecoin issuer proposals",
       "source_url": "https://www.federalregister.gov/documents/2026/09/29/2026-19899/application-procedures-for-board-supervised-insured-depository-institutions-seeking-approval-for-a"
     },
     {
