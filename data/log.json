@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "t": "2026-10-23T17:00:02.119000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T003 XLM: expiry reached unfilled, cancelled."
+    },
+    {
       "t": "2026-10-23T12:02:31Z",
       "kind": "auto",
       "author": "update_prices.py",
@@ -22,7 +28,7 @@
       "t": "2026-10-23T06:45:53.933000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T008 HBAR short 2x FILLED at 0.0815 (zone 0.0815\u20130.0825)."
+      "text": "Trade events: T008 HBAR short 2x FILLED at 0.0815 (zone 0.0815–0.0825)."
     },
     {
       "t": "2026-10-23T04:21:19Z",
@@ -112,7 +118,7 @@
       "t": "2026-10-22T08:21:50.552000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T007 BTC long 3x FILLED at 82300.0 (zone 81800\u201382300)."
+      "text": "Trade events: T007 BTC long 3x FILLED at 82300.0 (zone 81800–82300)."
     },
     {
       "t": "2026-10-22T05:19:11.155000Z",
@@ -142,7 +148,7 @@
       "t": "2026-10-22T02:08:23.908000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T005 AXL long 3x FILLED at 0.053 (zone 0.0518\u20130.053); T002b XRP idea closed."
+      "text": "Trade events: T005 AXL long 3x FILLED at 0.053 (zone 0.0518–0.053); T002b XRP idea closed."
     },
     {
       "t": "2026-10-22T01:58:00Z",
@@ -202,13 +208,13 @@
       "t": "2026-10-21T23:04:05Z",
       "kind": "auto",
       "author": "update_prices.py",
-      "text": "Prices refreshed: BTC 84423 (+1.8%), HBAR 0.084558 (+0.5%), XLM 0.184217 (+1.1%), XRP 1.37 (+2.7%), ZBCN 0.00228334 (+7.6%), AXL 0.054249 (+2.3%), XDC 0.0348291 (+8.0%), ETH 2483.57 (+1.3%), SOL 107.43 (+0.8%), DOGE 0.082239 (+0.5%), ADA 0.226534 (+1.3%), LINK 12.57 (+2.2%), SUI 1.033 (+0.4%). Trades: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347\u20130.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368\u20131.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706. Open trades: 3; pending: 2."
+      "text": "Prices refreshed: BTC 84423 (+1.8%), HBAR 0.084558 (+0.5%), XLM 0.184217 (+1.1%), XRP 1.37 (+2.7%), ZBCN 0.00228334 (+7.6%), AXL 0.054249 (+2.3%), XDC 0.0348291 (+8.0%), ETH 2483.57 (+1.3%), SOL 107.43 (+0.8%), DOGE 0.082239 (+0.5%), ADA 0.226534 (+1.3%), LINK 12.57 (+2.2%), SUI 1.033 (+0.4%). Trades: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347–0.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706. Open trades: 3; pending: 2."
     },
     {
       "t": "2026-10-21T23:04:05.905000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347\u20130.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368\u20131.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706."
+      "text": "Trade events: T006 XDC: missed-it plan void (main idea filled); T006 XDC long spot FILLED at 0.0352 (zone 0.0347–0.0352); T002 XRP: superseded by its missed-it plan, cancelled; T002 XRP: missed-it plan TRIGGERED (Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368) -> T002b opened at 1.3706."
     },
     {
       "t": "2026-10-21T21:36:39Z",
@@ -232,7 +238,7 @@
       "t": "2026-10-21T20:23:17.907000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T002 XRP: missed-it plan ARMED (price past the missed-it limit 1.365); watching: Retest of 1.368\u20131.375 holds: a 1h candle trades into the zone and closes at or above 1.368; T004 ZBCN: missed-it plan void (main idea filled)."
+      "text": "Trade events: T002 XRP: missed-it plan ARMED (price past the missed-it limit 1.365); watching: Retest of 1.368–1.375 holds: a 1h candle trades into the zone and closes at or above 1.368; T004 ZBCN: missed-it plan void (main idea filled)."
     },
     {
       "t": "2026-10-21T19:58:04Z",
@@ -244,7 +250,7 @@
       "t": "2026-10-21T19:29:06.748000Z",
       "kind": "auto",
       "author": "track_trades.py",
-      "text": "Trade events: T004 ZBCN long 3x FILLED at 0.00234 (zone 0.0023\u20130.00234)."
+      "text": "Trade events: T004 ZBCN long 3x FILLED at 0.00234 (zone 0.0023–0.00234)."
     },
     {
       "t": "2026-10-21T18:31:28Z",
@@ -268,7 +274,7 @@
       "t": "2026-10-21T17:15:00Z",
       "kind": "analysis",
       "author": "Lumi (noon update)",
-      "text": "Noon update: prices, signals and market context refreshed (BTC ~$84.4K, Fear & Greed 63). No fills, targets or stops: T002 XRP long (bid 1.345\u20131.355), T003 XLM short (0.1895\u20130.1915) and T004 ZBCN long (0.0023\u20130.00234) all still pending and valid; HBAR and AXL stay 'no setup'. Added XRPL Oct 23 amendment, ledger-slowdown and derivatives-OI notes with sources."
+      "text": "Noon update: prices, signals and market context refreshed (BTC ~$84.4K, Fear & Greed 63). No fills, targets or stops: T002 XRP long (bid 1.345–1.355), T003 XLM short (0.1895–0.1915) and T004 ZBCN long (0.0023–0.00234) all still pending and valid; HBAR and AXL stay 'no setup'. Added XRPL Oct 23 amendment, ledger-slowdown and derivatives-OI notes with sources."
     },
     {
       "t": "2026-10-21T17:08:18Z",
@@ -286,7 +292,7 @@
       "t": "2026-10-21T16:55:00Z",
       "kind": "analysis",
       "author": "Grok Bot",
-      "text": "Paper-trade leverage lowered from 5x to 3x going forward. T002 (pending XRP limit long at 1.35) converted to 3x: stop \u221210.0%, T1 +15.6%, T2 +26.7% on margin."
+      "text": "Paper-trade leverage lowered from 5x to 3x going forward. T002 (pending XRP limit long at 1.35) converted to 3x: stop −10.0%, T1 +15.6%, T2 +26.7% on margin."
     },
     {
       "t": "2026-10-21T16:06:00Z",
