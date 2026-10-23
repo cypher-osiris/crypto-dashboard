@@ -32,7 +32,7 @@ TRUST_PRICES = [
 ]
 MARKET_PRICES = [
     ("Signal per coin (buy/sell read, RSI/MACD/EMA)", "GET /v1/signal/{coin}", "$0.01"),
-    ("Support / resistance levels + 7-day projection", "GET /v1/levels/{coin}", "$0.01"),
+    ("Support / resistance and 7-day scenario levels (not forecasts)", "GET /v1/levels/{coin}", "$0.01"),
     ("All-coins scan (50 signals in one call)", "GET /v1/scan", "$0.02"),
     ("Lite signal per coin (label, score, price)", "GET /v1/lite/{coin}", "$0.004"),
     ("Market slate (today's paper-trade ideas)", "GET /v1/slate", "$0.02"),
@@ -48,6 +48,19 @@ MARKET_PRICES = [
     ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.25"),
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES
+AGENTS_ROUTES_TEXT = ("Live signals for the top 50 coins, support and resistance levels, the paper-trade slate, and market and policy briefs: "
+                      "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base wallets get 3 free calls "
+                      "on every paid route except the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC; "
+                      "nothing is moved). XRPL-only wallets get no trial.")
+
+
+def route_counts():
+    """Paid route counts and price range, computed from the tables above (the /agents/ text and the homepage use these)."""
+    paid = [float(x[2].lstrip("$")) for x in PRICES if x[2] != "free"]
+    return {"m": len(MARKET_PRICES), "t": sum(1 for x in TRUST_PRICES if x[2] != "free"),
+            "lo": f"${min(paid):g}", "hi": f"${max(paid):g}"}
+
+
 # (plan, price, what you get). Live: GET /v1/monitor and GET /v1/feed. 30-day plans, no auto-renew.
 MONITOR_PLANS = [
     ("Monitor", ("{p} per 30 days", "$9"), "1 endpoint: one test-buy per term (plus one recheck after a failure) and alerts"),
@@ -222,7 +235,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 {ptable(FEED_PLANS)}
 <p class="meta">{_t("Licence: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.")} {lk(API + "/v1/feed/license", _t("Licence terms"))} · {lk(API + "/v1/feed", _t("Feed docs"))}</p></section>
 <section class="card cp-sec" id="prices"><h2>{E(_t("Market data"))}</h2>
-<p>{_t("Live signals for the top 50 coins, support and resistance levels, the paper-trade slate, and market and policy briefs: 17 paid routes in all, from $0.003 to $0.25 per call. Free trial: new wallets get 3 free calls on every paid route except the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC; nothing is moved).")}</p>
+<p>{_t(AGENTS_ROUTES_TEXT, **route_counts())}</p>
 {table(MARKET_PRICES)}
 <p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
 <section class="card cp-sec" id="pay"><h2>{E(_t("How to pay"))}</h2>
@@ -240,7 +253,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <li>{lk(API + "/", "api.lumitrades.io")} · {lk(API + "/openapi.json", "openapi.json")} · {lk(API + "/skill.md", "skill.md")} · {lk(API + "/.well-known/x402", ".well-known/x402")}</li>
 <li><a href="../trust/">{E(_t("Vendor trust list (free)"))}</a> · {lk(API + "/v1/monitor", _t("Seller monitoring"))} · {lk(API + "/v1/feed", _t("Trust data feed"))}</li>
 <li>{lk(BAZAAR, _t("Coinbase x402 Bazaar"))} · {lk(X402SCAN, "x402scan")}</li>
-<li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/a2a", "A2A")}</li></ul></section>
+<li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul></section>
 {seo.faq_html(_t, E)}
 <div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas come from an AI's paper-trading experiment; no real money is traded.")}</span></div>
 </main>
