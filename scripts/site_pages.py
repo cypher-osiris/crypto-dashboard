@@ -188,9 +188,9 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
     E, _t = h.E, h._
     row = lambda p, ep, pr: f'<tr><td>{E(_t(p))}</td><td class="mono">{E(ep)}</td><td class="num mono">{E(_t(pr) if pr == "free" else pr)}</td></tr>'
     thead = f'<thead><tr><th>{E(_t("Product"))}</th><th>{E(_t("Endpoint"))}</th><th class="num">{E(_t("Price"))}</th></tr></thead>'
-    table = lambda items: f'<div class="cp-tablewrap"><table class="cp-table">{thead}<tbody>{"".join(row(*x) for x in items)}</tbody></table></div>'
+    table = lambda items: f'<div class="cp-tablewrap"><table class="cp-table cp-stack cp-stack-r">{thead}<tbody>{"".join(row(*x) for x in items)}</tbody></table></div>'
     pthead = f'<thead><tr><th>{E(_t("Plan"))}</th><th>{E(_t("Price"))}</th><th>{E(_t("What you get"))}</th></tr></thead>'
-    ptable = lambda items: ('<div class="cp-tablewrap"><table class="cp-table">' + pthead + "<tbody>" + "".join(
+    ptable = lambda items: ('<div class="cp-tablewrap"><table class="cp-table cp-stack">' + pthead + "<tbody>" + "".join(
         f'<tr><td>{E(_t(n))}</td><td class="mono">{E(_t(fmt, p=p) if fmt != "{p}" else p)}</td><td>{E(_t(d))}</td></tr>' for n, (fmt, p), d in items) + "</tbody></table></div>")
     title = _t("Crypto market data API for AI agents, pay per call with x402 | Lumi Trades")
     desc = _t(AGENTS_DESC)
