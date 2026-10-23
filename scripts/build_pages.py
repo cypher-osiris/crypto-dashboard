@@ -153,11 +153,34 @@ def chart_svg(a, an, trade):
             ya, yb = Y(min(z["high"], y1)), Y(max(z["low"], y0))
             g.append(f'<rect x="{L_}" y="{ya:.1f}" width="{W - L_ - R}" height="{max(1.5, yb - ya):.1f}" fill="rgba(245,176,65,.16)"/>')
             g.append(f'<text x="{L_ + 4}" y="{ya - 3:.1f}" fill="#f5b041" font-size="10">{E(_("entry zone"))} {lvl(z["low"])}–{lvl(z["high"])}</text>')
+    labs = []
     for x, k in lv:
         if y0 <= x <= y1:
             c = "#22c55e" if k == "sup" else "#f43f5e"
             g.append(f'<line x1="{L_}" x2="{W - R}" y1="{Y(x):.1f}" y2="{Y(x):.1f}" stroke="{c}" stroke-opacity=".55" stroke-dasharray="4 4"/>')
-            g.append(f'<text x="{W - R + 4}" y="{Y(x) + 3.5:.1f}" fill="{c}" font-size="10">{lvl(x)}</text>')
+            labs.append([Y(x), Y(x), c, lvl(x)])
+    # right-edge labels: keep a minimum vertical gap so close levels don't overlap; a nudged label gets a short leader line
+    labs.sort(key=lambda q: q[0])
+    GAP, top, bot = 13.0, 7.0, H - 12.0
+    cl = [[q] for q in labs]  # clusters of labels; each cluster is centred on its true levels, merged while they collide
+    while True:
+        pos = []
+        for grp in cl:
+            n = len(grp)
+            s0 = sum(q[0] for q in grp) / n - GAP * (n - 1) / 2
+            s0 = min(max(s0, top), bot - GAP * (n - 1))
+            pos.append(s0)
+        hit = next((i for i in range(len(cl) - 1) if pos[i] + GAP * (len(cl[i]) - 1) + GAP > pos[i + 1] + 1e-6), None)
+        if hit is None:
+            break
+        cl[hit:hit + 2] = [cl[hit] + cl[hit + 1]]
+    for grp, s0 in zip(cl, pos):
+        for j, q in enumerate(grp):
+            q[1] = s0 + j * GAP
+    for ty, ly, c, lab in labs:
+        if abs(ly - ty) > 1.5:
+            g.append(f'<polyline points="{W - R:.1f},{ty:.1f} {W - R + 2:.1f},{ty:.1f} {W - R + 3.5:.1f},{ly:.1f}" fill="none" stroke="{c}" stroke-opacity=".7" stroke-width="1"/>')
+        g.append(f'<text x="{W - R + 4}" y="{ly + 3.5:.1f}" fill="{c}" font-size="10">{lab}</text>')
     for i in range(5):
         t = t0 + (t1 - t0) * i / 4
         lab = L.day(dt.datetime.fromtimestamp(t / 1000, CT))
