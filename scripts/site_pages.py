@@ -194,7 +194,7 @@ AGENTS_DESC = ("Pay-per-call crypto API for AI agents: trading signals, support 
                "a daily brief and an Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Pay with x402 in USDC "
                "on Base or XRP and RLUSD on the XRPL. MCP server, no API key.")
 TRUST_DESC = ("x402 vendor reputation: free trust scores for pay-per-call endpoints from Lumi's automated 402-quote checks and small "
-              "paid test-buys, with on-ledger evidence on Base and the XRP Ledger. Observations, not a rating or review of any business.")
+              "paid test-buys, with on-ledger evidence on XRPL, Base and Stellar. Observations, not a rating or review of any business.")
 
 
 BADGE_EXAMPLE = "printmoneylab"  # a real curated vendor with delivered test-buys (checked live Oct 23 2026)
