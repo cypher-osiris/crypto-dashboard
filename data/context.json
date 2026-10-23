@@ -1,34 +1,34 @@
 {
- "generated_utc": "2026-10-22T23:19:23Z",
+ "generated_utc": "2026-10-23T11:21:24Z",
  "global": {
-  "total_mcap_usd": 2736614617959.5127,
-  "total_volume_usd": 80679480222.34337,
-  "mcap_change_24h_pct": -6.0223332068738555,
-  "btc_dominance_pct": 59.50159787209276,
-  "eth_dominance_pct": 10.597098549487997
+  "total_mcap_usd": 2723246574656.0547,
+  "total_volume_usd": 68831380297.51411,
+  "mcap_change_24h_pct": -4.019910622140102,
+  "btc_dominance_pct": 60.01503248417994,
+  "eth_dominance_pct": 10.701819195111067
  },
  "fear_greed": {
   "value": 48,
   "classification": "Neutral",
-  "previous": 54,
-  "timestamp": "2026-10-22T23:08:10Z",
+  "previous": 48,
+  "timestamp": "2026-10-23T11:08:10Z",
   "source": "CoinMarketCap"
  },
  "derivatives": {
   "instrument": "BTC-USDT-SWAP (OKX)",
-  "funding_rate_pct": 0.00681337124447,
-  "next_funding_time": "2026-10-23T00:00:00Z",
-  "open_interest_btc": 30790.802100000146,
-  "open_interest_usd": 2502993539.949642
+  "funding_rate_pct": 0.00999042959886,
+  "next_funding_time": "2026-10-23T16:00:00Z",
+  "open_interest_btc": 31486.61440000013,
+  "open_interest_usd": 2569024355.5104103
  },
  "yen": {
   "usd_jpy": {
    "name": "USD/JPY",
    "symbol": "JPY=X",
-   "price": 156.593,
-   "change_pct": -0.1161,
-   "day_high": 156.816,
-   "day_low": 156.514,
+   "price": 156.908,
+   "change_pct": 0.0848,
+   "day_high": 157.16,
+   "day_low": 156.072,
    "week52_high": 163.979,
    "week52_low": 151.549,
    "closes_5d": [
@@ -36,27 +36,28 @@
     158.523,
     158.268,
     158.132,
-    156.593
+    156.908
    ],
-   "as_of": "2026-10-22T23:19:23Z",
+   "as_of": "2026-10-23T11:21:23Z",
    "source": "Yahoo Finance"
   },
   "nikkei": {
    "name": "Nikkei 225",
    "symbol": "^N225",
-   "price": 62907.84,
-   "change_pct": -2.651,
-   "day_high": 64866.44,
-   "day_low": 62907.84,
+   "price": 62693.16,
+   "change_pct": -0.341,
+   "day_high": 62786.89,
+   "day_low": 61462.61,
    "week52_high": 72831.73,
    "week52_low": 48235.3,
    "closes_5d": [
-    65324.2891,
     64916.6992,
     64075.4219,
-    64621.2383
+    64621.2383,
+    62907.8398,
+    62693.1602
    ],
-   "as_of": "2026-10-22T06:45:03Z",
+   "as_of": "2026-10-23T06:45:03Z",
    "source": "Yahoo Finance"
   }
  }
