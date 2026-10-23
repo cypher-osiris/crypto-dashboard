@@ -342,6 +342,23 @@ DATASET_DESC = ("Crypto prices (30-day hourly history), technical signals (RSI, 
                 "Paper trades only; not financial advice.")
 
 
+# Cloudflare Web Analytics. lumitrades.io is DNS-only to GitHub Pages (not proxied), so Cloudflare's automatic setup cannot
+# inject the beacon here (it only reaches proxied hosts such as api.lumitrades.io): every page carries the manual JS snippet.
+# The site token is public by design (it is in the page source). Site: Cloudflare dash > Web Analytics > lumitrades.io.
+CF_BEACON_TOKEN = "bb04df7104dc42b98ed683b5711cf149"
+CF_BEACON = ("<!-- Cloudflare Web Analytics --><script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
+             "data-cf-beacon='{\"token\": \"" + CF_BEACON_TOKEN + "\"}'></script><!-- End Cloudflare Web Analytics -->")
+# hand-made pages the generators never write; build() keeps the beacon in them too
+STATIC_PAGES = ("classic/index.html", "preview/index.html")
+
+
+def with_beacon(html_src):
+    """The page with the Cloudflare Web Analytics beacon just before </head> (idempotent; pages without a head are left alone)."""
+    if "static.cloudflareinsights.com/beacon.min.js" in html_src or "</head>" not in html_src:
+        return html_src
+    return html_src.replace("</head>", CF_BEACON + "\n</head>", 1)
+
+
 def lang_index(en_src, langs):
     """/<lang>/index.html from the English shell: translated text, head (lang, title, meta, canonical, hreflang, og:locale,
     JSON-LD), asset paths one level up. The generated blocks are refilled by the caller in this language."""
@@ -417,6 +434,8 @@ def build(dry=False):
     def write(rel, content):
         if dry:
             return
+        if rel.endswith(".html"):
+            content = with_beacon(content)
         p = os.path.join(ROOT, rel)
         old = None
         if os.path.exists(p):
@@ -755,8 +774,16 @@ def build(dry=False):
                     new = trade_pages.snapshot(h, new, prices, trades, analysis)
                 except Exception as e:
                     print(f"build_pages: WARNING index snapshot failed: {e!r}", file=sys.stderr)
+        new = with_beacon(new)
         if new != cur:
             write(path, new)
+    for path in STATIC_PAGES:
+        fp_ = os.path.join(ROOT, path)
+        if os.path.exists(fp_):
+            with open(fp_, encoding="utf-8") as f:
+                cur = f.read()
+            if with_beacon(cur) != cur:
+                write(path, cur)
     changed += i18n.bundle(langs)
     return changed
 

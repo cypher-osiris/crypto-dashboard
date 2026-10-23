@@ -65,5 +65,29 @@ class SitePages(unittest.TestCase):
                 self.assertIn(ph, d[sp.AGENTS_ROUTES_TEXT], (lang, ph))
 
 
+
+class Beacon(unittest.TestCase):
+    """Cloudflare Web Analytics: lumitrades.io is DNS-only (GitHub Pages), so every page needs the manual beacon."""
+    def test_every_page_has_beacon(self):
+        import build_pages as bp
+        missing = []
+        for d, _dirs, files in os.walk(ROOT):
+            if "/.git" in d or "/state" in d:
+                continue
+            for f in files:
+                if f.endswith(".html"):
+                    p = os.path.join(d, f)
+                    with open(p, encoding="utf-8") as fh:
+                        src = fh.read()
+                    if "</head>" in src and bp.CF_BEACON not in src:
+                        missing.append(os.path.relpath(p, ROOT))
+        self.assertEqual(missing, [])
+
+    def test_with_beacon_idempotent(self):
+        import build_pages as bp
+        once = bp.with_beacon("<html><head><title>x</title></head><body></body></html>")
+        self.assertEqual(once.count("beacon.min.js"), 1)
+        self.assertEqual(bp.with_beacon(once), once)
+
 if __name__ == "__main__":
     unittest.main()
