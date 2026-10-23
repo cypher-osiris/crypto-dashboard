@@ -92,7 +92,8 @@
 <p class="meta">호출당 가격(USD)입니다. 데이터가 최신이 아니면 API가 503으로 응답하며 요금이 청구되지 않습니다. 무료: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.</p></section>
 <section class="card cp-sec" id="pay"><h2>결제 방법</h2>
 <ul class="ag-list"><li><b>Base의 USDC</b> (eip155:8453), Coinbase x402 퍼실리테이터로 정산됩니다. Coinbase AgentKit 및 모든 x402 클라이언트와 호환됩니다.</li>
-<li><b>XRP Ledger</b>: XRP, RLUSD 또는 USDC, 원장에서 검증됩니다.</li></ul>
+<li><b>XRP Ledger</b>: XRP, RLUSD 또는 USDC, 원장에서 검증됩니다.</li>
+<li><b>Stellar의 USDC</b> (stellar:pubnet), OpenZeppelin x402 퍼실리테이터로 정산되며 네트워크 수수료는 후원됩니다. Base와 같은 USD 가격입니다.</li></ul>
 <p class="meta">402 견적에는 허용되는 모든 네트워크, 자산, 금액, 수취 주소가 나열되어 있으니 하나를 선택하세요. 헤더: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.</p></section>
 <section class="card cp-sec" id="flow"><h2>두 번의 호출로 끝나는 402 흐름</h2>
 <pre class="ag-code"><code># 1. ask: no key, no account. The API answers 402 with a quote

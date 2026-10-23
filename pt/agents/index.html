@@ -92,7 +92,8 @@
 <p class="meta">Preços por chamada em USD. Se os dados não estiverem atualizados, a API responde 503 e você não é cobrado. Grátis: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.</p></section>
 <section class="card cp-sec" id="pay"><h2>Como pagar</h2>
 <ul class="ag-list"><li><b>USDC na Base</b> (eip155:8453), liquidado pelo facilitador x402 da Coinbase. Funciona com o Coinbase AgentKit e qualquer cliente x402.</li>
-<li><b>XRP Ledger</b>: XRP, RLUSD ou USDC, verificado no ledger.</li></ul>
+<li><b>XRP Ledger</b>: XRP, RLUSD ou USDC, verificado no ledger.</li>
+<li><b>USDC na Stellar</b> (stellar:pubnet), liquidado pelo facilitador x402 da OpenZeppelin, com as taxas de rede patrocinadas. Mesmos preços em USD que na Base.</li></ul>
 <p class="meta">A cotação 402 lista cada rede, ativo, valor e endereço de recebimento aceitos; escolha um. Cabeçalhos: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.</p></section>
 <section class="card cp-sec" id="flow"><h2>O fluxo 402 em duas chamadas</h2>
 <pre class="ag-code"><code># 1. ask: no key, no account. The API answers 402 with a quote

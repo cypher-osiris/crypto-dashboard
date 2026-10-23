@@ -91,7 +91,8 @@
 <p class="meta">Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.</p></section>
 <section class="card cp-sec" id="pay"><h2>How to pay</h2>
 <ul class="ag-list"><li><b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.</li>
-<li><b>XRP Ledger</b>: XRP, RLUSD or USDC, verified on-ledger.</li></ul>
+<li><b>XRP Ledger</b>: XRP, RLUSD or USDC, verified on-ledger.</li>
+<li><b>USDC on Stellar</b> (stellar:pubnet), settled through the OpenZeppelin x402 facilitator with network fees sponsored. Same USD prices as Base.</li></ul>
 <p class="meta">The 402 quote lists every accepted network, asset, amount and pay-to address; pick one. Headers: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.</p></section>
 <section class="card cp-sec" id="flow"><h2>The 402 flow in two calls</h2>
 <pre class="ag-code"><code># 1. ask: no key, no account. The API answers 402 with a quote
