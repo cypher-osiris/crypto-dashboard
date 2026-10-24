@@ -280,3 +280,7 @@
 .pv-zone-h{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:1.2rem;font-weight:700;letter-spacing:.01em;text-transform:none}
 .pv-zone-h svg{width:22px;height:22px;flex:none;color:var(--amber)}
 .lgw .pv-zone-h{font-family:var(--display)}
+/* exchange affiliate CTA (moved from the header into the Markets area; same #aff-cta element, same affiliate.js geo logic) */
+.pv .pv-zone-aff{align-items:flex-start;margin:12px 0 4px;gap:4px}
+.pv .pv-zone-aff .aff-extra,.pv .pv-zone-aff .aff-tag{text-align:left}
+.pv .pv-zone-aff .aff-tag{font-size:.7rem}

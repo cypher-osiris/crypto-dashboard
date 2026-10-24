@@ -980,6 +980,9 @@
   "Trust layer for AI-agent payments · XRPL · Base · Stellar": "AI 에이전트 결제를 위한 신뢰 레이어 · XRPL · Base · Stellar",
   "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "XRPL, Base, Stellar의 x402 판매자에게서 테스트 구매를 하고 서명된 영수증을 공개합니다. 그래서 에이전트는 누가 제대로 전달하는지 압니다.",
   "Markets": "시장",
-  "Markets (paper trading, not financial advice)": "시장 (모의 거래, 투자 조언 아님)"
+  "Markets (paper trading, not financial advice)": "시장 (모의 거래, 투자 조언 아님)",
+  "Lumi Trades: trust layer for AI-agent payments on XRPL, Base and Stellar": "Lumi Trades: XRPL, Base, Stellar의 AI 에이전트 결제를 위한 신뢰 레이어",
+  "Lumi test-buys x402 sellers on XRPL, Base and Stellar and publishes signed receipts, so AI agents know who delivers before they pay. Not financial advice.": "Lumi는 XRPL, Base, Stellar의 x402 판매자에게서 테스트 구매를 하고 서명된 영수증을 공개해, AI 에이전트가 지불 전에 누가 제대로 제공하는지 알 수 있게 합니다. 투자 조언이 아닙니다.",
+  "Trust layer for AI-agent payments": "AI 에이전트 결제를 위한 신뢰 레이어"
  }
 }
