@@ -1084,6 +1084,8 @@
   "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "このエンドポイントはXRPL上のLumiの署名済みテスト決済を受け付けなかったため、何も請求されていません。参考情報であり、スコアには含まれません。",
   "Test payment not accepted yet on XRPL": "XRPLでのテスト決済はまだ受け付けられていません",
   "Lumi has tried {n} times on XRPL since {date}.": "Lumiは{date}以降、XRPLで{n}回試みました。",
-  "Lumi has tried once on XRPL, on {date}.": "Lumiは{date}にXRPLで1回試みました。"
+  "Lumi has tried once on XRPL, on {date}.": "Lumiは{date}にXRPLで1回試みました。",
+  "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer.": "支払い先アドレス：Lumiの支払い先アドレス（payTo）は、必ずライブの402支払いレスポンスまたは<code>/.well-known/x402</code>から取得してください。取引履歴や過去の送金から取らないでください。",
+  "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026) and {settled} (a paid test purchase of <code>/v1/slate</code> was delivered).": "第三者による確認：{paycheck}（2026年10月24日時点で、Lumiの7つのエンドポイントでA評価。例：<code>/v1/events/next48h</code>）、{settled}（<code>/v1/slate</code>の有料テスト購入でデータの受け渡しを確認）。"
  }
 }

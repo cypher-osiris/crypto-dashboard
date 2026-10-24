@@ -1084,6 +1084,8 @@
   "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Bu uç nokta, Lumi'nin XRPL üzerindeki imzalı test ödemelerini kabul etmedi; bu nedenle hiçbir ücret alınmadı. Yalnızca bilgi amaçlıdır; puana dahil değildir.",
   "Test payment not accepted yet on XRPL": "XRPL'de test ödemesi henüz kabul edilmedi",
   "Lumi has tried {n} times on XRPL since {date}.": "Lumi, {date} tarihinden bu yana XRPL'de {n} kez denedi.",
-  "Lumi has tried once on XRPL, on {date}.": "Lumi, {date} tarihinde XRPL'de bir kez denedi."
+  "Lumi has tried once on XRPL, on {date}.": "Lumi, {date} tarihinde XRPL'de bir kez denedi.",
+  "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer.": "Ödeme adresi: Lumi'nin ödeme adresini (payTo) her zaman canlı 402 ödeme yanıtından veya <code>/.well-known/x402</code> adresinden alın; asla işlem geçmişinden veya önceki bir transferden almayın.",
+  "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026) and {settled} (a paid test purchase of <code>/v1/slate</code> was delivered).": "Bağımsız olarak kontrol eden: {paycheck} (24 Ekim 2026 itibarıyla yedi Lumi uç noktasında A notu, örneğin <code>/v1/events/next48h</code>) ve {settled} (<code>/v1/slate</code> için ücretli bir test satın alımı teslim edildi)."
  }
 }

@@ -22,6 +22,10 @@ VENDORS_URL = API + "/v1/trust/vendors"
 CACHE = os.path.join(ROOT, "state", "trust_vendors.json")
 BAZAAR = "https://docs.cdp.coinbase.com/x402/bazaar"
 X402SCAN = "https://www.x402scan.com/server/0b8315c8-da5e-4754-8564-e9f286edcbae"
+PAYCHECK_URL = "https://lumierepaycheck.org/e?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fevents%2Fnext48h"  # Lumière PayCheck page for one Lumi endpoint (independent check)
+SETTLED_URL = "https://settled.tools/v1/free/check?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fslate"  # Settled free check for /v1/slate (independent paid test purchase)
+PAY_ADDRESS_TEXT = "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer."
+CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026) and {settled} (a paid test purchase of <code>/v1/slate</code> was delivered)."
 MCP_REG = "https://registry.modelcontextprotocol.io/v0/servers?search=lumi-trades"
 NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 
@@ -586,7 +590,8 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <ul class="ag-list"><li>{_t("<b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.")}</li>
 <li>{_t("<b>XRP Ledger</b>: XRP, RLUSD or USDC, verified on-ledger.")}</li>
 <li>{_t("<b>USDC on Stellar</b> (stellar:pubnet), settled through the OpenZeppelin x402 facilitator with network fees sponsored. Same USD prices as Base.")}</li></ul>
-<p class="meta">{_t("The 402 quote lists every accepted network, asset, amount and pay-to address; pick one. Headers: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.")}</p></section>
+<p class="meta">{_t("The 402 quote lists every accepted network, asset, amount and pay-to address; pick one. Headers: <code>PAYMENT-REQUIRED</code>, <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>.")}</p>
+<p class="meta">{_t(PAY_ADDRESS_TEXT)}</p></section>
 <section class="card cp-sec" id="flow"><h2>{E(_t("The 402 flow in two calls"))}</h2>
 <pre class="ag-code"><code>{E(CURL)}</code></pre></section>
 <section class="card cp-sec" id="mcp"><h2>{E(_t("MCP server"))}</h2>
@@ -598,7 +603,8 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <li>{lk(API + "/", "api.lumitrades.io")} · {lk(API + "/openapi.json", "openapi.json")} · {lk(API + "/skill.md", "skill.md")} · {lk(API + "/.well-known/x402", ".well-known/x402")}</li>
 <li><a href="../trust/">{E(_t("Vendor trust list (free)"))}</a> · {lk(API + "/v1/monitor", _t("Seller monitoring"))} · {lk(API + "/v1/feed", _t("Trust data feed"))}</li>
 <li>{lk(BAZAAR, _t("Coinbase x402 Bazaar"))} · {lk(X402SCAN, "x402scan")}</li>
-<li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul></section>
+<li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul>
+<p class="meta">{_t(CHECKED_BY_TEXT, paycheck=lk(PAYCHECK_URL, "Lumière PayCheck"), settled=lk(SETTLED_URL, "Settled"))}</p></section>
 {seo.faq_html(_t, E)}
 <div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas are an AI's paper-trade analysis; no real money is traded.")}</span></div>
 </main>

@@ -1084,6 +1084,8 @@
   "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint não aceitou os pagamentos de teste assinados da Lumi no XRPL, por isso nada foi cobrado. Apenas informativo; não faz parte da pontuação.",
   "Test payment not accepted yet on XRPL": "Pagamento de teste ainda não aceito na XRPL",
   "Lumi has tried {n} times on XRPL since {date}.": "A Lumi tentou {n} vezes na XRPL desde {date}.",
-  "Lumi has tried once on XRPL, on {date}.": "A Lumi tentou uma vez na XRPL, em {date}."
+  "Lumi has tried once on XRPL, on {date}.": "A Lumi tentou uma vez na XRPL, em {date}.",
+  "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer.": "Endereço de pagamento: use sempre o endereço de pagamento da Lumi (payTo) da resposta 402 ao vivo ou de <code>/.well-known/x402</code>, nunca do histórico de transações nem de uma transferência anterior.",
+  "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026) and {settled} (a paid test purchase of <code>/v1/slate</code> was delivered).": "Verificado de forma independente por {paycheck} (nota A em sete endpoints da Lumi, por exemplo <code>/v1/events/next48h</code>, em 24 de outubro de 2026) e {settled} (uma compra de teste paga de <code>/v1/slate</code> foi entregue)."
  }
 }
