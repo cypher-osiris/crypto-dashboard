@@ -36,8 +36,8 @@ ORG_DESC = ("Lumi Trades is a free public paper-trading crypto dashboard and an 
             "Lumi never handles funds for users.")
 # "is / isn't" line: JSON-LD disambiguatingDescription + the visible homepage footer line (same facts; keeps Lumi apart from
 # similarly named trading or brokerage sites)
-ORG_ISNT = ("Not a broker or exchange. Lumi never asks for deposits, never opens accounts and never holds anyone's funds. "
-            "Lumi's emails come only from hello@lumitrades.io, never from admin@.")
+ORG_ISNT = ("Not a broker or exchange; Lumi never holds user funds. Lumi never asks for deposits, passwords or wallet keys, "
+            "and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.")
 CONTACT_EMAIL = "hello@lumitrades.io"
 ORG_DESC_TRUST = ("Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents "
                   "through a pay-per-call x402 API and an MCP server.")
