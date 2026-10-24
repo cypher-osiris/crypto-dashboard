@@ -305,12 +305,15 @@ def trade_html(t, sym, price, H):
     return "".join(out)
 
 
+FEED_LINK = '<link rel="alternate" type="application/atom+xml" title="Lumi Trades" href="https://lumitrades.io/feed.xml">'  # /feed.xml (scripts/feed.py)
+
+
 def head_i18n(path, langs):
     """hreflang alternates + og:locale for a page at `path` (relative to a language root)."""
     alt = i18n.alternates(path, langs)
     loc = f'<meta property="og:locale" content="{L.meta.get("og_locale", "en_US")}">'
     loc += "".join(f'\n<meta property="og:locale:alternate" content="{x.meta.get("og_locale")}">' for x in langs if x.code != L.code)
-    return alt + "\n" + loc
+    return alt + "\n" + loc + "\n" + FEED_LINK
 
 
 def i18n_scripts(R):
@@ -439,7 +442,7 @@ def lang_index(en_src, langs):
             body = body[:body.index(b0) + len(b0)] + "\n" + body[body.index(b1):]
     body = i18n.translate_html(body, L)
     # asset / root paths: one level up (pages like xrp/ and trades/ stay relative, i.e. inside this language)
-    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|classic/|data/))', r"\1../", h)
+    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|classic/|data/))', r"\1../", h)
     head, body = fix(head), fix(body)
     head = head.replace('<script src="../assets/i18n.js', f'<script src="../assets/i18n/{L.code}.js?v={VERSION}" defer></script>\n<script src="../assets/i18n.js', 1)
     return head + "</head>" + body
@@ -803,6 +806,13 @@ def build(dry=False):
             if os.path.exists(os.path.join(bdir, d, "index.html")):
                 sm.append(f'  <url><loc>{SITE}blog/{d}/</loc><lastmod>{gen_date}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>')
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
+
+    # ---- Atom feed /feed.xml (scripts/feed.py): published blog posts, Lumi's market updates, active ideas (plan only) ----
+    try:
+        import feed
+        write("feed.xml", feed.atom(ROOT, load("log.json"), trades, {c: a.get("symbol") for c, a in prices["assets"].items()}, lvl))
+    except Exception as e:
+        print(f"build_pages: WARNING feed.xml failed: {e!r}", file=sys.stderr)
 
     # ---- link blocks in the main page (index.html, root) and the classic view (classic/index.html, one level down) ----
     for path, pre in (("index.html", ""), ("classic/index.html", "../")):

@@ -34,5 +34,22 @@ class NoPnl(unittest.TestCase):
             self.assertNotRegex(src, r'_t?\("[^"]*P&(amp;)?L|unrealized_pnl_pct\)?\s*(\)|,)\s*\}?\s*$|P&amp;L \$\{', f)
 
 
+    def test_feed_has_no_outcomes(self):
+        import feed
+        log = {"entries": [{"kind": "analysis", "t": "2026-10-23T06:25:00-05:00",
+                            "text": "BTC ~$81.6K is steady. T008 HBAR short filled overnight at 0.0815; T1 hit on T005. "
+                                    "Win rate is 60%. T003 XLM expired unfilled. Fed is next."},
+                           {"kind": "trade", "t": "2026-10-23T07:00:00-05:00", "text": "T007 stopped out"}]}
+        trades = {"trades": [{"id": "T008", "coin": "hedera-hashgraph", "status": "open", "direction": "short", "leverage": 2,
+                              "entry_zone": {"low": 0.0815, "high": 0.0825}, "stop": 0.084, "current_stop": 0.0815, "targets": [0.0778, 0.0755],
+                              "opened_at": "2026-10-22T12:40:00-05:00", "pnl_pct": 4.2, "t1_hit": True},
+                             {"id": "T007", "coin": "bitcoin", "status": "won", "pnl_pct": 9.1, "opened_at": "2026-10-20T12:00:00-05:00"}]}
+        x = feed.atom("/nonexistent", log, trades, {"hedera-hashgraph": "HBAR", "bitcoin": "BTC"}, str)
+        self.assertIn("BTC ~$81.6K is steady.", x)
+        self.assertIn("Fed is next.", x)
+        self.assertIn("T008", x)
+        self.assertNotRegex(x, r"(?i)filled|T1 hit|win rate|expired|stopped|T007|4\.2|9\.1|pnl")
+
+
 if __name__ == "__main__":
     unittest.main()
