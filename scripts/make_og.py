@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Social preview + icons for the site (run after each slate update; ~1 s).
 
-    python3 scripts/make_og.py            # assets/og.png (1200x630 "Lumi Trades" card from the current slate)
-    python3 scripts/make_og.py --icons    # also rebuild logo.png, favicons, favicon.ico, x_avatar.png (scripts/make_brand.py)
+    python3 scripts/make_og.py            # no-op for og.png: assets/og.png is the approved static brand card (2026-10-23)
+    python3 scripts/make_og.py --icons    # rebuild logo.png, wordmark, header sky, banner, favicons, x_avatar.png (scripts/make_brand.py)
+    python3 scripts/make_og.py --slate    # legacy: overwrite assets/og.png with the 1200x630 card drawn from the current slate
 
 Uses the same data/fonts as scripts/make_post.py. Needs matplotlib (+ fontTools for bold weights) and Pillow.
 The card's logo mark is assets/brand/logo.png (transparent "L" chart-line mark).
@@ -67,6 +68,7 @@ def icons():
 
 if __name__ == "__main__":
     out = icons() if "--icons" in sys.argv else []
-    og(os.path.join(ASSETS, "og.png"))
-    out = ["assets/og.png"] + out
+    if "--slate" in sys.argv:  # the brand card is static now; only redraw the slate card when asked
+        og(os.path.join(ASSETS, "og.png"))
+        out = ["assets/og.png"] + out
     print(" ".join(out))

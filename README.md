@@ -54,8 +54,8 @@ scripts/seo.py             schema.org JSON-LD (WebSite, Organization, WebAPI + o
                            /agents/ FAQ and /llms.txt (written by build_pages.py)
 scripts/locked.sh          run any command while holding state/lock (use for hand edits of trades.json/log.json)
 scripts/make_post.py       X helper: facts JSON for writing posts, number check, 1200x675 card, save drafts -> posts/ (git-ignored)
-scripts/make_og.py         1200x630 "Lumi Trades" social card (assets/og.png) from the current slate; --icons rebuilds favicons
-scripts/make_brand.py      logo mark (assets/brand/logo.png), favicons/favicon.ico and X avatar from assets/brand/logo-source.jpg
+scripts/make_og.py         social card: assets/og.png is the approved static brand card (left as is); --slate redraws the old slate card; --icons rebuilds favicons
+scripts/make_brand.py      L icon (assets/brand/logo.png), favicons/favicon.ico, X avatar, header wordmark/sky and Milky Way banner from assets/brand/*-source.*
 scripts/coins.py           loader for data/coins.json used by every script
 scripts/backtest.py        backtest of the signals.py indicators/composite -> data/backtest.json (~20 s first run)
 scripts/signals.py         RSI/MACD/EMA/Bollinger/StochRSI/volume signals -> data/signals.json + JSON on stdout (~1 s, no args)
@@ -129,7 +129,7 @@ section. The browser's signals refresh is throttled to about 6 Coinbase requests
    works). Optional `expires` closes an open trade at market. Times without an offset are read as Central time.
    The update script prints a WARNING (and stores `stats.slate_warnings`) if the slate rules are broken.
 4. Prepend an `{"t": ISO-UTC, "kind":"analysis", "author":"...", "text":"..."}` entry to `data/log.json`.
-5. Refresh the social card: `python3 scripts/make_og.py` (rewrites `assets/og.png` from the current slate, ~1 s).
+5. Social card: `assets/og.png` is now the static brand card, so nothing to do (`python3 scripts/make_og.py --slate` brings back the old slate card).
 6. Publish: `PUBLISH_MSG="Evening update" scripts/publish.sh data index.html assets/og.png` (or the manual git steps below).
    Because a `data` path is published, publish.sh first runs `scripts/build_pages.py` and commits the regenerated coin pages
    and sitemap.xml in the same commit (see "Coin pages" below). If you publish by hand with git, run `python3 scripts/build_pages.py` first.
@@ -444,10 +444,12 @@ Assets are referenced as `../assets/...`, and affiliate.js resolves `data/config
 
 ## SEO & social (index.html head, scripts/make_og.py)
 - `<title>`, meta description, `robots: index, follow`, canonical `https://lumitrades.io/`.
-- Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). `python3 scripts/make_og.py`
-  regenerates it from the current slate (step 5 of each update). `--icons` also rebuilds the favicons
-  (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` 180, `icon-192.png`, `icon-512.png`) plus `assets/brand/logo.png` and
-  `x_avatar.png` from `assets/brand/logo-source.jpg` via `scripts/make_brand.py` (only needed if the logo changes). X and other platforms
+- Open Graph + Twitter `summary_large_image` tags pointing at the absolute URL `assets/og.png` (1200x630). It is the approved
+  static brand card (Milky Way wordmark); `python3 scripts/make_og.py --slate` redraws the old slate card instead. `--icons` rebuilds the favicons
+  (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` 180, `icon-192.png`, `icon-512.png`) plus `assets/brand/logo.png`,
+  `x_avatar.png`, the header wordmark (`wordmark.png`, keyed transparent), `header-sky.jpg` and `banner.jpg` from
+  `assets/brand/icon-source.png`, `icon-square-source.png`, `wordmark-source.jpg` and `wordmark-milkyway-source.jpg` via
+  `scripts/make_brand.py` (only needed if the brand changes). X and other platforms
   cache card images, so a new og.png can take a while to show on links that were already shared.
 - JSON-LD in the head: `WebSite` (publisher Lumi Trades, sameAs the X account) + `Dataset` (DataDownload links to prices/signals/backtest JSON).
   If you change the description or data files, keep it in sync and validate (e.g. https://validator.schema.org/).

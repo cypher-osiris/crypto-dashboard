@@ -234,3 +234,20 @@
   .lgw *,.lgw *::before,.lgw *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .lgw .ag-rows li{opacity:1}
 }
+
+/* ---------- brand: "lumi" wordmark (no icon) on a faint Milky Way header; Milky Way banner above the footer ---------- */
+.lgw .pv-top,.lgw .cp-top{background:linear-gradient(90deg,rgba(4,5,11,.38) 0%,rgba(4,5,11,.6) 30%,rgba(4,5,11,.86) 62%,rgba(4,5,11,.94) 100%),url(brand/header-sky.jpg) 30% 78%/cover no-repeat,#04050b}
+.lgw .pv-brand{gap:0}
+.lgw .pv-brand>span{flex-direction:row;align-items:center;gap:14px}
+.lgw .pv-brand .pv-title{display:block;line-height:0;font-size:0}
+.lgw .pv-brand img.wm,.lgw .cp-brand img.wm{display:block;width:auto;height:46px;margin:-6px 0 -6px -3px;border-radius:0;filter:none}
+.lgw .cp-brand img.wm{height:42px;margin:-6px 0}
+.lgw .pv-brand small{padding-left:14px;border-left:1px solid var(--line2);line-height:1.3;max-width:15em}
+.lgw .brand-band{margin:34px auto 4px;max-width:1040px}
+.lgw .brand-band img{display:block;width:100%;height:auto;aspect-ratio:1280/480;object-fit:cover;border-radius:22px;border:1px solid var(--line);opacity:.9;box-shadow:0 24px 60px -32px rgba(124,92,255,.45)}
+@media (max-width:760px){
+  .lgw .pv-brand img.wm{height:40px;margin:-4px 0 -4px -3px}
+  .lgw .cp-brand img.wm{height:36px;margin:-4px 0}
+  .lgw .brand-band{margin-top:26px}
+  .lgw .brand-band img{border-radius:16px}
+}

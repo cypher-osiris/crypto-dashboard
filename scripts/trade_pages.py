@@ -243,7 +243,7 @@ def chrome(h, pre, home, nav_items, V, path, current="trades"):
     tk_pages = ",".join(f"{c}:{h.L.prefix}{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js)
     return (f'<body class="cp tp lgw">\n<div class="bg-glow" aria-hidden="true"></div>\n'
             f'<header class="cp-top"><div class="wrap cp-top-inner">\n'
-            f'  <a class="cp-brand" href="{home}"><img src="{pre}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>\n'
+            f'  <a class="cp-brand" href="{home}"><img class="wm" src="{pre}assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>\n'
             f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}#slate">{h._("Dashboard &amp; trade ideas →")}</a></span>\n</div></header>\n'
             f'<div class="ticker lt-ticker" role="region" aria-label="{h.E(h._("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>\n'
             f'<nav class="nav" aria-label="{h.E(h._("Site"))}"><div class="wrap nav-inner"><a href="{home}">{h.E(h._("Dashboard"))}</a>'
