@@ -220,6 +220,8 @@ class PrivacyPage(unittest.TestCase):
             self.assertIn("hello@lumitrades.io", h)
             self.assertIn(pp.UPDATED.isoformat(), h)
             self.assertNotIn("bitunix", h.lower())
+            self.assertIn('id="lumi-check"', h)          # Lumi Check section (English on every language page for now)
+            self.assertNotIn("draft", h.lower())
             self.assertIn(f"<loc>https://lumitrades.io/{lang}privacy/</loc>", sm)
             if lang:
                 self.assertNotIn(pp.LEDE[:60], h)
