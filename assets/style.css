@@ -875,6 +875,10 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 .tr-tx a{text-decoration:none}
 .tr-tx a:hover code,.tr-tx a:focus code{text-decoration:underline}
 .tr-tx code{font:500 .74rem/1.35 var(--mono);color:var(--cyan);background:none;padding:0}
+/* opt-in "Test payment not accepted yet": neutral grey pill + note (not a result badge, never red/green) */
+.tr-att{display:block;width:max-content;max-width:100%;margin:.3rem 0 .15rem;padding:1px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.35);background:rgba(148,163,184,.12);color:#c3ccd8;font-size:.72rem;font-weight:600;line-height:1.55;white-space:normal}
+.tr-att-note{display:block;max-width:15rem;margin:.1rem 0 .2rem;font-size:.74rem;line-height:1.4;color:var(--muted);white-space:normal}
+.tr-att-note a{white-space:nowrap}
 .tr-verify ol{margin:.6rem 0 .8rem;padding-left:1.4rem}
 .tr-verify li{margin:.35rem 0;line-height:1.5;overflow-wrap:anywhere}
 .tr-verify li b{display:block}

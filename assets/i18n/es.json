@@ -317,7 +317,13 @@
   "Date in UTC. A dated test result, not an endorsement or guarantee.": "Fecha en UTC. Un resultado de prueba fechado, no un respaldo ni una garantía.",
   "On-chain tx": "Tx on-chain",
   "Lumi's payment for this test-buy on the public {chain} ledger. Free to check.": "El pago de Lumi por esta compra de prueba en el ledger público de {chain}. Comprobarlo es gratis.",
-  "Signed receipt and full history: paid vendor report ($0.02)": "Recibo firmado e historial completo: informe de proveedor de pago ($0.02)"
+  "Signed receipt and full history: paid vendor report ($0.02)": "Recibo firmado e historial completo: informe de proveedor de pago ($0.02)",
+  "Test payment not accepted yet": "Pago de prueba aún no aceptado",
+  "Lumi has tried {n} times since {date}.": "Lumi lo ha intentado {n} veces desde el {date}.",
+  "Lumi has tried once, on {date}.": "Lumi lo ha intentado una vez, el {date}.",
+  "The seller is online, but our payment hasn't gone through yet.": "El vendedor está en línea, pero nuestro pago aún no se ha completado.",
+  "Seller? Help us complete it": "¿Es el vendedor? Ayúdenos a completarlo",
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint no aceptó los pagos de prueba firmados de Lumi en el XRPL, por lo que no se cobró nada. Solo informativo; no forma parte de la puntuación."
  },
  "pages": {
   " (filled {when})": " (ejecutada {when})",
@@ -1072,6 +1078,12 @@
   "Contact": "Contacto",
   "Lumi never asks for deposits, never holds user funds and never offers investment returns.": "Lumi nunca pide depósitos, nunca custodia fondos de usuarios y nunca ofrece rendimientos de inversión.",
   "Sites and accounts not listed here are not Lumi's.": "Los sitios y cuentas que no aparecen aquí no son de Lumi.",
-  "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "Cada compra de prueba pagada es una transacción real en XRPL, Base o Stellar, guardada con un recibo firmado. El hash de transacción de la última compra a cada vendedor es gratis en la lista de confianza; los recibos firmados vienen con el informe de proveedor de pago."
+  "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "Cada compra de prueba pagada es una transacción real en XRPL, Base o Stellar, guardada con un recibo firmado. El hash de transacción de la última compra a cada vendedor es gratis en la lista de confianza; los recibos firmados vienen con el informe de proveedor de pago.",
+  "Test payment not accepted yet": "Pago de prueba aún no aceptado",
+  "Lumi has tried {n} times since {date}.": "Lumi lo ha intentado {n} veces desde el {date}.",
+  "Lumi has tried once, on {date}.": "Lumi lo ha intentado una vez, el {date}.",
+  "The seller is online, but our payment hasn't gone through yet.": "El vendedor está en línea, pero nuestro pago aún no se ha completado.",
+  "Seller? Help us complete it": "¿Es el vendedor? Ayúdenos a completarlo",
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint no aceptó los pagos de prueba firmados de Lumi en el XRPL, por lo que no se cobró nada. Solo informativo; no forma parte de la puntuación."
  }
 }

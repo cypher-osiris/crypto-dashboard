@@ -1,0 +1,18 @@
+{
+ "_note": "Build-time fallback for the opt-in 'Test payment not accepted yet' label on /trust/ (used only when the API row has no payment_attempts). Listing a vendor here IS the opt-in: add one only after confirming the failure is not on Lumi's side. Counts = distinct signed XRPL test payments to the vendor's pay-to that it answered with a rejection and that never reached the ledger (each re-checked txnNotFound on Oct 24 2026). Sources: notes/trust_testbuys.log (buy_not_validated) and xrpl_testbuys state files; plan/skip/dry-run lines are not attempts.",
+ "as_of": "2026-10-24T16:40:00Z",
+ "vendors": {
+  "edge-agents": {
+   "network": "xrpl:0",
+   "count": 4,
+   "first_attempt": "2026-10-23T03:08:48.615Z",
+   "last_attempt": "2026-10-24T09:25:07.491Z",
+   "tx_hashes": [
+    "4D8116AF1972C269104507B344CFF49577CBD8B1EB6025588FCBBA17FE54A719",
+    "784D0F69B69DA2834D53AC888A47B79E4028D4E9CEA4AE5229586979BA536393",
+    "7DAC6138D26712FDA0421BC8FA064812A6255E22E35386AE989333981AD3218A",
+    "1099E7F81ECCAF1569DD8EFF599124681E5B90130030C0F45B58D2A7624AE904"
+   ]
+  }
+ }
+}

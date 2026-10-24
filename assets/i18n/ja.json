@@ -317,7 +317,13 @@
   "Date in UTC. A dated test result, not an endorsement or guarantee.": "日付はUTC。日付入りのテスト結果であり、推奨や保証ではありません。",
   "On-chain tx": "オンチェーンTx",
   "Lumi's payment for this test-buy on the public {chain} ledger. Free to check.": "このテスト購入に対するLumiの支払い（{chain}の公開レジャー上）。確認は無料です。",
-  "Signed receipt and full history: paid vendor report ($0.02)": "署名付き領収記録と全履歴：有料のベンダーレポート（$0.02）"
+  "Signed receipt and full history: paid vendor report ($0.02)": "署名付き領収記録と全履歴：有料のベンダーレポート（$0.02）",
+  "Test payment not accepted yet": "テスト決済はまだ受け付けられていません",
+  "Lumi has tried {n} times since {date}.": "Lumiは{date}以降、{n}回試みました。",
+  "Lumi has tried once, on {date}.": "Lumiは{date}に1回試みました。",
+  "The seller is online, but our payment hasn't gone through yet.": "販売者はオンラインですが、こちらの支払いはまだ完了していません。",
+  "Seller? Help us complete it": "販売者の方へ：完了にご協力ください",
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "このエンドポイントはXRPL上のLumiの署名済みテスト決済を受け付けなかったため、何も請求されていません。参考情報であり、スコアには含まれません。"
  },
  "pages": {
   " (filled {when})": "（{when}に約定）",
@@ -1072,6 +1078,12 @@
   "Contact": "連絡先",
   "Lumi never asks for deposits, never holds user funds and never offers investment returns.": "Lumiが入金を求めることも、ユーザーの資金を預かることも、投資リターンを約束することも決してありません。",
   "Sites and accounts not listed here are not Lumi's.": "ここに記載されていないサイトやアカウントはLumiのものではありません。",
-  "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "有料テスト購入はすべてXRPL、Base、Stellar上の実際のトランザクションで、署名付き領収記録とともに保管されます。各販売者の最新購入のトランザクションハッシュは信頼リストで無料で確認でき、署名付き領収記録は有料のベンダーレポートに含まれます。"
+  "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "有料テスト購入はすべてXRPL、Base、Stellar上の実際のトランザクションで、署名付き領収記録とともに保管されます。各販売者の最新購入のトランザクションハッシュは信頼リストで無料で確認でき、署名付き領収記録は有料のベンダーレポートに含まれます。",
+  "Test payment not accepted yet": "テスト決済はまだ受け付けられていません",
+  "Lumi has tried {n} times since {date}.": "Lumiは{date}以降、{n}回試みました。",
+  "Lumi has tried once, on {date}.": "Lumiは{date}に1回試みました。",
+  "The seller is online, but our payment hasn't gone through yet.": "販売者はオンラインですが、こちらの支払いはまだ完了していません。",
+  "Seller? Help us complete it": "販売者の方へ：完了にご協力ください",
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "このエンドポイントはXRPL上のLumiの署名済みテスト決済を受け付けなかったため、何も請求されていません。参考情報であり、スコアには含まれません。"
  }
 }

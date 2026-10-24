@@ -7,6 +7,7 @@ build, cached in state/trust_vendors.json, which is git-ignored; if the API is d
 then refreshes the table live from the same free endpoint. Every routine that runs scripts/publish.sh with data/ files
 (dashboard update, trade tracker) rebuilds the pages, so the static table stays fresh without a separate job.
 """
+import datetime as dt
 import json
 import re
 import urllib.parse
@@ -384,7 +385,84 @@ def tx_html(h, v):
             f'data-tx="{E(t[0])}"><code>{E(tx_short(t[0]))}</code> ↗</a></span>')
 
 
-def vendor_row(h, v):
+# ---------- Opt-in "Test payment not accepted yet" label (neutral, grey; never affects the score) ----------
+# Only for vendors with zero paid test-buys AND an explicit opt-in: the API's payment_attempts (set only for vendors flagged
+# label_unsettled_payments in lumi-api) or, as a build-time fallback, scripts/trust_attempts.json. N = signed XRPL test
+# payments the seller did not accept (none reached the ledger). "The seller is online" only when a free quote check in the
+# last 90 minutes returned a valid 402. Mirrored in assets/trust.js (attempts()/attLabel()).
+ATT_SNAPSHOT = os.path.join(ROOT, "scripts", "trust_attempts.json")
+ATT_LABEL = "Test payment not accepted yet"
+ATT_TRIED = "Lumi has tried {n} times since {date}."
+ATT_TRIED_1 = "Lumi has tried once, on {date}."
+ATT_ONLINE = "The seller is online, but our payment hasn't gone through yet."
+ATT_HELP = "Seller? Help us complete it"
+ATT_TIP = "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score."
+ATT_ONLINE_MS = 90 * 60 * 1000
+_att_snap = None
+
+
+def att_snapshot():
+    global _att_snap
+    if _att_snap is None:
+        try:
+            with open(ATT_SNAPSHOT, encoding="utf-8") as f:
+                d = json.load(f).get("vendors") or {}
+            _att_snap = {k: x for k, x in d.items() if isinstance(x, dict)}
+        except Exception:
+            _att_snap = {}
+    return _att_snap
+
+
+def _iso_ms(iso):
+    try:
+        return dt.datetime.fromisoformat(str(iso).replace("Z", "+00:00")).timestamp() * 1000
+    except Exception:
+        return None
+
+
+def vendor_attempts(v, snap=None):
+    """{count, first_attempt} for an opted-in vendor with zero paid test-buys, else None."""
+    if (v.get("samples") or {}).get("paid_test_buys") or v.get("last_paid_observation"):
+        return None
+    a = v.get("payment_attempts")
+    if not (isinstance(a, dict) and a.get("status") == "test_payment_not_accepted_yet"):
+        a = (att_snapshot() if snap is None else snap).get(str(v.get("id") or ""))
+    if not isinstance(a, dict):
+        return None
+    try:
+        n = int(a.get("count") or 0)
+    except (TypeError, ValueError):
+        return None
+    if n < 1 or _iso_ms(a.get("first_attempt")) is None:
+        return None
+    return {"count": n, "first_attempt": a["first_attempt"]}
+
+
+def seller_online(v, now_ms):
+    """True when a free quote check in the last 90 minutes got a valid 402 quote and the vendor is live."""
+    if v.get("status") not in (None, "live"):
+        return False
+    for p in v.get("latest_probes") or []:
+        t = _iso_ms(p.get("checked_at"))
+        if p.get("http_status") == 402 and p.get("valid_quote") is True and t is not None and 0 <= now_ms - t <= ATT_ONLINE_MS:
+            return True
+    return False
+
+
+def attempts_html(h, v, now_ms):
+    a = vendor_attempts(v)
+    if not a:
+        return ""
+    E, _t = h.E, h._
+    date = h.ctime(a["first_attempt"], False)
+    tried = _t(ATT_TRIED_1, date=date) if a["count"] == 1 else _t(ATT_TRIED, n=a["count"], date=date)
+    sep = "" if h.L.code == "ja" else " "  # Japanese runs sentences together
+    note = tried + (sep + _t(ATT_ONLINE) if seller_online(v, now_ms) else "")
+    return (f'<span class="tr-att" title="{E(_t(ATT_TIP))}">{E(_t(ATT_LABEL))}</span>'
+            f'<span class="tr-att-note">{E(note)} <a href="#reply">{E(_t(ATT_HELP))}</a></span>')
+
+
+def vendor_row(h, v, now_ms=None):
     E, _t = h.E, h._
     s = v.get("samples") or {}
     o = v.get("last_paid_observation") or None
@@ -407,7 +485,7 @@ def vendor_row(h, v):
     if v.get("replies") and _https(v.get("detail")):
         ev += f' <a href="{E(v["detail"])}" target="_blank" rel="noopener">· {E(_t("reply ({n})", n=v["replies"]))}</a>'
     lc = _last_checked(v)
-    return (f'<tr><td>{name}{badge_html(h, v)}{tx_html(h, v)}<span class="vid">{E(v.get("id"))}</span></td>'
+    return (f'<tr><td>{name}{badge_html(h, v)}{tx_html(h, v)}{attempts_html(h, v, now_ms) if now_ms else ""}<span class="vid">{E(v.get("id"))}</span></td>'
             f'<td class="num">{"—" if v.get("score") is None else E(v.get("score"))}</td>'
             f'<td><span class="tr-conf c-{E(conf)}">{E(_t(conf) if conf in ("low", "medium", "high") else conf)}</span></td>'
             f'<td class="num">{E(s.get("paid_test_buys") or 0)}</td><td class="num">{E(s.get("delivered") or 0)}</td>'
@@ -609,7 +687,10 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
           {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
               {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + h.L.prefix},
               {"@type": "ListItem", "position": 2, "name": _t("Vendor trust"), "item": h.SITE + h.L.prefix + "trust/"}]}]
-    rows = "".join(vendor_row(h, v) for v in vendors)
+    gen_ms = _iso_ms((doc or {}).get("generated_at")) or dt.datetime.now(dt.timezone.utc).timestamp() * 1000
+    rows = "".join(vendor_row(h, v, gen_ms) for v in vendors)
+    att = {k: {f: x.get(f) for f in ("network", "count", "first_attempt", "last_attempt")} for k, x in att_snapshot().items() if k in {str(v.get("id")) for v in vendors}}
+    att_js = json.dumps(att, separators=(",", ":"), sort_keys=True).replace("</", "<\\/")
     snap = {str(v.get("id")): tx_snapshot()[str(v.get("id"))] for v in vendors if str(v.get("id")) in tx_snapshot()}
     snap_js = json.dumps(snap, separators=(",", ":"), sort_keys=True).replace("</", "<\\/")
     R = "../" + ("" if h.L.en else "../")
@@ -649,6 +730,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <thead><tr><th>{E(_t("Vendor"))}</th><th class="num">{E(_t("Score"))}</th><th>{E(_t("Confidence"))}</th><th class="num">{E(_t("Paid buys"))}</th><th class="num">{E(_t("Delivered"))}</th><th>{E(_t("Last checked"))}</th><th>{E(_t("Last test-buy"))}</th></tr></thead>
 <tbody id="tr-body">{rows}</tbody></table></div>
 <script type="application/json" id="tr-tx">{snap_js}</script>
+<script type="application/json" id="tr-att">{att_js}</script>
 <p class="meta">{E(_t("Listed in the order we added them, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. \"Last test-buy\" = outcome and time of the latest paid test-buy. \"On-chain tx\" = Lumi's payment for that same test-buy on the public ledger, free to check (see \"Verify it yourself\" below). Older tx hashes and the signed receipts come with the paid vendor report ($0.02 per vendor). Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
 <p class="meta">{E(_t("Raw data:"))} <a href="{VENDORS_URL}" target="_blank" rel="noopener">api.lumitrades.io/v1/trust/vendors</a> · <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("How scores are computed"))}</a> · <a href="../agents/">{E(_t("Lumi's data for AI agents →"))}</a></p>
 </section>

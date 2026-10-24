@@ -78,6 +78,39 @@
     return `<span class="tr-tx">${esc(tr("On-chain tx"))} <a href="${esc(t.url)}" target="_blank" rel="noopener" ` +
       `title="${esc(tr("Lumi's payment for this test-buy on the public {chain} ledger. Free to check.", { chain: t.ch }))}" data-tx="${esc(t.h)}"><code>${esc(short)}</code> ↗</a></span>`;
   }
+  // Opt-in "Test payment not accepted yet" label (mirrors vendor_attempts()/attempts_html() in scripts/site_pages.py): only for
+  // vendors with zero paid test-buys and an explicit opt-in (the API's payment_attempts, else the build's copy in #tr-att).
+  // Neutral grey, never part of the score. "The seller is online" only if a quote check in the last 90 min got a valid 402.
+  let ATT = {};
+  try { ATT = JSON.parse(($("tr-att") || {}).textContent || "{}") || {}; } catch (e) { ATT = {}; }
+  function attempts(v) {
+    if ((v.samples && v.samples.paid_test_buys) || v.last_paid_observation) return null;
+    let a = v.payment_attempts;
+    if (!(a && a.status === "test_payment_not_accepted_yet")) a = Object.prototype.hasOwnProperty.call(ATT, v.id) ? ATT[v.id] : null;
+    const n = a ? parseInt(a.count, 10) : 0;
+    return n >= 1 && !isNaN(new Date(a.first_attempt || "")) ? { count: n, first_attempt: a.first_attempt } : null;
+  }
+  function online(v) {
+    if (v.status && v.status !== "live") return false;
+    return (v.latest_probes || []).some((p) => {
+      const t = new Date((p && p.checked_at) || "").getTime();
+      return p && p.http_status === 402 && p.valid_quote === true && !isNaN(t) && Date.now() - t >= -60000 && Date.now() - t <= 90 * 60000;
+    });
+  }
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    try { return d.toLocaleDateString(I.locale || "en-US", { timeZone: "America/Chicago", year: "numeric", month: "short", day: "numeric" }); }
+    catch (e) { return d.toISOString().slice(0, 10); }
+  }
+  function attLabel(v) {
+    const a = attempts(v);
+    if (!a) return "";
+    const date = fmtDate(a.first_attempt);
+    let note = a.count === 1 ? tr("Lumi has tried once, on {date}.", { date }) : tr("Lumi has tried {n} times since {date}.", { n: a.count, date });
+    if (online(v)) note += (/^ja/i.test(I.locale || "") ? "" : " ") + tr("The seller is online, but our payment hasn't gone through yet.");
+    return `<span class="tr-att" title="${esc(tr("Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score."))}">${esc(tr("Test payment not accepted yet"))}</span>` +
+      `<span class="tr-att-note">${esc(note)} <a href="#reply">${esc(tr("Seller? Help us complete it"))}</a></span>`;
+  }
   function row(v) {
     const s = v.samples || {}, o = v.last_paid_observation, home = vendorLink(v);
     const own = home.indexOf("https://api.lumitrades.io/trust/v/") === 0; // no working homepage: say it's Lumi's own result page
@@ -94,7 +127,7 @@
       ev = `<a href="${esc(o.explorer)}" target="_blank" rel="noopener" title="${esc(o.summary || "")}">${esc(((o.amount || "") + " " + (o.asset || "")).trim())} · ${esc(o.data_returned ? tr("data") : tr("no data"))} ↗</a>`;
     }
     if (v.replies && https(v.detail)) ev += ` <a href="${esc(v.detail)}" target="_blank" rel="noopener">· ${esc(tr("reply ({n})", { n: v.replies }))}</a>`;
-    return `<tr><td>${name}${badge(o)}${txLink(v, o)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
+    return `<tr><td>${name}${badge(o)}${txLink(v, o)}${attLabel(v)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
       `<td><span class="tr-conf c-${esc(conf)}">${esc(confTxt)}</span></td><td class="num">${esc(s.paid_test_buys || 0)}</td>` +
       `<td class="num">${esc(s.delivered || 0)}</td><td>${esc(fmt(lastChecked(v)))}</td><td>${ev}</td></tr>`;
   }

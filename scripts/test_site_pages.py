@@ -324,6 +324,54 @@ class TrustBadge(unittest.TestCase):
             self.assertEqual(pages["Tested by Lumi"], "Tested by Lumi")
             self.assertIn("Tested by Lumi", pages[sp.BADGE_NOTE])
 
+class PaymentAttemptsLabel(unittest.TestCase):
+    """Opt-in grey 'Test payment not accepted yet' label: only listed vendors, only with zero paid buys, neutral wording."""
+    SNAP = {"edge-agents": {"count": 4, "first_attempt": "2026-10-23T03:08:48.615Z"}}
+    NOW = 1792860000000  # 2026-10-24T16:40Z
+
+    def h(self):
+        import types, html
+        return types.SimpleNamespace(E=lambda s: html.escape(str(s)), _=lambda s, **kw: s.format(**kw) if kw else s,
+                                     ctime=lambda *a, **k: "Oct 22, 2026", L=types.SimpleNamespace(code="en"))
+
+    def probe(self, ms_ago, ok=True):
+        import datetime as dt
+        t = dt.datetime.fromtimestamp((self.NOW - ms_ago) / 1000, dt.timezone.utc).isoformat()
+        return {"checked_at": t, "http_status": 402 if ok else 500, "valid_quote": ok}
+
+    def test_opt_in_only(self):
+        self.assertIsNotNone(sp.vendor_attempts({"id": "edge-agents", "samples": {"paid_test_buys": 0}}, self.SNAP))
+        self.assertIsNone(sp.vendor_attempts({"id": "monid", "samples": {"paid_test_buys": 0}}, self.SNAP))
+
+    def test_gone_after_a_paid_buy(self):
+        self.assertIsNone(sp.vendor_attempts({"id": "edge-agents", "samples": {"paid_test_buys": 1}}, self.SNAP))
+        self.assertIsNone(sp.vendor_attempts({"id": "edge-agents", "last_paid_observation": {"x": 1}}, self.SNAP))
+
+    def test_api_field_wins(self):
+        v = {"id": "x", "payment_attempts": {"status": "test_payment_not_accepted_yet", "count": 5, "first_attempt": "2026-10-20T00:00:00Z"}}
+        self.assertEqual(sp.vendor_attempts(v, {})["count"], 5)
+
+    def test_online_sentence_needs_fresh_valid_402(self):
+        old = sp.att_snapshot
+        sp.att_snapshot = lambda: self.SNAP
+        try:
+            base = {"id": "edge-agents", "status": "live", "samples": {"paid_test_buys": 0}}
+            on = sp.attempts_html(self.h(), dict(base, latest_probes=[self.probe(10 * 60000)]), self.NOW)
+            self.assertIn("Lumi has tried 4 times since Oct 22, 2026. The seller is online", on)
+            self.assertIn('href="#reply"', on)
+            for probes in ([self.probe(3 * 3600000)], [self.probe(60000, ok=False)], []):
+                off = sp.attempts_html(self.h(), dict(base, latest_probes=probes), self.NOW)
+                self.assertIn("Lumi has tried 4 times", off)
+                self.assertNotIn("online", off)
+            self.assertNotRegex(on.lower(), r"scam|fraud|" + os.environ.get("LUMI_PRIVATE_NAME_RE", "owner-name-redacted"))
+        finally:
+            sp.att_snapshot = old
+
+    def test_snapshot_file_is_opt_in_list(self):
+        with open(sp.ATT_SNAPSHOT, encoding="utf-8") as f:
+            d = json.load(f)["vendors"]
+        self.assertEqual(sorted(d), ["edge-agents"])
+
 
 if __name__ == "__main__":
     unittest.main()
