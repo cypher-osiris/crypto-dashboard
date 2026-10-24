@@ -870,3 +870,16 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 .tr-badge-note{margin:.2rem 0 .8rem;font-size:.9rem}
 .tr-badge-note .muted{display:block;font-size:.8rem;margin-top:.15rem}
 @media (max-width:600px){.lt-badge>span{padding:1px 5px}}
+/* /trust/: free on-chain proof link under the badge, #verify steps and #about */
+.tr-tx{display:block;margin:.05rem 0 .1rem;font-size:.74rem;line-height:1.35;color:var(--dim);white-space:nowrap}
+.tr-tx a{text-decoration:none}
+.tr-tx a:hover code,.tr-tx a:focus code{text-decoration:underline}
+.tr-tx code{font:500 .74rem/1.35 var(--mono);color:var(--cyan);background:none;padding:0}
+.tr-verify ol{margin:.6rem 0 .8rem;padding-left:1.4rem}
+.tr-verify li{margin:.35rem 0;line-height:1.5;overflow-wrap:anywhere}
+.tr-verify li b{display:block}
+.tr-verify .tr-free,.tr-verify .tr-score{margin:.45rem 0}
+.tr-about dl{display:grid;grid-template-columns:max-content 1fr;gap:.3rem 1rem;margin:.6rem 0}
+.tr-about dt{color:var(--dim)}
+.tr-about dd{margin:0;overflow-wrap:anywhere}
+@media (max-width:600px){.tr-about dl{grid-template-columns:1fr;gap:.1rem}.tr-about dd{margin-bottom:.45rem}}

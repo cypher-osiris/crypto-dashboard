@@ -200,7 +200,7 @@ def steps_html(h):
     _t, E = h._, h.E
     steps = ((_t("Lumi checks the quote"), _t("A free request asks each endpoint for its x402 price quote and checks it is readable and payable.")),
              (_t("Lumi makes a small paid test-buy"), _t("Lumi pays a few cents from its own wallet and records whether real data came back.")),
-             (_t("The payment is on a public ledger"), _t("Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. Tx hashes and receipts come with the paid vendor report.")))
+             (_t("The payment is on a public ledger"), _t("Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.")))
     li = "".join(f'<li><span class="hx-step-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="{STEP_ICONS[i]}"/></svg><em>{i + 1}</em></span>'
                  f'<b>{E(t)}</b><span>{E(d)}</span></li>' for i, (t, d) in enumerate(steps))
     return f'<ol class="hx-steps">{li}</ol>'
@@ -319,6 +319,71 @@ def badge_html(h, v):
             f'<span class="lt-b-l" aria-hidden="true">{E(label)}</span><span class="lt-b-r" aria-hidden="true">{E(right)}</span></span>')
 
 
+# ---------- Free on-chain proof: the tx hash of each seller's latest paid test-buy (the same buy the badge shows) ----------
+# Source, in order: last_paid_observation.tx_hash from the live API (if it ever carries one), else scripts/trust_tx.json, a
+# read-only copy of hashes from Lumi's own trust database. A copied hash is used only when vendor id, observed_at, endpoint
+# and network all equal the API's latest paid test-buy, so a newer buy never shows an older hash. No match = no tx link.
+# Hashes are never derived or made up. Mirrored in assets/trust.js (txFor()). Signed receipts stay in the paid report.
+TX_SNAPSHOT = os.path.join(ROOT, "scripts", "trust_tx.json")
+TX_EXPLORER = {"XRPL": "https://livenet.xrpl.org/transactions/{h}", "Base": "https://basescan.org/tx/{h}",
+               "Stellar": "https://stellar.expert/explorer/public/tx/{h}"}
+TX_RE = {"XRPL": re.compile(r"^[0-9A-F]{64}$"), "Base": re.compile(r"^0x[0-9a-f]{64}$"), "Stellar": re.compile(r"^[0-9a-f]{64}$")}
+TX_LABEL = "On-chain tx"
+TX_TIP = "Lumi's payment for this test-buy on the public {chain} ledger. Free to check."
+_tx_snap = None
+
+
+def tx_snapshot():
+    """{vendor_id: {observed_at, endpoint, network, tx_hash}} from scripts/trust_tx.json ({} if missing or invalid)."""
+    global _tx_snap
+    if _tx_snap is None:
+        try:
+            with open(TX_SNAPSHOT, encoding="utf-8") as f:
+                d = json.load(f).get("vendors") or {}
+            _tx_snap = {k: x for k, x in d.items() if isinstance(x, dict)}
+        except Exception:
+            _tx_snap = {}
+    return _tx_snap
+
+
+def obs_tx(v, snap=None):
+    """(tx_hash, explorer_url) of the vendor's latest paid test-buy, or None when we have no matching hash."""
+    o = v.get("last_paid_observation") or None
+    if not o or not o.get("observed_at"):
+        return None
+    chain = badge_chain(o.get("network"))
+    if not chain:
+        return None
+    h = o.get("tx_hash")
+    if not h:
+        x = (tx_snapshot() if snap is None else snap).get(str(v.get("id") or "")) or {}
+        if all(x.get(k) == o.get(k) for k in ("observed_at", "endpoint", "network")):
+            h = x.get("tx_hash")
+    h = str(h or "").strip()
+    if chain == "XRPL":
+        h = h.upper()
+    elif chain == "Base":
+        h = h.lower()
+    if not TX_RE[chain].match(h):
+        return None
+    return h, TX_EXPLORER[chain].format(h=h)
+
+
+def tx_short(h):
+    return h[:8] + "…" + h[-6:] if h.startswith("0x") else h[:6] + "…" + h[-6:]
+
+
+def tx_html(h, v):
+    """Compact free tx link under the badge: 'On-chain tx 51E571…D1F4C2 ↗' with the full hash in the link."""
+    t = obs_tx(v)
+    if not t:
+        return ""
+    E, _t = h.E, h._
+    tip = _t(TX_TIP, chain=badge_chain(v["last_paid_observation"].get("network")))
+    return (f'<span class="tr-tx">{E(_t(TX_LABEL))} <a href="{E(t[1])}" target="_blank" rel="noopener" title="{E(tip)}" '
+            f'data-tx="{E(t[0])}"><code>{E(tx_short(t[0]))}</code> ↗</a></span>')
+
+
 def vendor_row(h, v):
     E, _t = h.E, h._
     s = v.get("samples") or {}
@@ -331,9 +396,9 @@ def vendor_row(h, v):
         name = f'<a href="{E(home)}" target="_blank" rel="noopener nofollow">{nm}</a>' if home else nm
     conf = str(v.get("confidence") or "—")
     ev = "—"
-    if o and o.get("observed_at"):  # outcome + date of the latest paid test-buy (free data); tx hashes are in the paid report
+    if o and o.get("observed_at"):  # outcome + date of the latest paid test-buy (free data); signed receipts are in the paid report
         dv = o.get("delivery")
-        ev = (f'<span title="{E(_t("Tx hash and signed receipt: paid vendor report ($0.02)"))}">'
+        ev = (f'<span title="{E(_t("Signed receipt and full history: paid vendor report ($0.02)"))}">'
               f'{E(_t("Delivered") if dv == "delivered" else _t("No data") if dv in ("not_delivered", "failed") or o.get("data_returned") is False else _t("Inconclusive"))}'
               f' · {E(h.ctime(o["observed_at"]))}</span>')
     if o and _https(o.get("explorer")):
@@ -342,7 +407,7 @@ def vendor_row(h, v):
     if v.get("replies") and _https(v.get("detail")):
         ev += f' <a href="{E(v["detail"])}" target="_blank" rel="noopener">· {E(_t("reply ({n})", n=v["replies"]))}</a>'
     lc = _last_checked(v)
-    return (f'<tr><td>{name}{badge_html(h, v)}<span class="vid">{E(v.get("id"))}</span></td>'
+    return (f'<tr><td>{name}{badge_html(h, v)}{tx_html(h, v)}<span class="vid">{E(v.get("id"))}</span></td>'
             f'<td class="num">{"—" if v.get("score") is None else E(v.get("score"))}</td>'
             f'<td><span class="tr-conf c-{E(conf)}">{E(_t(conf) if conf in ("low", "medium", "high") else conf)}</span></td>'
             f'<td class="num">{E(s.get("paid_test_buys") or 0)}</td><td class="num">{E(s.get("delivered") or 0)}</td>'
@@ -473,13 +538,70 @@ def policy_note(h):
             f'<a href="../{policy_page.SLUG}">{h.E(h._(policy_page.H1))}</a></p>\n')
 
 
+VERIFY_H = "Verify it yourself"
+VERIFY_INTRO = ("You don't have to take our word for it. Each tx link above opens Lumi's payment on a public block explorer, "
+                "and checking it is free.")
+VERIFY_STEPS = [
+    ("Pick a seller", "Choose any seller in the list above that has an On-chain tx link."),
+    ("Open its tx hash", "Click the hash. The block explorer shows Lumi's payment for that seller's latest test-buy on the "
+                         "public XRPL, Base or Stellar ledger."),
+    ("Compare the details", "Check that the amount, time and recipient match the seller's listed x402 price, the test-buy "
+                            "time shown here and the seller's pay-to address. The price and the pay-to address are in the "
+                            "seller's free entry at api.lumitrades.io/v1/trust/vendors/<seller id> (the id is the grey text "
+                            "under each name)."),
+    ("Optional: check the signed receipt", "Each test-buy also has a receipt signed by the wallet that paid. Receipts come "
+                                           "with the paid vendor report ($0.02). To verify one for free, send it to POST "
+                                           "https://api.lumitrades.io/v1/trust/receipts/verify (add ?ledger=1 to check the "
+                                           "payment on-chain too), or follow the steps listed at that address."),
+]
+VERIFY_FREE = "The tx proof is free. The full report on a vendor, with its whole history and the signed receipts, costs $0.02."
+VERIFY_NONE = "Sellers without a recorded hash for their latest test-buy show no tx link."
+VERIFY_SCORE = "Paying Lumi never changes a score: scores come only from Lumi's own checks."
+ABOUT_H = "About Lumi Trades"
+ABOUT_P = ("Lumi Trades is an independent trust list for x402, bridging trust between Base, XRPL and Stellar. Lumi makes "
+           "small paid test-buys from x402 sellers on all three chains and publishes what came back; it does not move "
+           "funds between chains. It launched in October 2026.")
+ABOUT_SAFE = "Lumi never asks for deposits, never holds user funds and never offers investment returns."
+ABOUT_OTHER = "Sites and accounts not listed here are not Lumi's."
+X_URL = "https://x.com/Lumisinsite"
+YT_URL = "https://www.youtube.com/@lumitradesio"
+
+
+def verify_section(h):
+    E, _t = h.E, h._
+    li = "".join(f'<li><b>{E(_t(t))}</b> <span>{E(_t(d))}</span></li>' for t, d in VERIFY_STEPS)
+    return (f'<section class="card cp-sec tr-verify" id="verify">\n<h2>{E(_t(VERIFY_H))}</h2>\n<p>{E(_t(VERIFY_INTRO))}</p>\n'
+            f'<ol>{li}</ol>\n<p class="tr-free"><b>{E(_t(VERIFY_FREE))}</b> {E(_t(VERIFY_NONE))}</p>\n'
+            f'<p class="tr-score">{E(_t(VERIFY_SCORE))}</p>\n'
+            f'<p class="meta"><a href="{API}/v1/trust/receipts/verify" target="_blank" rel="noopener">{E(_t("Receipt check (free)"))}</a> · '
+            f'<a href="{VENDORS_URL}" target="_blank" rel="noopener">{E(_t("Seller data (free JSON)"))}</a> · '
+            f'<a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a></p>\n</section>')
+
+
+def about_section(h):
+    E, _t = h.E, h._
+    rows = [(_t("Official sites"), '<a href="https://lumitrades.io/">lumitrades.io</a> · <a href="https://api.lumitrades.io/" target="_blank" rel="noopener">api.lumitrades.io</a>'),
+            (_t("Official X account (the only one)"), f'<a href="{X_URL}" target="_blank" rel="me noopener">@Lumisinsite</a>'),
+            (_t("Contact"), '<a href="mailto:hello@lumitrades.io">hello@lumitrades.io</a>')]
+    dl = "".join(f"<dt>{E(k)}</dt><dd>{v}</dd>" for k, v in rows)
+    return (f'<section class="card cp-sec tr-about" id="about">\n<h2>{E(_t(ABOUT_H))}</h2>\n<p>{E(_t(ABOUT_P))}</p>\n'
+            f'<dl>{dl}</dl>\n<p class="tr-safe"><b>{E(_t(ABOUT_SAFE))}</b> {E(_t(ABOUT_OTHER))}</p>\n</section>')
+
+
 def trust_page(h, tp, nav_items, V, gen_date, doc):
     E, _t = h.E, h._
     vendors = (doc or {}).get("vendors") or []
     title = _t("x402 vendor trust list: Lumi's automated test-buys | Lumi Trades")
     desc = _t(TRUST_DESC)
     url = h.SITE + h.L.prefix + "trust/"
-    ld = [seo.organization(_t, "trust"),
+    org = seo.organization(_t, "trust")
+    org.update({"foundingDate": "2026-10", "email": "hello@lumitrades.io",
+                "sameAs": [X_URL, YT_URL] + [u for u in org.get("sameAs") or [] if u.lower() not in (X_URL.lower(), YT_URL.lower())]})
+    howto = {"@context": "https://schema.org", "@type": "HowTo", "name": _t("How to verify a Lumi test-buy yourself"),
+             "description": _t(VERIFY_INTRO), "inLanguage": h.L.code, "url": url + "#verify",
+             "step": [{"@type": "HowToStep", "position": i + 1, "name": _t(t), "text": _t(d), "url": url + "#verify"}
+                      for i, (t, d) in enumerate(VERIFY_STEPS)]}
+    ld = [org, howto,
           {"@context": "https://schema.org", "@type": "WebPage", "name": _t("x402 vendor trust list"), "url": url,
            "description": desc, "inLanguage": h.L.code, "isPartOf": {"@id": seo.SITE_ID}, "publisher": {"@id": seo.ORG_ID},
            "keywords": seo.keywords(_t, "trust", h.L.en)},
@@ -488,6 +610,8 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
               {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + h.L.prefix},
               {"@type": "ListItem", "position": 2, "name": _t("Vendor trust"), "item": h.SITE + h.L.prefix + "trust/"}]}]
     rows = "".join(vendor_row(h, v) for v in vendors)
+    snap = {str(v.get("id")): tx_snapshot()[str(v.get("id"))] for v in vendors if str(v.get("id")) in tx_snapshot()}
+    snap_js = json.dumps(snap, separators=(",", ":"), sort_keys=True).replace("</", "<\\/")
     R = "../" + ("" if h.L.en else "../")
     gen = (doc or {}).get("generated_at")
     status = "" if vendors else f'<p id="tr-status" class="muted">{E(_t("Loading observations…"))}</p>'
@@ -500,7 +624,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <h1 id="tx-h" class="hx-h1">{E(_t("Know which agent APIs actually deliver before you pay."))}</h1>
 <p class="hx-sub">{E(_t("Lumi pays x402 sellers a few cents for real, records what came back, and keeps a signed receipt for every buy."))}</p>
 <div class="hx-cta"><a class="hx-btn" href="#vendors">{E(_t("See the list"))}</a><a class="hx-btn ghost" href="../agents/">{E(_t("Full vendor report: $0.02"))}</a></div>
-<p class="hx-price-note muted">{E(_t("$0.02 buys the full report on one vendor from this list (every check, tx hashes, signed receipts). $0.004 is the pay check: allow, warn or block for any x402 URL before your agent pays it."))}</p>
+<p class="hx-price-note muted">{E(_t("$0.02 buys the full report on one vendor from this list (every check, every tx hash and the signed receipts). $0.004 is the pay check: allow, warn or block for any x402 URL before your agent pays it."))}</p>
 </div>
 <div class="tx-visual ag-panel ag-feed" id="ag-feed">
 <div class="ag-head"><span class="ag-who"><img src="{R}assets/brand/logo.png?v={V}" alt="" width="30" height="30"><span><b>{E(_t("Latest delivered test-buys"))}</b><small>{E(_t("from the live trust API"))}</small></span></span><span class="ag-live"><i aria-hidden="true"></i>{E(_t("live"))}</span></div>
@@ -514,7 +638,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 </section>
 <div class="disclaimer tx-note" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Automated observations, not a rating or review of any business.</strong> Scores summarize what Lumi's own checks saw over the last 30 days. Few samples = low confidence.")} <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a></span></div>
 <details class="tx-more"><summary>{E(_t("How the checks work"))}</summary>
-<p>{_t("Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys. Each paid test-buy is a real payment on a public ledger (XRPL, Base or Stellar), stored with its tx hash and a signed receipt. The list is free; the full report on one vendor, with tx hashes, explorer links and signed receipts, costs $0.02. The $0.004 pay check is a different product: allow, warn or block for any x402 URL.")}</p>
+<p>{_t("Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys. Each paid test-buy is a real payment on a public ledger (XRPL, Base or Stellar), stored with its tx hash and a signed receipt. The list and the tx hash of each seller's latest test-buy are free; the full report on one vendor, with its whole history, explorer links and signed receipts, costs $0.02. The $0.004 pay check is a different product: allow, warn or block for any x402 URL.")}</p>
 <p>{E(_t("Quote checks are free and unpaid, so they show an endpoint is reachable and priced, not that it delivers. Paid test-buys are capped at a small shared daily budget, so not every vendor is bought every day; fewer samples means lower confidence."))}</p>
 </details>
 <section class="card cp-sec" id="vendors">
@@ -524,9 +648,12 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <div class="tr-wrap"><table class="cp-table tr-table" id="tr-table"{"" if vendors else " hidden"}>
 <thead><tr><th>{E(_t("Vendor"))}</th><th class="num">{E(_t("Score"))}</th><th>{E(_t("Confidence"))}</th><th class="num">{E(_t("Paid buys"))}</th><th class="num">{E(_t("Delivered"))}</th><th>{E(_t("Last checked"))}</th><th>{E(_t("Last test-buy"))}</th></tr></thead>
 <tbody id="tr-body">{rows}</tbody></table></div>
-<p class="meta">{E(_t("Listed in the order we added them, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. \"Last test-buy\" = outcome and time of the latest paid test-buy. Tx hashes, explorer links and signed receipts are not in this free list; they come with the paid vendor report ($0.02 per vendor). Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
+<script type="application/json" id="tr-tx">{snap_js}</script>
+<p class="meta">{E(_t("Listed in the order we added them, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. \"Last test-buy\" = outcome and time of the latest paid test-buy. \"On-chain tx\" = Lumi's payment for that same test-buy on the public ledger, free to check (see \"Verify it yourself\" below). Older tx hashes and the signed receipts come with the paid vendor report ($0.02 per vendor). Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
 <p class="meta">{E(_t("Raw data:"))} <a href="{VENDORS_URL}" target="_blank" rel="noopener">api.lumitrades.io/v1/trust/vendors</a> · <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("How scores are computed"))}</a> · <a href="../agents/">{E(_t("Lumi's data for AI agents →"))}</a></p>
 </section>
+{verify_section(h)}
+{about_section(h)}
 <section class="card cp-sec" id="reply">
 <h2>{E(_t("Right to reply"))}</h2>
 <p>{_t("If you run one of these endpoints and think an observation is wrong or missing context, you can add a reply that is shown with your entry. Email <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>, or post a signed reply to <code>POST https://api.lumitrades.io/v1/trust/replies</code>, signed with the key of a pay-to address listed for your entry (details in the methodology). We can also re-run a check or remove an endpoint from the list on request.")}</p>

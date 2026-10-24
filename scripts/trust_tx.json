@@ -1,0 +1,168 @@
+{
+ "_about": "Tx hash of each curated seller's latest paid test-buy, copied read-only from Lumi's trust database (D1 lumi_trust.observations). A hash is shown on /trust/ only when vendor id, observed_at, endpoint and network all equal the live API's last_paid_observation; otherwise nothing is shown. Refresh with scripts/trust_tx.py. Never hand-edit or invent hashes.",
+ "snapshot_at": "2026-10-24T16:20:00Z",
+ "vendors": {
+  "agentic-swarm": {
+   "endpoint": "https://api.agentic-swarm-marketplace.com/t54/hello",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:23:01.000Z",
+   "tx_hash": "E75EB7572443A50E94945410EBA88A69DEE5D02CFFFA1B713F64F88D3179A464"
+  },
+  "agentweather": {
+   "endpoint": "https://api.agentweather.io/v1/pulse/facilitator",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:23:31.000Z",
+   "tx_hash": "8B1939E08A5E837717C73B45B9C8BCFE398B538E90FCA19149CDF847193B8777"
+  },
+  "alsp": {
+   "endpoint": "https://alsp.vercel.app/api/xrpl/paid-resource",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:25:41.000Z",
+   "tx_hash": "AEC6E658E35990D7E46AD354B244CD93FD26D73AD30CF2DB4210F2336AC809BF"
+  },
+  "asksurf": {
+   "endpoint": "https://x402.asksurf.ai/x402/xrpl/data/v1/news/feed",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:20:50.000Z",
+   "tx_hash": "51E571CB970DDE31E613CEF56E8173D59F6C52B8AFBCCA111FAFC5690D598712"
+  },
+  "aslan-macropulse": {
+   "endpoint": "https://macropulse.theaslangroupllc.com/api/market/is-open?exchange=NYSE",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:22:31.000Z",
+   "tx_hash": "6A96118E333C764A0C5D3CCFB25D9CC2963B58F46063511107A1E6B902780704"
+  },
+  "bitbooth": {
+   "endpoint": "https://app.heinrichstech.com/v1/cdp/echo",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-23T03:47:42.000Z",
+   "tx_hash": "23046754DEA635D45BAF1F79E51A26EA365A18AAB8E4F9B4628207A24014B9DC"
+  },
+  "bruk": {
+   "endpoint": "https://bruk-agent-api.fly.dev/v1/send-check?amount=5&currency=RLUSD&destination=r36sbDCAsaCj44ZUXWY2jjGE1jBpsCoRQ4",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-23T03:06:11.000Z",
+   "tx_hash": "8594E7B35C20ECCCC002A9CCAC120ABD757BFC40D2433E9FFB9B3B7FE72E271D"
+  },
+  "cloudpayx": {
+   "endpoint": "https://api.cloudpayxagent.xyz/agent/v3/asset-analysis",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-23T04:12:22.000Z",
+   "tx_hash": "AC71757237879C8734A98A16B9ED188F14299892CA771BEA544E249873C698F8"
+  },
+  "cocoeatsai-launchlab": {
+   "endpoint": "https://cocoeatsai.com/area4/agent/tools/json-format?data=%5B%7B%22name%22%3A%22example%22%2C%22value%22%3A1%7D%5D&mode=pretty",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:24:02.000Z",
+   "tx_hash": "C444945C61A6EF8AAF91198A873F516F383A0DAD69782C0443A4E1BD9A2D7AB9"
+  },
+  "cryptobuddy": {
+   "endpoint": "https://x402.cryptobuddy.com.au/crypto/australia/asset-mainnet?symbol=XRP&amount=5000",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:24:40.000Z",
+   "tx_hash": "23A6887167187C392C43C9EF16AF1F27B12751268BAE99C0DEE355B09A29C056"
+  },
+  "db-expert": {
+   "endpoint": "https://db-expert-x402.onrender.com/search?q=method",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:25:30.000Z",
+   "tx_hash": "002FB94AA05C5D10E0DE0C11677DB87753DBB2039260176F825E2C11E5468456"
+  },
+  "emerge-digital": {
+   "endpoint": "https://agent-commerce.emergedigital.com/api/xrpl/utm-build?base_url=https%3A%2F%2Fexample.com%2F&utm_source=newsletter&utm_medium=email&utm_campaign=test",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:24:20.000Z",
+   "tx_hash": "F541D41C6600A5BC9EFE0E820CABA7785EC1A5999F7088D1DB002F1D3B098A8C"
+  },
+  "evebrief-risk-oracle": {
+   "endpoint": "https://oracle.evebrief.org/",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:23:41.000Z",
+   "tx_hash": "5D454341B48B89FAD0EBB5366D7867B005B990E247F2145CC09553C506AAFAA1"
+  },
+  "fizzl-x402-doctor": {
+   "endpoint": "https://x402-doctor.fizzl.eu/api/v1/preflight?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Ftrust%2Fvendors%2Fasksurf%2Freport",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:23:20.000Z",
+   "tx_hash": "DD630ECE8792A2046B1B2A95C945596D9D71131D832A05FEE7AD6C9D79394DA7"
+  },
+  "helpmyagent": {
+   "endpoint": "https://api.helpmyagent.com/v1/iban/validate",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-23T15:51:41.000Z",
+   "tx_hash": "9105429FCF2BF31D025A088D64AC8F68935087AA5CCC76818BDB40A0D51F1125"
+  },
+  "heurist-mesh": {
+   "endpoint": "https://mesh.heurist.xyz/x402/xrpl/agents/FundingRateAgent/get_all_funding_rates",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:21:00.000Z",
+   "tx_hash": "7C09AB0325870B32C884285789AC475E271F43FB0127B5A1474934C36EC2AB73"
+  },
+  "heurist-router": {
+   "endpoint": "https://router.heurist.xyz/x402/xrpl/v1/chat/completions",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:21:11.000Z",
+   "tx_hash": "C5AC8CD09CA287D8F2A4E0C623EDF7648BDDB00FB31AA85BC87B4197392EB221"
+  },
+  "horizonpulse": {
+   "endpoint": "https://horizonpulse.dev/api/pulse",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-23T03:48:52.000Z",
+   "tx_hash": "69B1DB949B82A956CAE585626E56B3CD91384E966BB64B9ACE90EC3D8A54DE55"
+  },
+  "invinoveritas": {
+   "endpoint": "https://api.babyblueviper.com/signals/full",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:22:10.000Z",
+   "tx_hash": "F00988EDC467DD02306F2BC5E3F95FD335094B7EACF7688000805ED4E36BC862"
+  },
+  "lucyos": {
+   "endpoint": "https://x402.lucyos.ai/x402/xrpl/tools/analyze_token",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:22:20.000Z",
+   "tx_hash": "F6F9745EF1FA3C491FDC048C98358F8DC6318874E3405483AB85B089A0F4398D"
+  },
+  "printmoneylab": {
+   "endpoint": "https://api.printmoneylab.com/api/v1/xrpl/kimchi-premium",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:21:21.000Z",
+   "tx_hash": "A10863951D41E6F86E607920CE9F6C402427EC87A93BAF7CB17F2DC583E0921E"
+  },
+  "scalpstream": {
+   "endpoint": "https://feed.scalpstream.com/crypto",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-22T17:05:42.000Z",
+   "tx_hash": "F6CBEF72F152104CCE7B1037E246245E79BA39279A47E2BEFA8ADA12AFBD408C"
+  },
+  "sitecheck-api": {
+   "endpoint": "https://api.sitecheck-api.workers.dev/api/macro?series=fed_funds&limit=3",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:25:52.000Z",
+   "tx_hash": "8023E3363F2E56D8219D0BF390E22625D47AFA4611524FAB64806D490C9F9291"
+  },
+  "vextorium": {
+   "endpoint": "https://api.vextorium.com/v1/wikipedia-trending",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:23:51.000Z",
+   "tx_hash": "BD972E3CB1B4D590E5C2044EF2F7522865159BCF6D694C92A27A64C410EF2793"
+  },
+  "x402lab": {
+   "endpoint": "https://api.x402lab.dev/products/demo",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:25:12.000Z",
+   "tx_hash": "BFFC1AD1F314FDBA37B0C62E875C6FF216EBADF71A979456BE52749DB7F50B6B"
+  },
+  "xrplhub": {
+   "endpoint": "https://www.xrplhub.io/api/x402/screen/ofac?address=rnXyVQzgxZe7TR1EPzTkGj2jxH4LMJYh66",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:24:30.000Z",
+   "tx_hash": "11B958ADBD7769F27A38937969C2A20416A5CFACC845EE87FC662C6266971C35"
+  },
+  "xrpreflight": {
+   "endpoint": "https://destinationpreflight.com/v1/post-send?hash=4A676BC446BCF9499935EC71F1DA4CDC4F7C30D273093157C819D9861DEC96EF&destination=ra9b6JX5aPVbdJhogDDddsRAcasWg7gzC3",
+   "network": "xrpl:0",
+   "observed_at": "2026-10-24T09:26:30.000Z",
+   "tx_hash": "F7B9583F9D531775C6DACA76DB1C598384B74630161E86D5B6810F1D76E8DCE1"
+  }
+ }
+}

@@ -51,6 +51,33 @@
     return `<span class="lt-badge b-${res}" role="img" aria-label="${esc(label)}: ${esc(right)}" title="${esc(tip)}">` +
       `<span class="lt-b-l" aria-hidden="true">${esc(label)}</span><span class="lt-b-r" aria-hidden="true">${esc(right)}</span></span>`;
   }
+  // Free on-chain proof (mirrors obs_tx()/tx_html() in scripts/site_pages.py): the tx hash of the latest paid test-buy, from
+  // the live API if it carries one, else from the build's copy (#tr-tx) only when id, observed_at, endpoint and network all
+  // match that same buy. No match = no link; hashes are never derived or made up.
+  let SNAP = {};
+  try { SNAP = JSON.parse(($("tr-tx") || {}).textContent || "{}") || {}; } catch (e) { SNAP = {}; }
+  const EXPL = { XRPL: "https://livenet.xrpl.org/transactions/", Base: "https://basescan.org/tx/", Stellar: "https://stellar.expert/explorer/public/tx/" };
+  const TXRE = { XRPL: /^[0-9A-F]{64}$/, Base: /^0x[0-9a-f]{64}$/, Stellar: /^[0-9a-f]{64}$/ };
+  function txFor(v, o) {
+    if (!o || !o.observed_at) return null;
+    const ch = chainName(o.network);
+    if (!ch) return null;
+    let h = o.tx_hash;
+    if (!h) {
+      const x = Object.prototype.hasOwnProperty.call(SNAP, v.id) ? SNAP[v.id] : null;
+      if (x && x.observed_at === o.observed_at && x.endpoint === o.endpoint && x.network === o.network) h = x.tx_hash;
+    }
+    h = String(h || "").trim();
+    h = ch === "XRPL" ? h.toUpperCase() : ch === "Base" ? h.toLowerCase() : h;
+    return TXRE[ch].test(h) ? { h, url: EXPL[ch] + h, ch } : null;
+  }
+  function txLink(v, o) {
+    const t = txFor(v, o);
+    if (!t) return "";
+    const short = t.h.indexOf("0x") === 0 ? t.h.slice(0, 8) + "…" + t.h.slice(-6) : t.h.slice(0, 6) + "…" + t.h.slice(-6);
+    return `<span class="tr-tx">${esc(tr("On-chain tx"))} <a href="${esc(t.url)}" target="_blank" rel="noopener" ` +
+      `title="${esc(tr("Lumi's payment for this test-buy on the public {chain} ledger. Free to check.", { chain: t.ch }))}" data-tx="${esc(t.h)}"><code>${esc(short)}</code> ↗</a></span>`;
+  }
   function row(v) {
     const s = v.samples || {}, o = v.last_paid_observation, home = vendorLink(v);
     const own = home.indexOf("https://api.lumitrades.io/trust/v/") === 0; // no working homepage: say it's Lumi's own result page
@@ -59,15 +86,15 @@
     const conf = String(v.confidence || "—");
     const confTxt = ["low", "medium", "high"].includes(conf) ? tr(conf) : conf;
     let ev = "—";
-    if (o && o.observed_at) { // outcome + time of the latest paid test-buy (free data); tx hashes are in the paid vendor report
+    if (o && o.observed_at) { // outcome + time of the latest paid test-buy (free data); signed receipts are in the paid vendor report
       const dv = o.delivery === "delivered" ? tr("Delivered") : (o.delivery === "not_delivered" || o.delivery === "failed" || o.data_returned === false) ? tr("No data") : tr("Inconclusive");
-      ev = `<span title="${esc(tr("Tx hash and signed receipt: paid vendor report ($0.02)"))}">${esc(dv)} · ${esc(fmt(o.observed_at))}</span>`;
+      ev = `<span title="${esc(tr("Signed receipt and full history: paid vendor report ($0.02)"))}">${esc(dv)} · ${esc(fmt(o.observed_at))}</span>`;
     }
     if (o && https(o.explorer)) {
       ev = `<a href="${esc(o.explorer)}" target="_blank" rel="noopener" title="${esc(o.summary || "")}">${esc(((o.amount || "") + " " + (o.asset || "")).trim())} · ${esc(o.data_returned ? tr("data") : tr("no data"))} ↗</a>`;
     }
     if (v.replies && https(v.detail)) ev += ` <a href="${esc(v.detail)}" target="_blank" rel="noopener">· ${esc(tr("reply ({n})", { n: v.replies }))}</a>`;
-    return `<tr><td>${name}${badge(o)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
+    return `<tr><td>${name}${badge(o)}${txLink(v, o)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
       `<td><span class="tr-conf c-${esc(conf)}">${esc(confTxt)}</span></td><td class="num">${esc(s.paid_test_buys || 0)}</td>` +
       `<td class="num">${esc(s.delivered || 0)}</td><td>${esc(fmt(lastChecked(v)))}</td><td>${ev}</td></tr>`;
   }
