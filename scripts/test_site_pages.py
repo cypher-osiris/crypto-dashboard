@@ -405,5 +405,65 @@ class PaymentAttemptsLabel(unittest.TestCase):
         self.assertEqual(sorted(d), ["edge-agents"])
 
 
+class TopSellersPage(unittest.TestCase):
+    """/top-sellers/: built only from test results in scripts/top_sellers_snapshot.json; no failing seller, no payment input."""
+    def ts(self):
+        import top_sellers_page as ts
+        return ts
+
+    def test_rule_on_synthetic_results(self):
+        import datetime as _dt
+        ts = self.ts()
+        now = _dt.datetime(2026, 10, 24, tzinfo=_dt.timezone.utc)
+        def s(*v, at="2026-10-23T00:00:00Z"):
+            return {"key": "k", "tests": [{"at": at, "verdict": {"d": "delivered", "n": "not_delivered", "i": "inconclusive"}[x]} for x in v]}
+        self.assertTrue(ts.qualifies(s("d", "d"), now))
+        self.assertTrue(ts.qualifies(s("d", "n", "d"), now))
+        self.assertTrue(ts.qualifies(s("d", "i", "d"), now))       # inconclusive = Lumi-side, skipped
+        self.assertFalse(ts.qualifies(s("d"), now))                # one test is not "consistently"
+        self.assertFalse(ts.qualifies(s("n", "d", "d"), now))      # latest must deliver
+        self.assertFalse(ts.qualifies(s("d", "n", "n", "d"), now))  # only the last 3 count
+        self.assertFalse(ts.qualifies(s("d", "d", at="2026-09-01T00:00:00Z"), now))
+
+    def test_rows_come_from_snapshot_and_all_qualify(self):
+        ts = self.ts()
+        snap = ts.load()
+        by = {x["key"]: x for x in snap["sellers"]}
+        cats = ts.rows(snap)
+        self.assertTrue(cats)
+        now = ts._ts(snap["generated_at"])
+        for c, rs in cats.items():
+            self.assertIn(c, ts.CAT_LABEL)
+            self.assertEqual([r["key"] for r in rs], [x["key"] for x in sorted((by[r["key"]] for r in rs), key=ts.ordering)])
+            for r in rs:
+                self.assertTrue(ts.qualifies(by[r["key"]], now), r["key"])
+                self.assertEqual(ts.conclusive(by[r["key"]])[0]["verdict"], "delivered")
+                self.assertTrue(r["url"].startswith("https://api.lumitrades.io/trust/v/"))
+        # ordering keys never look at payment
+        import inspect
+        self.assertNotRegex(inspect.getsource(ts.ordering) + inspect.getsource(ts.qualifies), r"pa(id|y)|plan|monitor")
+
+    def test_pages_translated_in_sitemap_and_clean(self):
+        ts = self.ts()
+        with open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8") as f:
+            sm = f.read()
+        keys = [ts.TITLE, ts.H1, ts.DESC, ts.LEDE, ts.RULE_HEAD] + ts.RULE + [l for _c, l, _r in ts.CATEGORIES] + [
+            ts.L_CHAINS, ts.L_LAST, ts.L_RESULT, ts.L_OF, ts.L_VIEW, ts.L_ASOF, ts.L_COUNT, ts.L_EMPTY, ts.TRUST_NOTE]
+        for lang in LANGS:
+            tr = i18n(lang)
+            for k in keys:
+                self.assertIn(k, tr, (lang, k[:40]))
+        n = sum(len(r) for r in ts.rows().values())
+        for lang in [""] + [l + "/" for l in LANGS]:
+            self.assertIn(f"<loc>https://lumitrades.io/{lang}top-sellers/</loc>", sm)
+            with open(os.path.join(ROOT, lang, "top-sellers", "index.html"), encoding="utf-8") as f:
+                h = f.read()
+            self.assertEqual(h.count("https://api.lumitrades.io/trust/v/"), n + h.count('"url": "https://api.lumitrades.io/trust/v/'), lang)
+            self.assertIn('href="../trust-policy/"', h)
+            self.assertNotRegex(h.lower(), r"\bscam|p&amp;l|not delivered|\{(n|m|days|mail|policy)\}")
+            with open(os.path.join(ROOT, lang, "trust", "index.html"), encoding="utf-8") as f:
+                self.assertIn('href="../top-sellers/"', f.read())
+
+
 if __name__ == "__main__":
     unittest.main()

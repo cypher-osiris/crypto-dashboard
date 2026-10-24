@@ -636,7 +636,15 @@ def policy_note(h):
     if h.L.code not in policy_page.LIVE_LANGS:
         return ""
     return (f'<p class="meta">{h.E(h._(policy_page.TRUST_NOTE))} '
-            f'<a href="../{policy_page.SLUG}">{h.E(h._(policy_page.H1))}</a></p>\n')
+            f'<a href="../{policy_page.SLUG}">{h.E(h._(policy_page.H1))}</a></p>\n') + top_sellers_note(h)
+
+
+def top_sellers_note(h):
+    """/trust/#reply: link to /top-sellers/ (top_sellers_page.LIVE_LANGS only)."""
+    import top_sellers_page as ts
+    if h.L.code not in ts.LIVE_LANGS:
+        return ""
+    return f'<p class="meta"><a href="../{ts.SLUG}">{h.E(h._(ts.H1))}</a>: {h.E(h._(ts.TRUST_NOTE))}</p>\n'
 
 
 VERIFY_H = "Verify it yourself"
@@ -784,6 +792,10 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
         write(f"{P}{policy_page.SLUG}index.html", pol)
     import contact_page  # /contact/: official addresses and accounts (every language)
     write(f"{P}{contact_page.SLUG}index.html", contact_page.build_page(h, tp, nav_items, V, gen_date, _page))
+    import top_sellers_page  # /top-sellers/: rows from scripts/top_sellers_snapshot.json (top_sellers_refresh.py)
+    tsp = top_sellers_page.build_page(h, tp, nav_items, V, gen_date, _page)
+    if tsp:
+        write(f"{P}{top_sellers_page.SLUG}index.html", tsp)
     if h.L.en:
         write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES), ("Market data", MARKET_DATA_PRICES),
                                                                      ("Lumi Market Ideas", MARKET_IDEAS_PRICES)]))
@@ -791,4 +803,5 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
             ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3"),
             (contact_page.SLUG, contact_page.UPDATED.isoformat(), "yearly", "0.4")] + (
-            [(policy_page.SLUG, policy_page.UPDATED.isoformat(), "monthly", "0.4")] if h.L.code in policy_page.LIVE_LANGS else [])
+            [(policy_page.SLUG, policy_page.UPDATED.isoformat(), "monthly", "0.4")] if h.L.code in policy_page.LIVE_LANGS else []) + (
+            [(top_sellers_page.SLUG, top_sellers_page.lastmod() or gen_date, "weekly", "0.6")] if tsp else [])
