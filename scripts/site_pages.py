@@ -58,10 +58,10 @@ MARKET_IDEAS_PRICES = [x for x in MARKET_PRICES if x[1].split(" ", 1)[1].startsw
 MARKET_DATA_PRICES = [x for x in MARKET_PRICES if x not in MARKET_IDEAS_PRICES]
 MARKET_IDEAS_TEXT = ("Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are "
                      "Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.")
-AGENTS_ROUTES_TEXT = ("Live signals for the top 50 coins, support and resistance levels, the paper-trade slate, and market and policy briefs: "
+AGENTS_ROUTES_TEXT = ("Live signals for 51 coins, support and resistance levels for 14 tracked coins, the paper-trade slate, and market and policy briefs: "
                       "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
-                      "on every paid route, including the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
-                      "or an activated XRP Ledger account; one trial per wallet, nothing is moved).")
+                      "in total, usable on any paid route including the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
+                      "or an activated XRP Ledger account; one trial per wallet, not per chain; nothing is moved).")
 
 
 def route_counts():
