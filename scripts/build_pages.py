@@ -302,6 +302,14 @@ def trade_html(t, sym, price, H):
     return "".join(out)
 
 
+def dedupe_sym(page, n):
+    """Collapse "<name> (<symbol>)" when the coin's name is its symbol (XRP): ASCII, full-width and unspaced brackets."""
+    for pat in (f"{n} ({n})", f"{n}({n})", f"{n}（{n}）", f"{n} （{n}）"):
+        page = page.replace(pat, n)
+    return page
+
+
+CANDLE_SOURCES = {"coinbase": "Coinbase", "kraken": "Kraken", "coingecko": "CoinGecko"}  # display names for signals' "source"
 FEED_LINK = '<link rel="alternate" type="application/atom+xml" title="Lumi Trades" href="https://lumitrades.io/feed.xml">'  # /feed.xml (scripts/feed.py)
 
 
@@ -438,7 +446,7 @@ def lang_index(en_src, langs):
             body = body[:body.index(b0) + len(b0)] + "\n" + body[body.index(b1):]
     body = i18n.translate_html(body, L)
     # asset / root paths: one level up (pages like xrp/ and trades/ stay relative, i.e. inside this language)
-    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|classic/|data/))', r"\1../", h)
+    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|blog/|classic/|data/))', r"\1../", h)
     head, body = fix(head), fix(body)
     head = head.replace('<script src="../assets/i18n.js', f'<script src="../assets/i18n/{L.code}.js?v={VERSION}" defer></script>\n<script src="../assets/i18n.js', 1)
     return head + "</head>" + body
@@ -585,7 +593,7 @@ def build(dry=False):
                     rows.append(f'<tr><th>{tf}</th><td><b>{E(_(x.get("label")))}</b></td><td class="mono">{E(rsi if rsi is not None else "—")}</td>'
                                 f'<td>{E(L.state((ind.get("ema") or {}).get("state", "")))}</td><td>{E(L.state((ind.get("macd") or {}).get("state", "")))}</td></tr>')
                 sig_html = (f'<h3>{E(_("Signals ({label} overall)", label=_(sig.get("label", ""))))}</h3><div class="cp-tablewrap"><table class="cp-table"><thead><tr><th>{E(_("TF"))}</th><th>{E(_("Signal"))}</th><th>RSI</th><th>{E(_("EMA trend"))}</th><th>MACD</th></tr></thead>'
-                            f'<tbody>{"".join(rows)}</tbody></table></div><p class="meta">{E(_("Computed from {source} candles at {time}.", source=sig.get("source", "exchange"), time=sig_time))} '
+                            f'<tbody>{"".join(rows)}</tbody></table></div><p class="meta">{E(_("Computed from {source} candles at {time}.", source=CANDLE_SOURCES.get(sig.get("source"), sig.get("source", "exchange")), time=sig_time))} '
                             f'{_("The site\'s backtest shows none of these indicators has a reliable edge on its own.")}</p>')
             cats = an.get("catalysts") or []
             cat_html = ""
@@ -733,6 +741,8 @@ def build(dry=False):
 </body>
 </html>
 """
+            if name == sym:   # e.g. XRP: say "XRP", not "XRP (XRP)" / "How to buy XRP (XRP)" (every language's bracket style)
+                page = dedupe_sym(page, E(name))
             write(f"{L.prefix}{slug}/index.html", page)
 
         # ---- trade history (/trades/ + /trades/<ID>/), see scripts/trade_pages.py ----

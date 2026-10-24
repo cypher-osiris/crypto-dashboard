@@ -243,6 +243,12 @@ TRUST_METHOD = "trust-policy/#score"   # nav "How it works" = how the trust scor
 HOW_MARKETS = "How Lumi's market ideas work"   # nav label + title of /how-it-works/ (scripts/how_page.py)
 
 
+def blog_href(h, home):
+    """/blog/ is English-only at the site root: one level above a language home."""
+    L = getattr(h, "L", None)
+    return f'{home}{"../" if L is not None and L.prefix else ""}blog/'
+
+
 def site_nav(h, home, coins="", current=None):
     """Top nav links (inside .nav-inner): trust pages first, then a "Markets" group (trade ideas, how market ideas work,
     coin pages, newsletter). home = relative path to this language's home; coins = coin-page links (already HTML)."""
@@ -252,6 +258,7 @@ def site_nav(h, home, coins="", current=None):
             f'<a href="{home}trust/"{cur("trust")}>{E(_("Vendor trust"))}</a>'
             f'<a href="{home}agents/"{cur("agents")}>{E(_("For AI agents"))}</a>'
             f'<a href="{home}{TRUST_METHOD}"{cur("policy")}>{E(_("How it works"))}</a>'
+            f'<a href="{blog_href(h, home)}"{cur("blog")}>{E(_("Blog"))}</a>'
             f'<span class="nav-grp"><a class="nav-lbl" href="{home}#markets">{E(_("Markets"))}</a>'
             f'<a href="{home}trades/"{cur("trades")}>{E(_("Trade ideas"))}</a>'
             f'<a href="{home}how-it-works/"{cur("how")}>{E(_(HOW_MARKETS))}</a>{coins}'
