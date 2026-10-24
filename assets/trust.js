@@ -111,6 +111,12 @@
     return `<span class="tr-att" title="${esc(tr("Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score."))}">${esc(tr("Test payment not accepted yet on XRPL"))}</span>` +
       `<span class="tr-att-note">${esc(note)} <a href="#reply">${esc(tr("Seller? Help us complete it"))}</a></span>`;
   }
+  let SP = {}; // vendor id -> its seller page (/sellers/<slug>/), from the static table
+  try { SP = JSON.parse(($("tr-body") && $("tr-body").getAttribute("data-sp")) || "{}") || {}; } catch (e) { SP = {}; }
+  function spLink(v) {
+    const h = SP[v.id];
+    return h ? `<a class="tr-sp" href="${esc(h)}">${esc(tr("Test-buy results"))} →</a>` : "";
+  }
   function row(v) {
     const s = v.samples || {}, o = v.last_paid_observation, home = vendorLink(v);
     const own = home.indexOf("https://api.lumitrades.io/trust/v/") === 0; // no working homepage: say it's Lumi's own result page
@@ -127,7 +133,7 @@
       ev = `<a href="${esc(o.explorer)}" target="_blank" rel="noopener" title="${esc(o.summary || "")}">${esc(((o.amount || "") + " " + (o.asset || "")).trim())} · ${esc(o.data_returned ? tr("data") : tr("no data"))} ↗</a>`;
     }
     if (v.replies && https(v.detail)) ev += ` <a href="${esc(v.detail)}" target="_blank" rel="noopener">· ${esc(tr("reply ({n})", { n: v.replies }))}</a>`;
-    return `<tr><td>${name}${badge(o)}${txLink(v, o)}${attLabel(v)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
+    return `<tr><td>${name}${badge(o)}${txLink(v, o)}${attLabel(v)}${spLink(v)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
       `<td><span class="tr-conf c-${esc(conf)}">${esc(confTxt)}</span></td><td class="num">${esc(s.paid_test_buys || 0)}</td>` +
       `<td class="num">${esc(s.delivered || 0)}</td><td>${esc(fmt(lastChecked(v)))}</td><td>${ev}</td></tr>`;
   }

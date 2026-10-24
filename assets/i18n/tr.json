@@ -323,7 +323,8 @@
   "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Bu uç nokta, Lumi'nin XRPL üzerindeki imzalı test ödemelerini kabul etmedi; bu nedenle hiçbir ücret alınmadı. Yalnızca bilgi amaçlıdır; puana dahil değildir.",
   "Test payment not accepted yet on XRPL": "XRPL'de test ödemesi henüz kabul edilmedi",
   "Lumi has tried {n} times on XRPL since {date}.": "Lumi, {date} tarihinden bu yana XRPL'de {n} kez denedi.",
-  "Lumi has tried once on XRPL, on {date}.": "Lumi, {date} tarihinde XRPL'de bir kez denedi."
+  "Lumi has tried once on XRPL, on {date}.": "Lumi, {date} tarihinde XRPL'de bir kez denedi.",
+  "Test-buy results": "Test alımı sonuçları"
  },
  "pages": {
   " (filled {when})": " ({when} gerçekleşti)",

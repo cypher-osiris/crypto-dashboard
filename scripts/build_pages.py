@@ -501,6 +501,14 @@ def build(dry=False):
     except Exception as e:
         print(f"build_pages: WARNING site pages unavailable: {e!r}", file=sys.stderr)
         site_pages = vendors_doc = None
+    seller_sm = []  # /sellers/<host-slug>/ (scripts/seller_pages.py, English only)
+    try:
+        import seller_pages
+        if site_pages:
+            site_pages.SELLER_SLUGS = seller_pages.slugs([v for v in (vendors_doc or {}).get("vendors") or [] if v.get("id")])
+    except Exception as e:
+        print(f"build_pages: WARNING seller pages unavailable: {e!r}", file=sys.stderr)
+        seller_pages = None
     trade_pages = None
     try:
         import trade_pages
@@ -767,6 +775,12 @@ def build(dry=False):
                     site_sm = sm_s
             except Exception as e:
                 print(f"build_pages: WARNING agents/trust pages failed ({L.code}): {e!r}", file=sys.stderr)
+        # ---- /sellers/<host-slug>/ (English only; one page per seller on the trust list, same data as /trust/) ----
+        if L.en and site_pages and trade_pages and seller_pages:
+            try:
+                seller_sm = seller_pages.build(h, trade_pages, nav_items, V, gen_date, write, vendors_doc, dry)
+            except Exception as e:
+                print(f"build_pages: WARNING seller pages failed: {e!r}", file=sys.stderr)
         # ---- /blog/ index (English only; scripts/blog_index.py lists blog/<slug>/ posts) ----
         if L.en and trade_pages:
             try:
@@ -822,6 +836,9 @@ def build(dry=False):
         for d in sorted(os.listdir(bdir)):
             if os.path.exists(os.path.join(bdir, d, "index.html")):
                 sm.append(f'  <url><loc>{SITE}blog/{d}/</loc><lastmod>{gen_date}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>')
+    # English-only seller pages (scripts/seller_pages.py); noindex ones (no paid test-buy or attempt yet) stay out
+    for p, lm, fq, pr in seller_sm:
+        sm.append(f'  <url><loc>{SITE}{p}</loc><lastmod>{lm}</lastmod><changefreq>{fq}</changefreq><priority>{pr}</priority></url>')
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
 
     # ---- Atom feed /feed.xml (scripts/feed.py): published blog posts, Lumi's market updates, active ideas (plan only) ----
@@ -888,6 +905,9 @@ if __name__ == "__main__":
             if os.path.isdir(tdir):
                 outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
                     f"{pre}trades/{d}/index.html" for d in os.listdir(tdir) if os.path.exists(os.path.join(tdir, d, "index.html")))
+        sdir = os.path.join(ROOT, "sellers")  # English-only seller pages (scripts/seller_pages.py)
+        if os.path.isdir(sdir):
+            outs += sorted(f"sellers/{d}/index.html" for d in os.listdir(sdir) if os.path.exists(os.path.join(sdir, d, "index.html")))
         outs.append("sitemap.xml")
         print("\n".join(outs + [x for x in ch if x not in outs]))
     elif "--quiet" in sys.argv:

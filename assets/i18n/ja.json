@@ -323,7 +323,8 @@
   "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "このエンドポイントはXRPL上のLumiの署名済みテスト決済を受け付けなかったため、何も請求されていません。参考情報であり、スコアには含まれません。",
   "Test payment not accepted yet on XRPL": "XRPLでのテスト決済はまだ受け付けられていません",
   "Lumi has tried {n} times on XRPL since {date}.": "Lumiは{date}以降、XRPLで{n}回試みました。",
-  "Lumi has tried once on XRPL, on {date}.": "Lumiは{date}にXRPLで1回試みました。"
+  "Lumi has tried once on XRPL, on {date}.": "Lumiは{date}にXRPLで1回試みました。",
+  "Test-buy results": "テスト購入の結果"
  },
  "pages": {
   " (filled {when})": "（{when}に約定）",

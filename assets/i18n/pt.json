@@ -323,7 +323,8 @@
   "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint não aceitou os pagamentos de teste assinados da Lumi no XRPL, por isso nada foi cobrado. Apenas informativo; não faz parte da pontuação.",
   "Test payment not accepted yet on XRPL": "Pagamento de teste ainda não aceito na XRPL",
   "Lumi has tried {n} times on XRPL since {date}.": "A Lumi tentou {n} vezes na XRPL desde {date}.",
-  "Lumi has tried once on XRPL, on {date}.": "A Lumi tentou uma vez na XRPL, em {date}."
+  "Lumi has tried once on XRPL, on {date}.": "A Lumi tentou uma vez na XRPL, em {date}.",
+  "Test-buy results": "Resultados das compras de teste"
  },
  "pages": {
   " (filled {when})": " (executada {when})",

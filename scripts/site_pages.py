@@ -466,6 +466,21 @@ def attempts_html(h, v, now_ms):
             f'<span class="tr-att-note">{E(note)} <a href="#reply">{E(_t(ATT_HELP))}</a></span>')
 
 
+SELLER_SLUGS = {}  # vendor id -> /sellers/<slug>/ (set by build_pages.py from scripts/seller_pages.py)
+SELLER_LINK = "Test-buy results"
+
+
+def seller_href(h, vid):
+    """Link from /trust/ (or /<lang>/trust/) to the English-only seller page, or "" if there is none."""
+    s = SELLER_SLUGS.get(str(vid or ""))
+    return f'{"../" if h.L.en else "../../"}sellers/{s}/' if s else ""
+
+
+def seller_link_html(h, v):
+    href = seller_href(h, v.get("id"))
+    return f'<a class="tr-sp" href="{h.E(href)}">{h.E(h._(SELLER_LINK))} →</a>' if href else ""
+
+
 def vendor_row(h, v, now_ms=None):
     E, _t = h.E, h._
     s = v.get("samples") or {}
@@ -489,7 +504,7 @@ def vendor_row(h, v, now_ms=None):
     if v.get("replies") and _https(v.get("detail")):
         ev += f' <a href="{E(v["detail"])}" target="_blank" rel="noopener">· {E(_t("reply ({n})", n=v["replies"]))}</a>'
     lc = _last_checked(v)
-    return (f'<tr><td>{name}{badge_html(h, v)}{tx_html(h, v)}{attempts_html(h, v, now_ms) if now_ms else ""}<span class="vid">{E(v.get("id"))}</span></td>'
+    return (f'<tr><td>{name}{badge_html(h, v)}{tx_html(h, v)}{attempts_html(h, v, now_ms) if now_ms else ""}{seller_link_html(h, v)}<span class="vid">{E(v.get("id"))}</span></td>'
             f'<td class="num">{"—" if v.get("score") is None else E(v.get("score"))}</td>'
             f'<td><span class="tr-conf c-{E(conf)}">{E(_t(conf) if conf in ("low", "medium", "high") else conf)}</span></td>'
             f'<td class="num">{E(s.get("paid_test_buys") or 0)}</td><td class="num">{E(s.get("delivered") or 0)}</td>'
@@ -734,7 +749,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 {status}
 <div class="tr-wrap"><table class="cp-table tr-table" id="tr-table"{"" if vendors else " hidden"}>
 <thead><tr><th>{E(_t("Vendor"))}</th><th class="num">{E(_t("Score"))}</th><th>{E(_t("Confidence"))}</th><th class="num">{E(_t("Paid buys"))}</th><th class="num">{E(_t("Delivered"))}</th><th>{E(_t("Last checked"))}</th><th>{E(_t("Last test-buy"))}</th></tr></thead>
-<tbody id="tr-body">{rows}</tbody></table></div>
+<tbody id="tr-body" data-sp="{E(json.dumps({k: seller_href(h, k) for k in SELLER_SLUGS}, separators=(",", ":")))}">{rows}</tbody></table></div>
 <script type="application/json" id="tr-tx">{snap_js}</script>
 <script type="application/json" id="tr-att">{att_js}</script>
 <p class="meta">{E(_t("Listed in the order we added them, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. \"Last test-buy\" = outcome and time of the latest paid test-buy. \"On-chain tx\" = Lumi's payment for that same test-buy on the public ledger, free to check (see \"Verify it yourself\" below). Older tx hashes and the signed receipts come with the paid vendor report ($0.02 per vendor). Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
