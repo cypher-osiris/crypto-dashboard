@@ -318,12 +318,12 @@
   "On-chain tx": "Tx on-chain",
   "Lumi's payment for this test-buy on the public {chain} ledger. Free to check.": "O pagamento da Lumi por esta compra de teste no ledger público da {chain}. Verificar é grátis.",
   "Signed receipt and full history: paid vendor report ($0.02)": "Recibo assinado e histórico completo: relatório pago do fornecedor ($0.02)",
-  "Test payment not accepted yet": "Pagamento de teste ainda não aceito",
-  "Lumi has tried {n} times since {date}.": "A Lumi tentou {n} vezes desde {date}.",
-  "Lumi has tried once, on {date}.": "A Lumi tentou uma vez, em {date}.",
   "The seller is online, but our payment hasn't gone through yet.": "O vendedor está online, mas nosso pagamento ainda não foi concluído.",
   "Seller? Help us complete it": "É o vendedor? Ajude-nos a concluí-lo",
-  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint não aceitou os pagamentos de teste assinados da Lumi no XRPL, por isso nada foi cobrado. Apenas informativo; não faz parte da pontuação."
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint não aceitou os pagamentos de teste assinados da Lumi no XRPL, por isso nada foi cobrado. Apenas informativo; não faz parte da pontuação.",
+  "Test payment not accepted yet on XRPL": "Pagamento de teste ainda não aceito na XRPL",
+  "Lumi has tried {n} times on XRPL since {date}.": "A Lumi tentou {n} vezes na XRPL desde {date}.",
+  "Lumi has tried once on XRPL, on {date}.": "A Lumi tentou uma vez na XRPL, em {date}."
  },
  "pages": {
   " (filled {when})": " (executada {when})",
@@ -1079,11 +1079,11 @@
   "Lumi never asks for deposits, never holds user funds and never offers investment returns.": "A Lumi nunca pede depósitos, nunca guarda fundos de usuários e nunca oferece retorno de investimento.",
   "Sites and accounts not listed here are not Lumi's.": "Sites e contas que não estão listados aqui não são da Lumi.",
   "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "Cada compra de teste paga é uma transação real no XRPL, Base ou Stellar, guardada com um recibo assinado. O hash de transação da última compra de cada vendedor é grátis na lista de confiança; os recibos assinados vêm com o relatório pago do fornecedor.",
-  "Test payment not accepted yet": "Pagamento de teste ainda não aceito",
-  "Lumi has tried {n} times since {date}.": "A Lumi tentou {n} vezes desde {date}.",
-  "Lumi has tried once, on {date}.": "A Lumi tentou uma vez, em {date}.",
   "The seller is online, but our payment hasn't gone through yet.": "O vendedor está online, mas nosso pagamento ainda não foi concluído.",
   "Seller? Help us complete it": "É o vendedor? Ajude-nos a concluí-lo",
-  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint não aceitou os pagamentos de teste assinados da Lumi no XRPL, por isso nada foi cobrado. Apenas informativo; não faz parte da pontuação."
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Este endpoint não aceitou os pagamentos de teste assinados da Lumi no XRPL, por isso nada foi cobrado. Apenas informativo; não faz parte da pontuação.",
+  "Test payment not accepted yet on XRPL": "Pagamento de teste ainda não aceito na XRPL",
+  "Lumi has tried {n} times on XRPL since {date}.": "A Lumi tentou {n} vezes na XRPL desde {date}.",
+  "Lumi has tried once on XRPL, on {date}.": "A Lumi tentou uma vez na XRPL, em {date}."
  }
 }

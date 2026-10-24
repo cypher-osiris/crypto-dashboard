@@ -318,12 +318,12 @@
   "On-chain tx": "Zincir üstü işlem",
   "Lumi's payment for this test-buy on the public {chain} ledger. Free to check.": "Lumi'nin bu test alımı için {chain} herkese açık defterindeki ödemesi. Kontrol etmek ücretsizdir.",
   "Signed receipt and full history: paid vendor report ($0.02)": "İmzalı makbuz ve tam geçmiş: ücretli sağlayıcı raporu ($0.02)",
-  "Test payment not accepted yet": "Test ödemesi henüz kabul edilmedi",
-  "Lumi has tried {n} times since {date}.": "Lumi {date} tarihinden bu yana {n} kez denedi.",
-  "Lumi has tried once, on {date}.": "Lumi {date} tarihinde bir kez denedi.",
   "The seller is online, but our payment hasn't gone through yet.": "Satıcı çevrimiçi, ancak ödememiz henüz gerçekleşmedi.",
   "Seller? Help us complete it": "Satıcı mısınız? Tamamlamamıza yardım edin",
-  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Bu uç nokta, Lumi'nin XRPL üzerindeki imzalı test ödemelerini kabul etmedi; bu nedenle hiçbir ücret alınmadı. Yalnızca bilgi amaçlıdır; puana dahil değildir."
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Bu uç nokta, Lumi'nin XRPL üzerindeki imzalı test ödemelerini kabul etmedi; bu nedenle hiçbir ücret alınmadı. Yalnızca bilgi amaçlıdır; puana dahil değildir.",
+  "Test payment not accepted yet on XRPL": "XRPL'de test ödemesi henüz kabul edilmedi",
+  "Lumi has tried {n} times on XRPL since {date}.": "Lumi, {date} tarihinden bu yana XRPL'de {n} kez denedi.",
+  "Lumi has tried once on XRPL, on {date}.": "Lumi, {date} tarihinde XRPL'de bir kez denedi."
  },
  "pages": {
   " (filled {when})": " ({when} gerçekleşti)",
@@ -1079,11 +1079,11 @@
   "Lumi never asks for deposits, never holds user funds and never offers investment returns.": "Lumi asla para yatırmanızı istemez, asla kullanıcı fonlarını tutmaz ve asla yatırım getirisi vaat etmez.",
   "Sites and accounts not listed here are not Lumi's.": "Burada listelenmeyen siteler ve hesaplar Lumi'ye ait değildir.",
   "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "Her ücretli test alımı XRPL, Base veya Stellar üzerinde gerçek bir işlemdir ve imzalı bir makbuzla saklanır. Her satıcıdan yapılan son alımın işlem hash'i güven listesinde ücretsizdir; imzalı makbuzlar ücretli sağlayıcı raporunda yer alır.",
-  "Test payment not accepted yet": "Test ödemesi henüz kabul edilmedi",
-  "Lumi has tried {n} times since {date}.": "Lumi {date} tarihinden bu yana {n} kez denedi.",
-  "Lumi has tried once, on {date}.": "Lumi {date} tarihinde bir kez denedi.",
   "The seller is online, but our payment hasn't gone through yet.": "Satıcı çevrimiçi, ancak ödememiz henüz gerçekleşmedi.",
   "Seller? Help us complete it": "Satıcı mısınız? Tamamlamamıza yardım edin",
-  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Bu uç nokta, Lumi'nin XRPL üzerindeki imzalı test ödemelerini kabul etmedi; bu nedenle hiçbir ücret alınmadı. Yalnızca bilgi amaçlıdır; puana dahil değildir."
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "Bu uç nokta, Lumi'nin XRPL üzerindeki imzalı test ödemelerini kabul etmedi; bu nedenle hiçbir ücret alınmadı. Yalnızca bilgi amaçlıdır; puana dahil değildir.",
+  "Test payment not accepted yet on XRPL": "XRPL'de test ödemesi henüz kabul edilmedi",
+  "Lumi has tried {n} times on XRPL since {date}.": "Lumi, {date} tarihinden bu yana XRPL'de {n} kez denedi.",
+  "Lumi has tried once on XRPL, on {date}.": "Lumi, {date} tarihinde XRPL'de bir kez denedi."
  }
 }

@@ -385,15 +385,15 @@ def tx_html(h, v):
             f'data-tx="{E(t[0])}"><code>{E(tx_short(t[0]))}</code> ↗</a></span>')
 
 
-# ---------- Opt-in "Test payment not accepted yet" label (neutral, grey; never affects the score) ----------
+# ---------- Opt-in "Test payment not accepted yet on XRPL" label (neutral, grey; never affects the score) ----------
 # Only for vendors with zero paid test-buys AND an explicit opt-in: the API's payment_attempts (set only for vendors flagged
 # label_unsettled_payments in lumi-api) or, as a build-time fallback, scripts/trust_attempts.json. N = signed XRPL test
 # payments the seller did not accept (none reached the ledger). "The seller is online" only when a free quote check in the
 # last 90 minutes returned a valid 402. Mirrored in assets/trust.js (attempts()/attLabel()).
 ATT_SNAPSHOT = os.path.join(ROOT, "scripts", "trust_attempts.json")
-ATT_LABEL = "Test payment not accepted yet"
-ATT_TRIED = "Lumi has tried {n} times since {date}."
-ATT_TRIED_1 = "Lumi has tried once, on {date}."
+ATT_LABEL = "Test payment not accepted yet on XRPL"
+ATT_TRIED = "Lumi has tried {n} times on XRPL since {date}."
+ATT_TRIED_1 = "Lumi has tried once on XRPL, on {date}."
 ATT_ONLINE = "The seller is online, but our payment hasn't gone through yet."
 ATT_HELP = "Seller? Help us complete it"
 ATT_TIP = "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score."

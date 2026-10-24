@@ -78,7 +78,7 @@
     return `<span class="tr-tx">${esc(tr("On-chain tx"))} <a href="${esc(t.url)}" target="_blank" rel="noopener" ` +
       `title="${esc(tr("Lumi's payment for this test-buy on the public {chain} ledger. Free to check.", { chain: t.ch }))}" data-tx="${esc(t.h)}"><code>${esc(short)}</code> ↗</a></span>`;
   }
-  // Opt-in "Test payment not accepted yet" label (mirrors vendor_attempts()/attempts_html() in scripts/site_pages.py): only for
+  // Opt-in "Test payment not accepted yet on XRPL" label (mirrors vendor_attempts()/attempts_html() in scripts/site_pages.py): only for
   // vendors with zero paid test-buys and an explicit opt-in (the API's payment_attempts, else the build's copy in #tr-att).
   // Neutral grey, never part of the score. "The seller is online" only if a quote check in the last 90 min got a valid 402.
   let ATT = {};
@@ -106,9 +106,9 @@
     const a = attempts(v);
     if (!a) return "";
     const date = fmtDate(a.first_attempt);
-    let note = a.count === 1 ? tr("Lumi has tried once, on {date}.", { date }) : tr("Lumi has tried {n} times since {date}.", { n: a.count, date });
+    let note = a.count === 1 ? tr("Lumi has tried once on XRPL, on {date}.", { date }) : tr("Lumi has tried {n} times on XRPL since {date}.", { n: a.count, date });
     if (online(v)) note += (/^ja/i.test(I.locale || "") ? "" : " ") + tr("The seller is online, but our payment hasn't gone through yet.");
-    return `<span class="tr-att" title="${esc(tr("Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score."))}">${esc(tr("Test payment not accepted yet"))}</span>` +
+    return `<span class="tr-att" title="${esc(tr("Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score."))}">${esc(tr("Test payment not accepted yet on XRPL"))}</span>` +
       `<span class="tr-att-note">${esc(note)} <a href="#reply">${esc(tr("Seller? Help us complete it"))}</a></span>`;
   }
   function row(v) {

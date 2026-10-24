@@ -357,11 +357,11 @@ class PaymentAttemptsLabel(unittest.TestCase):
         try:
             base = {"id": "edge-agents", "status": "live", "samples": {"paid_test_buys": 0}}
             on = sp.attempts_html(self.h(), dict(base, latest_probes=[self.probe(10 * 60000)]), self.NOW)
-            self.assertIn("Lumi has tried 4 times since Oct 22, 2026. The seller is online", on)
+            self.assertIn("Lumi has tried 4 times on XRPL since Oct 22, 2026. The seller is online", on)
             self.assertIn('href="#reply"', on)
             for probes in ([self.probe(3 * 3600000)], [self.probe(60000, ok=False)], []):
                 off = sp.attempts_html(self.h(), dict(base, latest_probes=probes), self.NOW)
-                self.assertIn("Lumi has tried 4 times", off)
+                self.assertIn("Lumi has tried 4 times on XRPL", off)
                 self.assertNotIn("online", off)
             self.assertNotRegex(on.lower(), r"scam|fraud|" + os.environ.get("LUMI_PRIVATE_NAME_RE", "owner-name-redacted"))
         finally:

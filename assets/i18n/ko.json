@@ -318,12 +318,12 @@
   "On-chain tx": "온체인 트랜잭션",
   "Lumi's payment for this test-buy on the public {chain} ledger. Free to check.": "이 테스트 구매에 대한 Lumi의 결제 내역({chain} 공개 원장). 무료로 확인할 수 있습니다.",
   "Signed receipt and full history: paid vendor report ($0.02)": "서명된 영수증과 전체 기록: 유료 벤더 보고서($0.02)",
-  "Test payment not accepted yet": "테스트 결제 아직 미승인",
-  "Lumi has tried {n} times since {date}.": "Lumi는 {date} 이후 {n}번 시도했습니다.",
-  "Lumi has tried once, on {date}.": "Lumi는 {date}에 한 번 시도했습니다.",
   "The seller is online, but our payment hasn't gone through yet.": "판매자는 온라인 상태이지만 저희 결제가 아직 완료되지 않았습니다.",
   "Seller? Help us complete it": "판매자이신가요? 완료할 수 있도록 도와주세요",
-  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "이 엔드포인트가 XRPL에서 Lumi의 서명된 테스트 결제를 받지 않아 아무것도 청구되지 않았습니다. 참고용이며 점수에는 반영되지 않습니다."
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "이 엔드포인트가 XRPL에서 Lumi의 서명된 테스트 결제를 받지 않아 아무것도 청구되지 않았습니다. 참고용이며 점수에는 반영되지 않습니다.",
+  "Test payment not accepted yet on XRPL": "XRPL 테스트 결제 아직 미승인",
+  "Lumi has tried {n} times on XRPL since {date}.": "Lumi는 {date} 이후 XRPL에서 {n}번 시도했습니다.",
+  "Lumi has tried once on XRPL, on {date}.": "Lumi는 {date}에 XRPL에서 한 번 시도했습니다."
  },
  "pages": {
   " (filled {when})": " ({when} 체결)",
@@ -1079,11 +1079,11 @@
   "Lumi never asks for deposits, never holds user funds and never offers investment returns.": "Lumi는 절대 입금을 요구하지 않으며, 사용자 자금을 보관하지 않고, 투자 수익을 제안하지 않습니다.",
   "Sites and accounts not listed here are not Lumi's.": "여기에 나열되지 않은 사이트와 계정은 Lumi의 것이 아닙니다.",
   "Every paid test-buy is a real transaction on XRPL, Base or Stellar, kept with a signed receipt. The tx hash of each seller's latest buy is free on the trust list; the signed receipts come with the paid vendor report.": "모든 유료 테스트 구매는 XRPL, Base 또는 Stellar의 실제 트랜잭션이며 서명된 영수증과 함께 보관됩니다. 각 판매자의 최근 구매 트랜잭션 해시는 신뢰 목록에서 무료로 볼 수 있고, 서명된 영수증은 유료 벤더 보고서에 포함됩니다.",
-  "Test payment not accepted yet": "테스트 결제 아직 미승인",
-  "Lumi has tried {n} times since {date}.": "Lumi는 {date} 이후 {n}번 시도했습니다.",
-  "Lumi has tried once, on {date}.": "Lumi는 {date}에 한 번 시도했습니다.",
   "The seller is online, but our payment hasn't gone through yet.": "판매자는 온라인 상태이지만 저희 결제가 아직 완료되지 않았습니다.",
   "Seller? Help us complete it": "판매자이신가요? 완료할 수 있도록 도와주세요",
-  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "이 엔드포인트가 XRPL에서 Lumi의 서명된 테스트 결제를 받지 않아 아무것도 청구되지 않았습니다. 참고용이며 점수에는 반영되지 않습니다."
+  "Lumi's signed test payments on the XRPL were not accepted by this endpoint, so nothing was charged. Informational only; not part of the score.": "이 엔드포인트가 XRPL에서 Lumi의 서명된 테스트 결제를 받지 않아 아무것도 청구되지 않았습니다. 참고용이며 점수에는 반영되지 않습니다.",
+  "Test payment not accepted yet on XRPL": "XRPL 테스트 결제 아직 미승인",
+  "Lumi has tried {n} times on XRPL since {date}.": "Lumi는 {date} 이후 XRPL에서 {n}번 시도했습니다.",
+  "Lumi has tried once on XRPL, on {date}.": "Lumi는 {date}에 XRPL에서 한 번 시도했습니다."
  }
 }
