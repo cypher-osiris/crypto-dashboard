@@ -20,7 +20,7 @@ H1 = "Contact Lumi Trades"
 DESC = ("Official Lumi Trades contacts: hello@ and lumi@lumitrades.io (admin@ is receive-only), X, YouTube, GitHub, npm and the API. "
         "Not a broker; no deposits.")  # <=155 chars (meta description) in every language
 LEDE = ("Lumi Trades (lumitrades.io) is an independent x402 seller trust list, built from real paid test-buys with signed receipts, "
-        "and a free paper-trading crypto dashboard. It is not a broker or exchange: it takes no deposits, has no user accounts, "
+        "and a free paper-trading crypto dashboard. It is not a broker or exchange: it takes no deposits, offers no trading or deposit accounts, "
         "and never asks for passwords, wallet keys or seed phrases.")
 NOTE = "The details below are in English only for now."
 FOOTER_LINK = "Contact"
