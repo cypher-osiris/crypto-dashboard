@@ -372,8 +372,8 @@ def set_block(src, marks, body):
     return src
 
 
-INDEX_TITLE = "Lumi Trades: trust layer for AI-agent payments on XRPL, Base and Stellar"
-INDEX_DESC = ("Lumi test-buys x402 sellers on XRPL, Base and Stellar, with a signed receipt for each buy, so AI agents know who delivers. Not financial advice.")   # keep under ~155 characters (search snippets)
+INDEX_TITLE = "Lumi Trades: x402 seller trust list and free paper-trading crypto dashboard"
+INDEX_DESC = ("Free paper-trading crypto dashboard and an independent x402 seller trust list with paid test-buys on Base, XRPL and Stellar. No deposits, no accounts.")   # keep under ~155 characters (search snippets)
 # x402scan and some unfurlers read <title>, og:title and the meta description without decoding HTML entities: keep "&", quotes
 # and angle brackets out of these three (and the og/twitter description); use "and".
 INDEX_OG_TITLE = INDEX_TITLE

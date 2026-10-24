@@ -10,10 +10,10 @@ API = "https://api.lumitrades.io"
 ORG_ID = SITE + "#organization"
 SITE_ID = SITE + "#website"
 API_ID = API + "/#api"
-LOGO = SITE + "assets/brand/logo.png"
+LOGO = SITE + "assets/icon-512.png"
 ORG_ALT_NAME = "Trade with Lumi"   # the YouTube channel name (brand alias for search)
-SAME_AS = ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard",
-           "https://github.com/cypher-osiris/lumi-api", "https://www.npmjs.com/package/lumi-trades-mcp"]
+SAME_AS = ["https://x.com/lumisinsite", "https://github.com/lumitrades", "https://www.npmjs.com/package/lumi-trades-mcp",
+           "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"]
 
 # keyword terms: generic ones are translated (and the English kept too), names / protocols / tickers are not
 KW_GENERIC = ["crypto signals", "trading signals", "support and resistance", "fear and greed index", "crypto market data API",
@@ -31,9 +31,14 @@ KW_PAGE = {  # which terms lead on each page (the rest follow)
 # Trust-branded pages (/trust/ and its JSON-LD) never name or upsell Lumi Market Ideas (signals, trade ideas).
 NOT_ON_TRUST = {"crypto signals", "trading signals", "paper trading"}
 
-ORG_DESC = ("Lumi Trades is the trust layer for AI-agent payments: it test-buys x402 sellers on XRPL, Base and Stellar, keeps a "
-            "signed receipt for every buy, publishes a free vendor trust list, and sells trust checks and crypto market data to AI agents through a "
-            "pay-per-call x402 API and an MCP server.")
+ORG_DESC = ("Lumi Trades is a free public paper-trading crypto dashboard and an independent x402 seller trust list: Lumi makes paid "
+            "test-buys from x402 sellers on Base, XRPL and Stellar and publishes the results. No deposits, no accounts, no brokerage: "
+            "Lumi never handles funds for users.")
+# "is / isn't" line: JSON-LD disambiguatingDescription + the visible homepage footer line (same facts; keeps Lumi apart from
+# similarly named trading or brokerage sites)
+ORG_ISNT = ("Not a broker or exchange. Lumi never asks for deposits, never opens accounts and never holds anyone's funds. "
+            "Lumi's emails come only from hello@lumitrades.io, never from admin@.")
+CONTACT_EMAIL = "hello@lumitrades.io"
 ORG_DESC_TRUST = ("Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents "
                   "through a pay-per-call x402 API and an MCP server.")
 API_NAME = "Lumi Trades API"
@@ -60,6 +65,8 @@ def organization(t, page=None):
     return {"@context": "https://schema.org", "@type": "Organization", "@id": ORG_ID, "name": "Lumi Trades",
             "alternateName": ORG_ALT_NAME, "url": SITE,
             "logo": {"@type": "ImageObject", "url": LOGO}, "description": t(ORG_DESC_TRUST if page == "trust" else ORG_DESC), "sameAs": SAME_AS,
+            "disambiguatingDescription": t(ORG_ISNT),
+            "contactPoint": {"@type": "ContactPoint", "contactType": "customer support", "email": CONTACT_EMAIL},
             "knowsAbout": knows}
 
 
