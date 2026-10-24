@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "t": "2026-10-24T10:00:01.779000Z",
+      "kind": "auto",
+      "author": "track_trades.py",
+      "text": "Trade events: T009 BTC long 2x FILLED at 80400.0 (zone 79900–80400)."
+    },
+    {
       "t": "2026-10-24T06:30:01.741000Z",
       "kind": "auto",
       "author": "track_trades.py",

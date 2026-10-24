@@ -2,8 +2,8 @@
   "_readme": "Trades are hand-edited ideas + script-evaluated status. SLATE model: up to one active idea per coin (max 5), listed in slate.coins[coin] = {trade_id | null, note}. Fields: id, coin, direction long|short, leverage (1-10 per idea; plus conviction low|medium|high and leverage_reason), entry (planned; replaced by fill price when filled, original kept in planned_entry), entry_zone {low, high} (optional), stop, targets[], opened_at, expiry (fill deadline for pending; legacy fill_by also accepted), expires (optional max hold for open trades), status pending|open|won|lost|stopped|cancelled (this public file shows closed ideas as status \"closed\" without exit price, P&L or targets hit; the full doc is private), missed_it {max_entry, note}, reasoning. Script fills targets_hit/filled_at/closed_at/exit_price/pnl_pct/unrealized_pnl_pct/mark_price (closed ideas: kept privately only). Hand edits of this file are merged by scripts/track_trades.py (load_trades). Times are ISO-8601; no offset = US Central.",
   "current_idea_id": "T002",
   "stats": {
-    "open": 1,
-    "pending": 3,
+    "open": 2,
+    "pending": 2,
     "slate_warnings": []
   },
   "evaluated_utc": "2026-10-21T17:08:18Z",
@@ -60,7 +60,7 @@
       }
     }
   },
-  "tracked_utc": "2026-10-24T08:00:01.749000Z",
+  "tracked_utc": "2026-10-24T10:00:01.779000Z",
   "trades": [
     {
       "id": "T001",
@@ -463,9 +463,9 @@
       },
       "reasoning": "SHORT (sell the retest). HBAR broke the 0.0814-0.082 floor that held Oct 16-21 and fell to a fresh 30-day low (~0.0793, -19% over 30 days) in Thursday's broad risk-off move. All three timeframes are Sell with price under the 1h EMA50 (~0.0827), 4h EMA20 (~0.0828) and daily EMAs (~0.087). Rather than short into an oversold low, the order sits in the broken floor at 0.0815-0.0825, where old support usually becomes resistance. Stop 0.0840 is above the 1h/4h EMA cluster; a move back there means the breakdown failed. T1 0.0778 is just under today's low area, T2 0.0755 is the bear-case extension. From the 0.0815 worst fill: risk 3.1% vs 4.5% to T1 (1.5R) and 7.4% to T2 (2.4R). Hedera's testnet Network MCP launch is development news, not a near-term price driver.",
       "source": "analysis run (midday Oct 22)",
-      "last_checked_ms": 1792828800000,
-      "last_checked": "2026-10-24T08:00:00Z",
-      "mark_price": 0.07694,
+      "last_checked_ms": 1792836000000,
+      "last_checked": "2026-10-24T10:00:00Z",
+      "mark_price": 0.07641,
       "planned_entry": 0.082,
       "filled_at": "2026-10-23T05:00:00Z",
       "entry_type": "pullback",
@@ -475,7 +475,8 @@
           "at": "2026-10-23T20:15:00Z"
         }
       ],
-      "current_stop": 0.0815
+      "current_stop": 0.0815,
+      "unrealized_pnl_pct": 10.79
     },
     {
       "id": "T009",
@@ -484,7 +485,7 @@
       "leverage": 2,
       "conviction": "low",
       "leverage_reason": "Range floor with steady ETF buying (+$524.8M Oct 21, Farside), but 1h/4h Sell, risk-off macro, a yen rally and the Oct 28 Fed / Oct 29-30 BOJ inside the window; stop 1.9% from worst fill -> 3.7% of margin at 2x",
-      "entry": 80400,
+      "entry": 80400.0,
       "entry_zone": {
         "low": 79900,
         "high": 80400
@@ -497,7 +498,7 @@
       "opened_at": "2026-10-22T12:40:00-05:00",
       "expiry": "2026-10-26T23:00:00-05:00",
       "expires": "2026-10-28T12:00:00-05:00",
-      "status": "pending",
+      "status": "open",
       "timeframe": "swing",
       "timeframe_note": "Swing (days): bid the Oct 15-18 range floor; fills by Oct 26, closes at market before the Oct 28 Fed decision if still open",
       "missed_it": {
@@ -529,9 +530,14 @@
       },
       "reasoning": "SWING LONG (range-floor buy). BTC's push to ~$85K reversed and it fell to ~$81.1K as an AI-stock selloff and oil near five-month highs hit risk assets (Investing.com, CoinDesk). The bid moves lower to 79,900-80,400, the Oct 15-18 lows (30-day low ~80,100) that also line up with the daily EMA50 (~80,800) zone and the ~$80K ETF/treasury cost basis Glassnode flagged. Spot ETFs are still buying (+$524.8M on Oct 21, Farside; +$1.07B over three sessions). Stop 78,900 is under the 30-day low; T1 82,500 is the broken support, T2 84,500 the Oct 21-22 high area. From the 80,400 worst fill: risk 1.9% vs 2.6% to T1 (1.4R) and 5.1% to T2 (2.7R). Low conviction: long liquidations dominate (97% longs in 24h, TRdesk), USD/JPY slipped to ~157 and the Fed/BOJ meetings fall inside the window.",
       "source": "analysis run (midday Oct 22)",
-      "last_checked_ms": 1792828800000,
-      "last_checked": "2026-10-24T08:00:00Z",
-      "mark_price": 80635.8
+      "last_checked_ms": 1792836000000,
+      "last_checked": "2026-10-24T10:00:00Z",
+      "mark_price": 80516.0,
+      "planned_entry": 80400,
+      "filled_at": "2026-10-24T09:35:00Z",
+      "entry_type": "pullback",
+      "targets_hit": [],
+      "unrealized_pnl_pct": 0.29
     },
     {
       "id": "T010",
@@ -568,9 +574,9 @@
       },
       "reasoning": "SHORT (sell the retest). ETH lost the 2,432 line and trades in the lower third of its October range (~2,382, -3.9% 24h). The 4h is Strong Sell with price under the 4h EMA20/50 (~2,424/2,435), and the daily is Sell under its EMA20 (~2,484). Flows lag BTC: Lookonchain shows ~$290M of 7-day ETH ETF outflows while BTC funds add money, and JPMorgan notes weaker ETH ETF and futures positioning. The 2,420-2,445 zone stacks the broken 2,432 level with both 4h EMAs; the stop at 2,485 sits above today's 2,480 high. T1 2,345 is just above the 2,336 Oct low; T2 2,295 is under it. From the worst fill (2,420): risk 2.7% vs. 3.1% / 5.2% to the targets (about 1.2R / 1.9R).",
       "source": "analysis run (evening Oct 22)",
-      "last_checked_ms": 1792828800000,
-      "last_checked": "2026-10-24T08:00:00Z",
-      "mark_price": 2371.98
+      "last_checked_ms": 1792836000000,
+      "last_checked": "2026-10-24T10:00:00Z",
+      "mark_price": 2364.21
     },
     {
       "id": "T011",
@@ -607,9 +613,9 @@
       },
       "reasoning": "SWING SHORT (sell the rally into resistance). XRP (~1.32) is pinned between the 1.30 horizontal floor and a heavy resistance band: the 20-, 50- and 200-day EMAs sit together at 1.361 / 1.370 / 1.374, just under the Oct 21-22 high (~1.389). The 1d read is Strong Sell (price < EMA20 < EMA50, below EMA200) and the 4h is Sell under its EMAs (~1.325-1.331). The 1.355-1.37 zone sells a relief rally into that EMA cluster; the stop at 1.392 is above the Oct 21-22 high and the 200-day EMA, so a move there means the downtrend is being reclaimed. T1 1.30 is the floor; T2 1.265 sits just above the Oct low (1.259). From the worst fill (1.355): risk 2.7% vs 4.1% to T1 (1.5R) and 6.6% to T2 (2.4R). Ripple's news flow is constructive (Arf RLUSD settlement financing on XRPL, CryptEscrow real-estate settlement, small XRP ETF inflows), but none of it changes XRP demand in the near term, and BTC ETFs just had their biggest outflow day since June, so the idea leans on the levels.",
       "source": "analysis run (morning Oct 23)",
-      "last_checked_ms": 1792828800000,
-      "last_checked": "2026-10-24T08:00:00Z",
-      "mark_price": 1.2835
+      "last_checked_ms": 1792836000000,
+      "last_checked": "2026-10-24T10:00:00Z",
+      "mark_price": 1.2752
     }
   ]
 }
