@@ -813,6 +813,7 @@
   "−0.5 to −0.15": "de −0,5 a −0,15",
   "TikTok": "TikTok",
   "Privacy Policy": "Política de privacidade",
+  "RSS feed": "Feed RSS",
   "Privacy Policy | Lumi Trades": "Política de privacidade | Lumi Trades",
   "What Lumi Trades collects and why: newsletter email via Kit, cookieless Cloudflare Web Analytics, GitHub Pages hosting and the agent API logs. We do not sell data.": "O que a Lumi Trades coleta e por quê: o e-mail da newsletter via Kit, Cloudflare Web Analytics sem cookies, a hospedagem no GitHub Pages e os registros da API para agentes. Não vendemos dados.",
   "Last updated: {date}": "Última atualização: {date}",
@@ -988,7 +989,6 @@
   "<b>Trust data feed</b> for facilitators, wallets and agent frameworks: a free key with 1,000 lookups a month, then <b class=\"mono\">$1.50</b> per 1,000 (prepaid credits never expire), or Feed <b class=\"mono\">$99</b> and Feed Pro <b class=\"mono\">$199</b> per 30 days. No resale of raw data, attribution required, no warranty. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">License</a>": "<b>Feed de dados de confiança</b> para facilitadores, carteiras e frameworks de agentes: uma chave grátis com 1.000 consultas por mês, depois <b class=\"mono\">$1.50</b> a cada 1.000 (créditos pré-pagos nunca expiram), ou Feed <b class=\"mono\">$99</b> e Feed Pro <b class=\"mono\">$199</b> por 30 dias. Sem revenda dos dados brutos, atribuição obrigatória, sem garantia. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">Licença</a>",
   "License terms": "Termos da licença",
   "License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.": "Licença: sem revenda nem redistribuição dos dados brutos, atribuição obrigatória, sem garantia. Créditos pré-pagos nunca expiram. Planos de 30 dias, sem renovação automática.",
-  "Trust data feed and license": "Feed de dados de confiança e licença",
-  "RSS feed": "Feed RSS"
+  "Trust data feed and license": "Feed de dados de confiança e licença"
  }
 }

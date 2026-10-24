@@ -813,6 +813,7 @@
   "−0.5 to −0.15": "−0.5〜−0.15",
   "TikTok": "TikTok",
   "Privacy Policy": "プライバシーポリシー",
+  "RSS feed": "RSSフィード",
   "Privacy Policy | Lumi Trades": "プライバシーポリシー | Lumi Trades",
   "What Lumi Trades collects and why: newsletter email via Kit, cookieless Cloudflare Web Analytics, GitHub Pages hosting and the agent API logs. We do not sell data.": "Lumi Tradesが収集する情報とその理由: Kit経由のニュースレター用メール、Cookieを使わないCloudflare Web Analytics、GitHub Pagesでのホスティング、エージェントAPIのログ。データは販売しません。",
   "Last updated: {date}": "最終更新: {date}",
@@ -988,7 +989,6 @@
   "<b>Trust data feed</b> for facilitators, wallets and agent frameworks: a free key with 1,000 lookups a month, then <b class=\"mono\">$1.50</b> per 1,000 (prepaid credits never expire), or Feed <b class=\"mono\">$99</b> and Feed Pro <b class=\"mono\">$199</b> per 30 days. No resale of raw data, attribution required, no warranty. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">License</a>": "ファシリテーター、ウォレット、エージェントフレームワーク向けの<b>信頼データフィード</b>：月1,000回の照会付き無料キー、その後は1,000回ごとに<b class=\"mono\">$1.50</b>（前払いクレジットは失効しません）、または30日のFeed <b class=\"mono\">$99</b>とFeed Pro <b class=\"mono\">$199</b>。生データの再販禁止、出典の表示が必要、保証なし。<a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">ライセンス</a>",
   "License terms": "ライセンス条件",
   "License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.": "ライセンス：生データの再販・再配布禁止、出典の表示が必要、保証なし。前払いクレジットは失効しません。30日プラン、自動更新なし。",
-  "Trust data feed and license": "信頼データフィードとライセンス",
-  "RSS feed": "RSSフィード"
+  "Trust data feed and license": "信頼データフィードとライセンス"
  }
 }

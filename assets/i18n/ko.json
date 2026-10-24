@@ -813,6 +813,7 @@
   "−0.5 to −0.15": "−0.5 ~ −0.15",
   "TikTok": "TikTok",
   "Privacy Policy": "개인정보 처리방침",
+  "RSS feed": "RSS 피드",
   "Privacy Policy | Lumi Trades": "개인정보 처리방침 | Lumi Trades",
   "What Lumi Trades collects and why: newsletter email via Kit, cookieless Cloudflare Web Analytics, GitHub Pages hosting and the agent API logs. We do not sell data.": "Lumi Trades가 수집하는 정보와 그 이유: Kit를 통한 뉴스레터 이메일, 쿠키 없는 Cloudflare Web Analytics, GitHub Pages 호스팅, 에이전트 API 로그. 데이터를 판매하지 않습니다.",
   "Last updated: {date}": "최종 업데이트: {date}",
@@ -988,7 +989,6 @@
   "<b>Trust data feed</b> for facilitators, wallets and agent frameworks: a free key with 1,000 lookups a month, then <b class=\"mono\">$1.50</b> per 1,000 (prepaid credits never expire), or Feed <b class=\"mono\">$99</b> and Feed Pro <b class=\"mono\">$199</b> per 30 days. No resale of raw data, attribution required, no warranty. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">License</a>": "퍼실리테이터, 지갑, 에이전트 프레임워크를 위한 <b>신뢰 데이터 피드</b>: 월 1,000회 조회가 포함된 무료 키, 이후 1,000회당 <b class=\"mono\">$1.50</b>(선불 크레딧은 만료되지 않음), 또는 30일 Feed <b class=\"mono\">$99</b>와 Feed Pro <b class=\"mono\">$199</b>. 원시 데이터 재판매 금지, 출처 표기 필수, 보증 없음. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">라이선스</a>",
   "License terms": "라이선스 조건",
   "License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.": "라이선스: 원시 데이터 재판매 및 재배포 금지, 출처 표기 필수, 보증 없음. 선불 크레딧은 만료되지 않습니다. 30일 플랜, 자동 갱신 없음.",
-  "Trust data feed and license": "신뢰 데이터 피드와 라이선스",
-  "RSS feed": "RSS 피드"
+  "Trust data feed and license": "신뢰 데이터 피드와 라이선스"
  }
 }
