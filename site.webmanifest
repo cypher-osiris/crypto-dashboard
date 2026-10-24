@@ -1,7 +1,7 @@
 {
   "name": "Lumi Trades",
   "short_name": "Lumi",
-  "description": "Lumi Trades: the trust layer for AI-agent payments. A free x402 seller trust list with signed test-buy receipts, plus paper-trade market analysis.",
+  "description": "Lumi Trades: the trust layer for AI-agent payments. A free x402 seller trust list built from real test-buys, each kept with a signed receipt, plus paper-trade market analysis.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

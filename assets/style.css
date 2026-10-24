@@ -826,3 +826,23 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .nav .nav-lbl{font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.8;padding:5px 6px 5px 2px}
 /* long inline code (e.g. the right-to-reply endpoint on /trust/) wraps instead of widening the page on phones */
 p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
+/* social icons (X, YouTube, TikTok): header of generated pages + every footer (scripts/trade_pages.social_icons) */
+.soc{display:inline-flex;align-items:center;gap:6px}
+.soc-i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;border:1px solid var(--line2,var(--line));color:var(--muted)}
+.soc-i:hover{color:var(--text);background:rgba(255,255,255,.05);text-decoration:none}
+.soc-i svg{width:14px;height:14px}
+.soc-i.yt:hover{color:#ff4e45}
+.footer .foot-soc{margin:10px 0 6px}
+.footer .foot-soc .soc-i{color:var(--muted);text-decoration:none}
+/* /trust/: vendors without a working homepage link to Lumi's own result page, labelled as such */
+.tr-own{display:block;width:max-content;margin:.1rem 0 0;font-size:.74rem;color:var(--cyan);white-space:nowrap}
+.hx-price-note{font-size:.8rem;margin:10px 0 0;max-width:560px}
+/* phones: the top nav wraps onto rows (no sideways scroll, nothing cut off); it scrolls away with the page instead of sticking */
+@media (max-width:600px){
+  .nav{position:static}
+  .nav-inner{flex-wrap:wrap;overflow:visible;row-gap:4px;gap:4px 2px}
+  .nav a{padding:4px 9px;font-size:.8rem}
+  .nav-grp{flex:1 1 100%;flex-wrap:wrap;margin-left:0;padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:4px;gap:2px}
+  .cp-top-r{gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .cp-top-r .soc-i{width:28px;height:28px}
+}

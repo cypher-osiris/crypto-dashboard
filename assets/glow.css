@@ -139,7 +139,8 @@
   .lgw .hx-card{padding:16px}
   .lgw .hx-stats li{min-width:0}
   .lgw .hx-stats b{font-size:1.45rem}
-  .lgw .pv-brand small,.lgw .pv-social.tt,.lgw .pv-social.yt{display:none}
+  .lgw .pv-brand small{display:none}
+  .lgw .pv-social{width:28px;height:28px}
 }
 
 .lgw .ag-rows li{padding:10px 12px}

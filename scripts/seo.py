@@ -31,8 +31,8 @@ KW_PAGE = {  # which terms lead on each page (the rest follow)
 # Trust-branded pages (/trust/ and its JSON-LD) never name or upsell Lumi Market Ideas (signals, trade ideas).
 NOT_ON_TRUST = {"crypto signals", "trading signals", "paper trading"}
 
-ORG_DESC = ("Lumi Trades is the trust layer for AI-agent payments: it test-buys x402 sellers on XRPL, Base and Stellar, publishes "
-            "signed receipts and a free vendor trust list, and sells trust checks and crypto market data to AI agents through a "
+ORG_DESC = ("Lumi Trades is the trust layer for AI-agent payments: it test-buys x402 sellers on XRPL, Base and Stellar, keeps a "
+            "signed receipt for every buy, publishes a free vendor trust list, and sells trust checks and crypto market data to AI agents through a "
             "pay-per-call x402 API and an MCP server.")
 ORG_DESC_TRUST = ("Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents "
                   "through a pay-per-call x402 API and an MCP server.")
@@ -100,7 +100,7 @@ def web_api(t, lang, prices, page_url=None, full=True):
 
 TRUST_DS_NAME = "Lumi x402 vendor trust list"
 TRUST_DS_DESC = ("Automated observations of x402 pay-per-call endpoints that AI agents can buy from: free checks that each endpoint "
-                 "returns a valid 402 payment quote, small paid test-buys with links to the on-ledger transactions (XRPL, Base, Stellar), "
+                 "returns a valid 402 payment quote, small paid on-ledger test-buys (XRPL, Base, Stellar), "
                  "and a 30-day trust score with a confidence level per vendor. Updated regularly; free to read as JSON. "
                  "Observations, not a rating or review of any business.")
 
@@ -141,7 +141,7 @@ FAQ = [
     ("How do I check if an x402 service is trustworthy?",
      "Before paying, check that the endpoint returns a valid 402 quote and that the pay-to address and price match its documentation. "
      "Independent observations help too: Lumi's free vendor trust list at lumitrades.io/trust/ records automated quote checks and small "
-     "paid test-buys of x402 endpoints, each paid buy linked to its transaction on a public ledger explorer, with a 30-day score and a "
+     "paid test-buys of x402 endpoints, each paid buy recorded as a real ledger payment, with a 30-day score and a "
      "confidence level. Start with small amounts and a per-call spending cap. The list is observations, not a rating of any business."),
     ("How do I pay an API with XRP or RLUSD?",
      "With x402 on the XRP Ledger: the 402 quote lists XRPL options (XRP, RLUSD or USDC) with the amount, pay-to address and invoice "
@@ -212,7 +212,7 @@ def llms_txt(prices, plans=(), groups=None):
 
 ## Pages
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
-- [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
+- [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid on-ledger test-buys of x402 endpoints
 - [How Lumi's market ideas work](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
 - [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API, plus Lumi Market Ideas further down (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)

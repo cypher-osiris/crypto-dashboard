@@ -19,7 +19,7 @@
 
 ## Pages
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
-- [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
+- [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid on-ledger test-buys of x402 endpoints
 - [How Lumi's market ideas work](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
 - [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API, plus Lumi Market Ideas further down (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
@@ -28,7 +28,7 @@
 ## Prices (USD per call)
 ### Lumi Trust
 - `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed receipts, $0.004 per call
-- `GET /v1/trust/vendors/{id}/report`: Detailed vendor report (full observation history), $0.02 per call
+- `GET /v1/trust/vendors/{id}/report`: Full report on one curated vendor (observation history, tx hashes, signed receipts), $0.02 per call
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free
 - `POST /v1/trust/receipts/verify`: Verify a signed test-buy receipt, free
 

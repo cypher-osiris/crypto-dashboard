@@ -258,6 +258,23 @@ def site_nav(h, home, coins="", current=None):
             f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Newsletter ↗"))}</a></span>')
 
 
+# Social icons (X, YouTube, TikTok): header of generated pages + every footer. Same handles as the text links.
+SOCIAL_SVG = {
+    "x": '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+    "yt": '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/></svg>',
+    "tt": '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>',
+}
+
+
+def social_icons(h, cls="soc"):
+    E, _ = h.E, h._
+    items = (("x", "https://x.com/lumisinsite", _("Lumi on X (@lumisinsite)")),
+             ("yt", "https://www.youtube.com/@lumitradesio", _("Lumi on YouTube")),
+             ("tt", "https://www.tiktok.com/@lumitradesio", _("Lumi on TikTok")))
+    return (f'<span class="{cls}">' + "".join(f'<a class="soc-i {k}" href="{u}" rel="me noopener" target="_blank" aria-label="{E(l)}" title="{E(l)}">{SOCIAL_SVG[k]}</a>'
+                                            for k, u, l in items) + "</span>")
+
+
 def foot_brand(h):
     """First footer line: positioning + social links (same on every generated page)."""
     E, _ = h.E, h._
@@ -275,7 +292,7 @@ def chrome(h, pre, home, nav_items, V, path, current="trades"):
     return (f'<body class="cp tp lgw">\n<div class="bg-glow" aria-hidden="true"></div>\n'
             f'<header class="cp-top"><div class="wrap cp-top-inner">\n'
             f'  <a class="cp-brand" href="{home}"><img class="wm" src="{pre}assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>\n'
-            f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}trust/">{h.E(h._("Vendor trust list →"))}</a></span>\n</div></header>\n'
+            f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}trust/">{h.E(h._("Vendor trust list →"))}</a>{social_icons(h)}</span>\n</div></header>\n'
             f'<div class="ticker lt-ticker" role="region" aria-label="{h.E(h._("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>\n'
             f'<nav class="nav" aria-label="{h.E(h._("Site"))}"><div class="wrap nav-inner">{site_nav(h, home, nav, current)}</div></nav>\n')
 
@@ -286,7 +303,7 @@ def _policy_link(h, pre):
 
 
 def footer(h, pre, gen_date):
-    return (f'<footer class="wrap footer">\n  {foot_brand(h)}\n'
+    return (f'<footer class="wrap footer">\n  {foot_brand(h)}\n  <p class="foot-soc">{social_icons(h)}</p>\n'
             f'  <p>{h._("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=h.E(gen_date))} · <a href="{pre}{h.L.prefix}privacy/">{h.E(h._("Privacy Policy"))}</a>{_policy_link(h, pre)}</p>\n'
             f'  <p class="aff-foot" id="aff-foot" hidden></p>\n</footer>\n</body>\n</html>\n')
 
