@@ -980,6 +980,9 @@
   "Trust layer for AI-agent payments · XRPL · Base · Stellar": "Camada de confiança para pagamentos de agentes de IA · XRPL · Base · Stellar",
   "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "Fazemos compras de teste em vendedores x402 na XRPL, Base e Stellar e publicamos recibos assinados, para que seu agente saiba quem entrega.",
   "Markets": "Mercados",
-  "Markets (paper trading, not financial advice)": "Mercados (operações simuladas, não é aconselhamento financeiro)"
+  "Markets (paper trading, not financial advice)": "Mercados (operações simuladas, não é aconselhamento financeiro)",
+  "Lumi Trades: trust layer for AI-agent payments on XRPL, Base and Stellar": "Lumi Trades: camada de confiança para pagamentos de agentes de IA em XRPL, Base e Stellar",
+  "Lumi test-buys x402 sellers on XRPL, Base and Stellar and publishes signed receipts, so AI agents know who delivers before they pay. Not financial advice.": "A Lumi faz compras de teste de vendedores x402 em XRPL, Base e Stellar e publica recibos assinados: o agente sabe quem entrega. Não é conselho financeiro.",
+  "Trust layer for AI-agent payments": "Camada de confiança para pagamentos de agentes de IA"
  }
 }

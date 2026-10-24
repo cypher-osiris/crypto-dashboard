@@ -980,6 +980,9 @@
   "Trust layer for AI-agent payments · XRPL · Base · Stellar": "Yapay zekâ ajanı ödemeleri için güven katmanı · XRPL · Base · Stellar",
   "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "XRPL, Base ve Stellar'daki x402 satıcılarından test alımları yapıyor ve imzalı makbuzlar yayımlıyoruz; böylece ajanınız kimin teslim ettiğini bilir.",
   "Markets": "Piyasalar",
-  "Markets (paper trading, not financial advice)": "Piyasalar (kâğıt üzerinde işlem, yatırım tavsiyesi değildir)"
+  "Markets (paper trading, not financial advice)": "Piyasalar (kâğıt üzerinde işlem, yatırım tavsiyesi değildir)",
+  "Lumi Trades: trust layer for AI-agent payments on XRPL, Base and Stellar": "Lumi Trades: XRPL, Base ve Stellar'da yapay zekâ ajanı ödemeleri için güven katmanı",
+  "Lumi test-buys x402 sellers on XRPL, Base and Stellar and publishes signed receipts, so AI agents know who delivers before they pay. Not financial advice.": "Lumi, XRPL, Base ve Stellar'daki x402 satıcılarından test alımı yapıp imzalı makbuz yayımlar; ajan kimin teslim ettiğini bilir. Yatırım tavsiyesi değildir.",
+  "Trust layer for AI-agent payments": "Yapay zekâ ajanı ödemeleri için güven katmanı"
  }
 }
