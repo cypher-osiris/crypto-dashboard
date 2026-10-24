@@ -821,3 +821,8 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .pv-mi{padding-left:14px}
 .ag-mi{margin:18px 0 6px;padding-top:2px}
 .ag-mi h3{margin-top:4px}
+/* nav: market pages grouped under a small "Markets" label (scripts/trade_pages.site_nav, index.html) */
+.nav-grp{display:flex;align-items:center;gap:4px;margin-left:6px;padding-left:10px;border-left:1px solid var(--line);flex:none}
+.nav .nav-lbl{font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.8;padding:5px 6px 5px 2px}
+/* long inline code (e.g. the right-to-reply endpoint on /trust/) wraps instead of widening the page on phones */
+p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}

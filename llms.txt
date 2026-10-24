@@ -20,8 +20,9 @@
 ## Pages
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
-- [How Lumi works](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
-- [Dashboard](https://lumitrades.io/): live prices, plus Lumi Market Ideas (signals and today's paper-trade ideas) (also in es, pt, tr, ko, ja)
+- [How Lumi's market ideas work](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
+- [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API, plus Lumi Market Ideas further down (also in es, pt, tr, ko, ja)
+- [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
 - [Trade ideas](https://lumitrades.io/trades/): Lumi Market Ideas, the active paper-trade ideas (paper-trade analysis, not investment advice)
 
 ## Prices (USD per call)
@@ -55,11 +56,11 @@
 - Monitor: $9 per 30 days. 1 endpoint: one test-buy per term (plus one recheck after a failure) and alerts
 - Monitor Plus: $29 per 30 days. Up to 20 endpoints: weekly test-buys and alerts
 - Audit: $99 one-time. One test-buy of every listed endpoint, with a full report signed by Lumi's wallet
-- Free: $0. 1,000 lookups a month per key (wallet-signature signup), answer-only
+- Free: $0. 1,000 lookups a month per key (wallet-signature signup), returns the verdict only
 - Feed credits: $1.50 per 1,000 lookups. Prepaid lookups on top of the free 1,000 a month; credits never expire
 - Feed: $99 per 30 days. 100,000 bulk lookups, delta feed, full evidence and receipts
 - Feed Pro: $199 per 30 days. 500,000 lookups, delta feed, licensed full snapshot export, status-change webhooks, receipts
-- [Seller monitoring](https://api.lumitrades.io/v1/monitor) · [Trust data feed](https://api.lumitrades.io/v1/feed) · [Feed licence](https://api.lumitrades.io/v1/feed/license)
+- [Seller monitoring](https://api.lumitrades.io/v1/monitor) · [Trust data feed](https://api.lumitrades.io/v1/feed) · [Feed license](https://api.lumitrades.io/v1/feed/license)
 
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free

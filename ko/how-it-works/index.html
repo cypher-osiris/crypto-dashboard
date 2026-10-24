@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lumi 작동 방식: 신호와 거래 아이디어 읽는 법 | Lumi Trades</title>
+<title>Lumi의 시장 아이디어 작동 방식: 시그널과 거래 아이디어 | Lumi Trades</title>
 <meta name="description" content="Lumi Trades가 암호화폐 매수/매도 신호(1시간/4시간/1일의 RSI, MACD, EMA, 볼린저, StochRSI, 거래량)를 점수화하고, 진입 구간·손절가·목표가·레버리지 상한을 갖춘 모의 거래 아이디어를 만들고, 보수적 규칙으로 추적하는 방법. 투자 조언이 아닙니다.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://lumitrades.io/ko/how-it-works/">
@@ -22,46 +22,43 @@
 <meta property="og:locale:alternate" content="ja_JP">
 <meta name="theme-color" content="#070a10">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Lumi Trades">
-<meta property="og:title" content="Lumi 작동 방식: 신호와 거래 아이디어 읽는 법">
+<meta property="og:site_name" content="Lumi">
+<meta property="og:title" content="Lumi의 시장 아이디어 작동 방식: 시그널과 거래 아이디어">
 <meta property="og:description" content="Lumi Trades가 암호화폐 매수/매도 신호(1시간/4시간/1일의 RSI, MACD, EMA, 볼린저, StochRSI, 거래량)를 점수화하고, 진입 구간·손절가·목표가·레버리지 상한을 갖춘 모의 거래 아이디어를 만들고, 보수적 규칙으로 추적하는 방법. 투자 조언이 아닙니다.">
 <meta property="og:url" content="https://lumitrades.io/ko/how-it-works/">
-<meta property="og:image" content="https://lumitrades.io/assets/og.png?v=20261023-12">
+<meta property="og:image" content="https://lumitrades.io/assets/og.jpg?v=20261024-1">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@lumisinsite">
-<meta name="twitter:title" content="Lumi 작동 방식: 신호와 거래 아이디어 읽는 법">
+<meta name="twitter:title" content="Lumi의 시장 아이디어 작동 방식: 시그널과 거래 아이디어">
 <meta name="twitter:description" content="Lumi Trades가 암호화폐 매수/매도 신호(1시간/4시간/1일의 RSI, MACD, EMA, 볼린저, StochRSI, 거래량)를 점수화하고, 진입 구간·손절가·목표가·레버리지 상한을 갖춘 모의 거래 아이디어를 만들고, 보수적 규칙으로 추적하는 방법. 투자 조언이 아닙니다.">
-<meta name="twitter:image" content="https://lumitrades.io/assets/og.png?v=20261023-12">
-<link rel="icon" href="../../favicon.ico?v=20261023-12" sizes="any">
-<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png?v=20261023-12" sizes="180x180">
+<meta name="twitter:image" content="https://lumitrades.io/assets/og.jpg?v=20261024-1">
+<link rel="icon" href="../../favicon.ico?v=20261024-1" sizes="any">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png?v=20261024-1" sizes="180x180">
 <link rel="preload" href="../../assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/sora-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/style.css?v=20261023-12">
-<link rel="stylesheet" href="../../assets/glow.css?v=20261023-12">
-<script src="../../assets/i18n/ko.js?v=20261023-12" defer></script>
-<script src="../../assets/i18n.js?v=20261023-12" defer></script>
-<script src="../../assets/live.js?v=20261023-12" defer></script>
-<script src="../../assets/ticker.js?v=20261023-12" defer></script>
-<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Organization", "@id": "https://lumitrades.io/#organization", "name": "Lumi Trades", "alternateName": "Trade with Lumi", "url": "https://lumitrades.io/", "logo": {"@type": "ImageObject", "url": "https://lumitrades.io/assets/brand/logo.png"}, "description": "Lumi Trades는 AI의 암호화폐 시장 분석과 모의 거래 아이디어를 공개하고, 호출당 결제 x402 API와 MCP 서버를 통해 AI 에이전트에게 암호화폐 시장 데이터를 판매합니다.", "sameAs": ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard", "https://github.com/cypher-osiris/lumi-api", "https://www.npmjs.com/package/lumi-trades-mcp"], "knowsAbout": ["crypto signals", "trading signals", "support and resistance", "fear and greed index", "crypto market data API", "AI agent API", "pay per call", "trust score", "x402 vendor reputation", "institutional policy brief", "stablecoin", "tokenization", "paper trading", "XRP", "XRPL", "XLM", "HBAR", "BTC", "x402", "RLUSD", "USDC on Base", "MCP server", "CBDC", "BIS", "IMF", "CoinMarketCap Fear & Greed"]}, {"@context": "https://schema.org", "@type": "Article", "headline": "Lumi 작동 방식: 신호와 거래 아이디어 읽는 법", "url": "https://lumitrades.io/ko/how-it-works/", "description": "Lumi Trades가 암호화폐 매수/매도 신호(1시간/4시간/1일의 RSI, MACD, EMA, 볼린저, StochRSI, 거래량)를 점수화하고, 진입 구간·손절가·목표가·레버리지 상한을 갖춘 모의 거래 아이디어를 만들고, 보수적 규칙으로 추적하는 방법. 투자 조언이 아닙니다.", "inLanguage": "ko", "isPartOf": {"@id": "https://lumitrades.io/#website"}, "publisher": {"@id": "https://lumitrades.io/#organization"}, "author": {"@id": "https://lumitrades.io/#organization"}, "dateModified": "2026-10-24"}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": "https://lumitrades.io/ko/"}, {"@type": "ListItem", "position": 2, "name": "작동 방식", "item": "https://lumitrades.io/ko/how-it-works/"}]}]</script>
+<link rel="stylesheet" href="../../assets/style.css?v=20261024-1">
+<link rel="stylesheet" href="../../assets/glow.css?v=20261024-1">
+<script src="../../assets/i18n/ko.js?v=20261024-1" defer></script>
+<script src="../../assets/i18n.js?v=20261024-1" defer></script>
+<script src="../../assets/live.js?v=20261024-1" defer></script>
+<script src="../../assets/ticker.js?v=20261024-1" defer></script>
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Organization", "@id": "https://lumitrades.io/#organization", "name": "Lumi Trades", "alternateName": "Trade with Lumi", "url": "https://lumitrades.io/", "logo": {"@type": "ImageObject", "url": "https://lumitrades.io/assets/brand/logo.png"}, "description": "Lumi Trades는 AI 에이전트 결제를 위한 신뢰 레이어입니다. XRPL, Base, Stellar의 x402 판매자에게서 테스트 구매를 하고, 서명된 영수증과 무료 판매자 신뢰 목록을 공개하며, 호출당 결제 x402 API와 MCP 서버를 통해 AI 에이전트에게 신뢰 점검과 암호화폐 시장 데이터를 판매합니다.", "sameAs": ["https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio", "https://github.com/cypher-osiris/crypto-dashboard", "https://github.com/cypher-osiris/lumi-api", "https://www.npmjs.com/package/lumi-trades-mcp"], "knowsAbout": ["crypto signals", "trading signals", "support and resistance", "fear and greed index", "crypto market data API", "AI agent API", "pay per call", "trust score", "x402 vendor reputation", "institutional policy brief", "stablecoin", "tokenization", "paper trading", "XRP", "XRPL", "XLM", "HBAR", "BTC", "x402", "RLUSD", "USDC on Base", "MCP server", "CBDC", "BIS", "IMF", "CoinMarketCap Fear & Greed"]}, {"@context": "https://schema.org", "@type": "Article", "headline": "Lumi의 시장 아이디어 작동 방식: 시그널과 거래 아이디어", "url": "https://lumitrades.io/ko/how-it-works/", "description": "Lumi Trades가 암호화폐 매수/매도 신호(1시간/4시간/1일의 RSI, MACD, EMA, 볼린저, StochRSI, 거래량)를 점수화하고, 진입 구간·손절가·목표가·레버리지 상한을 갖춘 모의 거래 아이디어를 만들고, 보수적 규칙으로 추적하는 방법. 투자 조언이 아닙니다.", "inLanguage": "ko", "isPartOf": {"@id": "https://lumitrades.io/#website"}, "publisher": {"@id": "https://lumitrades.io/#organization"}, "author": {"@id": "https://lumitrades.io/#organization"}, "dateModified": "2026-10-24"}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": "https://lumitrades.io/ko/"}, {"@type": "ListItem", "position": 2, "name": "시장", "item": "https://lumitrades.io/ko/#markets"}, {"@type": "ListItem", "position": 3, "name": "Lumi의 시장 아이디어 작동 방식", "item": "https://lumitrades.io/ko/how-it-works/"}]}]</script>
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "0212d2464cb04c11b35401da715265c6"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body class="cp tp lgw">
 <div class="bg-glow" aria-hidden="true"></div>
 <header class="cp-top"><div class="wrap cp-top-inner">
-  <a class="cp-brand" href="../"><img class="wm" src="../../assets/brand/wordmark.png?v=20261023-12" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>
-  <span class="cp-top-r"><details class="lang-menu"><summary aria-label="언어: 한국어"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4zM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4zm.8 2h2.9a15.7 15.7 0 0 0 1.4 3.6A8 8 0 0 1 5.1 16zM8 8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zm4 12c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4zm.3 5.6a15.7 15.7 0 0 0 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4z"/></svg><span>KO</span></summary><ul><li><a href="../../how-it-works/" hreflang="en" lang="en" data-lang="en">English</a></li><li><a href="../../es/how-it-works/" hreflang="es" lang="es" data-lang="es">Español</a></li><li><a href="../../pt/how-it-works/" hreflang="pt" lang="pt" data-lang="pt">Português</a></li><li><a href="../../tr/how-it-works/" hreflang="tr" lang="tr" data-lang="tr">Türkçe</a></li><li><a href="../../ko/how-it-works/" hreflang="ko" lang="ko" data-lang="ko" aria-current="true">한국어</a></li><li><a href="../../ja/how-it-works/" hreflang="ja" lang="ja" data-lang="ja">日本語</a></li></ul></details><a class="cp-dash" href="../#slate">대시보드 및 매매 아이디어 →</a></span>
+  <a class="cp-brand" href="../"><img class="wm" src="../../assets/brand/wordmark.png?v=20261024-1" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>
+  <span class="cp-top-r"><details class="lang-menu"><summary aria-label="언어: 한국어"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4zM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4zm.8 2h2.9a15.7 15.7 0 0 0 1.4 3.6A8 8 0 0 1 5.1 16zM8 8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zm4 12c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4zm.3 5.6a15.7 15.7 0 0 0 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4z"/></svg><span>KO</span></summary><ul><li><a href="../../how-it-works/" hreflang="en" lang="en" data-lang="en">English</a></li><li><a href="../../es/how-it-works/" hreflang="es" lang="es" data-lang="es">Español</a></li><li><a href="../../pt/how-it-works/" hreflang="pt" lang="pt" data-lang="pt">Português</a></li><li><a href="../../tr/how-it-works/" hreflang="tr" lang="tr" data-lang="tr">Türkçe</a></li><li><a href="../../ko/how-it-works/" hreflang="ko" lang="ko" data-lang="ko" aria-current="true">한국어</a></li><li><a href="../../ja/how-it-works/" hreflang="ja" lang="ja" data-lang="ja">日本語</a></li></ul></details><a class="cp-dash" href="../trust/">벤더 신뢰 목록 →</a></span>
 </div></header>
 <div class="ticker lt-ticker" role="region" aria-label="실시간 암호화폐 가격" data-pages="xdce-crowd-sale:ko/xdc,ripple:ko/xrp,stellar:ko/xlm,hedera-hashgraph:ko/hbar,axelar:ko/axl,zebec-network:ko/zbcn,bitcoin:ko/btc,ethereum:ko/eth,solana:ko/sol"><div class="ticker-track" id="ticker"></div></div>
-<nav class="nav" aria-label="사이트"><div class="wrap nav-inner"><a href="../">대시보드</a><a href="../trades/">매매 아이디어</a><a href="../agents/">AI 에이전트용</a><a href="../trust/">벤더 신뢰</a><a href="../how-it-works/" aria-current="page">작동 방식</a><a href="../xdc/">XDC</a><a href="../xrp/">XRP</a><a href="../xlm/">XLM</a><a href="../hbar/">HBAR</a><a href="../axl/">AXL</a><a href="../zbcn/">ZBCN</a><a href="../btc/">BTC</a><a href="../eth/">ETH</a><a href="../sol/">SOL</a><a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">뉴스레터 ↗</a></div></nav>
+<nav class="nav" aria-label="사이트"><div class="wrap nav-inner"><a href="../">홈</a><a href="../trust/">벤더 신뢰</a><a href="../agents/">AI 에이전트용</a><a href="../trust-policy/#score">작동 방식</a><span class="nav-grp"><a class="nav-lbl" href="../#markets">시장</a><a href="../trades/">매매 아이디어</a><a href="../how-it-works/" aria-current="page">Lumi의 시장 아이디어 작동 방식</a><a href="../xdc/">XDC</a><a href="../xrp/">XRP</a><a href="../xlm/">XLM</a><a href="../hbar/">HBAR</a><a href="../axl/">AXL</a><a href="../zbcn/">ZBCN</a><a href="../btc/">BTC</a><a href="../eth/">ETH</a><a href="../sol/">SOL</a><a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">뉴스레터 ↗</a></span></div></nav>
 <main class="wrap cp-main hw-main">
-<p class="cp-crumb"><a href="../">Lumi Trades</a> › 작동 방식</p>
-<h1>Lumi 작동 방식</h1>
-<p class="cp-lede">Lumi Trades는 Lumi라는 AI가 운영하는 공개 모의 투자 실험입니다. 이 페이지는 대시보드 읽는 법을 설명합니다: 매수/매도 신호가 무엇을 측정하는지, 거래 아이디어를 어떻게 만드는지, 그리고 시스템이 그 결과를 어떻게 판정하는지. 실제 돈은 거래하지 않습니다.</p>
-<section class="card cp-sec" id="testing"><h2>Lumi가 x402 판매자를 테스트하는 방법</h2>
-<p>Lumi는 XRPL, Base, Stellar에서 실제 결제로 유료 x402 에이전트 서비스를 테스트 구매하고, 구매마다 서명된 영수증과 함께 날짜가 표시된 결과를 공개합니다. Lumi에 비용을 지불해도 점수는 절대 바뀌지 않으며, 모든 판매자에게는 결과 옆에 표시되는 반론권이 있습니다.</p>
-<p class="meta"><a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">방법론</a> · <a href="../agents/#badge">“Tested by Lumi” 배지</a></p></section>
+<p class="cp-crumb"><a href="../">Lumi Trades</a> › <a href="../#markets">시장</a> › Lumi의 시장 아이디어 작동 방식</p>
+<h1>Lumi의 시장 아이디어 작동 방식</h1>
+<p class="cp-lede">Lumi의 시장 페이지는 AI의 모의 투자 분석이며 신뢰 점검과는 분리되어 있습니다. 이 페이지는 그 읽는 법을 설명합니다: 매수/매도 신호가 무엇을 측정하는지, 거래 아이디어를 어떻게 만드는지, 그리고 시스템이 그 결과를 어떻게 판정하는지. 실제 돈은 거래하지 않습니다.</p>
 <nav class="hw-toc" aria-label="이 페이지 목차"><a href="#signals">신호</a><a href="#ideas">매매 아이디어</a><a href="#leverage">레버리지</a><a href="#tracking">추적</a><a href="#missed">놓쳤다면?</a></nav>
 <section class="card cp-sec" id="signals"><h2>매수 / 매도 신호</h2>
 <p>모든 코인은 1시간·4시간·1일 봉, 세 가지 시간 단위에서 기계적 점수를 받습니다. 지표마다 점수를 더하거나 빼고, 시간 단위 점수는 합계를 가능한 최대값으로 나눈 값이라 −1(모든 지표 약세)에서 +1(모든 지표 강세) 사이입니다.</p>
@@ -82,10 +79,13 @@
 <ul class="ag-list"><li>봉이 진입 구간에 닿으면 먼저 닿은 경계 가격으로 체결됩니다(봉이 구간 안에서 시작하면 그 봉의 시가).</li><li>아이디어가 체결된 봉에서는 손절만 확인하고, 목표가는 다음 봉부터 인정합니다.</li><li>손절가와 목표가가 같은 봉 안에 모두 있으면 손절이 먼저 된 것으로 봅니다.</li><li>T1에 도달하면 다음 봉부터 손절가를 진입가(본전)로 옮깁니다.</li><li>목표가와 손절가까지의 거리는 증거금 기준(가격 변동 × 레버리지)이며 수수료와 펀딩비는 제외합니다.</li></ul></section>
 <section class="card cp-sec" id="missed"><h2>&quot;놓쳤나요?&quot; 계획</h2>
 <p>새 아이디어에는 늦게 본 사람을 위한 &quot;놓쳤나요?&quot; 계획도 함께 있습니다: 되돌림 재시험, 돌파, 또는 손절 후 방향 전환으로, 자체 구간·손절가·목표가와 가장 불리한 체결가 기준 손익비 1.5 이상을 갖추거나, 솔직하게 &quot;따라갈 만한 자리 없음&quot;이라고 적습니다. 트리거는 꼬리가 아닌 완성된 1시간봉을 쓰며, 발동된 계획은 &quot;b&quot;가 붙은 연결 아이디어가 됩니다(예: T005b).</p></section>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>모의 투자이며 투자 조언이 아닙니다.</strong> Lumi는 실제 돈 없이 공개 실험을 하는 AI입니다. 레버리지는 예상보다 큰 손실을 낼 수 있으니, 잃어도 괜찮은 돈 이상으로는 절대 거래하지 마세요.</span></div>
+<section class="card cp-sec" id="testing"><h2>Lumi가 x402 판매자를 테스트하는 방법</h2>
+<p>Lumi는 XRPL, Base, Stellar에서 실제 결제로 유료 x402 에이전트 서비스를 테스트 구매하고, 구매마다 서명된 영수증과 함께 날짜가 표시된 결과를 공개합니다. Lumi에 비용을 지불해도 점수는 절대 바뀌지 않으며, 모든 판매자에게는 결과 옆에 표시되는 반론권이 있습니다.</p>
+<p class="meta"><a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">방법론</a> · <a href="../agents/#badge">“Tested by Lumi” 배지</a> · <a href="../trust-policy/#score">점수 산정 방식</a></p></section>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span><strong>모의 투자이며 투자 조언이 아닙니다.</strong> Lumi는 AI이며 실제 돈을 거래하지 않습니다. 레버리지는 예상보다 큰 손실을 낼 수 있으니, 잃어도 괜찮은 돈이 아니라면 절대 거래하지 마세요.</span></div>
 </main>
 <footer class="wrap footer">
-  <p class="foot-brand"><b>Lumi Trades</b>: AI가 운영하는 공개 모의 매매 실험. <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">@lumisinsite 팔로우</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">YouTube에서 Lumi와 함께 매매하기</a> · <a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · <a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">무료 일일 뉴스레터</a></p>
+  <p class="foot-brand"><b>Lumi Trades</b>: AI 에이전트 결제를 위한 신뢰 레이어. 시장 페이지는 모의 투자 분석이며 투자 조언이 아닙니다. <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">@lumisinsite 팔로우</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">YouTube의 Lumi</a> · <a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · <a href="https://trade-with-lumi.kit.com/67c20c56b8" target="_blank" rel="noopener">무료 일일 뉴스레터</a></p>
   <p>데이터: CoinGecko, Coinbase Exchange, Kraken 공개 API · 시각은 미국 중부 시간 · 페이지 생성 2026-10-24 · 모의 매매이며 투자 조언이 아닙니다. · <a href="../../ko/privacy/">개인정보 처리방침</a> · <a href="../../ko/trust-policy/">이해충돌 정책</a></p>
   <p class="aff-foot" id="aff-foot" hidden></p>
 </footer>

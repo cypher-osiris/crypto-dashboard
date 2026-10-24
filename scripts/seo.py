@@ -22,7 +22,7 @@ KW_GENERIC = ["crypto signals", "trading signals", "support and resistance", "fe
 KW_NAMES = ["XRP", "XRPL", "XLM", "HBAR", "BTC", "x402", "RLUSD", "USDC on Base", "MCP server", "CBDC", "BIS", "IMF",
             "CoinMarketCap Fear & Greed"]
 KW_PAGE = {  # which terms lead on each page (the rest follow)
-    "home": ["crypto signals", "trading signals", "XRP", "support and resistance", "fear and greed index", "AI agent API", "x402"],
+    "home": ["x402 vendor reputation", "trust score", "x402", "AI agent API", "pay per call", "XRPL", "USDC on Base"],
     "agents": ["AI agent API", "crypto market data API", "pay per call", "x402", "crypto signals", "MCP server", "RLUSD", "USDC on Base",
                "institutional policy brief"],
     "trust": ["x402 vendor reputation", "trust score", "x402", "AI agent API", "pay per call", "XRPL", "USDC on Base"],
@@ -31,8 +31,9 @@ KW_PAGE = {  # which terms lead on each page (the rest follow)
 # Trust-branded pages (/trust/ and its JSON-LD) never name or upsell Lumi Market Ideas (signals, trade ideas).
 NOT_ON_TRUST = {"crypto signals", "trading signals", "paper trading"}
 
-ORG_DESC = ("Lumi Trades publishes an AI's crypto market analysis and paper-trade ideas, and sells crypto market data to AI agents "
-            "through a pay-per-call x402 API and an MCP server.")
+ORG_DESC = ("Lumi Trades is the trust layer for AI-agent payments: it test-buys x402 sellers on XRPL, Base and Stellar, publishes "
+            "signed receipts and a free vendor trust list, and sells trust checks and crypto market data to AI agents through a "
+            "pay-per-call x402 API and an MCP server.")
 ORG_DESC_TRUST = ("Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents "
                   "through a pay-per-call x402 API and an MCP server.")
 API_NAME = "Lumi Trades API"
@@ -44,7 +45,7 @@ API_DESC = ("Pay-per-call crypto market data API for AI agents: trading signals,
 def keywords(t, page, en):
     """Comma-separated keywords meta for a page: page-specific terms first, translated generic terms plus the English ones."""
     order = KW_PAGE.get(page, []) + [k for k in KW_GENERIC + KW_NAMES if k not in KW_PAGE.get(page, [])]
-    if page == "trust":
+    if page in ("trust", "home"):   # the home page leads with the trust layer too
         order = [k for k in order if k not in NOT_ON_TRUST]
     out = []
     for k in order:
@@ -55,7 +56,7 @@ def keywords(t, page, en):
 
 
 def organization(t, page=None):
-    knows = [k for k in KW_GENERIC + KW_NAMES if page != "trust" or k not in NOT_ON_TRUST]
+    knows = [k for k in KW_GENERIC + KW_NAMES if page not in ("trust", "home") or k not in NOT_ON_TRUST]
     return {"@context": "https://schema.org", "@type": "Organization", "@id": ORG_ID, "name": "Lumi Trades",
             "alternateName": ORG_ALT_NAME, "url": SITE,
             "logo": {"@type": "ImageObject", "url": LOGO}, "description": t(ORG_DESC_TRUST if page == "trust" else ORG_DESC), "sameAs": SAME_AS,
@@ -63,7 +64,7 @@ def organization(t, page=None):
 
 
 def website(t, url, lang, desc):
-    return {"@context": "https://schema.org", "@type": "WebSite", "@id": SITE_ID, "name": "Lumi Trades", "alternateName": "Lumi Trades crypto dashboard",
+    return {"@context": "https://schema.org", "@type": "WebSite", "@id": SITE_ID, "name": "Lumi Trades", "alternateName": "Lumi",
             "url": url, "description": desc, "inLanguage": lang, "publisher": {"@id": ORG_ID},
             "keywords": keywords(t, "home", lang == "en")}
 
@@ -127,7 +128,7 @@ FAQ = [
      "Call GET https://api.lumitrades.io/v1/signal/{coin} (for example /v1/signal/XRP). The first call answers 402 Payment Required "
      "with a quote; the agent pays $0.01 with x402 and repeats the call with the signed payment to get a buy/sell read built from RSI, "
      "MACD and EMA. MCP clients can use the same data through https://api.lumitrades.io/mcp. "
-     "The signals are data from an AI's paper-trading experiment, not financial advice."),
+     "The signals are an AI's paper-trade analysis, not financial advice."),
     ("Is there a pay-per-call crypto API for AI agents?",
      "Yes. The Lumi Trades API sells crypto signals, support and resistance levels, CoinMarketCap Fear & Greed sentiment, the daily "
      "paper-trade slate, a daily market brief and a daily Institutional & Policy Brief for $0.003 to $0.10 per call. There is no account, "
@@ -212,8 +213,9 @@ def llms_txt(prices, plans=(), groups=None):
 ## Pages
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
-- [How Lumi works](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
-- [Dashboard](https://lumitrades.io/): live prices, plus Lumi Market Ideas (signals and today's paper-trade ideas) (also in es, pt, tr, ko, ja)
+- [How Lumi's market ideas work](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
+- [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API, plus Lumi Market Ideas further down (also in es, pt, tr, ko, ja)
+- [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
 - [Trade ideas](https://lumitrades.io/trades/): Lumi Market Ideas, the active paper-trade ideas (paper-trade analysis, not investment advice)
 
 ## Prices (USD per call)
@@ -221,7 +223,7 @@ def llms_txt(prices, plans=(), groups=None):
 
 ## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
 {plan_rows}
-- [Seller monitoring](https://api.lumitrades.io/v1/monitor) · [Trust data feed](https://api.lumitrades.io/v1/feed) · [Feed licence](https://api.lumitrades.io/v1/feed/license)
+- [Seller monitoring](https://api.lumitrades.io/v1/monitor) · [Trust data feed](https://api.lumitrades.io/v1/feed) · [Feed license](https://api.lumitrades.io/v1/feed/license)
 
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free
