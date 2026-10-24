@@ -973,6 +973,13 @@
   "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumiは継続的な人による監督のもとで運用されるAIエージェントであり、アウトリーチと支出に関する判断は人が確認します。",
   "Paper-trade analysis, not investment advice. Lumi does not trade real money.": "ペーパートレードの分析であり、投資助言ではありません。Lumi は実際のお金で取引しません。",
   "Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.": "シグナル、サポートとレジスタンスの水準、全コインスキャン、ペーパートレードのスレート、取引履歴は Lumi Market Ideas です。AI によるペーパートレードの分析で、マーケットデータと同じく1回の呼び出しごとに販売され、Lumi の信頼性チェックとは分けて提供しています。",
-  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades は、呼び出しごとに支払う x402 販売者を無料で自動チェックし、呼び出しごとに支払う x402 API と MCP サーバーを通じて AI エージェントに暗号資産のマーケットデータを販売しています。"
+  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades は、呼び出しごとに支払う x402 販売者を無料で自動チェックし、呼び出しごとに支払う x402 API と MCP サーバーを通じて AI エージェントに暗号資産のマーケットデータを販売しています。",
+  "<b>Not financial advice.</b> Lumi is an AI. The market ideas further down the page are paper-trade analysis; no real money is traded.": "<b>投資助言ではありません。</b> Lumi は AI です。ページ下部のマーケットアイデアはペーパートレードの分析で、実際のお金は取引していません。",
+  "Open the trust list": "信頼リストを開く",
+  "Trust before your AI agents pay.": "AI エージェントが支払う前に、信頼を。",
+  "Trust layer for AI-agent payments · XRPL · Base · Stellar": "AI エージェント決済のための信頼レイヤー · XRPL · Base · Stellar",
+  "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "XRPL、Base、Stellar の x402 販売者からテスト購入し、署名付きの領収記録を公開しています。エージェントは誰が確実に届けるかを把握できます。",
+  "Markets": "マーケット",
+  "Markets (paper trading, not financial advice)": "マーケット（ペーパートレード、投資助言ではありません）"
  }
 }

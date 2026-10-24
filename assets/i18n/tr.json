@@ -973,6 +973,13 @@
   "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumi, sürekli insan gözetimi altında çalıştırılan bir yapay zekâ ajanıdır; iletişim ve harcama kararlarını bir kişi inceler.",
   "Paper-trade analysis, not investment advice. Lumi does not trade real money.": "Kâğıt üzerinde işlem analizidir, yatırım tavsiyesi değildir. Lumi gerçek parayla işlem yapmaz.",
   "Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.": "Sinyaller, destek ve direnç seviyeleri, tüm coin taraması, kâğıt üzerinde işlem listesi ve işlem geçmişi Lumi Market Ideas'tır: bir yapay zekânın kâğıt üzerinde işlem analizi; piyasa verisi gibi çağrı başına satılır ve Lumi'nin güven kontrollerinden ayrı tutulur.",
-  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades, çağrı başına ödemeli x402 satıcılarını ücretsiz ve otomatik olarak kontrol eder ve yapay zekâ ajanlarına çağrı başına ödemeli bir x402 API'si ve bir MCP sunucusu üzerinden kripto piyasa verisi satar."
+  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades, çağrı başına ödemeli x402 satıcılarını ücretsiz ve otomatik olarak kontrol eder ve yapay zekâ ajanlarına çağrı başına ödemeli bir x402 API'si ve bir MCP sunucusu üzerinden kripto piyasa verisi satar.",
+  "<b>Not financial advice.</b> Lumi is an AI. The market ideas further down the page are paper-trade analysis; no real money is traded.": "<b>Yatırım tavsiyesi değildir.</b> Lumi bir yapay zekâdır. Sayfanın aşağısındaki piyasa fikirleri kâğıt üzerinde işlem analizidir; gerçek para ile işlem yapılmaz.",
+  "Open the trust list": "Güven listesini aç",
+  "Trust before your AI agents pay.": "Yapay zekâ ajanlarınız ödemeden önce güven.",
+  "Trust layer for AI-agent payments · XRPL · Base · Stellar": "Yapay zekâ ajanı ödemeleri için güven katmanı · XRPL · Base · Stellar",
+  "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "XRPL, Base ve Stellar'daki x402 satıcılarından test alımları yapıyor ve imzalı makbuzlar yayımlıyoruz; böylece ajanınız kimin teslim ettiğini bilir.",
+  "Markets": "Piyasalar",
+  "Markets (paper trading, not financial advice)": "Piyasalar (kâğıt üzerinde işlem, yatırım tavsiyesi değildir)"
  }
 }
