@@ -327,7 +327,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <section class="card cp-sec" id="sellers"><h2>{E(_t("For sellers: monitoring and audits"))}</h2>
 <p>{_t("Prove you control your payTo wallet by signing a challenge (XRPL or Base; Lumi never asks for keys or seeds), enrol your endpoints for free, then pay a plan with x402. Lumi test-buys your endpoints with real payments and alerts you by webhook or email when something breaks: no data, errors, timeouts, or a changed payTo, price or response schema.")}</p>
 {ptable(MONITOR_PLANS)}
-<p class="meta">{_t("Each test-buy is capped at $0.10 and funded from the plan fee. A paid plan is disclosed on the seller's public entry, findings stay public with the seller's reply next to them, and the badge is removed automatically when a test fails or the plan lapses. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
+<p class="meta">{_t("Each test-buy is capped at $0.10 and funded from the plan fee. A paid plan is disclosed on the seller's public entry, and findings stay public with the seller's reply next to them. The “Tested by Lumi” badge is earned only from delivery results and is removed automatically when the seller's live score drops. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
 {badge_section(h)}
 <section class="card cp-sec" id="feed"><h2>{E(_t("Trust data feed and licence"))}</h2>
 <p>{_t("Keyed, licensed access to Lumi's trust observations for facilitators, wallets and agent frameworks: bulk lookups of up to 50 URLs or payTo addresses per request, a status-change feed and, on Feed Pro, a full snapshot export.")}</p>
@@ -360,6 +360,15 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 """
     js = '<script src="{R}assets/badge.js?v={V}" defer></script>\n'
     return _page(h, tp, "agents/", title, desc, ld, body, V, gen_date, nav_items, "agents", extra_js=js, keywords=seo.keywords(_t, "agents", h.L.en))
+
+
+def policy_note(h):
+    """/trust/#reply: link to the conflicts policy, only in languages that have it (policy_page.LIVE_LANGS)."""
+    import policy_page
+    if h.L.code not in policy_page.LIVE_LANGS:
+        return ""
+    return (f'<p class="meta">{h.E(h._(policy_page.TRUST_NOTE))} '
+            f'<a href="../{policy_page.SLUG}">{h.E(h._(policy_page.H1))}</a></p>\n')
 
 
 def trust_page(h, tp, nav_items, V, gen_date, doc):
@@ -417,7 +426,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <section class="card cp-sec" id="reply">
 <h2>{E(_t("Right to reply"))}</h2>
 <p>{_t("If you run one of these endpoints and think an observation is wrong or missing context, you can add a reply that is shown with your entry. Email <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>, or post a signed reply to <code>POST https://api.lumitrades.io/v1/trust/replies</code>, signed with the key of a pay-to address listed for your entry (details in the methodology). We can also re-run a check or remove an endpoint from the list on request.")}</p>
-</section>
+{policy_note(h)}</section>
 </main>
 """
     js = '<script src="{R}assets/trust.js?v={V}" defer></script>\n<script src="{R}assets/hero.js?v={V}" defer></script>\n'
@@ -425,7 +434,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 
 
 def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
-    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html, how-it-works/, privacy/ and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
+    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html, how-it-works/, privacy/, trust-policy/ (live languages only) and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
     P = h.L.prefix
     write(f"{P}agents/index.html", agents_page(h, tp, nav_items, V, gen_date, vendors_doc))
     write(f"{P}trust/index.html", trust_page(h, tp, nav_items, V, gen_date, vendors_doc))
@@ -433,8 +442,13 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     write(f"{P}how-it-works/index.html", how_page.build_page(h, tp, nav_items, V, gen_date, _page))
     import privacy_page
     write(f"{P}privacy/index.html", privacy_page.build_page(h, tp, nav_items, V, gen_date, _page))
+    import policy_page  # /trust-policy/: written for the languages in policy_page.LIVE_LANGS
+    pol = policy_page.build_page(h, tp, nav_items, V, gen_date, _page)
+    if pol:
+        write(f"{P}{policy_page.SLUG}index.html", pol)
     if h.L.en:
         write("llms.txt", seo.llms_txt(PRICES, PLANS))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
-            ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3")]
+            ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3")] + (
+            [(policy_page.SLUG, policy_page.UPDATED.isoformat(), "monthly", "0.4")] if h.L.code in policy_page.LIVE_LANGS else [])

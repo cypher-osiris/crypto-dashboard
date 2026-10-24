@@ -19,6 +19,7 @@ import datetime as dt, html, json, math, os, re, sys, types
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import policy_page  # /trust-policy/ (conflicts policy; footer link in every language in policy_page.LIVE_LANGS)
 import i18n  # assets/i18n/<lang>.json; every page is rendered once per language (English at /, others under /<lang>/)
 
 L = i18n.Lang("en")  # current language while building (set per pass in build())
@@ -395,6 +396,7 @@ def lang_index(en_src, langs):
     """/<lang>/index.html from the English shell: translated text, head (lang, title, meta, canonical, hreflang, og:locale,
     JSON-LD), asset paths one level up. The generated blocks are refilled by the caller in this language."""
     url = f"{SITE}{L.prefix}"
+    en_src = re.sub(r"<!--en-only-->.*?<!--/en-only-->", "", en_src, flags=re.S)  # English-only bits (e.g. the /trust-policy/ footer link)
     src = en_src.replace('<html lang="en" data-root="">', f'<html lang="{L.code}" data-root="../" data-home="">', 1)
     head, body = src.split("</head>", 1)
 
@@ -716,7 +718,7 @@ def build(dry=False):
 </main>
 <footer class="wrap footer">
   <p class="foot-brand">{_("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} <a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · <a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Trade with Lumi on YouTube"))}</a> · <a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · <a href="{NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Free daily newsletter"))}</a></p>
-  <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))} · <a href="{H}privacy/">{E(_("Privacy Policy"))}</a></p>
+  <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))} · <a href="{H}privacy/">{E(_("Privacy Policy"))}</a>{policy_page.footer_link(types.SimpleNamespace(L=L, E=E, _=_), H)}</p>
   <p class="aff-foot" id="aff-foot" hidden></p>
 </footer>
 </body>
@@ -835,7 +837,7 @@ if __name__ == "__main__":
             outs += [f"{pre}{slug}/index.html" for _c, slug in PAGES if os.path.exists(os.path.join(ROOT, pre, slug, "index.html"))]
             if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
                 outs.append(f"{pre}index.html")
-            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
+            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy", "trust-policy") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
             tdir = os.path.join(ROOT, pre, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
             if os.path.isdir(tdir):
                 outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
