@@ -124,22 +124,45 @@ def _outcome(o):
 
 
 # ---------- page ----------
+DESC_MAX = 155
+
+
+def _fit(whos, rest, limit=DESC_MAX):
+    """First seller label in `whos` that fits with `rest` in `limit` chars ("Name (host)", then "Name"); else the name
+    cut at a word boundary with "…". The facts in `rest` are never cut."""
+    for w in whos:
+        if len(w) + len(rest) <= limit:
+            return w + rest
+    who = whos[-1]
+    room = max(limit - len(rest) - 1, 8)
+    cut = who[:room]
+    if who[room:room + 1] not in ("", " "):  # mid-word: back up to the last space if that keeps at least half
+        i = cut.rfind(" ")
+        if i >= room // 2:
+            cut = cut[:i]
+    return cut.rstrip(" .,:;(-") + "…" + rest
+
+
 def description(v, d, h):
+    return _fit(*_desc_parts(v, d, h))
+
+
+def _desc_parts(v, d, h):
     s = v.get("samples") or {}
     nm, host = short_name(v), host_of(v)
-    who = f"{nm} ({host})" if host else nm
+    who = [f"{nm} ({host})", nm] if host else [nm]
     n, dl = int(s.get("paid_test_buys") or 0), int(s.get("delivered") or 0)
     o = v.get("last_paid_observation") or {}
     a = sp.vendor_attempts(v)
     if n:
-        txt = f"{who}: {n} paid x402 test-buy{'s' if n != 1 else ''} by Lumi in 30 days, {dl} delivered data"
+        txt = f": {n} paid x402 test-buy{'s' if n != 1 else ''} by Lumi in 30 days, {dl} delivered data"
         if o.get("observed_at"):
             txt += f"; latest {h.ctime(o['observed_at'], False)}"
-        return txt + ". Dated results, not a review."
+        return who, txt + ". Dated results, not a review."
     if a:
-        return (f"{who}: Lumi's x402 test payment not accepted yet ({a['count']} tr{'ies' if a['count'] != 1 else 'y'} on XRPL "
+        return who, (f": Lumi's x402 test payment not accepted yet ({a['count']} tr{'ies' if a['count'] != 1 else 'y'} on XRPL "
                 f"since {h.ctime(a['first_attempt'], False)}). Dated results, not a review.")
-    return f"{who}: on Lumi's x402 seller trust list. No paid test-buy on record yet. Dated observations, not a review."
+    return who, f": on Lumi's x402 seller trust list. No paid test-buy on record yet. Dated observations, not a review."
 
 
 def _row(k, v):
