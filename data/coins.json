@@ -1,5 +1,5 @@
 {
-  "_readme": "Single source of truth for the coin list (scripts + site). id = CoinGecko id; coinbase = Coinbase Exchange product (websocket + candles); kraken = Kraken pair in websocket form (REST form drops the '/'). Exactly one of coinbase/kraken is used for live data and candles, coinbase preferred. Order inside a group = display order. Verified 2026-10-21: all Coinbase products online; CoinGecko ids resolve to the right assets (AXL is 'axelar', NOT 'axelar-network'). XDC added 2026-10-21: CoinGecko id 'xdce-crowd-sale' (XDC Network); not on Coinbase (XDC-USD NotFound on Exchange and Advanced), so Kraken XDC/USD (REST XDCUSD, online).",
+  "_readme": "Single source of truth for the coin list (scripts + site). id = CoinGecko id; coinbase = Coinbase Exchange product (websocket + candles); kraken = Kraken pair in websocket form (REST form drops the '/'). Exactly one of coinbase/kraken is used for live data and candles, coinbase preferred. Order inside a group = display order. Verified 2026-10-21: all Coinbase products online; CoinGecko ids resolve to the right assets (AXL is 'axelar', NOT 'axelar-network'). XDC added 2026-10-21: CoinGecko id 'xdce-crowd-sale' (XDC Network); not on Coinbase (XDC-USD NotFound on Exchange and Advanced), so Kraken XDC/USD (REST XDCUSD, online). SHX added 2026-10-24: CoinGecko id 'stronghold-token' (Stronghold, SHX); not on Coinbase (SHX-USD NotFound), so Kraken SHX/USD (REST SHXUSD, online).",
   "backdrop": "bitcoin",
   "slate_max": 6,
   "groups": [
@@ -19,6 +19,7 @@
     {"id": "dogecoin",         "symbol": "DOGE", "name": "Dogecoin",      "group": "majors",    "coinbase": "DOGE-USD", "colors": ["#c2a633", "#4a3d0e"]},
     {"id": "cardano",          "symbol": "ADA",  "name": "Cardano",       "group": "majors",    "coinbase": "ADA-USD",  "colors": ["#0033ad", "#0b1a40"]},
     {"id": "chainlink",        "symbol": "LINK", "name": "Chainlink",     "group": "majors",    "coinbase": "LINK-USD", "colors": ["#2a5ada", "#0d1f4d"]},
-    {"id": "sui",              "symbol": "SUI",  "name": "Sui",           "group": "majors",    "coinbase": "SUI-USD",  "colors": ["#4da2ff", "#0b2a4d"]}
+    {"id": "sui",              "symbol": "SUI",  "name": "Sui",           "group": "majors",    "coinbase": "SUI-USD",  "colors": ["#4da2ff", "#0b2a4d"]},
+    {"id": "stronghold-token", "symbol": "SHX",  "name": "Stronghold",    "group": "majors",    "kraken": "SHX/USD",    "colors": ["#8b5cf6", "#1e1240"]}
   ]
 }
