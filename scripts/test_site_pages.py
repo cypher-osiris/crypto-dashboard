@@ -483,6 +483,12 @@ class PolicyPageSelection(unittest.TestCase):
             self.assertIn(s, base_add)
         self.assertNotIn("a paid Lumi check", base_add)
         self.assertTrue(any("Paying Lumi never changes" in p and "never change this order" in p for p in ps))
+        # Stellar weekly-retest mode (trust_testbuys.ts STELLAR_RETEST_WEEKDAY, default Mon): new sellers daily, retests once a week.
+        stellar = [p for p in ps if p.startswith("<b>Stellar:</b>")][0]
+        for s in ("every day", "bought the day it appears", "cheapest first", "once a week", "(on Mondays)", "oldest test-buy first",
+                  "0.15 USDC", "at most 4 buys a day", "not ranked by popularity"):
+            self.assertIn(s, stellar)
+        self.assertNotIn("then the sellers whose last test-buy is oldest", stellar)
         self.assertNotRegex(txt.lower(), r"p&l|profit|return")
 
     def test_caps_match_runners_when_present(self):
@@ -497,6 +503,7 @@ class PolicyPageSelection(unittest.TestCase):
         self.assertIn("const STELLAR_CAP = 0.15", tbs)
         self.assertIn("const STELLAR_MAX_BUYS = 4", tbs)
         self.assertIn("const MAX_PRICE = 0.05", tbs)
+        self.assertIn('const STELLAR_RETEST_WEEKDAY_DEFAULT = "Mon"', tbs)
 
     def test_translated_and_built(self):
         ps, pp = self._sel()
@@ -511,6 +518,8 @@ class PolicyPageSelection(unittest.TestCase):
                 h = f.read()
             self.assertIn('id="selection"', h)
             self.assertIn("0.75 USDC", h)
+            if lang == "":
+                self.assertIn("once a week (on Mondays)", h)
             self.assertIn("mailto:hello@lumitrades.io", h)
             self.assertNotIn("{mail}", h)
 
