@@ -228,4 +228,5 @@ def llms_txt(prices, plans=(), groups=None):
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free
 - [Sitemap](https://lumitrades.io/sitemap.xml)
+- [Atom feed](https://lumitrades.io/feed.xml): Lumi's articles, market updates and active paper-trade ideas (English)
 """

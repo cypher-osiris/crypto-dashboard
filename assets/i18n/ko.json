@@ -988,6 +988,7 @@
   "<b>Trust data feed</b> for facilitators, wallets and agent frameworks: a free key with 1,000 lookups a month, then <b class=\"mono\">$1.50</b> per 1,000 (prepaid credits never expire), or Feed <b class=\"mono\">$99</b> and Feed Pro <b class=\"mono\">$199</b> per 30 days. No resale of raw data, attribution required, no warranty. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">License</a>": "퍼실리테이터, 지갑, 에이전트 프레임워크를 위한 <b>신뢰 데이터 피드</b>: 월 1,000회 조회가 포함된 무료 키, 이후 1,000회당 <b class=\"mono\">$1.50</b>(선불 크레딧은 만료되지 않음), 또는 30일 Feed <b class=\"mono\">$99</b>와 Feed Pro <b class=\"mono\">$199</b>. 원시 데이터 재판매 금지, 출처 표기 필수, 보증 없음. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">라이선스</a>",
   "License terms": "라이선스 조건",
   "License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.": "라이선스: 원시 데이터 재판매 및 재배포 금지, 출처 표기 필수, 보증 없음. 선불 크레딧은 만료되지 않습니다. 30일 플랜, 자동 갱신 없음.",
-  "Trust data feed and license": "신뢰 데이터 피드와 라이선스"
+  "Trust data feed and license": "신뢰 데이터 피드와 라이선스",
+  "RSS feed": "RSS 피드"
  }
 }

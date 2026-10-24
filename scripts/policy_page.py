@@ -67,10 +67,12 @@ SECTIONS = [
 
 def footer_link(h, home):
     """' · <a>Conflicts policy</a>' for the site footer (home = relative path to this language's home), only in
-    languages that have the page ('' otherwise)."""
+    languages that have the page, then ' · <a>RSS feed</a>' (all languages)."""
+    # Atom feed (/feed.xml, scripts/feed.py) sits at the site root: one level above a language home.
+    feed = f' · <a href="{home}{"../" if h.L.prefix else ""}feed.xml" type="application/atom+xml">{h.E(h._("RSS feed"))}</a>'
     if h.L.code not in LIVE_LANGS:
-        return ""
-    return f' · <a href="{home}{SLUG}">{h.E(h._(FOOTER_LINK))}</a>'
+        return feed
+    return f' · <a href="{home}{SLUG}">{h.E(h._(FOOTER_LINK))}</a>' + feed
 
 
 def build_page(h, tp, nav_items, V, gen_date, page):

@@ -988,6 +988,7 @@
   "<b>Trust data feed</b> for facilitators, wallets and agent frameworks: a free key with 1,000 lookups a month, then <b class=\"mono\">$1.50</b> per 1,000 (prepaid credits never expire), or Feed <b class=\"mono\">$99</b> and Feed Pro <b class=\"mono\">$199</b> per 30 days. No resale of raw data, attribution required, no warranty. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">License</a>": "<b>Güven verisi akışı</b> facilitator'lar, cüzdanlar ve ajan framework'leri için: ayda 1.000 sorguluk ücretsiz bir anahtar, sonra 1.000 sorgu başına <b class=\"mono\">$1.50</b> (ön ödemeli krediler hiç sona ermez) ya da 30 gün için Feed <b class=\"mono\">$99</b> ve Feed Pro <b class=\"mono\">$199</b>. Ham verinin yeniden satışı yok, kaynak gösterilmesi zorunlu, garanti yok. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">Lisans</a>",
   "License terms": "Lisans koşulları",
   "License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.": "Lisans: ham verinin yeniden satışı veya dağıtımı yok, kaynak gösterilmesi zorunlu, garanti yok. Ön ödemeli krediler hiç sona ermez. 30 günlük planlar, otomatik yenileme yok.",
-  "Trust data feed and license": "Güven verisi akışı ve lisans"
+  "Trust data feed and license": "Güven verisi akışı ve lisans",
+  "RSS feed": "RSS beslemesi"
  }
 }

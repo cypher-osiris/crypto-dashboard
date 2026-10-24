@@ -988,6 +988,7 @@
   "<b>Trust data feed</b> for facilitators, wallets and agent frameworks: a free key with 1,000 lookups a month, then <b class=\"mono\">$1.50</b> per 1,000 (prepaid credits never expire), or Feed <b class=\"mono\">$99</b> and Feed Pro <b class=\"mono\">$199</b> per 30 days. No resale of raw data, attribution required, no warranty. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">License</a>": "<b>Feed de datos de confianza</b> para facilitadores, wallets y frameworks de agentes: una clave gratis con 1.000 consultas al mes, luego <b class=\"mono\">$1.50</b> por cada 1.000 (los créditos prepagados nunca caducan), o Feed <b class=\"mono\">$99</b> y Feed Pro <b class=\"mono\">$199</b> por 30 días. Sin reventa de los datos en bruto, atribución obligatoria, sin garantía. <a href=\"https://api.lumitrades.io/v1/feed/license\" target=\"_blank\" rel=\"noopener\">Licencia</a>",
   "License terms": "Términos de la licencia",
   "License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.": "Licencia: sin reventa ni redistribución de los datos en bruto, atribución obligatoria, sin garantía. Los créditos prepagados nunca caducan. Planes de 30 días, sin renovación automática.",
-  "Trust data feed and license": "Feed de datos de confianza y licencia"
+  "Trust data feed and license": "Feed de datos de confianza y licencia",
+  "RSS feed": "Feed RSS"
  }
 }
