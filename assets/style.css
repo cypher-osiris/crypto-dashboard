@@ -816,7 +816,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   color:#1c1035;background:linear-gradient(90deg,#c4b5fd,#a78bfa)}
 .mi-txt{flex:1 1 220px;min-width:0}
 .mi-top{margin:2px 0 14px}
-.cp-mi,.pv-mi,.ag-mi{border-left:3px solid rgba(167,139,250,.7)}
+.cp-mi,.pv-mi,.ag-mi,.lgw .card.cp-mi{border-left:3px solid rgba(167,139,250,.75)}
 .cp-mi,.ag-mi{padding-left:15px}
 .pv-mi{padding-left:14px}
 .ag-mi{margin:18px 0 6px;padding-top:2px}
