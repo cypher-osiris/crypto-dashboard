@@ -21,6 +21,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import policy_page  # /trust-policy/ (conflicts policy; footer link in every language in policy_page.LIVE_LANGS)
 import trade_pages as site_chrome  # shared nav + footer (site_nav, foot_brand) for every generated page
+import coins as _coins_mod  # private trades doc (state/trades.json; data/trades.json is no longer published)
 import i18n  # assets/i18n/<lang>.json; every page is rendered once per language (English at /, others under /<lang>/)
 
 L = i18n.Lang("en")  # current language while building (set per pass in build())
@@ -456,7 +457,7 @@ def build(dry=False):
     """Render every page in every language. dry=True renders without writing (used by `i18n.py check`); returns the
     Lang objects (with their missing-key sets) in that case, else the list of changed paths."""
     global L, VERSION
-    prices, analysis, trades, coins, cfg = load("prices.json"), load("analysis.json"), load("trades.json"), load("coins.json"), load("config.json")
+    prices, analysis, trades, coins, cfg = load("prices.json"), load("analysis.json"), _coins_mod.load_trades(), load("coins.json"), load("config.json")
     try:
         signals_all = load("signals.json")
     except Exception:

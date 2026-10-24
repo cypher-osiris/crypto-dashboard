@@ -90,7 +90,7 @@ def missed_plan_facts(t, now_p):
 
 def gather(now=None):
     now = now or datetime.now(timezone.utc)
-    P, TD = load("prices.json"), load("trades.json")
+    P, TD = load("prices.json"), coincfg.load_trades()
     AN, SG, CX, LOG = load("analysis.json", {}), load("signals.json", {}), load("context.json", {}), load("log.json", {"entries": []})
     A = P["assets"]; cfg = coincfg.coins(); sym = {c["id"]: c["symbol"] for c in cfg}
     sym.update({k: v["symbol"] for k, v in A.items()})
@@ -230,7 +230,7 @@ def allowed_values():
         walk({k: a.get(k) for k in ("price", "change_24h", "change_7d", "change_30d", "high_24h", "low_24h", "market_cap_rank")})
         h = [p for _, p in a.get("history", [])]
         if h: walk([min(h), max(h), min(h[-168:]), max(h[-168:])])
-    TD = load("trades.json"); walk(TD["trades"])
+    TD = coincfg.load_trades(); walk(TD["trades"])
     AN = load("analysis.json", {}); walk(AN.get("backdrop", {})); walk(AN.get("coins", {}))
     walk(load("context.json", {})); walk(gather())
     return vals
@@ -469,7 +469,7 @@ def main():
         f.write("\n\n---\n\n".join(posts) + "\n\n")
         f.write(f"=== notes (not for posting) ===\nkind: {a.kind}\nwritten: {ctfmt(now)}\ncard: {png if focus else '-'} (focus: {focus})\n"
                 f"check: {json.dumps(report, ensure_ascii=False)}\nReview before posting; nothing is posted automatically.\n")
-    P = load("prices.json"); TD = load("trades.json")
+    P = load("prices.json"); TD = coincfg.load_trades()
     json.dump({"at": now.isoformat(timespec="seconds").replace("+00:00", "Z"), "file": txt,
                "prices": {k: v["price"] for k, v in P["assets"].items()},
                "trades": {t["id"]: t["status"] for t in TD["trades"]},

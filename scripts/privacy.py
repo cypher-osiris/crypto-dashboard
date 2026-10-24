@@ -99,8 +99,9 @@ def run(check=False):
         with open(tt.PRIVATE_TRADES) as f:
             priv_before = json.load(f)
     if tt.public_view(full) != pub_before or full != priv_before:
-        changed.append("data/trades.json")
-        if not check:
+        if check:
+            changed.append("state/trades.json (private)")
+        else:
             tt.save_trades(full)
     for name, fn in (("log.json", scrub_log), ("analysis.json", scrub_obj)):
         p = os.path.join(tt.DATA, name)

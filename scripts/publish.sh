@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Publish data updates to GitHub Pages without prompts.
 #   scripts/publish.sh                    # stage everything under data/
-#   scripts/publish.sh data/trades.json data/log.json data/signals.json   # stage only these paths
+#   scripts/publish.sh data/log.json data/signals.json   # stage only these paths
+# data/trades.json is never published (taken down Oct 24, 2026; the trades doc is private in state/): it is dropped
+# from the paths and kept out of every commit.
 #   PUBLISH_MSG="custom message" scripts/publish.sh
 # Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push
 #   -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
@@ -13,7 +15,15 @@ export GIT_TERMINAL_PROMPT=0 GIT_EDITOR=true
 GIT_NET_TIMEOUT="${GIT_NET_TIMEOUT:-120}"
 gitnet() { timeout -k 10 "$GIT_NET_TIMEOUT" git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 "$@"; }
 mkdir -p state
-paths=("$@"); [ ${#paths[@]} -eq 0 ] && paths=(data)
+paths=()
+for p in "$@"; do
+  [ "$p" = data/trades.json ] && { echo "publish: data/trades.json is private and never published; skipping it" >&2; continue; }
+  paths+=("$p")
+done
+if [ ${#paths[@]} -eq 0 ]; then
+  [ $# -gt 0 ] && { echo "publish: nothing to publish"; exit 0; }
+  paths=(data)
+fi
 
 exec 9>>state/lock
 if ! flock -w 300 9; then echo "publish: could not acquire state/lock" >&2; exit 3; fi
@@ -54,6 +64,7 @@ done < <(find "${paths[@]}" -name '*.json' -print0)
 [ "$bad" -eq 0 ] || exit 2
 
 git add -- "${paths[@]}"
+git rm --cached -q --ignore-unmatch -- data/trades.json  # private: never in a commit
 if git diff --cached --quiet -- "${paths[@]}"; then
   echo "publish: nothing to commit"
   exit 0

@@ -70,6 +70,8 @@ LOCK = os.path.join(ROOT, "state", "lock")
 # go to state/track_record.json (git-ignored, never served); data/trades.json "stats" keeps only the slate counters + warnings.
 RECORD = os.path.join(ROOT, "state", "track_record.json")
 PUBLIC_STATS = ("open", "pending", "slate_warnings")
+# Since Oct 24, 2026 nothing about trades is published: "trades.json" below means state/trades.json (private, see
+# scripts/coins.py trades_path). It keeps the old public-view shape so hand edits and the site build work unchanged.
 # Closed ideas are published without their result: data/trades.json is the PUBLIC view (closed ideas: status "closed",
 # no exit price / P&L / targets hit; prose scrubbed by scripts/privacy.py). The full doc lives in state/trades_full.json
 # (git-ignored). load_trades() merges hand edits of data/trades.json into it; save_trades() writes both.
@@ -114,8 +116,12 @@ def get(url, timeout=10):
         return json.loads(r.read().decode())
 
 
+def _p(name):
+    return coincfg.trades_path() if name == "trades.json" else os.path.join(DATA, name)  # trades doc is private (state/)
+
+
 def load(name, default):
-    p = os.path.join(DATA, name)
+    p = _p(name)
     if not os.path.exists(p):
         return default
     with open(p) as f:
@@ -123,7 +129,7 @@ def load(name, default):
 
 
 def save(name, obj):
-    p = os.path.join(DATA, name)
+    p = _p(name)
     tmp = p + ".tmp"
     with open(tmp, "w") as f:
         json.dump(obj, f, indent=2, ensure_ascii=False)

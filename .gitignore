@@ -15,3 +15,6 @@ node_modules/
 
 state/
 posts/
+
+# Paper-trade ideas are private (taken down from the site Oct 24, 2026): the trades doc lives in state/
+data/trades.json

@@ -68,7 +68,7 @@ def get(path, params, retries=5):
 
 
 def load(name, default):
-    p = os.path.join(DATA, name)
+    p = coincfg.trades_path() if name == "trades.json" else os.path.join(DATA, name)  # trades doc is private (state/)
     if not os.path.exists(p):
         return default
     with open(p) as f:

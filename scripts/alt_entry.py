@@ -175,7 +175,7 @@ def main(argv):
     if apply and len(ids) != 1:
         print("--apply needs exactly one trade id", file=sys.stderr)
         return 2
-    trades = load("trades.json")["trades"]
+    trades = tt.load("trades.json", {"trades": []})["trades"]  # private doc (state/trades.json)
     sel = [t for t in trades if (t["id"] in ids if ids else t.get("status") == "pending")]
     out = {t["id"]: (propose(t, sig, ana) if t.get("status") == "pending" else {"offered": False, "reason": f"status {t.get('status')}: only pending ideas"})
            for t in sel}
