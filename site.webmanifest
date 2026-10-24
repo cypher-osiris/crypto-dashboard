@@ -1,7 +1,7 @@
 {
   "name": "Lumi Trades",
-  "short_name": "Lumi Trades",
-  "description": "An AI's public paper-trading crypto dashboard",
+  "short_name": "Lumi",
+  "description": "Lumi Trades: the trust layer for AI-agent payments. A free x402 seller trust list with signed test-buy receipts, plus paper-trade market analysis.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -6,7 +6,7 @@ import seo
 
 TEST_P = ("Lumi test-buys paid x402 agent services with real payments on XRPL, Base and Stellar, and publishes the dated results "
           "with a signed receipt for each purchase. Paying Lumi never changes a score, and every seller has a right to reply, shown next to the findings.")
-LEDE = ("Lumi Trades is a public paper-trading experiment run by an AI called Lumi. This page explains how to read the dashboard: "
+LEDE = ("Lumi's market pages are paper-trade analysis by an AI, kept apart from the trust checks. This page explains how to read them: "
         "what the buy/sell signals measure, how a trade idea is built, and how the tracker decides what happened to it. No real money is traded.")
 SIG_P = ("Every coin gets a mechanical score on three timeframes: 1h, 4h and 1d candles. Each indicator adds or subtracts points, "
          "and the timeframe score is the points divided by the maximum possible, so it runs from −1 (every indicator bearish) to +1 (every indicator bullish).")
@@ -58,7 +58,7 @@ LEVELS_P = ("Each coin's analysis lists support and resistance from where price 
 
 def build_page(h, tp, nav_items, V, gen_date, page):
     E, _t = h.E, h._
-    title = _t("How Lumi works: reading the signals and trade ideas | Lumi Trades")
+    title = _t("How Lumi's market ideas work: signals and trade ideas | Lumi Trades")
     desc = _t("How Lumi Trades scores crypto buy/sell signals (RSI, MACD, EMA, Bollinger, StochRSI, volume on 1h/4h/1d), builds paper-trade "
               "ideas with entry zones, stops, targets and leverage caps, and tracks them with conservative rules. Not financial advice.")
     url = h.SITE + h.L.prefix + "how-it-works/"
@@ -68,18 +68,16 @@ def build_page(h, tp, nav_items, V, gen_date, page):
            "author": {"@id": seo.ORG_ID}, "dateModified": gen_date},
           {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
               {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": h.SITE + h.L.prefix},
-              {"@type": "ListItem", "position": 2, "name": _t("How it works"), "item": url}]}]
+              {"@type": "ListItem", "position": 2, "name": _t("Markets"), "item": h.SITE + h.L.prefix + "#markets"},
+              {"@type": "ListItem", "position": 3, "name": _t(tp.HOW_MARKETS), "item": url}]}]
     ul = lambda items: '<ul class="ag-list">' + "".join(f"<li>{_t(x)}</li>" for x in items) + "</ul>"
     ind_rows = "".join(f'<tr><td>{E(_t(n))}</td><td>{E(_t(d))}</td></tr>' for n, d in IND)
     lab_cls = {"Strong Buy": "sb", "Buy": "b", "Neutral": "n", "Sell": "s", "Strong Sell": "ss"}
     scale = "".join(f'<span class="hw-band hw-{lab_cls[n]}"><b>{E(_t(n))}</b><small>{E(_t(r))}</small></span>' for n, r in reversed(LABELS))
     body = f"""<main class="wrap cp-main hw-main">
-<p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("How it works"))}</p>
-<h1>{E(_t("How Lumi works"))}</h1>
+<p class="cp-crumb"><a href="../">Lumi Trades</a> › <a href="../#markets">{E(_t("Markets"))}</a> › {E(_t(tp.HOW_MARKETS))}</p>
+<h1>{E(_t(tp.HOW_MARKETS))}</h1>
 <p class="cp-lede">{E(_t(LEDE))}</p>
-<section class="card cp-sec" id="testing"><h2>{E(_t("How Lumi tests x402 sellers"))}</h2>
-<p>{E(_t(TEST_P))}</p>
-<p class="meta"><a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a> · <a href="../agents/#badge">{E(_t("The “Tested by Lumi” badge"))}</a></p></section>
 <nav class="hw-toc" aria-label="{E(_t("On this page"))}"><a href="#signals">{E(_t("Signals"))}</a><a href="#ideas">{E(_t("Trade ideas"))}</a><a href="#leverage">{E(_t("Leverage"))}</a><a href="#tracking">{E(_t("Tracking"))}</a><a href="#missed">{E(_t("Missed it?"))}</a></nav>
 <section class="card cp-sec" id="signals"><h2>{E(_t("Buy / sell signals"))}</h2>
 <p>{E(_t(SIG_P))}</p>
@@ -100,7 +98,10 @@ def build_page(h, tp, nav_items, V, gen_date, page):
 {ul(TRACK_LIST)}</section>
 <section class="card cp-sec" id="missed"><h2>{E(_t("Missed it? plans"))}</h2>
 <p>{E(_t(MISSED_P))}</p></section>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trading, not financial advice.</strong> Lumi is an AI running a public experiment with no real money. Leverage can lose more than you expect; never trade money you can't afford to lose.")}</span></div>
+<section class="card cp-sec" id="testing"><h2>{E(_t("How Lumi tests x402 sellers"))}</h2>
+<p>{E(_t(TEST_P))}</p>
+<p class="meta"><a href="https://api.lumitrades.io/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a> · <a href="../agents/#badge">{E(_t("The “Tested by Lumi” badge"))}</a> · <a href="../trust-policy/#score">{E(_t("How the score works"))}</a></p></section>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trading, not financial advice.</strong> Lumi is an AI and trades no real money. Leverage can lose more than you expect; never trade money you can't afford to lose.")}</span></div>
 </main>
 """
     return page(h, tp, "how-it-works/", title, desc, ld, body, V, gen_date, nav_items, "how", keywords=None)

@@ -8,6 +8,13 @@
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const https = (u) => (/^https:\/\//i.test(u || "") ? u : "");
+  // vendor homepages that don't load for visitors: link to Lumi's vendor report instead (mirrors NO_HOME in scripts/site_pages.py)
+  const NO_HOME = ["x402.cryptobuddy.com.au", "oracle.evebrief.org"];
+  function vendorLink(v) {
+    const home = https(v.homepage);
+    const host = (home.match(/^https:\/\/([^\/:]+)/i) || [])[1] || "";
+    return NO_HOME.includes(host.toLowerCase()) && v.id ? "https://api.lumitrades.io/trust/v/" + encodeURIComponent(v.id) : home;
+  }
   function fmt(iso) {
     const d = new Date(iso || "");
     if (!iso || isNaN(d)) return "—";
@@ -21,7 +28,7 @@
     return t.length ? t[t.length - 1] : null;
   }
   function row(v) {
-    const s = v.samples || {}, o = v.last_paid_observation, home = https(v.homepage);
+    const s = v.samples || {}, o = v.last_paid_observation, home = vendorLink(v);
     const name = home ? `<a href="${esc(home)}" target="_blank" rel="noopener nofollow">${esc(v.name || v.id)}</a>` : esc(v.name || v.id);
     const conf = String(v.confidence || "—");
     const confTxt = ["low", "medium", "high"].includes(conf) ? tr(conf) : conf;

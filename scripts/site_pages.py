@@ -8,6 +8,8 @@ then refreshes the table live from the same free endpoint. Every routine that ru
 (dashboard update, trade tracker) rebuilds the pages, so the static table stays fresh without a separate job.
 """
 import json
+import re
+import urllib.parse
 import os
 import urllib.request
 
@@ -76,7 +78,7 @@ MONITOR_PLANS = [
     ("Audit", ("{p} one-time", "$99"), "One test-buy of every listed endpoint, with a full report signed by Lumi's wallet"),
 ]
 FEED_PLANS = [
-    ("Free", ("{p}", "$0"), "1,000 lookups a month per key (wallet-signature signup), answer-only"),
+    ("Free", ("{p}", "$0"), "1,000 lookups a month per key (wallet-signature signup), returns the verdict only"),
     ("Feed credits", ("{p} per 1,000 lookups", "$1.50"), "Prepaid lookups on top of the free 1,000 a month; credits never expire"),
     ("Feed", ("{p} per 30 days", "$99"), "100,000 bulk lookups, delta feed, full evidence and receipts"),
     ("Feed Pro", ("{p} per 30 days", "$199"), "500,000 lookups, delta feed, licensed full snapshot export, status-change webhooks, receipts"),
@@ -238,11 +240,25 @@ def _last_checked(v):
     return max(t) if t else None
 
 
+# Vendor homepages that don't load for visitors (404 / payment wall, launch QA 2026-10-24): link the name to Lumi's public
+# vendor report instead. Display only; the vendor's data and score are unchanged. Mirrored in assets/trust.js (NO_HOME).
+NO_HOME = {"x402.cryptobuddy.com.au", "oracle.evebrief.org"}
+REPORT_URL = API + "/trust/v/{id}"
+
+
+def vendor_link(v):
+    home = _https(v.get("homepage"))
+    host = re.sub(r"^https://([^/:]+).*$", r"\1", home or "").lower()
+    if host in NO_HOME and v.get("id"):
+        return REPORT_URL.format(id=urllib.parse.quote(str(v["id"]), safe=""))
+    return home
+
+
 def vendor_row(h, v):
     E, _t = h.E, h._
     s = v.get("samples") or {}
     o = v.get("last_paid_observation") or None
-    home = _https(v.get("homepage"))
+    home = vendor_link(v)
     nm = E(v.get("name") or v.get("id"))
     name = f'<a href="{E(home)}" target="_blank" rel="noopener nofollow">{nm}</a>' if home else nm
     conf = str(v.get("confidence") or "—")
@@ -310,7 +326,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
     pthead = f'<thead><tr><th>{E(_t("Plan"))}</th><th>{E(_t("Price"))}</th><th>{E(_t("What you get"))}</th></tr></thead>'
     ptable = lambda items: ('<div class="cp-tablewrap"><table class="cp-table cp-stack">' + pthead + "<tbody>" + "".join(
         f'<tr><td>{E(_t(n))}</td><td class="mono">{E(_t(fmt, p=p) if fmt != "{p}" else p)}</td><td>{E(_t(d))}</td></tr>' for n, (fmt, p), d in items) + "</tbody></table></div>")
-    title = _t("Crypto market data API for AI agents, pay per call with x402 | Lumi Trades")
+    title = _t("x402 trust checks and data for AI agents | Lumi Trades")
     desc = _t(AGENTS_DESC)
     url = h.SITE + h.L.prefix + "agents/"
     ld = [seo.organization(_t), seo.web_api(_t, h.L.code, PRICES, url),
@@ -336,10 +352,10 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 {ptable(MONITOR_PLANS)}
 <p class="meta">{_t("Each test-buy is capped at $0.10 and funded from the plan fee. A paid plan is disclosed on the seller's public entry, and findings stay public with the seller's reply next to them. The “Tested by Lumi” badge is earned only from delivery results and is removed automatically when the seller's live score drops. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
 {badge_section(h)}
-<section class="card cp-sec" id="feed"><h2>{E(_t("Trust data feed and licence"))}</h2>
+<section class="card cp-sec" id="feed"><h2>{E(_t("Trust data feed and license"))}</h2>
 <p>{_t("Keyed, licensed access to Lumi's trust observations for facilitators, wallets and agent frameworks: bulk lookups of up to 50 URLs or payTo addresses per request, a status-change feed and, on Feed Pro, a full snapshot export.")}</p>
 {ptable(FEED_PLANS)}
-<p class="meta">{_t("Licence: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.")} {lk(API + "/v1/feed/license", _t("Licence terms"))} · {lk(API + "/v1/feed", _t("Feed docs"))}</p></section>
+<p class="meta">{_t("License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.")} {lk(API + "/v1/feed/license", _t("License terms"))} · {lk(API + "/v1/feed", _t("Feed docs"))}</p></section>
 <section class="card cp-sec" id="prices"><h2>{E(_t("Market data"))}</h2>
 <p>{_t(AGENTS_ROUTES_TEXT, **route_counts())}</p>
 {table(MARKET_DATA_PRICES)}
@@ -368,7 +384,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <li>{lk(BAZAAR, _t("Coinbase x402 Bazaar"))} · {lk(X402SCAN, "x402scan")}</li>
 <li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul></section>
 {seo.faq_html(_t, E)}
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas come from an AI's paper-trading experiment; no real money is traded.")}</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas are an AI's paper-trade analysis; no real money is traded.")}</span></div>
 </main>
 """
     js = '<script src="{R}assets/badge.js?v={V}" defer></script>\n'
@@ -428,12 +444,12 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <p>{E(_t("Quote checks are free and unpaid, so they show an endpoint is reachable and priced, not that it delivers. Paid test-buys are capped at a small shared daily budget, so not every vendor is bought every day; fewer samples means lower confidence."))}</p>
 </details>
 <section class="card cp-sec" id="vendors">
-<h2>{E(_t("Vendors"))} <span class="muted" id="tr-count">{f"({len(vendors)})" if vendors else ""}</span></h2>
+<h2>{E(_t("Vendors on the curated list"))} <span class="muted" id="tr-count">{f"({len(vendors)})" if vendors else ""}</span></h2>
 {status}
 <div class="tr-wrap"><table class="cp-table tr-table" id="tr-table"{"" if vendors else " hidden"}>
 <thead><tr><th>{E(_t("Vendor"))}</th><th class="num">{E(_t("Score"))}</th><th>{E(_t("Confidence"))}</th><th class="num">{E(_t("Paid buys"))}</th><th class="num">{E(_t("Delivered"))}</th><th>{E(_t("Last checked"))}</th><th>{E(_t("Evidence"))}</th></tr></thead>
 <tbody id="tr-body">{rows}</tbody></table></div>
-<p class="meta">{E(_t("Listed in allowlist order, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. Evidence links to the latest paid test-buy's transaction. Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
+<p class="meta">{E(_t("Listed in the order we added them, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. Evidence links to the latest paid test-buy's transaction. Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
 <p class="meta">{E(_t("Raw data:"))} <a href="{VENDORS_URL}" target="_blank" rel="noopener">api.lumitrades.io/v1/trust/vendors</a> · <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("How scores are computed"))}</a> · <a href="../agents/">{E(_t("Lumi's data for AI agents →"))}</a></p>
 </section>
 <section class="card cp-sec" id="reply">

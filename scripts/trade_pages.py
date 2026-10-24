@@ -220,21 +220,52 @@ def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None, keywo
 {h.head_i18n(path, h.langs)}
 <meta name="theme-color" content="#070a10">
 <meta property="og:type" content="{kind}">
-<meta property="og:site_name" content="Lumi Trades">
+<meta property="og:site_name" content="Lumi">
 <meta property="og:title" content="{h.E(title.replace(' | Lumi Trades', ''))}">
 <meta property="og:description" content="{h.E(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{h.SITE}assets/og.png?v={V}">
+<meta property="og:image" content="{h.SITE}assets/og.jpg?v={V}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@lumisinsite">
 <meta name="twitter:title" content="{h.E(title.replace(' | Lumi Trades', ''))}">
 <meta name="twitter:description" content="{h.E(desc)}">
-<meta name="twitter:image" content="{h.SITE}assets/og.png?v={V}">
+<meta name="twitter:image" content="{h.SITE}assets/og.jpg?v={V}">
 """+ "{ASSETS}" + f"""<script type="application/ld+json">{ld}</script>
 </head>
 """
+
+
+# Shared site chrome (also used by build_pages.py for the coin pages). The trust story leads; market pages sit under "Markets".
+FOOT_BRAND = "<b>Lumi Trades</b>: the trust layer for AI-agent payments. Market pages are paper-trade analysis, not financial advice."
+TRUST_METHOD = "trust-policy/#score"   # nav "How it works" = how the trust score works (policy_page.SECTIONS "score")
+HOW_MARKETS = "How Lumi's market ideas work"   # nav label + title of /how-it-works/ (scripts/how_page.py)
+
+
+def site_nav(h, home, coins="", current=None):
+    """Top nav links (inside .nav-inner): trust pages first, then a "Markets" group (trade ideas, how market ideas work,
+    coin pages, newsletter). home = relative path to this language's home; coins = coin-page links (already HTML)."""
+    E, _ = h.E, h._
+    cur = lambda c: ' aria-current="page"' if current == c else ""
+    return (f'<a href="{home}">{E(_("Home"))}</a>'
+            f'<a href="{home}trust/"{cur("trust")}>{E(_("Vendor trust"))}</a>'
+            f'<a href="{home}agents/"{cur("agents")}>{E(_("For AI agents"))}</a>'
+            f'<a href="{home}{TRUST_METHOD}"{cur("policy")}>{E(_("How it works"))}</a>'
+            f'<span class="nav-grp"><a class="nav-lbl" href="{home}#markets">{E(_("Markets"))}</a>'
+            f'<a href="{home}trades/"{cur("trades")}>{E(_("Trade ideas"))}</a>'
+            f'<a href="{home}how-it-works/"{cur("how")}>{E(_(HOW_MARKETS))}</a>{coins}'
+            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Newsletter ↗"))}</a></span>')
+
+
+def foot_brand(h):
+    """First footer line: positioning + social links (same on every generated page)."""
+    E, _ = h.E, h._
+    return (f'<p class="foot-brand">{_(FOOT_BRAND)} '
+            f'<a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · '
+            f'<a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Lumi on YouTube"))}</a> · '
+            f'<a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · '
+            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{E(_("Free daily newsletter"))}</a></p>')
 
 
 def chrome(h, pre, home, nav_items, V, path, current="trades"):
@@ -244,13 +275,9 @@ def chrome(h, pre, home, nav_items, V, path, current="trades"):
     return (f'<body class="cp tp lgw">\n<div class="bg-glow" aria-hidden="true"></div>\n'
             f'<header class="cp-top"><div class="wrap cp-top-inner">\n'
             f'  <a class="cp-brand" href="{home}"><img class="wm" src="{pre}assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>\n'
-            f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}#slate">{h._("Dashboard &amp; trade ideas →")}</a></span>\n</div></header>\n'
+            f'  <span class="cp-top-r">{h.i18n.switcher(h.L, path, h.langs)}<a class="cp-dash" href="{home}trust/">{h.E(h._("Vendor trust list →"))}</a></span>\n</div></header>\n'
             f'<div class="ticker lt-ticker" role="region" aria-label="{h.E(h._("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>\n'
-            f'<nav class="nav" aria-label="{h.E(h._("Site"))}"><div class="wrap nav-inner"><a href="{home}">{h.E(h._("Dashboard"))}</a>'
-            f'<a href="{home}trades/"{" aria-current=\"page\"" if current == "trades" else ""}>{h.E(h._("Trade ideas"))}</a>'
-            f'<a href="{home}agents/"{" aria-current=\"page\"" if current == "agents" else ""}>{h.E(h._("For AI agents"))}</a>'
-            f'<a href="{home}trust/"{" aria-current=\"page\"" if current == "trust" else ""}>{h.E(h._("Vendor trust"))}</a><a href="{home}how-it-works/"{" aria-current=\"page\"" if current == "how" else ""}>{h.E(h._("How it works"))}</a>{nav}'
-            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{h.E(h._("Newsletter ↗"))}</a></div></nav>\n')
+            f'<nav class="nav" aria-label="{h.E(h._("Site"))}"><div class="wrap nav-inner">{site_nav(h, home, nav, current)}</div></nav>\n')
 
 
 def _policy_link(h, pre):
@@ -259,11 +286,7 @@ def _policy_link(h, pre):
 
 
 def footer(h, pre, gen_date):
-    return (f'<footer class="wrap footer">\n  <p class="foot-brand">{h._("<b>Lumi Trades</b>: a public paper-trading experiment run by an AI.")} '
-            f'<a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{h.E(h._("Follow @lumisinsite"))}</a> · '
-            f'<a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{h.E(h._("Trade with Lumi on YouTube"))}</a> · '
-            f'<a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a> · '
-            f'<a href="{h.NEWSLETTER_URL}" target="_blank" rel="noopener">{h.E(h._("Free daily newsletter"))}</a></p>\n'
+    return (f'<footer class="wrap footer">\n  {foot_brand(h)}\n'
             f'  <p>{h._("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=h.E(gen_date))} · <a href="{pre}{h.L.prefix}privacy/">{h.E(h._("Privacy Policy"))}</a>{_policy_link(h, pre)}</p>\n'
             f'  <p class="aff-foot" id="aff-foot" hidden></p>\n</footer>\n</body>\n</html>\n')
 

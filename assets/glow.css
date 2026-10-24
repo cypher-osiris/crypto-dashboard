@@ -251,3 +251,5 @@
   .lgw .brand-band{margin-top:26px}
   .lgw .brand-band img{border-radius:16px}
 }
+.lgw .brand h1 img.wm{display:block;width:auto;height:46px;margin:-4px 0 2px -3px}
+@media (max-width:520px){.lgw .brand h1 img.wm{height:38px}}
