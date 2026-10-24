@@ -272,3 +272,11 @@
 .pv-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
 .pv .coin-pages{padding:0;margin:14px 0 0;max-width:none}
 .pv-more a.pv-more-main{border-color:rgba(34,211,238,.4);background:linear-gradient(160deg,rgba(34,211,238,.1),var(--pv-card) 70%)}
+/* home: trust sections first; the market / paper-trading sections are grouped under one labeled area at the bottom */
+.pv-lede{margin:0 0 16px;max-width:62ch;color:var(--muted);line-height:1.5}
+.ag-home.ag-one{grid-template-columns:1fr}
+.pv-markets{margin-top:56px;padding-top:26px;border-top:1px solid var(--line2)}
+.pv-zone{margin:0 0 6px}
+.pv-zone-h{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:1.2rem;font-weight:700;letter-spacing:.01em;text-transform:none}
+.pv-zone-h svg{width:22px;height:22px;flex:none;color:var(--amber)}
+.lgw .pv-zone-h{font-family:var(--display)}

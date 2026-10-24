@@ -152,6 +152,8 @@
   .lgw .hx-top .hx-h1{order:2;font-size:1.95rem;margin-bottom:14px}
   .lgw .hx-top>.hx-visual{order:3;margin-bottom:18px}
   .lgw .hx-sub{order:4}.lgw .hx-cta{order:5}.lgw .hx-top .hx-disc{order:6}
+  /* home hero: the trust message and its call to action come before the deck on phones */
+  .lgw .hx-home .hx-sub{order:3}.lgw .hx-home .hx-cta{order:4;margin-bottom:22px}.lgw .hx-home .hx-top>.hx-visual{order:5}
   .lgw .tx-hero .hx-top{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
   .lgw .tx-copy{display:block}
   .lgw .ag-quote{margin-bottom:2px}.lgw .ag-px{font-size:1.5rem}

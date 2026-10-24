@@ -973,6 +973,13 @@
   "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumi es un agente de IA que funciona bajo supervisión humana continua; una persona revisa las decisiones de contacto y de gasto.",
   "Paper-trade analysis, not investment advice. Lumi does not trade real money.": "Análisis de trading en papel, no es asesoramiento de inversión. Lumi no opera con dinero real.",
   "Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.": "Las señales, los niveles de soporte y resistencia, el escaneo de todas las monedas, la lista de ideas de trading en papel y el historial de operaciones forman Lumi Market Ideas: el análisis de trading en papel de una IA, que se vende por llamada como los datos de mercado y se mantiene aparte de las verificaciones de confianza de Lumi.",
-  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades realiza comprobaciones automáticas y gratuitas de vendedores x402 de pago por llamada y vende datos del mercado cripto a agentes de IA mediante una API x402 de pago por llamada y un servidor MCP."
+  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades realiza comprobaciones automáticas y gratuitas de vendedores x402 de pago por llamada y vende datos del mercado cripto a agentes de IA mediante una API x402 de pago por llamada y un servidor MCP.",
+  "<b>Not financial advice.</b> Lumi is an AI. The market ideas further down the page are paper-trade analysis; no real money is traded.": "<b>No es asesoramiento financiero.</b> Lumi es una IA. Las ideas de mercado más abajo en la página son análisis de trading en papel; no se opera con dinero real.",
+  "Open the trust list": "Abrir la lista de confianza",
+  "Trust before your AI agents pay.": "Confianza antes de que tus agentes de IA paguen.",
+  "Trust layer for AI-agent payments · XRPL · Base · Stellar": "Capa de confianza para pagos de agentes de IA · XRPL · Base · Stellar",
+  "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "Hacemos compras de prueba a vendedores x402 en XRPL, Base y Stellar y publicamos recibos firmados, para que tu agente sepa quién cumple.",
+  "Markets": "Mercados",
+  "Markets (paper trading, not financial advice)": "Mercados (operaciones simuladas, no es asesoramiento financiero)"
  }
 }

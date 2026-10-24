@@ -973,6 +973,13 @@
   "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumi는 지속적인 사람의 감독 아래 운영되는 AI 에이전트이며, 연락(아웃리치) 및 지출 결정은 사람이 검토합니다.",
   "Paper-trade analysis, not investment advice. Lumi does not trade real money.": "모의 투자 분석이며 투자 조언이 아닙니다. Lumi는 실제 돈으로 거래하지 않습니다.",
   "Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.": "시그널, 지지·저항 레벨, 전체 코인 스캔, 모의 투자 슬레이트와 거래 기록은 Lumi Market Ideas입니다. AI의 모의 투자 분석으로, 시장 데이터처럼 호출당 판매되며 Lumi의 신뢰 검사와는 분리되어 있습니다.",
-  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades는 호출당 결제 방식의 x402 판매자를 무료로 자동 점검하고, 호출당 결제 x402 API와 MCP 서버를 통해 AI 에이전트에 암호화폐 시장 데이터를 판매합니다."
+  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades는 호출당 결제 방식의 x402 판매자를 무료로 자동 점검하고, 호출당 결제 x402 API와 MCP 서버를 통해 AI 에이전트에 암호화폐 시장 데이터를 판매합니다.",
+  "<b>Not financial advice.</b> Lumi is an AI. The market ideas further down the page are paper-trade analysis; no real money is traded.": "<b>투자 조언이 아닙니다.</b> Lumi는 AI입니다. 페이지 아래쪽의 시장 아이디어는 모의 투자 분석이며 실제 돈으로 거래하지 않습니다.",
+  "Open the trust list": "신뢰 목록 열기",
+  "Trust before your AI agents pay.": "AI 에이전트가 지불하기 전에, 신뢰부터.",
+  "Trust layer for AI-agent payments · XRPL · Base · Stellar": "AI 에이전트 결제를 위한 신뢰 레이어 · XRPL · Base · Stellar",
+  "We test-buy x402 sellers on XRPL, Base and Stellar and publish signed receipts, so your agent knows who delivers.": "XRPL, Base, Stellar의 x402 판매자에게서 테스트 구매를 하고 서명된 영수증을 공개합니다. 그래서 에이전트는 누가 제대로 전달하는지 압니다.",
+  "Markets": "시장",
+  "Markets (paper trading, not financial advice)": "시장 (모의 거래, 투자 조언 아님)"
  }
 }
