@@ -477,11 +477,17 @@ class PolicyPageSelection(unittest.TestCase):
         for s in ("0.75 USDC", "0.15 USDC", "0.30 RLUSD", "0.10 XRP", "x402 Bazaar", "more than 30 days old", "{mail}"):
             self.assertIn(s, txt)
         self.assertNotIn("scam", txt.lower())
-        # Free and paid Lumi checks send the same signal (lumi-api free-check-priority): payment never changes the order.
+        # Check-driven priority (lumi-api free-check-priority): objective signals only, independent of who ran the check and
+        # whether it was paid; at most 5 sellers a day and once per seller per 30 days (PRIORITY_SELLER_DAYS).
         base_add = [p for p in ps if p.startswith("<b>Base, one addition:</b>")][0]
-        for s in ("any Lumi check, free or paid", "never test-bought", "front of the next day's Base list", "At most 5 sellers"):
+        for s in ("objective signals", "never test-bought", "front of the next day's Base list", "At most 5 sellers",
+                  "Whether the check was free or paid, and who ran it, is not considered", "at most once every 30 days",
+                  "only from Lumi's own records and public data", "such as a payTo address"):
             self.assertIn(s, base_add)
         self.assertNotIn("a paid Lumi check", base_add)
+        self.assertNotIn("warning signs", base_add)
+        # Sales firewall (legal review 2-M1).
+        self.assertIn("We never pitch paid plans to a seller within 30 days of a failed or warning result, and our sales emails never cite a seller's score.", ps)
         self.assertTrue(any("Paying Lumi never changes" in p and "never change this order" in p for p in ps))
         # Stellar weekly-retest mode (trust_testbuys.ts STELLAR_RETEST_WEEKDAY, default Mon): new sellers daily, retests once a week.
         stellar = [p for p in ps if p.startswith("<b>Stellar:</b>")][0]
@@ -505,6 +511,19 @@ class PolicyPageSelection(unittest.TestCase):
         self.assertIn("const MAX_PRICE = 0.05", tbs)
         self.assertIn('const STELLAR_RETEST_WEEKDAY_DEFAULT = "Mon"', tbs)
 
+    def test_no_pay_to_rank_covers_paid_badges(self):
+        import policy_page as pp
+        p1 = [ps for sid, _h, ps in pp.SECTIONS if sid == "no-pay-to-rank"][0][0]
+        for s in ("never changes a seller's score, tier, ranking or “Tested by Lumi” result",
+                  "Paid plans add a separate “Monitored by Lumi” badge that says it is paid", "“Verified owner”", "labelled as paid"):
+            self.assertIn(s, p1)
+        self.assertNotIn("ranking or badge", p1 + pp.DESC)
+        for lang in LANGS:
+            tr = i18n(lang)
+            for k in (p1, pp.DESC):
+                self.assertIn(k, tr, (lang, k[:40]))
+                self.assertIn("Monitored by Lumi" if k == p1 else "Tested by Lumi", tr[k], lang)
+
     def test_translated_and_built(self):
         ps, pp = self._sel()
         head = [h for sid, h, _p in pp.SECTIONS if sid == "selection"][0]
@@ -520,6 +539,10 @@ class PolicyPageSelection(unittest.TestCase):
             self.assertIn("0.75 USDC", h)
             if lang == "":
                 self.assertIn("once a week (on Mondays)", h)
+                self.assertIn("at most once every 30 days", h)
+                self.assertIn("“Monitored by Lumi” badge that says it is paid", h)
+            self.assertIn("Monitored by Lumi", h)
+            self.assertNotIn("ranking or badge", h)
             self.assertIn("mailto:hello@lumitrades.io", h)
             self.assertNotIn("{mail}", h)
 

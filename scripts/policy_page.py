@@ -11,6 +11,12 @@ Keep every statement in sync with the code and the other pages:
 - PAID_VENDORS must list every seller with an active paid monitoring plan or audit (the API discloses plans on the seller's entry)
 - seller selection ("selection" section) mirrors ../tools/catalog_buys.ts --daily (Base) and trust_testbuys.ts (XRPL
   allowlist + Stellar phase): order rules and daily caps (DAILY_CAP / STELLAR_CAP) must match those files
+- the Base check-driven priority ("Base, one addition") mirrors lumi-api branch free-check-priority: catalog_service.BUY_SIGNALS
+  (minus caller-supplied pay_to_mismatch), the same rule for free and paid checks, PRIORITY_DAILY_CAP (5 a day) and
+  PRIORITY_SELLER_DAYS (once per seller per 30 days)
+- the sales firewall sentence (no paid-plan pitch within 30 days of a failed or warning result, no score in sales emails)
+  binds the outreach drafts in notes/outreach/
+- paid badges: "Monitored by Lumi" (labelled paid plan on the SVG) and the planned "Verified owner" are separate from results
 - contact: hello@lumitrades.io (the address used on /trust/ and /privacy/)
 - method details stay server-side (api.lumitrades.io/v1/trust/methodology); this page describes the score at a high level only
 Never name a person. No promises of returns."""
@@ -29,27 +35,26 @@ PAID_VENDORS = []
 
 TITLE = "Conflicts policy and paid-vendor disclosure | Lumi Trades"
 H1 = "Conflicts policy and paid-vendor disclosure"
-DESC = ("How Lumi keeps x402 seller scores independent: paying Lumi never changes a score, tier, ranking or badge. "
-        "How sellers are chosen for testing, and who pays Lumi.")
+DESC = "How Lumi keeps x402 seller scores independent: paying Lumi never changes a score, tier, ranking or “Tested by Lumi” result. How sellers are chosen for testing, and who pays Lumi."
 FOOTER_LINK = "Conflicts policy"
 LEDE = ("Lumi tests pay-per-call (x402) sellers and publishes what it finds. Some sellers can also pay Lumi for monitoring or audits. "
         "This page explains how we keep those two things apart, and lists every seller who pays us.")
 
 SECTIONS = [
     ("no-pay-to-rank", "Paying Lumi never changes a score", [
-        "<b>Paying Lumi never changes a seller's score, tier, ranking or badge.</b> This covers monitoring plans, audits and the paid "
-        "“Verified owner” badge (planned, not yet available).",
+        "<b>Paying Lumi never changes a seller's score, tier, ranking or “Tested by Lumi” result.</b> Paid plans add a separate “Monitored by Lumi” badge that says it is paid. The “Verified owner” badge (planned, not yet available) will also be paid, kept separate from the result and labelled as paid. This covers monitoring plans, audits and both paid badges.",
         "The “Tested by Lumi” badge is earned only from delivery results. It is removed automatically when a seller's live score drops.",
     ]),
     ("selection", "How we choose who to test-buy", [
         "Every day we test-buy from a few sellers with our own money. Each chain (Base, XRPL and Stellar) has its own list, its own order and its own daily cap. We skip any single buy that costs more than 0.05.",
         "<b>Base:</b> sellers we have never test-bought go first, most popular first. Popularity is the number of paid calls a seller had in the last 30 days in Coinbase's public x402 Bazaar catalog. After them, we retest sellers whose last test-buy is more than 30 days old, oldest first. Daily cap: 0.75 USDC.",
-        "<b>Base, one addition:</b> if any Lumi check, free or paid, of a Base seller we have never test-bought finds warning signs, that seller moves to the front of the next day's Base list. At most 5 sellers move up this way each day, and the same daily cap applies.",
+        "<b>Base, one addition:</b> if a Lumi check of a Base seller we have never test-bought finds one of these objective signals, that seller moves to the front of the next day's Base list: Lumi's last quote check got no valid x402 quote; fewer than half of at least 3 quote checks were valid; the live quote paid an address that is not in the listing; the quoted price differed from the listing; the domain was registered less than 30 days ago; no payments from anyone other than Lumi, known test wallets or the seller have been seen; Coinbase's Bazaar reports no calls in the last 30 days; or vet402's free probe failed. These signals come only from Lumi's own records and public data. Whether the check was free or paid, and who ran it, is not considered, and nothing the person checking enters (such as a payTo address) can trigger it. At most 5 sellers move up this way each day, a seller can move up this way at most once every 30 days, and the same daily cap applies.",
         "<b>Stellar:</b> sellers that accept USDC on Stellar, from Coinbase's x402 Bazaar catalog and the Vellar facilitator's public list. We check this list every day, and a seller we have never test-bought is bought the day it appears, cheapest first. Sellers we have already tested are re-tested once a week (on Mondays), oldest test-buy first. This list is not ranked by popularity. Daily cap: 0.15 USDC, at most 4 buys a day.",
         "<b>XRPL:</b> a fixed list of sellers that accept XRP or RLUSD. We try every seller on the list once a day, in the same order, until the day's cap runs out. This list is not ranked by popularity. Daily cap: 0.30 RLUSD and 0.10 XRP (network fees count toward the XRP cap).",
         "Paying Lumi never changes a score or the “Tested by Lumi” result. Monitoring plans, audits and the “Verified owner” badge (planned, not yet available) never change this order either. Monitoring test-buys are paid for by the seller, run separately and never count toward a score.",
         "Sellers can ask to be tested, or ask not to be tested, by emailing <a href=\"mailto:{mail}\">{mail}</a>. We handle these requests by hand.",
         "We don't pick sellers based on whether they might buy monitoring.",
+        "We never pitch paid plans to a seller within 30 days of a failed or warning result, and our sales emails never cite a seller's score.",
     ]),
     ("disclosure", "Paid-vendor disclosure", [
         "Sellers who pay Lumi for monitoring or audits are listed here, and a paid plan is also shown on the seller's public entry.",
