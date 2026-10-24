@@ -522,8 +522,7 @@ def _page(h, tp, path, title, desc, ld, body, V, gen_date, nav_items, current, e
 AGENTS_DESC = ("Pay-per-call crypto API for AI agents: trading signals, support and resistance levels, CoinMarketCap Fear & Greed, "
                "a daily brief and an Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Pay with x402 in USDC "
                "on Base or Stellar, or XRP and RLUSD on the XRPL. MCP server, no API key.")
-TRUST_DESC = ("x402 vendor reputation: free trust scores for pay-per-call endpoints from Lumi's automated 402-quote checks and small "
-              "paid on-ledger test-buys on XRPL, Base and Stellar. Observations, not a rating or review of any business.")
+TRUST_DESC = ("Independent x402 seller trust list: dated results of Lumi's small paid test-buys on Base, XRPL and Stellar. Paying Lumi never changes a score.")  # <=155 chars (meta description) in every language
 
 
 BADGE_EXAMPLE = "printmoneylab"  # a real curated vendor with delivered test-buys (checked live Oct 23 2026)
