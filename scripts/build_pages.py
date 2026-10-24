@@ -665,7 +665,7 @@ def build(dry=False):
 <meta property="og:title" content="{og_t}">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{SITE}assets/og.jpg?v={V}">
+<meta property="og:image" content="{SITE}assets/og.png?v={V}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="article:modified_time" content="{E(as_of)}">
@@ -673,7 +673,7 @@ def build(dry=False):
 <meta name="twitter:site" content="@lumisinsite">
 <meta name="twitter:title" content="{og_t}">
 <meta name="twitter:description" content="{E(desc)}">
-<meta name="twitter:image" content="{SITE}assets/og.jpg?v={V}">
+<meta name="twitter:image" content="{SITE}assets/og.png?v={V}">
 <link rel="icon" href="{R}favicon.ico?v={V}" sizes="any">
 <link rel="apple-touch-icon" href="{R}assets/apple-touch-icon.png?v={V}" sizes="180x180">
 <link rel="preload" href="{R}assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>

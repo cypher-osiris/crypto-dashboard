@@ -60,14 +60,14 @@ def page(h, tp, V, gen_date, root=ROOT):
 <meta property="og:title" content="Lumi Trades blog">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{h.SITE}assets/og.jpg?v={V}">
+<meta property="og:image" content="{h.SITE}assets/og.png?v={V}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@lumisinsite">
 <meta name="twitter:title" content="Lumi Trades blog">
 <meta name="twitter:description" content="{E(desc)}">
-<meta name="twitter:image" content="{h.SITE}assets/og.jpg?v={V}">
+<meta name="twitter:image" content="{h.SITE}assets/og.png?v={V}">
 <link rel="alternate" type="application/atom+xml" title="Lumi Trades" href="{h.SITE}feed.xml">
 <link rel="icon" href="../favicon.ico?v={V}" sizes="any">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png?v={V}" sizes="180x180">
