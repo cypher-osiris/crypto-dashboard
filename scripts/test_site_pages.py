@@ -477,6 +477,12 @@ class PolicyPageSelection(unittest.TestCase):
         for s in ("0.75 USDC", "0.15 USDC", "0.30 RLUSD", "0.10 XRP", "x402 Bazaar", "more than 30 days old", "{mail}"):
             self.assertIn(s, txt)
         self.assertNotIn("scam", txt.lower())
+        # Free and paid Lumi checks send the same signal (lumi-api free-check-priority): payment never changes the order.
+        base_add = [p for p in ps if p.startswith("<b>Base, one addition:</b>")][0]
+        for s in ("any Lumi check, free or paid", "never test-bought", "front of the next day's Base list", "At most 5 sellers"):
+            self.assertIn(s, base_add)
+        self.assertNotIn("a paid Lumi check", base_add)
+        self.assertTrue(any("Paying Lumi never changes" in p and "never change this order" in p for p in ps))
         self.assertNotRegex(txt.lower(), r"p&l|profit|return")
 
     def test_caps_match_runners_when_present(self):
