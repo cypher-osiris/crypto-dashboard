@@ -3,7 +3,8 @@
 #   scripts/publish.sh                    # stage everything under data/
 #   scripts/publish.sh data/trades.json data/log.json data/signals.json   # stage only these paths
 #   PUBLISH_MSG="custom message" scripts/publish.sh
-# Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push.
+# Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push
+#   -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
 # Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -39,6 +40,13 @@ if [ "${BUILD_PAGES:-1}" != 0 ] && [ -f scripts/build_pages.py ] && printf '%s\n
   fi
 fi
 
+# Search-engine ownership files at the site root must stay published: always stage them
+# (IndexNow key <32 hex>.txt with name == content, and Bing Webmaster Tools' BingSiteAuth.xml).
+for k in [0-9a-f]*.txt; do
+  [[ "$k" =~ ^[0-9a-f]{32}\.txt$ ]] && [ -f "$k" ] && paths+=("$k")
+done
+[ -f BingSiteAuth.xml ] && paths+=(BingSiteAuth.xml)
+
 bad=0
 while IFS= read -r -d '' f; do
   python3 -m json.tool "$f" >/dev/null 2>&1 || { echo "publish: invalid JSON: $f" >&2; bad=1; }
@@ -53,7 +61,13 @@ fi
 msg="${PUBLISH_MSG:-Data update $(TZ=America/Chicago date '+%Y-%m-%d %H:%M %Z')}"
 git commit --quiet -m "$msg" -- "${paths[@]}"
 for i in 1 2 3; do
-  if gitnet push --quiet; then echo "publish: pushed $(git rev-parse --short HEAD) — $msg"; exit 0; fi
+  if gitnet push --quiet; then
+    echo "publish: pushed $(git rev-parse --short HEAD) — $msg"
+    if [ "${INDEXNOW:-1}" != 0 ] && [ -f scripts/indexnow_ping.py ]; then
+      timeout -k 5 45 python3 scripts/indexnow_ping.py --commit HEAD || echo "publish: WARNING IndexNow ping failed (publish is fine)" >&2
+    fi
+    exit 0
+  fi
   echo "publish: push failed (attempt $i), rebasing and retrying" >&2
   sleep $((i * 3)); gitnet pull --rebase --autostash --quiet
 done
