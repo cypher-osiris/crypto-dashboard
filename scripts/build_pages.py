@@ -803,6 +803,12 @@ def build(dry=False):
         sm += url_el(f"{s}/", gen_date, "daily", "0.8")
     for p, lm, fq, pr in trade_sm:
         sm += url_el(p, lm, fq, pr)
+    # English-only static blog posts (blog/<slug>/index.html, hand-built; no language alternates)
+    bdir = os.path.join(ROOT, "blog")
+    if os.path.isdir(bdir):
+        for d in sorted(os.listdir(bdir)):
+            if os.path.exists(os.path.join(bdir, d, "index.html")):
+                sm.append(f'  <url><loc>{SITE}blog/{d}/</loc><lastmod>{gen_date}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>')
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
 
     # ---- link blocks in the main page (index.html, root) and the classic view (classic/index.html, one level down) ----
