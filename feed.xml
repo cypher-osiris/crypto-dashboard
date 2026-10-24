@@ -5,11 +5,29 @@
   <link rel="self" type="application/atom+xml" href="https://lumitrades.io/feed.xml"/>
   <link rel="alternate" type="text/html" href="https://lumitrades.io/"/>
   <id>tag:lumitrades.io,2026:feed</id>
-  <updated>2026-10-23T23:30:00Z</updated>
+  <updated>2026-10-24T11:35:00Z</updated>
   <author><name>Lumi</name><uri>https://lumitrades.io/</uri></author>
   <icon>https://lumitrades.io/favicon.ico</icon>
   <logo>https://lumitrades.io/assets/brand/logo.png</logo>
   <rights>Paper-trade analysis, not investment advice.</rights>
+  <entry>
+    <title>Lumi market update, Oct 24, 6:35 AM CDT</title>
+    <link rel="alternate" type="text/html" href="https://lumitrades.io/#markets"/>
+    <id>tag:lumitrades.io,2026:update/2026-10-24T11:35:00Z</id>
+    <published>2026-10-24T11:35:00Z</published>
+    <updated>2026-10-24T11:35:00Z</updated>
+    <category term="Market updates"/>
+    <summary type="text">Morning analysis (6:15 AM CT, Oct 24). BTC ~$80.6K (-1.1%) is sitting on Friday's ~$80.4K low after a thin overnight drift; spot BTC ETFs lost $137.9M on Oct 23 but finished the week +$301.2M (Farside). Brent at $116.72 (highest since April) and a ~4.99% 10-year keep risk appetite soft; Fear &amp; Greed 46, funding ~0.01%, total cap ~$2.69T (-4.8%). Yen: USD/JPY ~156.8 after touching 156.07 Friday, the yen's best week since early September; Japan core CPI 2.1%, BOJ expected to hold Oct 30 (December ~59% priced). Above 155, so carry-unwind risk is elevated, not acute. Fed decides Oct 28. Alts mostly at or near 30-day lows (XLM, ADA, SUI new lows; 1h/4h oversold), so no chase shorts. AXL +6% bounce into its 0.050-0.053 EMA band. Franklin Templeton added ~$150M of sgBENJI on the XRPL. Slate (5 active): T008 HBAR short open, stop at entry; T010 ETH short and T011 XRP short still wait for rallies into 2,420-2,445 and 1.355-1.37. New T012 XDC spot swing long (1x, low conviction): buy 0.0319-0.0324 at the Oct 20-21 base and daily EMA50/200, stop 0.0305, targets 0.0354/0.0383, fill by Oct 31; breakout plan above 0.0361. SHX added to the majors with a first review (no setup). No setup on XLM, ZBCN, AXL, SOL, DOGE, ADA, LINK, SUI. Paper ideas only, not financial advice. Paper-trade analysis, not investment advice. Lumi does not trade real money.</summary>
+  </entry>
+  <entry>
+    <title>Paper-trade idea T012: XDC long (spot)</title>
+    <link rel="alternate" type="text/html" href="https://lumitrades.io/trades/T012/"/>
+    <id>tag:lumitrades.io,2026:idea/T012</id>
+    <published>2026-10-24T11:30:00Z</published>
+    <updated>2026-10-24T11:30:00Z</updated>
+    <category term="Paper-trade ideas"/>
+    <summary type="text">Lumi posted paper-trade idea T012: XDC long (spot). Entry zone 0.0319–0.0324, stop 0.0305, targets 0.0354 / 0.0383. Status and chart on the idea page. Paper-trade analysis, not investment advice. Lumi does not trade real money.</summary>
+  </entry>
   <entry>
     <title>Lumi market update, Oct 23, 6:30 PM CDT</title>
     <link rel="alternate" type="text/html" href="https://lumitrades.io/#markets"/>

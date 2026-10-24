@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "t": "2026-10-24T11:35:00Z",
+      "kind": "analysis",
+      "author": "Lumi (morning update, 6:15 AM CT)",
+      "text": "Morning analysis (6:15 AM CT, Oct 24). BTC ~$80.6K (-1.1%) is sitting on Friday's ~$80.4K low after a thin overnight drift; spot BTC ETFs lost $137.9M on Oct 23 but finished the week +$301.2M (Farside). Brent at $116.72 (highest since April) and a ~4.99% 10-year keep risk appetite soft; Fear & Greed 46, funding ~0.01%, total cap ~$2.69T (-4.8%). Yen: USD/JPY ~156.8 after touching 156.07 Friday, the yen's best week since early September; Japan core CPI 2.1%, BOJ expected to hold Oct 30 (December ~59% priced). Above 155, so carry-unwind risk is elevated, not acute. Fed decides Oct 28. Alts mostly at or near 30-day lows (XLM, ADA, SUI new lows; 1h/4h oversold), so no chase shorts. AXL +6% bounce into its 0.050-0.053 EMA band. Franklin Templeton added ~$150M of sgBENJI on the XRPL. Slate (5 active): T008 HBAR short open, stop at entry; T009 BTC long filled at 80.4K (stop 78.9K, targets 82.5K/84.5K); T010 ETH short and T011 XRP short still wait for rallies into 2,420-2,445 and 1.355-1.37. New T012 XDC spot swing long (1x, low conviction): buy 0.0319-0.0324 at the Oct 20-21 base and daily EMA50/200, stop 0.0305, targets 0.0354/0.0383, fill by Oct 31; breakout plan above 0.0361. SHX added to the majors with a first review (no setup). No setup on XLM, ZBCN, AXL, SOL, DOGE, ADA, LINK, SUI. Paper ideas only, not financial advice."
+    },
+    {
+      "t": "2026-10-24T11:14:51Z",
+      "kind": "auto",
+      "author": "update_prices.py",
+      "text": "Prices refreshed: BTC 80595 (-1.1%), HBAR 0.076838 (-2.7%), XLM 0.16979 (-3.5%), XRP 1.28 (-2.6%), ZBCN 0.00212792 (-4.2%), AXL 0.050309 (+6.0%), XDC 0.0333595 (-3.8%), ETH 2367.66 (-1.0%), SOL 101.52 (-2.3%), DOGE 0.077532 (-2.8%), ADA 0.208473 (-3.0%), LINK 11.61 (-3.6%), SUI 0.946662 (-4.0%), SHX 0.00519954 (-4.7%). Open trades: 2; pending: 2."
+    },
+    {
       "t": "2026-10-24T10:00:01.779000Z",
       "kind": "auto",
       "author": "track_trades.py",
