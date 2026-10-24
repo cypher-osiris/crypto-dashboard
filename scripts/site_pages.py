@@ -48,6 +48,13 @@ MARKET_PRICES = [
     ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.10"),
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES
+# Lumi Market Ideas (signals, levels, scan, slate, trade history): the same routes and prices, shown as their own group,
+# apart from the Lumi Trust products above and the neutral market data below.
+MARKET_IDEAS_PATHS = ("/v1/signal/", "/v1/lite/", "/v1/scan", "/v1/slate", "/v1/trades", "/v1/levels/")
+MARKET_IDEAS_PRICES = [x for x in MARKET_PRICES if x[1].split(" ", 1)[1].startswith(MARKET_IDEAS_PATHS)]
+MARKET_DATA_PRICES = [x for x in MARKET_PRICES if x not in MARKET_IDEAS_PRICES]
+MARKET_IDEAS_TEXT = ("Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are "
+                     "Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.")
 AGENTS_ROUTES_TEXT = ("Live signals for the top 50 coins, support and resistance levels, the paper-trade slate, and market and policy briefs: "
                       "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
                       "on every paid route, including the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
@@ -335,7 +342,13 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <p class="meta">{_t("Licence: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.")} {lk(API + "/v1/feed/license", _t("Licence terms"))} · {lk(API + "/v1/feed", _t("Feed docs"))}</p></section>
 <section class="card cp-sec" id="prices"><h2>{E(_t("Market data"))}</h2>
 <p>{_t(AGENTS_ROUTES_TEXT, **route_counts())}</p>
-{table(MARKET_PRICES)}
+{table(MARKET_DATA_PRICES)}
+<div class="ag-mi" id="market-ideas">
+<h3>Lumi Market Ideas</h3>
+{h.MI_LABEL()}
+<p>{E(_t(MARKET_IDEAS_TEXT))}</p>
+{table(MARKET_IDEAS_PRICES)}
+</div>
 <p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
 <section class="card cp-sec" id="pay"><h2>{E(_t("How to pay"))}</h2>
 <ul class="ag-list"><li>{_t("<b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.")}</li>
@@ -377,7 +390,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
     title = _t("x402 vendor trust list: Lumi's automated test-buys | Lumi Trades")
     desc = _t(TRUST_DESC)
     url = h.SITE + h.L.prefix + "trust/"
-    ld = [seo.organization(_t),
+    ld = [seo.organization(_t, "trust"),
           {"@context": "https://schema.org", "@type": "WebPage", "name": _t("x402 vendor trust list"), "url": url,
            "description": desc, "inLanguage": h.L.code, "isPartOf": {"@id": seo.SITE_ID}, "publisher": {"@id": seo.ORG_ID},
            "keywords": seo.keywords(_t, "trust", h.L.en)},
@@ -447,7 +460,8 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     if pol:
         write(f"{P}{policy_page.SLUG}index.html", pol)
     if h.L.en:
-        write("llms.txt", seo.llms_txt(PRICES, PLANS))
+        write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES), ("Market data", MARKET_DATA_PRICES),
+                                                                     ("Lumi Market Ideas", MARKET_IDEAS_PRICES)]))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
             ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3")] + (

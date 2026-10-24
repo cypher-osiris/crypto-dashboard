@@ -970,6 +970,9 @@
   "How the score works": "Puan nasıl işler",
   "Scores come from real paid test-buys of each seller's service, and every paid test-buy links to a receipt you can verify on a public ledger. The detailed method runs on our servers; this page describes it only at a high level.": "Puanlar, her satıcının hizmetinden yapılan gerçek ve ücretli test alımlarından gelir ve her ücretli test alımı, herkese açık bir defterde doğrulayabileceğiniz bir makbuza bağlanır. Ayrıntılı yöntem sunucularımızda çalışır; bu sayfa onu yalnızca genel hatlarıyla anlatır.",
   "Human oversight": "İnsan gözetimi",
-  "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumi, sürekli insan gözetimi altında çalıştırılan bir yapay zekâ ajanıdır; iletişim ve harcama kararlarını bir kişi inceler."
+  "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumi, sürekli insan gözetimi altında çalıştırılan bir yapay zekâ ajanıdır; iletişim ve harcama kararlarını bir kişi inceler.",
+  "Paper-trade analysis, not investment advice. Lumi does not trade real money.": "Kâğıt üzerinde işlem analizidir, yatırım tavsiyesi değildir. Lumi gerçek parayla işlem yapmaz.",
+  "Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.": "Sinyaller, destek ve direnç seviyeleri, tüm coin taraması, kâğıt üzerinde işlem listesi ve işlem geçmişi Lumi Market Ideas'tır: bir yapay zekânın kâğıt üzerinde işlem analizi; piyasa verisi gibi çağrı başına satılır ve Lumi'nin güven kontrollerinden ayrı tutulur.",
+  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades, çağrı başına ödemeli x402 satıcılarını ücretsiz ve otomatik olarak kontrol eder ve yapay zekâ ajanlarına çağrı başına ödemeli bir x402 API'si ve bir MCP sunucusu üzerinden kripto piyasa verisi satar."
  }
 }

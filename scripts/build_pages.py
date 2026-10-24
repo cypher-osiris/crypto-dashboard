@@ -45,6 +45,18 @@ SCHED_HTML = 'Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> ·
 NEWSLETTER_URL = "https://trade-with-lumi.kit.com/67c20c56b8"  # Kit hosted page (form 10079883)
 
 
+# Lumi Market Ideas: the signal / levels / scan / slate / trade-idea product line (api.lumitrades.io /v1/signal, /v1/lite,
+# /v1/scan, /v1/slate, /v1/trades, /v1/levels), labelled apart from the Lumi Trust brand (/trust/, trust checks, badges).
+MI_NAME = "Lumi Market Ideas"  # product name: never translated
+MI_NOTICE = "Paper-trade analysis, not investment advice. Lumi does not trade real money."  # i18n key (6 languages)
+
+
+def MI_LABEL(extra=""):
+    """The visible Lumi Market Ideas label + short disclaimer (coin-page signal/levels/trade blocks, /trades/ pages)."""
+    return (f'<p class="mi-label{extra}" role="note"><span class="mi-tag" translate="no">{MI_NAME}</span>'
+            f'<span class="mi-txt">{E(_(MI_NOTICE))}</span></p>')
+
+
 def SCHEDULE_NOTE():  # assets/schedule.js adds local times + next review
     return f'<p class="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> {_(SCHED_HTML)}</p>'
 
@@ -692,7 +704,8 @@ def build(dry=False):
 {chart_svg(a, an, t)}
 <p class="meta">{_("Prices: CoinGecko snapshot, {time}. The <a href=\"{href}\">full detail view</a> streams live prices.", time=E(price_time), href=f"{R}classic/#coin-{E(cid)}")}</p></section>
 
-<section class="card cp-sec" id="levels"><h2>{_("{sym} support &amp; resistance levels to watch", sym=E(sym))}</h2>
+<section class="card cp-sec cp-mi" id="levels"><h2>{_("{sym} support &amp; resistance levels to watch", sym=E(sym))}</h2>
+{MI_LABEL()}
 {lv_html}
 {proj_html}
 {sig_html}</section>
@@ -702,7 +715,8 @@ def build(dry=False):
 {commentary}
 {src_html}</section>
 
-<section class="card cp-sec" id="trade"><h2>{E(_("{sym} paper-trade idea", sym=sym))}</h2>
+<section class="card cp-sec cp-mi" id="trade"><h2>{E(_("{sym} paper-trade idea", sym=sym))}</h2>
+{MI_LABEL()}
 {SCHEDULE_NOTE()}
 {trade_sec}
 <p class="meta">{_("Every idea is tracked against 5-minute candles. See <a href=\"{h}trades/\">all active ideas</a>", h=H)}{(_(' (this idea: <a href="{href}">{id} page</a>)', href=f'{H}trades/{E(t["id"])}/', id=E(t["id"]))) if t else ""}.</p></section>
@@ -728,7 +742,8 @@ def build(dry=False):
 
         # ---- trade history (/trades/ + /trades/<ID>/), see scripts/trade_pages.py ----
         h = types.SimpleNamespace(E=E, fp=fp, lvl=lvl, pc=pc, pct_txt=pct_txt, ctime=ctime, CT=CT, SITE=SITE, NEWSLETTER_URL=NEWSLETTER_URL,
-                                  L=L, _=_, langs=langs, i18n=i18n, i18n_scripts=i18n_scripts, head_i18n=head_i18n, dir_txt=dir_txt)
+                                  L=L, _=_, langs=langs, i18n=i18n, i18n_scripts=i18n_scripts, head_i18n=head_i18n, dir_txt=dir_txt,
+                                  MI_LABEL=MI_LABEL, MI_NAME=MI_NAME, MI_NOTICE=MI_NOTICE)
         coin_slug = {c: s for c, s in pages}
         if trade_pages:
             try:

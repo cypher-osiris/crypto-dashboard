@@ -807,3 +807,17 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   .hx .hx-disc{max-width:none}
 }
 .hx .hx-stats{margin-bottom:0}
+
+/* Lumi Market Ideas: signals, levels, the slate and trade ideas carry their own label and a violet edge, so they read
+   as a separate product line from the Lumi Trust content (trust list, trust checks, badges), which never uses it */
+.mi-label{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 12px;padding:7px 11px;border-radius:10px;font-size:.82rem;
+  line-height:1.4;color:#ddd6fe;background:rgba(139,92,246,.09);border:1px dashed rgba(167,139,250,.45)}
+.mi-tag{flex:none;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:#1c1035;background:linear-gradient(90deg,#c4b5fd,#a78bfa)}
+.mi-txt{flex:1 1 220px;min-width:0}
+.mi-top{margin:2px 0 14px}
+.cp-mi,.pv-mi,.ag-mi{border-left:3px solid rgba(167,139,250,.7)}
+.cp-mi,.ag-mi{padding-left:15px}
+.pv-mi{padding-left:14px}
+.ag-mi{margin:18px 0 6px;padding-top:2px}
+.ag-mi h3{margin-top:4px}
