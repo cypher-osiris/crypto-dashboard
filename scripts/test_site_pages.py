@@ -465,5 +465,49 @@ class TopSellersPage(unittest.TestCase):
                 self.assertIn('href="../top-sellers/"', f.read())
 
 
+class PolicyPageSelection(unittest.TestCase):
+    """/trust-policy/#selection: how sellers are chosen for test-buys (must match the box-side runners)."""
+    def _sel(self):
+        import policy_page as pp
+        return [ps for sid, _h, ps in pp.SECTIONS if sid == "selection"][0], pp
+
+    def test_caps_and_rules_stated(self):
+        ps, _ = self._sel()
+        txt = " ".join(ps)
+        for s in ("0.75 USDC", "0.15 USDC", "0.30 RLUSD", "0.10 XRP", "x402 Bazaar", "more than 30 days old", "{mail}"):
+            self.assertIn(s, txt)
+        self.assertNotIn("scam", txt.lower())
+        self.assertNotRegex(txt.lower(), r"p&l|profit|return")
+
+    def test_caps_match_runners_when_present(self):
+        import re as _re
+        cb, tb = os.path.join(os.path.dirname(ROOT), "tools", "catalog_buys.ts"), os.path.join(os.path.dirname(ROOT), "tools", "trust_testbuys.ts")
+        if not (os.path.exists(cb) and os.path.exists(tb)):
+            self.skipTest("runners not on this machine")
+        cbs, tbs = open(cb).read(), open(tb).read()
+        self.assertIn("const DAILY_CAP = 750_000n", cbs)
+        self.assertIn("const STALE_DAYS = 30", cbs)
+        self.assertIn("const DAILY_CAP = { RLUSD: 0.30, XRP: 0.10 }", tbs)
+        self.assertIn("const STELLAR_CAP = 0.15", tbs)
+        self.assertIn("const STELLAR_MAX_BUYS = 4", tbs)
+        self.assertIn("const MAX_PRICE = 0.05", tbs)
+
+    def test_translated_and_built(self):
+        ps, pp = self._sel()
+        head = [h for sid, h, _p in pp.SECTIONS if sid == "selection"][0]
+        for lang in LANGS:
+            tr = i18n(lang)
+            for k in [head] + ps:
+                self.assertIn(k, tr, (lang, k[:40]))
+                self.assertEqual(k.count("{mail}"), tr[k].count("{mail}"), (lang, k[:40]))
+        for lang in [""] + [l + "/" for l in LANGS]:
+            with open(os.path.join(ROOT, lang, "trust-policy", "index.html"), encoding="utf-8") as f:
+                h = f.read()
+            self.assertIn('id="selection"', h)
+            self.assertIn("0.75 USDC", h)
+            self.assertIn("mailto:hello@lumitrades.io", h)
+            self.assertNotIn("{mail}", h)
+
+
 if __name__ == "__main__":
     unittest.main()

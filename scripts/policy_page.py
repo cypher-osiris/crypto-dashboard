@@ -9,7 +9,8 @@ Keep every statement in sync with the code and the other pages:
 - the "Tested by Lumi" badge (site_pages.badge_section, api.lumitrades.io/badge) is earned from delivery results only
 - monitoring plans and the audit (site_pages.MONITOR_PLANS); the paid "Verified owner" badge is planned, not live
 - PAID_VENDORS must list every seller with an active paid monitoring plan or audit (the API discloses plans on the seller's entry)
-- seller selection: most popular untested sellers first, from public x402 catalogs on XRPL, Base and Stellar
+- seller selection ("selection" section) mirrors ../tools/catalog_buys.ts --daily (Base) and trust_testbuys.ts (XRPL
+  allowlist + Stellar phase): order rules and daily caps (DAILY_CAP / STELLAR_CAP) must match those files
 - contact: hello@lumitrades.io (the address used on /trust/ and /privacy/)
 - method details stay server-side (api.lumitrades.io/v1/trust/methodology); this page describes the score at a high level only
 Never name a person. No promises of returns."""
@@ -40,8 +41,14 @@ SECTIONS = [
         "“Verified owner” badge (planned, not yet available).",
         "The “Tested by Lumi” badge is earned only from delivery results. It is removed automatically when a seller's live score drops.",
     ]),
-    ("selection", "How we choose sellers to test", [
-        "We test the most popular untested sellers first, taken from public x402 catalogs on XRPL, Base and Stellar.",
+    ("selection", "How we choose who to test-buy", [
+        "Every day we test-buy from a few sellers with our own money. Each chain (Base, XRPL and Stellar) has its own list, its own order and its own daily cap. We skip any single buy that costs more than 0.05.",
+        "<b>Base:</b> sellers we have never test-bought go first, most popular first. Popularity is the number of paid calls a seller had in the last 30 days in Coinbase's public x402 Bazaar catalog. After them, we retest sellers whose last test-buy is more than 30 days old, oldest first. Daily cap: 0.75 USDC.",
+        "<b>Base, one addition:</b> if a paid Lumi check of a Base seller we have never test-bought finds warning signs, that seller moves to the front of the next day's Base list. The same daily cap applies.",
+        "<b>Stellar:</b> sellers that accept USDC on Stellar, from Coinbase's x402 Bazaar catalog and the Vellar facilitator's public list. Sellers we have never test-bought go first, cheapest first, then the sellers whose last test-buy is oldest. This list is not ranked by popularity. Daily cap: 0.15 USDC, at most 4 buys a day.",
+        "<b>XRPL:</b> a fixed list of sellers that accept XRP or RLUSD. We try every seller on the list once a day, in the same order, until the day's cap runs out. This list is not ranked by popularity. Daily cap: 0.30 RLUSD and 0.10 XRP (network fees count toward the XRP cap).",
+        "Paying Lumi never changes a score or the “Tested by Lumi” result. Monitoring plans, audits and the “Verified owner” badge (planned, not yet available) never change this order either. Monitoring test-buys are paid for by the seller, run separately and never count toward a score.",
+        "Sellers can ask to be tested, or ask not to be tested, by emailing <a href=\"mailto:{mail}\">{mail}</a>. We handle these requests by hand.",
         "We don't pick sellers based on whether they might buy monitoring.",
     ]),
     ("disclosure", "Paid-vendor disclosure", [
