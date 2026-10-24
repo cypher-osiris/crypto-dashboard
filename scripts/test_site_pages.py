@@ -207,6 +207,36 @@ class OrgAltName(unittest.TestCase):
         self.assertEqual(bad, [])
 
 
+class ContactPage(unittest.TestCase):
+    """/contact/: official addresses + accounts in every language, ContactPage JSON-LD, in the sitemap, linked from footers."""
+    def test_pages_exist_and_in_sitemap(self):
+        import contact_page as cp
+        with open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8") as f:
+            sm = f.read()
+        for lang in [""] + [l + "/" for l in LANGS]:
+            with open(os.path.join(ROOT, lang, "contact", "index.html"), encoding="utf-8") as f:
+                h = f.read()
+            for s in ("hello@lumitrades.io", "lumi@lumitrades.io", "admin@lumitrades.io", "receive-only", '"@type": "ContactPage"',
+                      "security.txt", "https://x.com/lumisinsite", "https://github.com/lumitrades", "lumi-check", "trust/#reply",
+                      cp.NOT_AFFILIATED):
+                self.assertIn(s, h, (lang, s))
+            for s in ("scam", "solana", "cypher", "support and resistance"):
+                self.assertNotIn(s, h.split("<main", 1)[1].split("</main>", 1)[0].lower(), (lang, s))
+            m = re.search(r'<meta name="description" content="([^"]*)"', h)
+            self.assertLessEqual(len(m.group(1)), 155, lang)
+            self.assertIn(f"<loc>https://lumitrades.io/{lang}contact/</loc>", sm)
+        for lang in LANGS:
+            tr = i18n(lang)
+            for k in (cp.TITLE, cp.H1, cp.DESC, cp.LEDE, cp.NOTE):
+                self.assertIn(k, tr, (lang, k[:40]))
+
+    def test_footers_link_contact(self):
+        for rel in ("index.html", "privacy/index.html", "trust/index.html", "es/trust/index.html", "blog/index.html", "xrp/index.html"):
+            with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+                foot = f.read().split('<footer', 1)[1]
+            self.assertIn('contact/">', foot, rel)
+
+
 class PrivacyPage(unittest.TestCase):
     """/privacy/ (scan 2026-10-23 #1): exists in every language, is linked from every footer and newsletter form, names no exchange."""
     def test_pages_exist_translated_and_in_sitemap(self):

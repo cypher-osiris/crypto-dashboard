@@ -1093,6 +1093,11 @@
   "Lumi Trades is a free public paper-trading crypto dashboard and an independent x402 seller trust list: Lumi makes paid test-buys from x402 sellers on Base, XRPL and Stellar and publishes the results. No deposits, no accounts, no brokerage: Lumi never handles funds for users.": "Lumi Trades는 누구나 볼 수 있는 무료 모의 투자 암호화폐 대시보드이자 독립 x402 판매자 신뢰 목록입니다. Lumi는 Base, XRPL, Stellar의 x402 판매자에게서 유료 테스트 구매를 하고 그 결과를 공개합니다. 입금 없음, 계정 없음, 중개 없음: Lumi는 사용자의 자금을 절대 다루지 않습니다.",
   "<b>What Lumi is:</b> a free public paper-trading crypto dashboard and an independent x402 seller trust list. <b>What Lumi isn't:</b> a broker or exchange; it never holds your funds. Lumi never asks for deposits, passwords or wallet keys, and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.": "<b>Lumi는 이런 곳입니다:</b> 누구나 볼 수 있는 무료 모의 투자 암호화폐 대시보드이자 독립 x402 판매자 신뢰 목록. <b>Lumi는 이런 곳이 아닙니다:</b> 브로커나 거래소. 여러분의 자금을 보관하지 않습니다. Lumi는 입금, 비밀번호, 지갑 키를 절대 요구하지 않으며, @lumitrades.io 주소(hello@ 또는 lumi@)로만 이메일을 보내고 admin@에서는 절대 보내지 않습니다.",
   "Not a broker or exchange; Lumi never holds user funds. Lumi never asks for deposits, passwords or wallet keys, and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.": "브로커나 거래소가 아니며, Lumi는 사용자 자금을 보관하지 않습니다. Lumi는 입금, 비밀번호, 지갑 키를 절대 요구하지 않으며, @lumitrades.io 주소(hello@ 또는 lumi@)로만 이메일을 보내고 admin@에서는 절대 보내지 않습니다.",
-  "This section is in English only for now.": "이 섹션은 현재 영어로만 제공됩니다."
+  "This section is in English only for now.": "이 섹션은 현재 영어로만 제공됩니다.",
+  "Contact Lumi Trades: official email addresses and accounts": "Lumi Trades 연락처: 공식 이메일 주소와 계정",
+  "Contact Lumi Trades": "Lumi Trades 연락처",
+  "Official Lumi Trades contacts: hello@ and lumi@lumitrades.io (admin@ is receive-only), X, YouTube, GitHub, npm and the API. Not a broker; no deposits.": "Lumi Trades 공식 연락처: hello@, lumi@lumitrades.io(admin@은 수신 전용), X, YouTube, GitHub, npm, API. 브로커가 아니며 예치금을 받지 않습니다.",
+  "Lumi Trades (lumitrades.io) is an independent x402 seller trust list, built from real paid test-buys with signed receipts, and a free paper-trading crypto dashboard. It is not a broker or exchange: it takes no deposits, has no user accounts, and never asks for passwords, wallet keys or seed phrases.": "Lumi Trades(lumitrades.io)는 서명된 영수증이 있는 실제 유료 테스트 구매로 만든 독립적인 x402 판매자 신뢰 목록이자 무료 모의 투자 암호화폐 대시보드입니다. 브로커나 거래소가 아닙니다. 예치금을 받지 않고, 사용자 계정이 없으며, 비밀번호, 지갑 키, 시드 문구를 절대 요구하지 않습니다.",
+  "The details below are in English only for now.": "아래 세부 정보는 현재 영어로만 제공됩니다."
  }
 }

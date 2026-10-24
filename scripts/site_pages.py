@@ -767,7 +767,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 
 
 def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
-    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html, how-it-works/, privacy/, trust-policy/ (live languages only) and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
+    """Writes [<lang>/]agents/index.html, [<lang>/]trust/index.html, how-it-works/, privacy/, contact/, trust-policy/ (live languages only) and (English pass) /llms.txt. Returns sitemap entries (language-relative)."""
     P = h.L.prefix
     write(f"{P}agents/index.html", agents_page(h, tp, nav_items, V, gen_date, vendors_doc))
     write(f"{P}trust/index.html", trust_page(h, tp, nav_items, V, gen_date, vendors_doc))
@@ -779,10 +779,13 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     pol = policy_page.build_page(h, tp, nav_items, V, gen_date, _page)
     if pol:
         write(f"{P}{policy_page.SLUG}index.html", pol)
+    import contact_page  # /contact/: official addresses and accounts (every language)
+    write(f"{P}{contact_page.SLUG}index.html", contact_page.build_page(h, tp, nav_items, V, gen_date, _page))
     if h.L.en:
         write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES), ("Market data", MARKET_DATA_PRICES),
                                                                      ("Lumi Market Ideas", MARKET_IDEAS_PRICES)]))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
-            ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3")] + (
+            ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3"),
+            (contact_page.SLUG, contact_page.UPDATED.isoformat(), "yearly", "0.4")] + (
             [(policy_page.SLUG, policy_page.UPDATED.isoformat(), "monthly", "0.4")] if h.L.code in policy_page.LIVE_LANGS else [])

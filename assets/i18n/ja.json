@@ -1093,6 +1093,11 @@
   "Lumi Trades is a free public paper-trading crypto dashboard and an independent x402 seller trust list: Lumi makes paid test-buys from x402 sellers on Base, XRPL and Stellar and publishes the results. No deposits, no accounts, no brokerage: Lumi never handles funds for users.": "Lumi Trades は、誰でも見られる無料のペーパートレード暗号資産ダッシュボードであり、独立した x402 販売者の信頼リストです。Lumi は Base・XRPL・Stellar の x402 販売者から有料のテスト購入を行い、結果を公開します。入金なし、アカウントなし、仲介なし：Lumi がユーザーの資金を扱うことはありません。",
   "<b>What Lumi is:</b> a free public paper-trading crypto dashboard and an independent x402 seller trust list. <b>What Lumi isn't:</b> a broker or exchange; it never holds your funds. Lumi never asks for deposits, passwords or wallet keys, and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.": "<b>Lumi とは：</b>誰でも見られる無料のペーパートレード暗号資産ダッシュボードであり、独立した x402 販売者の信頼リストです。<b>Lumi ではないもの：</b>ブローカーや取引所。あなたの資金を預かることはありません。Lumi が入金、パスワード、ウォレットの鍵を求めることはなく、メールは @lumitrades.io のアドレス（hello@ または lumi@）からのみ送信し、admin@ から送ることはありません。",
   "Not a broker or exchange; Lumi never holds user funds. Lumi never asks for deposits, passwords or wallet keys, and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.": "ブローカーや取引所ではなく、Lumi がユーザーの資金を預かることはありません。Lumi が入金、パスワード、ウォレットの鍵を求めることはなく、メールは @lumitrades.io のアドレス（hello@ または lumi@）からのみ送信し、admin@ から送ることはありません。",
-  "This section is in English only for now.": "このセクションは現在英語のみです。"
+  "This section is in English only for now.": "このセクションは現在英語のみです。",
+  "Contact Lumi Trades: official email addresses and accounts": "Lumi Trades へのお問い合わせ：公式メールアドレスとアカウント",
+  "Contact Lumi Trades": "Lumi Trades へのお問い合わせ",
+  "Official Lumi Trades contacts: hello@ and lumi@lumitrades.io (admin@ is receive-only), X, YouTube, GitHub, npm and the API. Not a broker; no deposits.": "Lumi Trades の公式連絡先：hello@ と lumi@lumitrades.io（admin@ は受信専用）、X、YouTube、GitHub、npm、API。ブローカーではなく、入金も受け付けません。",
+  "Lumi Trades (lumitrades.io) is an independent x402 seller trust list, built from real paid test-buys with signed receipts, and a free paper-trading crypto dashboard. It is not a broker or exchange: it takes no deposits, has no user accounts, and never asks for passwords, wallet keys or seed phrases.": "Lumi Trades（lumitrades.io）は、署名付きレシートのある実際の有料テスト購入にもとづく独立した x402 販売者トラストリストと、無料のペーパートレード暗号資産ダッシュボードです。ブローカーや取引所ではありません。入金を受け付けず、ユーザーアカウントもなく、パスワード、ウォレットの鍵、シードフレーズを求めることは決してありません。",
+  "The details below are in English only for now.": "以下の詳細は現在英語のみです。"
  }
 }

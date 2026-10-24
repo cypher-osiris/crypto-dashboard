@@ -900,7 +900,7 @@ if __name__ == "__main__":
             outs += [f"{pre}{slug}/index.html" for _c, slug in PAGES if os.path.exists(os.path.join(ROOT, pre, slug, "index.html"))]
             if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
                 outs.append(f"{pre}index.html")
-            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy", "trust-policy") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
+            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy", "contact", "trust-policy") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
             tdir = os.path.join(ROOT, pre, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
             if os.path.isdir(tdir):
                 outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(

@@ -13,7 +13,7 @@ API_ID = API + "/#api"
 LOGO = SITE + "assets/icon-512.png"
 ORG_ALT_NAME = "Trade with Lumi"   # the YouTube channel name (brand alias for search)
 SAME_AS = ["https://x.com/lumisinsite", "https://github.com/lumitrades", "https://www.npmjs.com/package/lumi-trades-mcp",
-           "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"]
+           "https://www.npmjs.com/package/lumi-check", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"]
 
 # keyword terms: generic ones are translated (and the English kept too), names / protocols / tickers are not
 KW_GENERIC = ["crypto signals", "trading signals", "support and resistance", "fear and greed index", "crypto market data API",
@@ -39,6 +39,13 @@ ORG_DESC = ("Lumi Trades is a free public paper-trading crypto dashboard and an 
 ORG_ISNT = ("Not a broker or exchange; Lumi never holds user funds. Lumi never asks for deposits, passwords or wallet keys, "
             "and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.")
 CONTACT_EMAIL = "hello@lumitrades.io"
+# Organization contactPoint (every page) and the /contact/ page (scripts/contact_page.py): the only addresses Lumi emails from.
+# admin@lumitrades.io is receive-only and is deliberately not a contact point.
+CONTACT_POINTS = [
+    {"@type": "ContactPoint", "contactType": "customer support", "email": CONTACT_EMAIL, "url": SITE + "contact/"},
+    {"@type": "ContactPoint", "contactType": "general", "email": "lumi@lumitrades.io", "url": SITE + "contact/"},
+    {"@type": "ContactPoint", "contactType": "security", "email": CONTACT_EMAIL, "url": SITE + ".well-known/security.txt"},
+]
 ORG_DESC_TRUST = ("Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents "
                   "through a pay-per-call x402 API and an MCP server.")
 API_NAME = "Lumi Trades API"
@@ -66,7 +73,7 @@ def organization(t, page=None):
             "alternateName": ORG_ALT_NAME, "url": SITE,
             "logo": {"@type": "ImageObject", "url": LOGO}, "description": t(ORG_DESC_TRUST if page == "trust" else ORG_DESC), "sameAs": SAME_AS,
             "disambiguatingDescription": t(ORG_ISNT),
-            "contactPoint": {"@type": "ContactPoint", "contactType": "customer support", "email": CONTACT_EMAIL},
+            "email": CONTACT_EMAIL, "contactPoint": CONTACT_POINTS,
             "knowsAbout": knows}
 
 
