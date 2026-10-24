@@ -274,8 +274,9 @@ class NoBitunixInStaticHtml(unittest.TestCase):
                     self.assertNotIn("bitunix", f.read().lower(), path)
 
     def test_generic_exchange_translated(self):
-        keys = ["a supported exchange ({sym}/USDT spot and perpetual futures)", "a supported exchange ({sym}/USDT spot)",
-                "A supported exchange ({sym}/USDT spot and perpetual futures)", "A supported exchange ({sym}/USDT spot)"]
+        keys = ["Other international exchanges that list {sym}",
+                "Outside the US, Kraken lists {sym} in many countries, and other international exchanges list it too. Availability depends on your country; check the exchange's supported-regions page.",
+                "Outside the US, many international exchanges list {sym}. Availability depends on your country; check the exchange's supported-regions page."]
         for lang in LANGS:
             for k in keys:
                 self.assertIn(k, i18n(lang), (lang, k))

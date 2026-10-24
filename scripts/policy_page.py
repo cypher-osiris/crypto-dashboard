@@ -56,7 +56,7 @@ SECTIONS = [
         "your findings (see <a href=\"{trust}#reply\">Right to reply</a>). If a re-test shows we got something wrong, we correct it.",
     ]),
     ("score", "How the score works", [
-        "Scores come from real paid test-buys of each seller's service, and every paid test-buy links to a receipt you can verify on a public ledger. "
+        "Scores come from real paid test-buys of each seller's service, and every paid test-buy is a real payment on a public ledger, kept with a signed receipt (tx hashes and receipts are in the paid vendor report). "
         "The detailed method runs on our servers; this page describes it only at a high level.",
     ]),
     ("oversight", "Human oversight", [

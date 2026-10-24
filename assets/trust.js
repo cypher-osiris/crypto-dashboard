@@ -29,10 +29,16 @@
   }
   function row(v) {
     const s = v.samples || {}, o = v.last_paid_observation, home = vendorLink(v);
-    const name = home ? `<a href="${esc(home)}" target="_blank" rel="noopener nofollow">${esc(v.name || v.id)}</a>` : esc(v.name || v.id);
+    const own = home.indexOf("https://api.lumitrades.io/trust/v/") === 0; // no working homepage: say it's Lumi's own result page
+    const name = own ? `${esc(v.name || v.id)} <a class="tr-own" href="${esc(home)}" target="_blank" rel="noopener">${esc(tr("Lumi test result"))} ↗</a>`
+      : home ? `<a href="${esc(home)}" target="_blank" rel="noopener nofollow">${esc(v.name || v.id)}</a>` : esc(v.name || v.id);
     const conf = String(v.confidence || "—");
     const confTxt = ["low", "medium", "high"].includes(conf) ? tr(conf) : conf;
     let ev = "—";
+    if (o && o.observed_at) { // outcome + time of the latest paid test-buy (free data); tx hashes are in the paid vendor report
+      const dv = o.delivery === "delivered" ? tr("Delivered") : (o.delivery === "not_delivered" || o.delivery === "failed" || o.data_returned === false) ? tr("No data") : tr("Inconclusive");
+      ev = `<span title="${esc(tr("Tx hash and signed receipt: paid vendor report ($0.02)"))}">${esc(dv)} · ${esc(fmt(o.observed_at))}</span>`;
+    }
     if (o && https(o.explorer)) {
       ev = `<a href="${esc(o.explorer)}" target="_blank" rel="noopener" title="${esc(o.summary || "")}">${esc(((o.amount || "") + " " + (o.asset || "")).trim())} · ${esc(o.data_returned ? tr("data") : tr("no data"))} ↗</a>`;
     }

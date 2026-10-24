@@ -223,12 +223,9 @@ def venues(cid, sym, coin_cfg, aff):
         us.append(f"Uphold ({up})")
     # The exchange is named only client-side, to non-US visitors (assets/affiliate.js fills #aff-coin); the static HTML,
     # FAQ and JSON-LD are served to US visitors too, so they say "a supported exchange" (scan 2026-10-23 follow-up).
-    perp = cid in BITUNIX_PERP
-    intl = [_("a supported exchange ({sym}/USDT spot and perpetual futures)" if perp else "a supported exchange ({sym}/USDT spot)", sym=sym)]
-    intl_list = [_("A supported exchange ({sym}/USDT spot and perpetual futures)" if perp else "A supported exchange ({sym}/USDT spot)", sym=sym)]
-    if kp:
-        intl.append(_("Kraken in many countries"))
-        intl_list.append(_("Kraken in many countries"))
+    # Static copy names no exchange outside the US except Kraken (scan 2026-10-24: no "a supported exchange" leftovers).
+    intl = []
+    intl_list = ([_("Kraken in many countries")] if kp else []) + [_("Other international exchanges that list {sym}", sym=sym)]
     return us, intl, intl_list, cb, kp, up
 
 
@@ -368,8 +365,7 @@ def set_block(src, marks, body):
 
 
 INDEX_TITLE = "Lumi Trades: trust layer for AI-agent payments on XRPL, Base and Stellar"
-INDEX_DESC = ("Lumi test-buys x402 sellers on XRPL, Base and Stellar and publishes signed receipts, "
-              "so AI agents know who delivers before they pay. Not financial advice.")   # keep under ~155 characters (search snippets)
+INDEX_DESC = ("Lumi test-buys x402 sellers on XRPL, Base and Stellar, with a signed receipt for each buy, so AI agents know who delivers. Not financial advice.")   # keep under ~155 characters (search snippets)
 # x402scan and some unfurlers read <title>, og:title and the meta description without decoding HTML entities: keep "&", quotes
 # and angle brackets out of these three (and the og/twitter description); use "and".
 INDEX_OG_TITLE = INDEX_TITLE
@@ -540,7 +536,8 @@ def build(dry=False):
                             + ("" if cb else _(" It isn't listed on Coinbase."))
                             + _(" Availability varies by state (for example, Uphold doesn't serve New York), so check the exchange's own list before signing up.")))
             faq.append((_("Where can I buy {sym} outside the US?", sym=sym),
-                        _("Outside the US, {venues} list it. Availability depends on your country; check the exchange's supported-regions page.", venues=_(" and ").join(intl))))
+                        (_("Outside the US, Kraken lists {sym} in many countries, and other international exchanges list it too. Availability depends on your country; check the exchange's supported-regions page.", sym=sym) if kp
+                         else _("Outside the US, many international exchanges list {sym}. Availability depends on your country; check the exchange's supported-regions page.", sym=sym))))
             if sup or res:
                 faq.append((_("What are the key {sym} support and resistance levels right now?", sym=sym),
                             _("As of Lumi's {date} update, support is at {sup} and resistance at {res}. {sym} last traded at {price} ({time}).",
@@ -686,7 +683,7 @@ def build(dry=False):
 <div class="bg-glow" aria-hidden="true"></div>
 <header class="cp-top"><div class="wrap cp-top-inner">
   <a class="cp-brand" href="{H}"><img class="wm" src="{R}assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>
-  <span class="cp-top-r">{i18n.switcher(L, slug + "/", langs)}<a class="cp-dash" href="{H}trust/">{E(_("Vendor trust list →"))}</a></span>
+  <span class="cp-top-r">{i18n.switcher(L, slug + "/", langs)}<a class="cp-dash" href="{H}trust/">{E(_("Vendor trust list →"))}</a>{site_chrome.social_icons(_chrome_h)}</span>
 </div></header>
 <div class="ticker lt-ticker" role="region" aria-label="{E(_("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
 <nav class="nav" aria-label="{E(_("Site"))}"><div class="wrap nav-inner">{site_chrome.site_nav(_chrome_h, H, nav)}</div></nav>
@@ -729,6 +726,7 @@ def build(dry=False):
 </main>
 <footer class="wrap footer">
   {site_chrome.foot_brand(_chrome_h)}
+  <p class="foot-soc">{site_chrome.social_icons(_chrome_h)}</p>
   <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))} · <a href="{H}privacy/">{E(_("Privacy Policy"))}</a>{policy_page.footer_link(types.SimpleNamespace(L=L, E=E, _=_), H)}</p>
   <p class="aff-foot" id="aff-foot" hidden></p>
 </footer>
@@ -759,6 +757,13 @@ def build(dry=False):
                     site_sm = sm_s
             except Exception as e:
                 print(f"build_pages: WARNING agents/trust pages failed ({L.code}): {e!r}", file=sys.stderr)
+        # ---- /blog/ index (English only; scripts/blog_index.py lists blog/<slug>/ posts) ----
+        if L.en and trade_pages:
+            try:
+                import blog_index
+                blog_index.build(h, trade_pages, V, gen_date, write)
+            except Exception as e:
+                print(f"build_pages: WARNING blog index failed: {e!r}", file=sys.stderr)
 
         # ---- the dashboard in this language (/<lang>/index.html from the English shell) ----
         if not L.en:
@@ -801,6 +806,8 @@ def build(dry=False):
         sm += url_el(p, lm, fq, pr)
     # English-only static blog posts (blog/<slug>/index.html, hand-built; no language alternates)
     bdir = os.path.join(ROOT, "blog")
+    if os.path.isfile(os.path.join(bdir, "index.html")):
+        sm.append(f'  <url><loc>{SITE}blog/</loc><lastmod>{gen_date}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>')
     if os.path.isdir(bdir):
         for d in sorted(os.listdir(bdir)):
             if os.path.exists(os.path.join(bdir, d, "index.html")):
