@@ -53,8 +53,10 @@
 - `GET /v1/trades`: Paper-trade history, $0.02 per call
 
 ## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
-- Monitor: $9 per 30 days. 1 endpoint: one test-buy per term (plus one recheck after a failure) and alerts
-- Monitor Plus: $29 per 30 days. Up to 20 endpoints: weekly test-buys and alerts
+- Watch Free: $0. 1 endpoint: a daily quote check, no test-buys
+- Watch: $5 per endpoint per 30 days. Hourly quote checks, a weekly test-buy, alerts, 30-day history and a status page
+- Watch Plus: $12 per endpoint per 30 days. Quote checks every 30 minutes, a daily test-buy rotating across the chains the endpoint accepts, schema and latency alerts, 90-day history
+- Watch Pro: $20 per endpoint per 30 days. Quote checks every 15 minutes, daily test-buys on up to 3 chains within the test-buy budget, all Watch Plus alerts, 90-day history and a monthly report signed by Lumi's wallet
 - Audit: $99 one-time. One test-buy of every listed endpoint, with a full report signed by Lumi's wallet
 - Free: $0. 1,000 lookups a month per key (wallet-signature signup), returns the verdict only
 - Feed credits: $1.50 per 1,000 lookups. Prepaid lookups on top of the free 1,000 a month; credits never expire

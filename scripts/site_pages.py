@@ -77,9 +77,12 @@ def route_counts():
 
 
 # (plan, price, what you get). Live: GET /v1/monitor and GET /v1/feed. 30-day plans, no auto-renew.
+# Watch tiers went live 2026-10-24 (per endpoint; legacy Monitor $9 / Monitor Plus $29 are grandfathered in the API, not sold here).
 MONITOR_PLANS = [
-    ("Monitor", ("{p} per 30 days", "$9"), "1 endpoint: one test-buy per term (plus one recheck after a failure) and alerts"),
-    ("Monitor Plus", ("{p} per 30 days", "$29"), "Up to 20 endpoints: weekly test-buys and alerts"),
+    ("Watch Free", ("{p}", "$0"), "1 endpoint: a daily quote check, no test-buys"),
+    ("Watch", ("{p} per endpoint per 30 days", "$5"), "Hourly quote checks, a weekly test-buy, alerts, 30-day history and a status page"),
+    ("Watch Plus", ("{p} per endpoint per 30 days", "$12"), "Quote checks every 30 minutes, a daily test-buy rotating across the chains the endpoint accepts, schema and latency alerts, 90-day history"),
+    ("Watch Pro", ("{p} per endpoint per 30 days", "$20"), "Quote checks every 15 minutes, daily test-buys on up to 3 chains within the test-buy budget, all Watch Plus alerts, 90-day history and a monthly report signed by Lumi's wallet"),
     ("Audit", ("{p} one-time", "$99"), "One test-buy of every listed endpoint, with a full report signed by Lumi's wallet"),
 ]
 FEED_PLANS = [
@@ -584,7 +587,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <section class="card cp-sec" id="sellers"><h2>{E(_t("For sellers: monitoring and audits"))}</h2>
 <p>{_t("Prove you control your payTo wallet by signing a challenge (XRPL or Base; Lumi never asks for keys or seeds), enrol your endpoints for free, then pay a plan with x402. Lumi test-buys your endpoints with real payments and alerts you by webhook or email when something breaks: no data, errors, timeouts, or a changed payTo, price or response schema.")}</p>
 {ptable(MONITOR_PLANS)}
-<p class="meta">{_t("Each test-buy is capped at $0.10 and funded from the plan fee. A paid plan is disclosed on the seller's public entry, and findings stay public with the seller's reply next to them. The “Tested by Lumi” badge is earned only from delivery results and is removed automatically when the seller's live score drops. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
+<p class="meta">{_t("Each test-buy is capped ($0.05 on Watch, $0.10 on Watch Plus and Watch Pro) and funded from the plan fee, never more than half of it. 10 or more endpoints: -20%; 3 terms prepaid: -10%; discounts do not stack (the larger applies). One free 14-day Watch Plus trial per seller (up to 3 endpoints, no card): it never converts and nothing is charged. A paid plan is disclosed on the seller's public entry, and findings stay public with the seller's reply next to them. The “Tested by Lumi” badge is earned only from delivery results and is removed automatically when the seller's live score drops. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
 {badge_section(h)}
 <section class="card cp-sec" id="feed"><h2>{E(_t("Trust data feed and license"))}</h2>
 <p>{_t("Keyed, licensed access to Lumi's trust observations for facilitators, wallets and agent frameworks: bulk lookups of up to 50 URLs or payTo addresses per request, a status-change feed and, on Feed Pro, a full snapshot export.")}</p>
