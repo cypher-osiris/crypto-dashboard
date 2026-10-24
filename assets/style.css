@@ -837,12 +837,26 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 /* /trust/: vendors without a working homepage link to Lumi's own result page, labelled as such */
 .tr-own{display:block;width:max-content;margin:.1rem 0 0;font-size:.74rem;color:var(--cyan);white-space:nowrap}
 .hx-price-note{font-size:.8rem;margin:10px 0 0;max-width:560px}
-/* phones: the top nav wraps onto rows (no sideways scroll, nothing cut off); it scrolls away with the page instead of sticking */
+/* top nav: on wider screens it wraps cleanly onto a second row instead of being cut off (the Markets group wraps inside
+   its own column, so the divider stays on the left); on phones it is ONE row that scrolls sideways, with a fade on the
+   right edge as the hint, so the hero starts near the top */
+.nav-inner{flex-wrap:wrap;overflow:visible;row-gap:4px;align-items:flex-start}
+.nav-grp{flex:1 1 0;min-width:0;flex-wrap:wrap;row-gap:4px}
 @media (max-width:600px){
   .nav{position:static}
-  .nav-inner{flex-wrap:wrap;overflow:visible;row-gap:4px;gap:4px 2px}
-  .nav a{padding:4px 9px;font-size:.8rem}
-  .nav-grp{flex:1 1 100%;flex-wrap:wrap;margin-left:0;padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:4px;gap:2px}
-  .cp-top-r{gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .nav-inner{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;gap:2px;padding-right:34px;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
+  .nav a{padding:4px 10px;font-size:.82rem}
+  .nav-grp{flex:none;flex-wrap:nowrap;margin-left:4px;padding-left:8px}
+  /* headers: brand left, language + social icons in one tidy row on the right */
+  .cp-top-r{gap:6px;flex-wrap:nowrap}
+  .cp-top-r .cp-dash{white-space:nowrap}
+  .cp-top-r .soc{gap:6px}
   .cp-top-r .soc-i{width:28px;height:28px}
+  .pv-top-inner{flex-wrap:nowrap;align-items:flex-start}
+  .pv-top-right{flex-wrap:wrap;justify-content:flex-end;gap:6px}
+  .pv-top-right .pv-snap{order:9;flex-basis:100%;text-align:right;font-size:.74rem}
 }
+/* smallest phones: the "Vendor trust list" shortcut is the second item of the nav row right below, so it steps aside
+   to keep the language menu and social icons on one line */
+@media (max-width:400px){ .cp-top-r .cp-dash{display:none} }

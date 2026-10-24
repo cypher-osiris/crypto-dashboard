@@ -44,7 +44,7 @@ def page(h, tp, V, gen_date, root=ROOT):
         return (f'<li class="bi-post"><a href="{E(p["slug"])}/"><b>{E(p["title"])}</b></a>{when}'
                 f'<span>{E(p["desc"])}</span><a class="bi-more" href="{E(p["slug"])}/">Read the article →</a></li>')
     items = "".join(item(p) for p in ps) or "<li>No posts yet.</li>"
-    nav = tp.site_nav(h, "../", "", None)
+    nav = tp.site_nav(h, "../", "", "blog")
     return f"""<!doctype html>
 <html lang="en">
 <head>
