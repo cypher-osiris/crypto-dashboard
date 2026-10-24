@@ -132,11 +132,13 @@
 
   /* ---------- 2. heat-map tiles ---------- */
   function tileHref(id, sym) { return D.pages.has(sym.toLowerCase()) ? `${HOME}${sym.toLowerCase()}/` : `${ROOT}classic/#coins`; }
+  // Even rows above the 2-col phone layout: 8 -> 4+4, 6 -> 6 (3+3 on tablets), 4 -> 4, 3/9 -> 3s; other counts fall back to auto-fit.
+  function tileCols(n) { const c = n % 4 === 0 ? 4 : n === 6 ? 6 : n % 3 === 0 ? 3 : n <= 5 ? n : 0; return c ? ` data-cols="${c}"` : ""; }
   function renderTiles(D) {
     const { prices, signals, trades } = D;
     const active = new Set((trades.trades || []).filter((t) => ["pending", "open"].includes(t.status)).map((t) => t.coin));
     const groups = (D.coins.groups || []).map((g) => ({ ...g, ids: D.ids.filter((id) => (prices.assets[id].group || "") === g.id) }));
-    $("pv-tiles").innerHTML = groups.filter((g) => g.ids.length).map((g) => `<h3 class="pv-group">${esc(tr(g.label))}</h3><div class="pv-tile-grid">` + g.ids.map((id) => {
+    $("pv-tiles").innerHTML = groups.filter((g) => g.ids.length).map((g) => `<h3 class="pv-group">${esc(tr(g.label))}</h3><div class="pv-tile-grid"${tileCols(g.ids.length)}>` + g.ids.map((id) => {
       const a = prices.assets[id], c = a.change_24h || 0, k = Math.min(Math.abs(c) / 8, 1);
       const rgb = c >= 0 ? "34,197,94" : "244,63,94";
       const s = (signals.coins || {})[id] || {};

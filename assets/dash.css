@@ -70,6 +70,11 @@
 /* 2. tiles */
 .pv-group{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 8px}
 .pv-tile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.pv-tile-grid[data-cols="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pv-tile-grid[data-cols="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pv-tile-grid[data-cols="5"]{grid-template-columns:repeat(5,minmax(0,1fr))}
+.pv-tile-grid[data-cols="6"]{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (max-width:960px){.pv-tile-grid[data-cols="6"]{grid-template-columns:repeat(3,minmax(0,1fr))}.pv-tile-grid[data-cols="5"]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
 .pv-tile{display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:14px;color:var(--text);min-width:0;
   background:linear-gradient(160deg,var(--heat),rgba(17,24,38,.85) 75%);border:1px solid var(--edge);transition:transform .15s,box-shadow .15s}
 .pv-tile:hover{text-decoration:none;transform:translateY(-2px);box-shadow:0 8px 24px -10px var(--edge)}
@@ -200,7 +205,7 @@
   .pv-lad-lbls span{font-size:.7rem}
   .pv-glance{grid-template-columns:1fr}
   .pv-h{font-size:1.25rem}
-  .pv-tile-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .pv-tile-grid,.pv-tile-grid[data-cols]{grid-template-columns:1fr 1fr;gap:8px}
   .pv-tile{padding:10px}
   .pv-cards,.pv-analysis{grid-template-columns:minmax(0,1fr)}
   .pv-brand small{display:none}
