@@ -306,7 +306,15 @@
   "Inconclusive": "判定不能",
   "Lumi test result": "Lumiのテスト結果",
   "No data": "データなし",
-  "Tx hash and signed receipt: paid vendor report ($0.02)": "トランザクションハッシュと署名付き領収記録：有料ベンダーレポート（$0.02）"
+  "Tx hash and signed receipt: paid vendor report ($0.02)": "トランザクションハッシュと署名付き領収記録：有料ベンダーレポート（$0.02）",
+  "Tested by Lumi": "Tested by Lumi",
+  "delivered": "配信あり",
+  "no delivery": "配信なし",
+  "inconclusive": "判定不能",
+  "Latest paid test-buy by Lumi: data delivered.": "Lumiの最新の有料テスト購入：データが配信されました。",
+  "Latest paid test-buy by Lumi: no data delivered.": "Lumiの最新の有料テスト購入：データは配信されませんでした。",
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumiの最新の有料テスト購入：結果は判定不能です。",
+  "Date in UTC. A dated test result, not an endorsement or guarantee.": "日付はUTC。日付入りのテスト結果であり、推奨や保証ではありません。"
  },
  "pages": {
   " (filled {when})": "（{when}に約定）",
@@ -1021,6 +1029,16 @@
   "As of {date}, Lumi had checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.": "{date}時点で、LumiはCoinbaseのx402 BazaarでXRPLの支払いオプションを掲載している第三者ホスト{checked}件をすべて確認し、そのうち{bought}件からXRPLメインネットで実際に購入し、{delivered}件がデータを返しました。すべての支払いはXRPLメインネットのトランザクションです。",
   "As of {date}, Lumi had checked {checked} of the {total} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.": "{date}時点で、LumiはCoinbaseのx402 BazaarでXRPLの支払いオプションを掲載している第三者ホスト{total}件のうち{checked}件を確認し、そのうち{bought}件からXRPLメインネットで実際に購入し、{delivered}件がデータを返しました。すべての支払いはXRPLメインネットのトランザクションです。",
   "Lumi test-buys x402 sellers on XRPL, Base and Stellar, with a signed receipt for each buy, so AI agents know who delivers. Not financial advice.": "LumiはXRPL、Base、Stellarのx402販売者からテスト購入し、購入ごとに署名付き領収記録を保管するので、AIエージェントは誰がきちんと提供するかがわかります。投資助言ではありません。",
-  "Blog": "ブログ"
+  "Blog": "ブログ",
+  "Tested by Lumi": "Tested by Lumi",
+  "delivered": "配信あり",
+  "no delivery": "配信なし",
+  "inconclusive": "判定不能",
+  "Latest paid test-buy by Lumi: data delivered.": "Lumiの最新の有料テスト購入：データが配信されました。",
+  "Latest paid test-buy by Lumi: no data delivered.": "Lumiの最新の有料テスト購入：データは配信されませんでした。",
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumiの最新の有料テスト購入：結果は判定不能です。",
+  "Date in UTC. A dated test result, not an endorsement or guarantee.": "日付はUTC。日付入りのテスト結果であり、推奨や保証ではありません。",
+  "Look for the Tested by Lumi badge: it means Lumi bought from this seller and checked the delivery.": "「Tested by Lumi」バッジを目印に：Lumiがこの販売者から購入し、配信を確認したことを示します。",
+  "Green: the latest paid test-buy got data back. Red: it did not. The date (UTC) and chain are those of that test-buy. Sellers Lumi has not bought from yet have no badge.": "緑：最新の有料テスト購入でデータが返ってきました。赤：返ってきませんでした。日付（UTC）とチェーンはそのテスト購入のものです。Lumiがまだ購入していない販売者にはバッジがありません。"
  }
 }

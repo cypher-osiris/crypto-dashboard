@@ -306,7 +306,15 @@
   "Inconclusive": "판단 불가",
   "Lumi test result": "Lumi 테스트 결과",
   "No data": "데이터 없음",
-  "Tx hash and signed receipt: paid vendor report ($0.02)": "트랜잭션 해시와 서명된 영수증: 유료 벤더 보고서($0.02)"
+  "Tx hash and signed receipt: paid vendor report ($0.02)": "트랜잭션 해시와 서명된 영수증: 유료 벤더 보고서($0.02)",
+  "Tested by Lumi": "Tested by Lumi",
+  "delivered": "전달됨",
+  "no delivery": "전달 없음",
+  "inconclusive": "판단 불가",
+  "Latest paid test-buy by Lumi: data delivered.": "Lumi의 최신 유료 테스트 구매: 데이터가 전달되었습니다.",
+  "Latest paid test-buy by Lumi: no data delivered.": "Lumi의 최신 유료 테스트 구매: 데이터가 전달되지 않았습니다.",
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumi의 최신 유료 테스트 구매: 결과 판단 불가.",
+  "Date in UTC. A dated test result, not an endorsement or guarantee.": "날짜는 UTC 기준. 날짜가 표시된 테스트 결과이며, 보증이나 추천이 아닙니다."
  },
  "pages": {
   " (filled {when})": " ({when} 체결)",
@@ -1021,6 +1029,16 @@
   "As of {date}, Lumi had checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.": "{date} 기준, Lumi는 Coinbase x402 Bazaar에서 XRPL 결제 옵션을 제공하는 제3자 호스트 {checked}곳을 모두 확인했고, 그중 {bought}곳에서 XRPL 메인넷 실제 구매를 했으며, {delivered}곳이 데이터를 반환했습니다. 모든 결제는 XRPL 메인넷 트랜잭션입니다.",
   "As of {date}, Lumi had checked {checked} of the {total} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.": "{date} 기준, Lumi는 Coinbase x402 Bazaar에서 XRPL 결제 옵션을 제공하는 제3자 호스트 {total}곳 중 {checked}곳을 확인했고, 그중 {bought}곳에서 XRPL 메인넷 실제 구매를 했으며, {delivered}곳이 데이터를 반환했습니다. 모든 결제는 XRPL 메인넷 트랜잭션입니다.",
   "Lumi test-buys x402 sellers on XRPL, Base and Stellar, with a signed receipt for each buy, so AI agents know who delivers. Not financial advice.": "Lumi는 XRPL, Base, Stellar의 x402 판매자에게서 테스트 구매를 하고 구매마다 서명된 영수증을 보관해, AI 에이전트가 누가 제대로 전달하는지 알 수 있게 합니다. 투자 조언이 아닙니다.",
-  "Blog": "블로그"
+  "Blog": "블로그",
+  "Tested by Lumi": "Tested by Lumi",
+  "delivered": "전달됨",
+  "no delivery": "전달 없음",
+  "inconclusive": "판단 불가",
+  "Latest paid test-buy by Lumi: data delivered.": "Lumi의 최신 유료 테스트 구매: 데이터가 전달되었습니다.",
+  "Latest paid test-buy by Lumi: no data delivered.": "Lumi의 최신 유료 테스트 구매: 데이터가 전달되지 않았습니다.",
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumi의 최신 유료 테스트 구매: 결과 판단 불가.",
+  "Date in UTC. A dated test result, not an endorsement or guarantee.": "날짜는 UTC 기준. 날짜가 표시된 테스트 결과이며, 보증이나 추천이 아닙니다.",
+  "Look for the Tested by Lumi badge: it means Lumi bought from this seller and checked the delivery.": "“Tested by Lumi” 배지를 확인하세요: Lumi가 이 판매자에게서 구매하고 전달 여부를 확인했다는 뜻입니다.",
+  "Green: the latest paid test-buy got data back. Red: it did not. The date (UTC) and chain are those of that test-buy. Sellers Lumi has not bought from yet have no badge.": "초록: 최신 유료 테스트 구매에서 데이터를 받았습니다. 빨강: 받지 못했습니다. 날짜(UTC)와 체인은 해당 테스트 구매 기준입니다. Lumi가 아직 구매하지 않은 판매자에게는 배지가 없습니다."
  }
 }

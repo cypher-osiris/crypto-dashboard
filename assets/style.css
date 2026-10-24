@@ -860,3 +860,13 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 /* smallest phones: the "Vendor trust list" shortcut is the second item of the nav row right below, so it steps aside
    to keep the language menu and social icons on one line */
 @media (max-width:400px){ .cp-top-r .cp-dash{display:none} }
+/* "Tested by Lumi" badge on /trust/ (same look as the API badge /badge/{key}.svg): dark-grey label pill joined to a status pill */
+.lt-badge{display:flex;width:max-content;max-width:100%;margin:.3rem 0 .15rem;border-radius:3px;overflow:hidden;font:400 10.5px/1.6 Verdana,Geneva,"DejaVu Sans",system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#fff;box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.lt-badge>span{padding:1px 6px;white-space:nowrap;text-shadow:0 1px 0 rgba(1,1,1,.3)}
+.lt-b-l{background:#3a3f47}
+.lt-b-r{background:#2e8540}
+.lt-badge.b-no_delivery .lt-b-r{background:#c62828}
+.lt-badge.b-inconclusive .lt-b-r{background:#5f6b7a}
+.tr-badge-note{margin:.2rem 0 .8rem;font-size:.9rem}
+.tr-badge-note .muted{display:block;font-size:.8rem;margin-top:.15rem}
+@media (max-width:600px){.lt-badge>span{padding:1px 5px}}

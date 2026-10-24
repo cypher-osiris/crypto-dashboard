@@ -261,6 +261,64 @@ def vendor_link(v):
     return home
 
 
+# ---------- "Tested by Lumi" badge on /trust/ (same look as the API badge /badge/{key}.svg and the brand video) ----------
+# Built only from the vendor's latest stored paid test-buy (last_paid_observation): result, UTC date (MM-DD-YYYY, the
+# same date the API badge prints) and chain. No paid test-buy on record = no badge. Display only: it never changes a
+# score. Mirrored in assets/trust.js (badge()).
+def badge_chain(network):
+    n = str(network or "").lower()
+    if n.startswith("xrpl"):
+        return "XRPL"
+    if n.startswith("stellar"):
+        return "Stellar"
+    if n in ("base", "base-mainnet", "eip155:8453"):
+        return "Base"
+    return ""
+
+
+def badge_result(o):
+    """'delivered' | 'no_delivery' | 'inconclusive' for a real paid test-buy, else None (never tested: no badge)."""
+    if not o or not o.get("observed_at"):
+        return None
+    dv = o.get("delivery")
+    if dv == "delivered":
+        return "delivered"
+    if dv in ("not_delivered", "failed") or o.get("data_returned") is False:
+        return "no_delivery"
+    return "inconclusive"
+
+
+def badge_date(iso):
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", str(iso or ""))
+    return f"{m.group(2)}-{m.group(3)}-{m.group(1)}" if m else ""
+
+
+BADGE_NOTE = "Look for the Tested by Lumi badge: it means Lumi bought from this seller and checked the delivery."
+BADGE_KEY = ("Green: the latest paid test-buy got data back. Red: it did not. The date (UTC) and chain are those of "
+             "that test-buy. Sellers Lumi has not bought from yet have no badge.")
+BADGE_RES = {"delivered": "delivered", "no_delivery": "no delivery", "inconclusive": "inconclusive"}
+BADGE_TIP = {"delivered": "Latest paid test-buy by Lumi: data delivered.",
+             "no_delivery": "Latest paid test-buy by Lumi: no data delivered.",
+             "inconclusive": "Latest paid test-buy by Lumi: result inconclusive."}
+BADGE_TIP_END = "Date in UTC. A dated test result, not an endorsement or guarantee."
+
+
+def badge_html(h, v):
+    """The two-pill badge for one vendor, or "" when Lumi has no real completed paid test-buy for it."""
+    E, _t = h.E, h._
+    o = v.get("last_paid_observation") or None
+    res = badge_result(o)
+    day = badge_date(o.get("observed_at")) if res else ""
+    if not res or not day:
+        return ""
+    chain = badge_chain(o.get("network"))
+    right = " · ".join([_t(BADGE_RES[res]), day] + ([chain] if chain else []))
+    label = _t("Tested by Lumi")
+    tip = _t(BADGE_TIP[res]) + " " + _t(BADGE_TIP_END)
+    return (f'<span class="lt-badge b-{res}" role="img" aria-label="{E(label)}: {E(right)}" title="{E(tip)}">'
+            f'<span class="lt-b-l" aria-hidden="true">{E(label)}</span><span class="lt-b-r" aria-hidden="true">{E(right)}</span></span>')
+
+
 def vendor_row(h, v):
     E, _t = h.E, h._
     s = v.get("samples") or {}
@@ -284,7 +342,7 @@ def vendor_row(h, v):
     if v.get("replies") and _https(v.get("detail")):
         ev += f' <a href="{E(v["detail"])}" target="_blank" rel="noopener">· {E(_t("reply ({n})", n=v["replies"]))}</a>'
     lc = _last_checked(v)
-    return (f'<tr><td>{name}<span class="vid">{E(v.get("id"))}</span></td>'
+    return (f'<tr><td>{name}{badge_html(h, v)}<span class="vid">{E(v.get("id"))}</span></td>'
             f'<td class="num">{"—" if v.get("score") is None else E(v.get("score"))}</td>'
             f'<td><span class="tr-conf c-{E(conf)}">{E(_t(conf) if conf in ("low", "medium", "high") else conf)}</span></td>'
             f'<td class="num">{E(s.get("paid_test_buys") or 0)}</td><td class="num">{E(s.get("delivered") or 0)}</td>'
@@ -461,6 +519,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 </details>
 <section class="card cp-sec" id="vendors">
 <h2>{E(_t("Vendors on the curated list"))} <span class="muted" id="tr-count">{f"({len(vendors)})" if vendors else ""}</span></h2>
+<p class="tr-badge-note">{E(_t(BADGE_NOTE))} <span class="muted">{E(_t(BADGE_KEY))}</span></p>
 {status}
 <div class="tr-wrap"><table class="cp-table tr-table" id="tr-table"{"" if vendors else " hidden"}>
 <thead><tr><th>{E(_t("Vendor"))}</th><th class="num">{E(_t("Score"))}</th><th>{E(_t("Confidence"))}</th><th class="num">{E(_t("Paid buys"))}</th><th class="num">{E(_t("Delivered"))}</th><th>{E(_t("Last checked"))}</th><th>{E(_t("Last test-buy"))}</th></tr></thead>

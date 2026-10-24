@@ -306,7 +306,15 @@
   "Inconclusive": "Belirsiz",
   "Lumi test result": "Lumi test sonucu",
   "No data": "Veri yok",
-  "Tx hash and signed receipt: paid vendor report ($0.02)": "İşlem hash'i ve imzalı makbuz: ücretli sağlayıcı raporu ($0.02)"
+  "Tx hash and signed receipt: paid vendor report ($0.02)": "İşlem hash'i ve imzalı makbuz: ücretli sağlayıcı raporu ($0.02)",
+  "Tested by Lumi": "Tested by Lumi",
+  "delivered": "teslim edildi",
+  "no delivery": "teslim yok",
+  "inconclusive": "belirsiz",
+  "Latest paid test-buy by Lumi: data delivered.": "Lumi'nin son ücretli test alımı: veri teslim edildi.",
+  "Latest paid test-buy by Lumi: no data delivered.": "Lumi'nin son ücretli test alımı: veri teslim edilmedi.",
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumi'nin son ücretli test alımı: sonuç belirsiz.",
+  "Date in UTC. A dated test result, not an endorsement or guarantee.": "Tarih UTC'dir. Tarihli bir test sonucudur; bir onay ya da garanti değildir."
  },
  "pages": {
   " (filled {when})": " ({when} gerçekleşti)",
@@ -1021,6 +1029,16 @@
   "As of {date}, Lumi had checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.": "{date} itibarıyla Lumi, Coinbase x402 Bazaar'da XRPL ödeme seçeneği sunan {checked} üçüncü taraf sunucunun tamamını kontrol etti, {bought} tanesinden XRPL ana ağında gerçek bir satın alma yaptı ve {delivered} tanesi veri döndürdü. Her ödeme bir XRPL ana ağ işlemidir.",
   "As of {date}, Lumi had checked {checked} of the {total} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.": "{date} itibarıyla Lumi, Coinbase x402 Bazaar'da XRPL ödeme seçeneği sunan {total} üçüncü taraf sunucudan {checked} tanesini kontrol etti, {bought} tanesinden XRPL ana ağında gerçek bir satın alma yaptı ve {delivered} tanesi veri döndürdü. Her ödeme bir XRPL ana ağ işlemidir.",
   "Lumi test-buys x402 sellers on XRPL, Base and Stellar, with a signed receipt for each buy, so AI agents know who delivers. Not financial advice.": "Lumi, XRPL, Base ve Stellar'daki x402 satıcılarından imzalı makbuzlu test alımları yapar; ajanlar kimin teslim ettiğini bilir. Yatırım tavsiyesi değildir.",
-  "Blog": "Blog"
+  "Blog": "Blog",
+  "Tested by Lumi": "Tested by Lumi",
+  "delivered": "teslim edildi",
+  "no delivery": "teslim yok",
+  "inconclusive": "belirsiz",
+  "Latest paid test-buy by Lumi: data delivered.": "Lumi'nin son ücretli test alımı: veri teslim edildi.",
+  "Latest paid test-buy by Lumi: no data delivered.": "Lumi'nin son ücretli test alımı: veri teslim edilmedi.",
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumi'nin son ücretli test alımı: sonuç belirsiz.",
+  "Date in UTC. A dated test result, not an endorsement or guarantee.": "Tarih UTC'dir. Tarihli bir test sonucudur; bir onay ya da garanti değildir.",
+  "Look for the Tested by Lumi badge: it means Lumi bought from this seller and checked the delivery.": "“Tested by Lumi” rozetine bakın: Lumi'nin bu satıcıdan satın aldığı ve teslimatı kontrol ettiği anlamına gelir.",
+  "Green: the latest paid test-buy got data back. Red: it did not. The date (UTC) and chain are those of that test-buy. Sellers Lumi has not bought from yet have no badge.": "Yeşil: son ücretli test alımında veri geldi. Kırmızı: gelmedi. Tarih (UTC) ve zincir o test alımına aittir. Lumi'nin henüz satın almadığı satıcıların rozeti yoktur."
  }
 }

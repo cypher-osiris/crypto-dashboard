@@ -27,6 +27,30 @@
     t.sort();
     return t.length ? t[t.length - 1] : null;
   }
+  // "Tested by Lumi" badge from the latest stored paid test-buy only (mirrors badge_html() in scripts/site_pages.py):
+  // result · UTC date (MM-DD-YYYY, as on the API badge) · chain. No paid test-buy on record = no badge.
+  function chainName(n) {
+    n = String(n || "").toLowerCase();
+    if (n.indexOf("xrpl") === 0) return "XRPL";
+    if (n.indexOf("stellar") === 0) return "Stellar";
+    return ["base", "base-mainnet", "eip155:8453"].includes(n) ? "Base" : "";
+  }
+  const RES = { delivered: "delivered", no_delivery: "no delivery", inconclusive: "inconclusive" };
+  const TIP = { delivered: "Latest paid test-buy by Lumi: data delivered.", no_delivery: "Latest paid test-buy by Lumi: no data delivered.",
+    inconclusive: "Latest paid test-buy by Lumi: result inconclusive." };
+  function badge(o) {
+    if (!o || !o.observed_at) return "";
+    const m = String(o.observed_at).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return "";
+    const res = o.delivery === "delivered" ? "delivered"
+      : (o.delivery === "not_delivered" || o.delivery === "failed" || o.data_returned === false) ? "no_delivery" : "inconclusive";
+    const ch = chainName(o.network);
+    const right = [tr(RES[res]), m[2] + "-" + m[3] + "-" + m[1]].concat(ch ? [ch] : []).join(" · ");
+    const label = tr("Tested by Lumi");
+    const tip = tr(TIP[res]) + " " + tr("Date in UTC. A dated test result, not an endorsement or guarantee.");
+    return `<span class="lt-badge b-${res}" role="img" aria-label="${esc(label)}: ${esc(right)}" title="${esc(tip)}">` +
+      `<span class="lt-b-l" aria-hidden="true">${esc(label)}</span><span class="lt-b-r" aria-hidden="true">${esc(right)}</span></span>`;
+  }
   function row(v) {
     const s = v.samples || {}, o = v.last_paid_observation, home = vendorLink(v);
     const own = home.indexOf("https://api.lumitrades.io/trust/v/") === 0; // no working homepage: say it's Lumi's own result page
@@ -43,7 +67,7 @@
       ev = `<a href="${esc(o.explorer)}" target="_blank" rel="noopener" title="${esc(o.summary || "")}">${esc(((o.amount || "") + " " + (o.asset || "")).trim())} · ${esc(o.data_returned ? tr("data") : tr("no data"))} ↗</a>`;
     }
     if (v.replies && https(v.detail)) ev += ` <a href="${esc(v.detail)}" target="_blank" rel="noopener">· ${esc(tr("reply ({n})", { n: v.replies }))}</a>`;
-    return `<tr><td>${name}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
+    return `<tr><td>${name}${badge(o)}<span class="vid">${esc(v.id)}</span></td><td class="num">${v.score == null ? "—" : esc(v.score)}</td>` +
       `<td><span class="tr-conf c-${esc(conf)}">${esc(confTxt)}</span></td><td class="num">${esc(s.paid_test_buys || 0)}</td>` +
       `<td class="num">${esc(s.delivered || 0)}</td><td>${esc(fmt(lastChecked(v)))}</td><td>${ev}</td></tr>`;
   }

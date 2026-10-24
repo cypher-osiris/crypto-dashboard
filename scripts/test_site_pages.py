@@ -283,5 +283,47 @@ class NoBitunixInStaticHtml(unittest.TestCase):
                 self.assertNotIn("bitunix", i18n(lang)[k].lower())
 
 
+class TrustBadge(unittest.TestCase):
+    """/trust/ "Tested by Lumi" badge: only from a real paid test-buy, never invented, same in all 6 languages."""
+    class H:
+        E = staticmethod(lambda s: __import__("html").escape(str(s)))
+        _ = staticmethod(lambda s, **kw: s.format(**kw) if kw else s)
+
+    def test_delivered(self):
+        v = {"last_paid_observation": {"observed_at": "2026-10-24T09:21:21.000Z", "network": "xrpl:0", "delivery": "delivered", "data_returned": True}}
+        b = sp.badge_html(self.H, v)
+        self.assertIn("b-delivered", b)
+        self.assertIn(">Tested by Lumi<", b)
+        self.assertIn(">delivered · 10-24-2026 · XRPL<", b)
+
+    def test_no_delivery_and_chains(self):
+        for net, ch in (("eip155:8453", "Base"), ("stellar:pubnet", "Stellar")):
+            v = {"last_paid_observation": {"observed_at": "2026-10-23T04:12:22Z", "network": net, "delivery": "not_delivered", "data_returned": False}}
+            b = sp.badge_html(self.H, v)
+            self.assertIn("b-no_delivery", b)
+            self.assertIn(f">no delivery · 10-23-2026 · {ch}<", b)
+
+    def test_never_tested_or_unknown(self):
+        self.assertEqual(sp.badge_html(self.H, {}), "")
+        self.assertEqual(sp.badge_html(self.H, {"last_paid_observation": None}), "")
+        self.assertEqual(sp.badge_html(self.H, {"last_paid_observation": {"delivery": "delivered"}}), "")  # no date: no badge
+        b = sp.badge_html(self.H, {"last_paid_observation": {"observed_at": "2026-10-24T01:00:00Z", "network": "solana:x", "delivery": "delivered"}})
+        self.assertIn(">delivered · 10-24-2026<", b)  # unknown chain is left out, not guessed
+
+    def test_no_scam_or_pnl_wording(self):
+        txt = " ".join([sp.BADGE_NOTE, sp.BADGE_KEY, sp.BADGE_TIP_END, *sp.BADGE_TIP.values(), *sp.BADGE_RES.values()]).lower()
+        for w in ("scam", "fraud", "p&l", "profit", "track record"):
+            self.assertNotIn(w, txt)
+
+    def test_translated(self):
+        keys = [sp.BADGE_NOTE, sp.BADGE_KEY, sp.BADGE_TIP_END, "Tested by Lumi", *sp.BADGE_TIP.values(), *sp.BADGE_RES.values()]
+        for lang in LANGS:
+            pages = i18n(lang)
+            for k in keys:
+                self.assertIn(k, pages, f"{lang}: {k}")
+            self.assertEqual(pages["Tested by Lumi"], "Tested by Lumi")
+            self.assertIn("Tested by Lumi", pages[sp.BADGE_NOTE])
+
+
 if __name__ == "__main__":
     unittest.main()
