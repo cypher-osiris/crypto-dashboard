@@ -376,7 +376,7 @@ INDEX_DESC = ("Lumi test-buys x402 sellers on XRPL, Base and Stellar and publish
 # and angle brackets out of these three (and the og/twitter description); use "and".
 INDEX_OG_TITLE = INDEX_TITLE
 INDEX_OG_DESC = INDEX_DESC
-INDEX_IMG_ALT = "Lumi Trades card: today's paper-trade slate with entry zones and stops"
+INDEX_IMG_ALT = "Lumi wordmark under a Milky Way night sky"
 DATASET_DESC = ("Crypto prices (30-day hourly history), technical signals (RSI, MACD, EMA, Bollinger, StochRSI, volume on 1h/4h/1d), "
                 "an AI's active paper-trade ideas with entries, stops and targets, and indicator statistics. Updated several times a day. "
                 "Paper trades only; not financial advice.")
@@ -689,7 +689,7 @@ def build(dry=False):
 <body class="cp lgw">
 <div class="bg-glow" aria-hidden="true"></div>
 <header class="cp-top"><div class="wrap cp-top-inner">
-  <a class="cp-brand" href="{H}"><img src="{R}assets/brand/logo.png?v={V}" alt="" width="32" height="32"><b>Lumi Trades</b></a>
+  <a class="cp-brand" href="{H}"><img class="wm" src="{R}assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>
   <span class="cp-top-r">{i18n.switcher(L, slug + "/", langs)}<a class="cp-dash" href="{H}#slate">{_("Dashboard &amp; trade ideas →")}</a></span>
 </div></header>
 <div class="ticker lt-ticker" role="region" aria-label="{E(_("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
