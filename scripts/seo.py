@@ -28,8 +28,13 @@ KW_PAGE = {  # which terms lead on each page (the rest follow)
     "trust": ["x402 vendor reputation", "trust score", "x402", "AI agent API", "pay per call", "XRPL", "USDC on Base"],
 }
 
+# Trust-branded pages (/trust/ and its JSON-LD) never name or upsell Lumi Market Ideas (signals, trade ideas).
+NOT_ON_TRUST = {"crypto signals", "trading signals", "paper trading"}
+
 ORG_DESC = ("Lumi Trades publishes an AI's crypto market analysis and paper-trade ideas, and sells crypto market data to AI agents "
             "through a pay-per-call x402 API and an MCP server.")
+ORG_DESC_TRUST = ("Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents "
+                  "through a pay-per-call x402 API and an MCP server.")
 API_NAME = "Lumi Trades API"
 API_DESC = ("Pay-per-call crypto market data API for AI agents: trading signals, support and resistance levels, CoinMarketCap Fear & Greed "
             "sentiment, a daily market brief and a daily Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoin rules, tokenization). "
@@ -39,6 +44,8 @@ API_DESC = ("Pay-per-call crypto market data API for AI agents: trading signals,
 def keywords(t, page, en):
     """Comma-separated keywords meta for a page: page-specific terms first, translated generic terms plus the English ones."""
     order = KW_PAGE.get(page, []) + [k for k in KW_GENERIC + KW_NAMES if k not in KW_PAGE.get(page, [])]
+    if page == "trust":
+        order = [k for k in order if k not in NOT_ON_TRUST]
     out = []
     for k in order:
         for v in ([k] if en or k in KW_NAMES else [t(k), k]):
@@ -47,11 +54,12 @@ def keywords(t, page, en):
     return ", ".join(out)
 
 
-def organization(t):
+def organization(t, page=None):
+    knows = [k for k in KW_GENERIC + KW_NAMES if page != "trust" or k not in NOT_ON_TRUST]
     return {"@context": "https://schema.org", "@type": "Organization", "@id": ORG_ID, "name": "Lumi Trades",
             "alternateName": ORG_ALT_NAME, "url": SITE,
-            "logo": {"@type": "ImageObject", "url": LOGO}, "description": t(ORG_DESC), "sameAs": SAME_AS,
-            "knowsAbout": KW_GENERIC + KW_NAMES}
+            "logo": {"@type": "ImageObject", "url": LOGO}, "description": t(ORG_DESC_TRUST if page == "trust" else ORG_DESC), "sameAs": SAME_AS,
+            "knowsAbout": knows}
 
 
 def website(t, url, lang, desc):
@@ -169,17 +177,29 @@ def faq_html(t, E):
     return f'<section class="card cp-sec" id="faq"><h2>{E(t("Questions agents and developers ask"))}</h2>{items}</section>'
 
 
-def llms_txt(prices, plans=()):
-    """/llms.txt (llmstxt.org format): where an LLM or agent finds the API docs and the human pages. English only."""
-    rows = "\n".join(f"- `{e}`: {n}, {p if p == 'free' else p + ' per call'}" for n, e, p in prices)
+MARKET_IDEAS_NOTICE = "Paper-trade analysis, not investment advice. Lumi does not trade real money."
+
+
+def llms_txt(prices, plans=(), groups=None):
+    """/llms.txt (llmstxt.org format): where an LLM or agent finds the API docs and the human pages. English only.
+    groups = [(title, rows)]: the price list split into Lumi Trust, Market data and Lumi Market Ideas."""
+    line = lambda n, e, p: f"- `{e}`: {n}, {p if p == 'free' else p + ' per call'}"
+    if groups:
+        rows = "\n\n".join(f"### {g}\n" + ("> " + MARKET_IDEAS_NOTICE + "\n" if g == "Lumi Market Ideas" else "")
+                            + "\n".join(line(*x) for x in items) for g, items in groups)
+    else:
+        rows = "\n".join(line(*x) for x in prices)
     plan_rows = "\n".join(f"- {n}: {fmt.format(p=p)}. {d}" for n, (fmt, p), d in plans)
     return f"""# Lumi Trades
 
-> Crypto market data for people and AI agents: live prices, crypto and trading signals (RSI, MACD, EMA), support and resistance
-> levels, CoinMarketCap Fear & Greed, an AI's paper-trade ideas, a daily market brief and a daily Institutional & Policy Brief
-> (BIS, IMF, CBDCs, stablecoins, tokenization). AI agents buy the data per call with x402 (USDC on Base or Stellar, or XRP, RLUSD or
-> USDC on the XRP Ledger); no account or API key. A free x402 vendor trust list records test-buys of other pay-per-call endpoints.
-> Data from a paper-trading experiment, not financial advice.
+> Three product lines, sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger);
+> no account or API key.
+> - Lumi Trust: x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
+>   built from real on-ledger test-buys of other pay-per-call endpoints.
+> - Market data: live prices, CoinMarketCap Fear & Greed, funding, a daily market brief, events and a daily Institutional &
+>   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization).
+> - Lumi Market Ideas: an AI's buy/sell signals (RSI, MACD, EMA), support and resistance levels, the all-coins scan, the
+>   paper-trade slate and the trade history. Paper-trade analysis, not investment advice. Lumi does not trade real money.
 
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
@@ -193,7 +213,8 @@ def llms_txt(prices, plans=()):
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid test-buys of x402 endpoints, with on-ledger evidence
 - [How Lumi works](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
-- [Dashboard](https://lumitrades.io/): live prices, signals and today's paper-trade ideas (also in es, pt, tr, ko, ja)
+- [Dashboard](https://lumitrades.io/): live prices, plus Lumi Market Ideas (signals and today's paper-trade ideas) (also in es, pt, tr, ko, ja)
+- [Trade ideas](https://lumitrades.io/trades/): Lumi Market Ideas, the active paper-trade ideas (paper-trade analysis, not investment advice)
 
 ## Prices (USD per call)
 {rows}

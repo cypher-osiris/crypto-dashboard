@@ -412,9 +412,10 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
         why_sum = (_t("Read more: why this idea") + (_t(", the leverage") if t.get("leverage_reason") else "")
                    + (_t(" and the “missed it?” plan") if (t.get("missed_it") or t.get("missed_plan")) else ""))
         page = (head + chrome(h, R, "../../", nav_items, V, path) +
-                f"""<main class="wrap cp-main">
+                f"""<main class="wrap cp-main mi-zone">
 <p class="cp-crumb"><a href="../../">Lumi Trades</a> › <a href="../">{E(_t("Trade ideas"))}</a> › {E(tid)}</p>
 <h1>{E(_t("Paper trade {id}: {full} {dir}", id=tid, full=full, dir=h.dir_txt(t.get("direction"))))}</h1>
+{h.MI_LABEL(" mi-top")}
 <div class="tp-hero o-{cls}">
   <div class="tp-hero-l"><span class="tp-dir {"long" if t.get("direction") != "short" else "short"}">{"▲" if t.get("direction") != "short" else "▼"} {E(side)}</span>
     <span class="tp-badge o-{cls}">{E(lab)}</span>{conv}
@@ -457,9 +458,10 @@ def build(h, prices, trades, nav_items, coin_slug, V, gen_date, write):
               {"@type": "ListItem", "position": 2, "name": _t("Trade ideas"), "item": h.SITE + P + "trades/"}]}]
     R = "../" + up
     head = page_head(h, title, desc, h.SITE + P + "trades/", V, "trades/", "website", ld).replace("{ASSETS}", assets(h, R, V))
-    page = (head + chrome(h, R, "../", nav_items, V, "trades/") + f"""<main class="wrap cp-main">
+    page = (head + chrome(h, R, "../", nav_items, V, "trades/") + f"""<main class="wrap cp-main mi-zone">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("Trade ideas"))}</p>
 <h1>{_t("Lumi's active paper-trade ideas")}</h1>
+{h.MI_LABEL(" mi-top")}
 <p class="cp-lede">{_t("Every idea Lumi has open or waiting for entry, with its own page: entry zone, stop, targets, chart and reasoning. Updated {when}.", when=E(h.ctime(trades.get("tracked_utc") or trades.get("evaluated_utc"))))}</p>
 <div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Paper trading only, not financial advice.</strong> Target and stop distances are price moves at the idea's leverage on margin, without fees or funding. Results are not published.")}</span></div>
 <section class="card cp-sec"><h2>{E(_t("Active now ({n})", n=len(live)))}</h2><div class="tp-cards">{"".join(map(card, newest)) or "<p>" + E(_t("No active ideas right now.")) + "</p>"}</div></section>
@@ -481,9 +483,10 @@ def closed_placeholder(h, t, A, nav_items, V, gen_date, up):
     desc = _t("Lumi's paper idea {id} on {sym} is no longer active. See the current ideas.", id=tid, sym=sym)
     head = page_head(h, title, desc, f"{h.SITE}{P}trades/{tid}/", V, f"trades/{tid}/").replace("{ASSETS}", assets(h, R, V))
     head = head.replace('<meta name="robots" content="index, follow, max-image-preview:large">', '<meta name="robots" content="noindex, follow">', 1)
-    return (head + chrome(h, R, "../../", nav_items, V, f"trades/{tid}/") + f"""<main class="wrap cp-main">
+    return (head + chrome(h, R, "../../", nav_items, V, f"trades/{tid}/") + f"""<main class="wrap cp-main mi-zone">
 <p class="cp-crumb"><a href="../../">Lumi Trades</a> › <a href="../">{E(_t("Trade ideas"))}</a> › {E(tid)}</p>
 <h1>{E(_t("Paper idea {id} ({sym}) is no longer active", id=tid, sym=sym))}</h1>
+{h.MI_LABEL(" mi-top")}
 <p class="cp-lede">{_t("This idea has closed. Lumi's current paper-trade ideas, with entries, stops and targets, are on the <a href=\"{href}\">trade ideas page</a>.", href="../")}</p>
 <p class="tp-links"><a href="../">{E(_t("All active ideas"))}</a> <a href="../../#slate">{_t("Today's trade ideas →")}</a></p>
 </main>

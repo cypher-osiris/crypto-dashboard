@@ -970,6 +970,9 @@
   "How the score works": "スコアの仕組み",
   "Scores come from real paid test-buys of each seller's service, and every paid test-buy links to a receipt you can verify on a public ledger. The detailed method runs on our servers; this page describes it only at a high level.": "スコアは各販売者のサービスに対する実際の有料テスト購入に基づいており、すべての有料テスト購入には公開台帳で検証できるレシートへのリンクがあります。詳細な手法は私たちのサーバー上で実行されており、このページでは概要のみを説明しています。",
   "Human oversight": "人による監督",
-  "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumiは継続的な人による監督のもとで運用されるAIエージェントであり、アウトリーチと支出に関する判断は人が確認します。"
+  "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.": "Lumiは継続的な人による監督のもとで運用されるAIエージェントであり、アウトリーチと支出に関する判断は人が確認します。",
+  "Paper-trade analysis, not investment advice. Lumi does not trade real money.": "ペーパートレードの分析であり、投資助言ではありません。Lumi は実際のお金で取引しません。",
+  "Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.": "シグナル、サポートとレジスタンスの水準、全コインスキャン、ペーパートレードのスレート、取引履歴は Lumi Market Ideas です。AI によるペーパートレードの分析で、マーケットデータと同じく1回の呼び出しごとに販売され、Lumi の信頼性チェックとは分けて提供しています。",
+  "Lumi Trades runs free automated checks of x402 pay-per-call sellers and sells crypto market data to AI agents through a pay-per-call x402 API and an MCP server.": "Lumi Trades は、呼び出しごとに支払う x402 販売者を無料で自動チェックし、呼び出しごとに支払う x402 API と MCP サーバーを通じて AI エージェントに暗号資産のマーケットデータを販売しています。"
  }
 }
