@@ -32,7 +32,7 @@ NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 # (product, method + path, price in USD); keys are translated, paths and prices are not.
 # Every price here was checked against the live API (https://api.lumitrades.io/ paid_endpoints + plans, v1.1.2, Oct 22 2026).
 TRUST_PRICES = [
-    ("x402 pay check: allow / warn / block with reasons, signed receipts", "GET /v1/trust/check?url=", "$0.004"),
+    ("x402 pay check: allow / warn / block with reasons, signed receipts", "GET /v1/trust/check?url=", "$0.02"),
     ("Full report on one curated vendor (observation history, tx hashes, signed receipts)", "GET /v1/trust/vendors/{id}/report", "$0.02"),
     ("Vendor trust list and seller lookup", "GET /v1/trust/vendors", "free"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify", "free"),
@@ -736,7 +736,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <h1 id="tx-h" class="hx-h1">{E(_t("Know which agent APIs actually deliver before you pay."))}</h1>
 <p class="hx-sub">{E(_t("Lumi pays x402 sellers a few cents for real, records what came back, and keeps a signed receipt for every buy."))}</p>
 <div class="hx-cta"><a class="hx-btn" href="#vendors">{E(_t("See the list"))}</a><a class="hx-btn ghost" href="../agents/">{E(_t("Full vendor report: $0.02"))}</a></div>
-<p class="hx-price-note muted">{E(_t("$0.02 buys the full report on one vendor from this list (every check, every tx hash and the signed receipts). $0.004 is the pay check: allow, warn or block for any x402 URL before your agent pays it."))}</p>
+<p class="hx-price-note muted">{E(_t("$0.02 buys the full report on one vendor from this list (every check, every tx hash and the signed receipts). $0.02 is the pay check: allow, warn or block for any x402 URL before your agent pays it."))}</p>
 </div>
 <div class="tx-visual ag-panel ag-feed" id="ag-feed">
 <div class="ag-head"><span class="ag-who"><img src="{R}assets/brand/logo.png?v={V}" alt="" width="30" height="30"><span><b>{E(_t("Latest delivered test-buys"))}</b><small>{E(_t("from the live trust API"))}</small></span></span><span class="ag-live"><i aria-hidden="true"></i>{E(_t("live"))}</span></div>
@@ -750,7 +750,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 </section>
 <div class="disclaimer tx-note" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Automated observations, not a rating or review of any business.</strong> Scores summarize what Lumi's own checks saw over the last 30 days. Few samples = low confidence.")} <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("Methodology"))}</a></span></div>
 <details class="tx-more"><summary>{E(_t("How the checks work"))}</summary>
-<p>{_t("Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys. Each paid test-buy is a real payment on a public ledger (XRPL, Base or Stellar), stored with its tx hash and a signed receipt. The list and the tx hash of each seller's latest test-buy are free; the full report on one vendor, with its whole history, explorer links and signed receipts, costs $0.02. The $0.004 pay check is a different product: allow, warn or block for any x402 URL.")}</p>
+<p>{_t("Lumi checks pay-per-call (x402) endpoints that agents can buy from: a free check that each endpoint returns a valid payment quote, plus small paid test-buys. Each paid test-buy is a real payment on a public ledger (XRPL, Base or Stellar), stored with its tx hash and a signed receipt. The list and the tx hash of each seller's latest test-buy are free; the full report on one vendor, with its whole history, explorer links and signed receipts, costs $0.02. The $0.02 pay check is a different product: allow, warn or block for any x402 URL.")}</p>
 <p>{E(_t("Quote checks are free and unpaid, so they show an endpoint is reachable and priced, not that it delivers. Paid test-buys are capped at a small shared daily budget, so not every vendor is bought every day; fewer samples means lower confidence."))}</p>
 </details>
 <section class="card cp-sec" id="vendors">

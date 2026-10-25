@@ -27,7 +27,7 @@
 
 ## Prices (USD per call)
 ### Lumi Trust
-- `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed receipts, $0.004 per call
+- `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed receipts, $0.02 per call
 - `GET /v1/trust/vendors/{id}/report`: Full report on one curated vendor (observation history, tx hashes, signed receipts), $0.02 per call
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free
 - `POST /v1/trust/receipts/verify`: Verify a signed test-buy receipt, free
