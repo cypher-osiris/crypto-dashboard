@@ -392,9 +392,9 @@ def tx_html(h, v):
             f'data-tx="{E(t[0])}"><code>{E(tx_short(t[0]))}</code> ↗</a></span>')
 
 
-# ---------- Opt-in "Test payment not accepted yet on XRPL" label (neutral, grey; never affects the score) ----------
-# Only for vendors with zero paid test-buys AND an explicit opt-in: the API's payment_attempts (set only for vendors flagged
-# label_unsettled_payments in lumi-api) or, as a build-time fallback, scripts/trust_attempts.json. N = signed XRPL test
+# ---------- "Test payment not accepted yet on XRPL" label (neutral, grey; never affects the score) ----------
+# For every curated vendor with zero paid test-buys and at least one rejected signed XRPL test payment: the API's
+# payment_attempts, else scripts/trust_attempts.json (derived for ALL sellers by scripts/derive_attempts_all.py on every publish). N = signed XRPL test
 # payments the seller did not accept (none reached the ledger). "The seller is online" only when a free quote check in the
 # last 90 minutes returned a valid 402. Mirrored in assets/trust.js (attempts()/attLabel()).
 ATT_SNAPSHOT = os.path.join(ROOT, "scripts", "trust_attempts.json")
@@ -428,7 +428,7 @@ def _iso_ms(iso):
 
 
 def vendor_attempts(v, snap=None):
-    """{count, first_attempt} for an opted-in vendor with zero paid test-buys, else None."""
+    """{count, first_attempt} for a listed vendor with zero paid test-buys, else None."""
     if (v.get("samples") or {}).get("paid_test_buys") or v.get("last_paid_observation"):
         return None
     a = v.get("payment_attempts")

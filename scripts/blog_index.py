@@ -107,7 +107,7 @@ def page(h, tp, V, gen_date, root=ROOT):
 <footer class="wrap footer">
   {tp.foot_brand(h)}
   <p class="foot-soc">{tp.social_icons(h)}</p>
-  <p>Times in US Central · Page generated {E(gen_date)} · Not financial advice. · <a href="../privacy/">Privacy Policy</a> · <a href="../trust-policy/">Conflicts policy</a> · <a href="../contact/">Contact</a></p>
+  <p>Times in US Central · Page generated {E(gen_date)} · Not financial advice. · <a href="../privacy/">Privacy Policy</a> · <a href="../trust-policy/">Conflicts policy</a> · <a href="../top-sellers/">Top tested sellers</a> · <a href="../contact/">Contact</a></p>
 </footer>
 </body>
 </html>

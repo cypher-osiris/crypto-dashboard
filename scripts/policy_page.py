@@ -86,6 +86,8 @@ def footer_link(h, home):
     feed = (f' · <a href="{home}{up}blog/">{h.E(h._("Blog"))}</a>'   # /blog/ is English-only at the root too
             f' · <a href="{home}{up}feed.xml" type="application/atom+xml">{h.E(h._("RSS feed"))}</a>'
             + contact_page.footer_link(h, home))
+    import top_sellers_page  # ' · <a>Top tested sellers</a>' (top_sellers_page.LIVE_LANGS)
+    feed = top_sellers_page.footer_link(h, home) + feed
     if h.L.code not in LIVE_LANGS:
         return feed
     return f' · <a href="{home}{SLUG}">{h.E(h._(FOOTER_LINK))}</a>' + feed

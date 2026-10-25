@@ -357,7 +357,7 @@ class TrustBadge(unittest.TestCase):
             self.assertIn("Tested by Lumi", pages[sp.BADGE_NOTE])
 
 class PaymentAttemptsLabel(unittest.TestCase):
-    """Opt-in grey 'Test payment not accepted yet' label: only listed vendors, only with zero paid buys, neutral wording."""
+    """Grey 'Test payment not accepted yet' label: only vendors in the derived list, only with zero paid buys, neutral wording."""
     SNAP = {"edge-agents": {"count": 4, "first_attempt": "2026-10-23T03:08:48.615Z"}}
     NOW = 1792860000000  # 2026-10-24T16:40Z
 
@@ -399,10 +399,45 @@ class PaymentAttemptsLabel(unittest.TestCase):
         finally:
             sp.att_snapshot = old
 
-    def test_snapshot_file_is_opt_in_list(self):
+    def test_snapshot_file_is_well_formed(self):
         with open(sp.ATT_SNAPSHOT, encoding="utf-8") as f:
             d = json.load(f)["vendors"]
-        self.assertEqual(sorted(d), ["edge-agents"])
+        for vid, a in d.items():
+            self.assertGreaterEqual(a["count"], 1, vid)
+            self.assertEqual(a["count"], len(set(a["tx_hashes"])), vid)
+            self.assertIsNotNone(sp._iso_ms(a["first_attempt"]), vid)
+
+    def test_derive_all_sellers(self):
+        """derive_attempts_all.py labels every seller with rejected XRPL payments and no completed buy, nobody else."""
+        import importlib, tempfile
+        sys.path.insert(0, os.path.join(ROOT, "scripts"))
+        d = importlib.import_module("derive_attempts_all")
+        with tempfile.TemporaryDirectory() as tmp:
+            log = os.path.join(tmp, "log"); out = os.path.join(tmp, "att.json")
+            with open(log, "w") as f:
+                for vid, tx, ts in (("a", "T1", "2026-10-22T01:00:00Z"), ("a", "T2", "2026-10-23T01:00:00Z"), ("a", "T2", "2026-10-23T01:00:00Z"),
+                                    ("b", "T3", "2026-10-22T02:00:00Z"), ("gone", "T4", "2026-10-22T03:00:00Z")):
+                    f.write(json.dumps({"ts": ts, "event": "buy_not_validated", "vendor": vid, "tx": tx}) + "\n")
+                f.write(json.dumps({"ts": "2026-10-22T04:00:00Z", "event": "plan", "vendor": "c", "tx": "T5"}) + "\n")
+            vs = [{"id": "a", "samples": {"paid_test_buys": 0}}, {"id": "b", "samples": {"paid_test_buys": 2}},
+                  {"id": "c", "samples": {}}, {"id": "d", "samples": {}}]
+            saved = (d.LOG, d.OUT, d.vendors, sys.argv)
+            d.LOG, d.OUT, d.vendors, sys.argv = log, out, (lambda: vs), ["x"]
+            try:
+                d.main()
+            finally:
+                d.LOG, d.OUT, d.vendors, sys.argv = saved
+            with open(out) as f:
+                got = json.load(f)["vendors"]
+        self.assertEqual(sorted(got), ["a"])
+        self.assertEqual(got["a"]["count"], 2)
+        self.assertEqual(got["a"]["first_attempt"], "2026-10-22T01:00:00Z")
+
+    def test_publish_runs_derive(self):
+        with open(os.path.join(ROOT, "scripts", "publish.sh")) as f:
+            sh = f.read()
+        self.assertIn("python3 scripts/derive_attempts_all.py", sh)
+        self.assertLess(sh.index("derive_attempts_all.py)"), sh.index("python3 scripts/build_pages.py --paths"))
 
 
 class TopSellersPage(unittest.TestCase):

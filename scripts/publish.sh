@@ -6,6 +6,7 @@
 # from the paths and kept out of every commit.
 #   PUBLISH_MSG="custom message" scripts/publish.sh
 # Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push
+#   -> (every publish, before the build: scripts/derive_attempts_all.py -> scripts/trust_attempts.json)
 #   -> data/ideas.json refresh (scripts/ideas.py, every publish) -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
 # Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
 set -euo pipefail
@@ -37,6 +38,17 @@ if [ -f scripts/privacy.py ] && printf '%s\n' "${paths[@]}" | grep -q '^data\(/\
     while IFS= read -r p; do [ -n "$p" ] && paths+=("$p"); done <<< "$scrubbed"
   else
     echo "publish: privacy scrub failed; not publishing" >&2; exit 4
+  fi
+fi
+
+# Every publish re-derives the grey 'Test payment not accepted yet' label for ALL curated sellers with no completed
+# test-buy (scripts/derive_attempts_all.py -> scripts/trust_attempts.json, read by build_pages.py's /trust/ table). It runs
+# before the page build so the label is current; a failure only warns and keeps the existing file.
+if [ -f scripts/derive_attempts_all.py ]; then
+  if att=$(timeout -k 5 60 python3 scripts/derive_attempts_all.py); then
+    while IFS= read -r p; do [ -n "$p" ] && paths+=("$p"); done <<< "$att"
+  else
+    echo "publish: WARNING derive_attempts_all.py failed; keeping scripts/trust_attempts.json" >&2
   fi
 fi
 
