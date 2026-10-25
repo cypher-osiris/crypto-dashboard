@@ -76,7 +76,7 @@ SECTIONS = [
     ]),
     ("probe-checked", "Checked, not test-bought", [
         "Some sellers on the list are labelled “Checked, not test-bought.” For these sellers, Lumi sent one free, unpaid request and checked the x402 payment response, whether the seller was reachable, its TLS certificate, the domain's age, whether its payment address has any public on-chain history, and whether its listing is complete. Lumi has not paid these sellers, so these checks say nothing about what a paid call returns.",
-        "Only a paid test-buy that delivers can earn “Tested by Lumi.” A checked seller moves up only after Lumi pays it and gets a usable result, and paying Lumi never changes either label.",
+        "A checked seller moves to “Delivered in recent checks” only after Lumi pays it and gets a usable result. The “Tested by Lumi” badge takes more: several paid test-buys with the latest one delivered, a live score at or above the minimum, and a seller that is reachable right now. Paying Lumi never changes a seller's label or badge.",
     ]),
     ("oversight", "Human oversight", [
         "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.",
