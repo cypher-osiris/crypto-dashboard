@@ -30,9 +30,10 @@ MCP_REG = "https://registry.modelcontextprotocol.io/v0/servers?search=lumi-trade
 NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 
 # (product, method + path, price in USD); keys are translated, paths and prices are not.
-# Every price here was checked against the live API (https://api.lumitrades.io/ paid_endpoints + plans, v1.1.2, Oct 22 2026).
+# Every price here was checked against the live API (https://api.lumitrades.io/ 402 quotes + /.well-known/x402, v1.1.7, Oct 25 2026).
 TRUST_PRICES = [
     ("x402 pay check: allow / warn / block with reasons, signed receipts", "GET /v1/trust/check?url=", "$0.02"),
+    ("Pre-payment check, one label (delivered in recent checks / check first / recent checks failed / not enough data)", "GET /v1/verdict?url=", "$0.01"),
     ("Full report on one curated vendor (observation history, tx hashes, signed receipts)", "GET /v1/trust/vendors/{id}/report", "$0.02"),
     ("Vendor trust list and seller lookup", "GET /v1/trust/vendors", "free"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify", "free"),
@@ -51,16 +52,15 @@ MARKET_PRICES = [
     ("Perpetual funding rates (50 coins)", "GET /v1/funding", "$0.003"),
     ("CoinMarketCap Fear & Greed with history", "GET /v1/fear-greed", "$0.003"),
     ("Events in the next 48 hours", "GET /v1/events/next48h", "$0.003"),
-    ("Paper-trade history", "GET /v1/trades", "$0.02"),
     ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.10"),
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES
-# Lumi Market Ideas (signals, levels, scan, slate, trade history): the same routes and prices, shown as their own group,
+# Lumi Market Ideas (signals, levels, scan, slate): the same routes and prices, shown as their own group,
 # apart from the Lumi Trust products above and the neutral market data below.
-MARKET_IDEAS_PATHS = ("/v1/signal/", "/v1/lite/", "/v1/scan", "/v1/slate", "/v1/trades", "/v1/levels/")
+MARKET_IDEAS_PATHS = ("/v1/signal/", "/v1/lite/", "/v1/scan", "/v1/slate", "/v1/levels/")
 MARKET_IDEAS_PRICES = [x for x in MARKET_PRICES if x[1].split(" ", 1)[1].startswith(MARKET_IDEAS_PATHS)]
 MARKET_DATA_PRICES = [x for x in MARKET_PRICES if x not in MARKET_IDEAS_PRICES]
-MARKET_IDEAS_TEXT = ("Signals, support and resistance levels, the all-coins scan, the paper-trade slate and the trade history are "
+MARKET_IDEAS_TEXT = ("Signals, support and resistance levels, the all-coins scan and the paper-trade slate are "
                      "Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.")
 AGENTS_ROUTES_TEXT = ("Live signals for 51 coins, support and resistance levels for 14 tracked coins, the paper-trade slate, and market and policy briefs: "
                       "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "

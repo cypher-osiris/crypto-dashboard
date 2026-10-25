@@ -213,8 +213,8 @@ def llms_txt(prices, plans=(), groups=None):
 >   built from real on-ledger test-buys of other pay-per-call endpoints.
 > - Market data: live prices, CoinMarketCap Fear & Greed, funding, a daily market brief, events and a daily Institutional &
 >   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization).
-> - Lumi Market Ideas: an AI's buy/sell signals (RSI, MACD, EMA), support and resistance levels, the all-coins scan, the
->   paper-trade slate and the trade history. Paper-trade analysis, not investment advice. Lumi does not trade real money.
+> - Lumi Market Ideas: an AI's buy/sell signals (RSI, MACD, EMA), support and resistance levels, the all-coins scan and the
+>   paper-trade slate. Paper-trade analysis, not investment advice. Lumi does not trade real money.
 
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow

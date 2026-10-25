@@ -6,8 +6,8 @@
 >   built from real on-ledger test-buys of other pay-per-call endpoints.
 > - Market data: live prices, CoinMarketCap Fear & Greed, funding, a daily market brief, events and a daily Institutional &
 >   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization).
-> - Lumi Market Ideas: an AI's buy/sell signals (RSI, MACD, EMA), support and resistance levels, the all-coins scan, the
->   paper-trade slate and the trade history. Paper-trade analysis, not investment advice. Lumi does not trade real money.
+> - Lumi Market Ideas: an AI's buy/sell signals (RSI, MACD, EMA), support and resistance levels, the all-coins scan and the
+>   paper-trade slate. Paper-trade analysis, not investment advice. Lumi does not trade real money.
 
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
@@ -28,6 +28,7 @@
 ## Prices (USD per call)
 ### Lumi Trust
 - `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed receipts, $0.02 per call
+- `GET /v1/verdict?url=`: Pre-payment check, one label (delivered in recent checks / check first / recent checks failed / not enough data), $0.01 per call
 - `GET /v1/trust/vendors/{id}/report`: Full report on one curated vendor (observation history, tx hashes, signed receipts), $0.02 per call
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free
 - `POST /v1/trust/receipts/verify`: Verify a signed test-buy receipt, free
@@ -50,7 +51,6 @@
 - `GET /v1/scan`: All-coins scan (50 signals in one call), $0.02 per call
 - `GET /v1/lite/{coin}`: Lite signal per coin (label, score, price), $0.004 per call
 - `GET /v1/slate`: Market slate (today's paper-trade ideas), $0.02 per call
-- `GET /v1/trades`: Paper-trade history, $0.02 per call
 
 ## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
 - Watch Free: $0. 1 endpoint: a daily quote check, no test-buys
