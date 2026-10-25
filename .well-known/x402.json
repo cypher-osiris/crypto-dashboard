@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "kind": "pointer",
+  "x402": "https://api.lumitrades.io/.well-known/x402",
+  "resources_host": "https://api.lumitrades.io",
+  "openapi": "https://api.lumitrades.io/openapi.json",
+  "note": "Lumi's x402 resources live on api.lumitrades.io; fetch the manifest there. Prices below are a convenience copy checked against the API's live 402 responses on 2026-10-25; the 402 response is authoritative.",
+  "featured": [
+    {
+      "name": "Lumi x402 pay check (allow / warn / block)",
+      "method": "GET",
+      "url": "https://api.lumitrades.io/v1/trust/check",
+      "price_usd": "0.02"
+    },
+    {
+      "name": "Lumi pre-payment check: one label",
+      "method": "GET",
+      "url": "https://api.lumitrades.io/v1/verdict",
+      "price_usd": "0.01"
+    },
+    {
+      "name": "Lumi Market Ideas: lite coin signal",
+      "method": "GET",
+      "url": "https://api.lumitrades.io/v1/lite/{coin}",
+      "price_usd": "0.004"
+    }
+  ],
+  "networks": [
+    "eip155:8453",
+    "xrpl:0",
+    "stellar:pubnet"
+  ],
+  "updated": "2026-10-25"
+}
