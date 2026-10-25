@@ -70,7 +70,7 @@ def newsletter():
         b = re.match(r"^\s*[-*]\s+(.+)", line)
         if sec and b and not PERSONAL.search(b.group(1)):
             out.setdefault(sec, []).append(b.group(1).strip())
-    out["source"] = "Trade with Lumi newsletter"
+    out["source"] = "Lumi Trades newsletter"
     return {k: v for k, v in out.items() if v}
 
 

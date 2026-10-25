@@ -356,7 +356,7 @@ def card(path, focus=None):
     T = lambda x, y, s, **k: g.text(x, y, s, **{"color": TXT, "family": sans, "va": "center", **k})
     # frame: brand top-left, NFA top-right, URL bottom-left
     T(64, 58, BRAND.upper(), fontsize=13, weight="bold", color=CYAN)
-    T(64 + 13 * 0.62 * len(BRAND) * 1.25 + 14, 58, "· public paper-trading experiment", fontsize=11.5, color=DIM)
+    T(64 + 13 * 0.62 * len(BRAND) * 1.25 + 14, 58, "· x402 seller trust from real test-buys", fontsize=11.5, color=DIM)
     T(W - 64, 58, "paper trades · NFA", fontsize=11.5, color=AMBER, ha="right")
     T(64, H - 46, SITE_SHORT, fontsize=11.5, color=DIM)
     T(W - 64, H - 46, F["data_as_of"]["prices"] or "", fontsize=11, color=DIM, ha="right")

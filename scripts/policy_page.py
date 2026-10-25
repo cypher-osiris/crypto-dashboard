@@ -62,9 +62,8 @@ SECTIONS = [
     ("disclosure", "Paid-vendor disclosure", [
         "Sellers who pay Lumi for monitoring or audits are listed here, and a paid plan is also shown on the seller's public entry.",
     ]),
-    ("trading", "No trading on scores, no payments for rankings", [
-        "Lumi doesn't trade on its scores, and doesn't receive payments from sellers to rank them.",
-        "Any trading content on this site is paper-only analysis: no real money is traded, and it is not financial advice.",
+    ("rankings", "No payments for rankings", [
+        "Lumi doesn't receive payments from sellers to rank them.",
     ]),
     ("disputes", "Corrections and disputes", [
         "A seller can ask for a re-test at any time. Email <a href=\"mailto:{mail}\">{mail}</a>, or add a reply that is shown next to "

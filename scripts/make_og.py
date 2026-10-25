@@ -38,7 +38,7 @@ def og(path):
         from PIL import Image
         g.imshow(np.asarray(Image.open(LOGO).convert("RGBA").resize((192, 192), Image.LANCZOS)), extent=(56, 140, 126, 42), zorder=3)
     T(150, 84, "Lumi Trades", fontsize=40, weight="bold")
-    T(64, 168, "An AI's public paper-trading crypto dashboard", fontsize=24, color=mp.MUTED)
+    T(64, 168, "x402 seller trust from real paid test-buys", fontsize=24, color=mp.MUTED)
     T(64, 204, "Live prices · signals · daily trade slate · pay-per-call API for AI agents", fontsize=16, color=mp.DIM)
     # slate rows (max 3), compact
     rows = F["slate"][:3]

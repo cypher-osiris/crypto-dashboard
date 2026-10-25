@@ -11,7 +11,7 @@ ORG_ID = SITE + "#organization"
 SITE_ID = SITE + "#website"
 API_ID = API + "/#api"
 LOGO = SITE + "assets/icon-512.png"
-ORG_ALT_NAME = "Trade with Lumi"   # the YouTube channel name (brand alias for search)
+ORG_ALT_NAME = "Lumi"   # short brand alias for search
 SAME_AS = ["https://x.com/lumisinsite", "https://github.com/lumitrades", "https://www.npmjs.com/package/lumi-trades-mcp",
            "https://www.npmjs.com/package/lumi-check", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"]
 

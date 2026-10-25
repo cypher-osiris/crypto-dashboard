@@ -181,7 +181,7 @@ class OrgAltName(unittest.TestCase):
     def test_generator(self):
         import seo
         org = seo.organization(lambda x: x)
-        self.assertEqual(org["alternateName"], "Trade with Lumi")
+        self.assertEqual(org["alternateName"], "Lumi")
         self.assertIn("https://www.tiktok.com/@lumitradesio", org["sameAs"])
 
     def test_every_org_node(self):
@@ -200,7 +200,7 @@ class OrgAltName(unittest.TestCase):
                     for node in data if isinstance(data, list) else [data]:
                         if node.get("@id") == "https://lumitrades.io/#organization":
                             n += 1
-                            if node.get("alternateName") != "Trade with Lumi" or "https://www.tiktok.com/@lumitradesio" not in node.get("sameAs", []):
+                            if node.get("alternateName") != "Lumi" or "https://www.tiktok.com/@lumitradesio" not in node.get("sameAs", []):
                                 bad.append(os.path.relpath(p, ROOT))
         self.assertGreater(n, 0)
         self.assertEqual(bad, [])
