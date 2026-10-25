@@ -1,25 +1,25 @@
 {
- "generated_utc": "2026-10-24T11:14:52Z",
+ "generated_utc": "2026-10-25T10:57:40Z",
  "global": {
-  "total_mcap_usd": 2691935334656.602,
-  "total_volume_usd": 62008258663.16449,
-  "mcap_change_24h_pct": -4.814024070429114,
-  "btc_dominance_pct": 60.082118270895165,
-  "eth_dominance_pct": 10.731258653264046
+  "total_mcap_usd": 2672320860961.15,
+  "total_volume_usd": 53042216526.054054,
+  "mcap_change_24h_pct": -3.1197022978992885,
+  "btc_dominance_pct": 60.12486304708321,
+  "eth_dominance_pct": 10.580654083490769
  },
  "fear_greed": {
-  "value": 46,
+  "value": 44,
   "classification": "Neutral",
-  "previous": 47,
-  "timestamp": "2026-10-24T11:08:10Z",
+  "previous": 46,
+  "timestamp": "2026-10-25T10:53:10Z",
   "source": "CoinMarketCap"
  },
  "derivatives": {
   "instrument": "BTC-USDT-SWAP (OKX)",
   "funding_rate_pct": 0.01,
-  "next_funding_time": "2026-10-24T16:00:00Z",
-  "open_interest_btc": 30643.94180000013,
-  "open_interest_usd": 2470986504.6197305
+  "next_funding_time": "2026-10-25T16:00:00Z",
+  "open_interest_btc": 29984.1663000001,
+  "open_interest_usd": 2405389788.918608
  },
  "yen": {
   "usd_jpy": {
