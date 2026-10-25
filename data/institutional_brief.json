@@ -1,19 +1,34 @@
 {
   "product": "lumi-trades/institutional-policy-brief",
   "schema_version": 1,
-  "generated_utc": "2026-10-24T10:07:41Z",
-  "date": "2026-10-24",
+  "generated_utc": "2026-10-25T10:02:53Z",
+  "date": "2026-10-25",
   "coverage_window": {
-    "from": "2026-10-22",
-    "to": "2026-10-24"
+    "from": "2026-10-23",
+    "to": "2026-10-25"
   },
   "big_picture": [
-    "Franklin Templeton added roughly $150M of its sgBENJI tokenized fund shares on the XRP Ledger, making it the second-largest tokenized asset issuer there after RLUSD, though the shares all sit in one issuer-linked wallet.",
-    "Singapore's BLOOM cross-border settlement initiative added the central banks of Malaysia and Thailand plus new participants including Ripple, Visa, Mastercard and the World Bank Group, focused on tokenised deposits, regulated stablecoins and network interoperability.",
-    "Bank-issued digital money kept spreading: HSBC launched its licensed HKD stablecoin to millions of PayMe users, and J.P. Morgan Asset Management opened its tokenized money funds on Solana, one of them built for GENIUS Act stablecoin reserves.",
-    "On Stellar, Ascend and M1X Global completed an around-the-clock Treasury-backed repo pilot, while the SEC listed tokenization among its 2027 exam priorities."
+    "Ripple's payout network gets its first live customer flow in Korea: Jeonbuk Bank plans Southeast Asia remittances at year-end, pre-funded in dollars with no stablecoins in the service for now.",
+    "Banca d'Italia argued tokenized markets must keep a risk-free central bank settlement asset and interoperability across platforms, pointing to the Eurosystem's Pontes and Appia; the BIS payments committee (CPMI) publishes a report on the role of central bank money on Oct 29.",
+    "Regional stablecoin rules keep firming up: Thailand consulted on fully backed, no-yield baht stablecoins a day after joining Singapore's BLOOM initiative, and the OCC proposed weekly and quarterly reporting forms for GENIUS Act issuers.",
+    "On the networks, Franklin Templeton's sgBENJI build-up on XRPL, a 24/7 Treasury-backed repo pilot on Stellar and new audited confidential-token contracts for Stellar carry the week's tokenization activity into a quiet weekend."
   ],
   "items": [
+    {
+      "entity": "Ripple / Jeonbuk Bank",
+      "headline": "Jeonbuk Bank to launch Southeast Asia personal remittances on Ripple's payout infrastructure at year-end",
+      "date": "2026-10-24",
+      "source_url": "https://biz.chosun.com/en/en-finance/2026/10/24/RVUB7BZFFVCNFFJ6TCIL3VI7QM/",
+      "why_it_matters": "Per ChosunBiz, the Korean bank will offer personal remittances to Southeast Asia late this year for foreign workers in Korea, with corporate remittances to follow and stablecoin remittances only if Korean legislation allows. Jeonbuk Bank pre-funds in dollars and Ripple's network pays out in local currency; Ripple told the outlet stablecoins are not used in this service, and it described XRP as a bridge asset for corridors where pre-funded liquidity is insufficient rather than confirming XRP is used here. It is the first of Ripple's announced Korean partners (with Kyobo Life, Kbank and Meritz Securities) to move customer money. Fees were not disclosed.",
+      "coins": [
+        "XRP",
+        "RLUSD"
+      ],
+      "impact": "bullish",
+      "confidence": "medium",
+      "link_type": "confirmed",
+      "link_basis": "Ripple's payout infrastructure is named for the service; XRP and RLUSD are not confirmed as used in Jeonbuk Bank's dollar pre-funded flow."
+    },
     {
       "entity": "Franklin Templeton",
       "headline": "Franklin Templeton adds about $150 million of sgBENJI fund shares on the XRP Ledger",
@@ -51,6 +66,45 @@
       "confidence": "high",
       "link_type": "confirmed",
       "link_basis": "Ripple is named in the MAS participant annex; RLUSD-on-XRPL testing is reported by The Block."
+    },
+    {
+      "entity": "Banca d'Italia",
+      "headline": "Banca d'Italia deputy governor speech: keep a risk-free settlement asset and interoperability as finance tokenizes",
+      "date": "2026-10-23",
+      "source_url": "https://www.bancaditalia.it/pubblicazioni/interventi-direttorio/int-dir-2026/20261023-scotti/Scotti_23102026.pdf",
+      "why_it_matters": "The Milan speech argues the two-tier system (central bank anchor, private innovation) should carry into tokenized markets. It warns that if private money became the main wholesale settlement medium \"we would go back to a pre-RTGS world\" and sets the challenge as preserving \"access to a risk-free settlement asset while ensuring interoperability across platforms\". It contrasts an interoperable ecosystem with fragmented proprietary platforms, and points to the Eurosystem's Pontes (linking market DLT platforms to TARGET Services) and Appia (longer-term interoperable infrastructure). No chain or vendor is named.",
+      "coins": [
+        "QNT",
+        "XRP",
+        "XLM",
+        "HBAR",
+        "XDC",
+        "AXL"
+      ],
+      "impact": "neutral",
+      "confidence": "high",
+      "link_type": "context",
+      "link_basis": "Central bank policy framing on interoperability and settlement assets; no network or token is named."
+    },
+    {
+      "entity": "US Treasury / OCC",
+      "headline": "OCC publishes its GENIUS Act final rule and proposes weekly and quarterly reporting forms for stablecoin issuers",
+      "date": "2026-10-23",
+      "source_url": "https://www.federalregister.gov/documents/2026/10/23/2026-21706/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the",
+      "additional_sources": [
+        "https://occ.gov/news-issuances/news-releases/2026/nr-occ-2026-92.html",
+        "https://www.fincen.gov/news/news-releases/treasury-proposes-rule-implement-genius-acts-requirements-counter-illicit",
+        "https://www.federalregister.gov/documents/2026/10/23/2026-21705/agency-information-collection-activities-proposed-information-collection-submission-for-omb-review"
+      ],
+      "why_it_matters": "Formal publication of the Oct 21 rule (effective Jan 18, 2027). The OCC still has to announce when it will accept issuer applications and waiver requests, and the FinCEN/OFAC program rule remains unfinalised. Separately, the OCC published a Paperwork Reduction Act notice the same day proposing new weekly and quarterly reporting forms that permitted and foreign payment stablecoin issuers under its jurisdiction would have to file; comments are due Nov 23, 2026.",
+      "coins": [
+        "RLUSD",
+        "USDC"
+      ],
+      "impact": "neutral",
+      "confidence": "high",
+      "link_type": "context",
+      "link_basis": "Sector-wide stablecoin rule; names no token or chain."
     },
     {
       "entity": "Stellar (Ascend Markets / M1X Global)",
@@ -106,85 +160,33 @@
       "link_basis": "Sector-wide supervisory focus; names no token or chain."
     },
     {
-      "entity": "J.P. Morgan Asset Management",
-      "headline": "J.P. Morgan Asset Management expands access to its tokenized money market funds on Solana",
+      "entity": "Stellar (OpenZeppelin)",
+      "headline": "OpenZeppelin releases audited Confidential Token contracts for Stellar with built-in compliance controls",
       "date": "2026-10-22",
-      "source_url": "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-expands-access-to-tokenized-money-market-funds-solana/",
-      "why_it_matters": "MONY (private placement) and JLTXX, a registered government money market fund designed to support GENIUS Act stablecoin issuers' reserve needs, are now reachable on Solana, with subscriptions through Morgan Money. Large managers are spreading tokenized cash funds across several public chains, the same pattern as Franklin's XRPL and Stellar issuance.",
-      "coins": [],
-      "impact": "neutral",
-      "confidence": "high",
-      "link_type": "context",
-      "link_basis": "Competing chain; no covered token involved."
-    },
-    {
-      "entity": "Ripple",
-      "headline": "CryptEscrow and Ripple announce strategic partnership for crypto-powered real estate settlement",
-      "date": "2026-10-22",
-      "source_url": "https://www.globenewswire.com/news-release/2026/10/23/3387005/0/en/cryptescrow-and-ripple-announce-strategic-partnership-to-advance-crypto-powered-real-estate-settlement.html",
-      "why_it_matters": "An escrow firm will work with Ripple on crypto-to-fiat settlement for property deals. A niche use case; the release does not quantify volume or say which Ripple products or ledger will carry the payments.",
-      "coins": [
-        "XRP",
-        "RLUSD"
-      ],
-      "impact": "neutral",
-      "confidence": "medium",
-      "link_type": "confirmed",
-      "link_basis": "Partnership with Ripple (the company) per the joint release; XRPL usage not specified."
-    },
-    {
-      "entity": "Ripple",
-      "headline": "Ripple and Arf partner to bring RLUSD settlement liquidity for licensed payment companies to the XRP Ledger",
-      "date": "2026-10-22",
-      "source_url": "https://crypto.news/ripple-arf-rlusd-settlement-liquidity-xrpl/",
+      "source_url": "https://www.openzeppelin.com/news/openzeppelin-brings-confidential-balances-and-transfers-to-stellar",
       "additional_sources": [
-        "https://arf.one/tag/press-release/",
-        "https://news.bitcoin.com/crypto-news/ripple-teams-arf-bring-rlusd-lending-xrp-ledger/"
+        "https://docs.openzeppelin.com/stellar-contracts/tokens/confidential/confidential"
       ],
-      "why_it_matters": "Arf, a Zug-based settlement liquidity provider reporting about $10B in annual settlement volume, will lend RLUSD as short-term working capital (typically repaid in one to five days) to licensed cross-border payment firms. A later phase would move to XRPL's native lending (XLS-65 vaults and XLS-66 lending), which still lacks the validator support needed to activate. Coverage notes XRP covers network fees and reserves.",
+      "why_it_matters": "Released in Stellar Contracts v0.8.0 as part of OpenZeppelin's partnership with the Stellar Development Foundation, the contracts hide balances and transfer amounts for any SEP-41 token while addresses stay visible, with auditor access, selective disclosure, account freezing and clawback. OpenZeppelin says the on-chain contracts are audited and ready for mainnet, while the SDK and client tooling are an unaudited demo; its docs advise testing first. It targets payroll, treasury and institutional settlement, a known barrier for regulated firms on public ledgers.",
       "coins": [
-        "XRP",
-        "RLUSD"
+        "XLM"
       ],
       "impact": "bullish",
-      "confidence": "high",
+      "confidence": "medium",
       "link_type": "confirmed",
-      "link_basis": "Arf and Ripple announced RLUSD settlement financing on the XRP Ledger."
+      "link_basis": "The contracts are built for the Stellar network per OpenZeppelin's release."
     },
     {
-      "entity": "Hedera",
-      "headline": "Hedera launches hosted Network MCP on testnet so AI coding agents can build Hedera transactions",
-      "date": "2026-10-22",
-      "source_url": "https://docs.hedera.com/solutions/ai/hosted-mcp-server",
-      "additional_sources": [
-        "https://www.tokenpost.com/news/technology/38619"
-      ],
-      "why_it_matters": "AI coding agents get 40+ tools to build Hedera transactions, while users sign every transaction in their own wallet. It is testnet only for now; mainnet separately upgraded to v0.78.1. A small step toward agent-driven use of the network, not an institutional deal.",
-      "coins": [
-        "HBAR"
-      ],
+      "entity": "Bank of Thailand",
+      "headline": "Bank of Thailand consults on rules for baht stablecoins: 1:1 deposit backing, no yield, licensing",
+      "date": "2026-10-24",
+      "source_url": "https://www.tokenstimes.com/en/article/425d8c20-041d-4378-ad23-6dff82f717ec",
+      "why_it_matters": "Per Token Times coverage of the consultation paper, baht stablecoins would be fully backed one-to-one by baht held initially in bank deposits, redeemable within one business day, with no interest or returns, licensing for issuers and wallet providers under BoT supervision, KYC/AML controls, and a possible cap on the number of issuers to limit fragmentation. It lands a day after BoT joined MAS's BLOOM cross-border digital money initiative.",
+      "coins": [],
       "impact": "neutral",
       "confidence": "medium",
-      "link_type": "confirmed"
-    },
-    {
-      "entity": "US Treasury / OCC",
-      "headline": "OCC's GENIUS Act final rule published in the Federal Register; Treasury's AML/sanctions rule for stablecoin issuers still a proposal",
-      "date": "2026-10-23",
-      "source_url": "https://www.federalregister.gov/documents/2026/10/23/2026-21706/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the",
-      "additional_sources": [
-        "https://occ.gov/news-issuances/news-releases/2026/nr-occ-2026-92.html",
-        "https://www.fincen.gov/news/news-releases/treasury-proposes-rule-implement-genius-acts-requirements-counter-illicit"
-      ],
-      "why_it_matters": "Formal publication of the Oct 21 rule (effective Jan 18, 2027). The OCC still has to announce when it will accept issuer applications and waiver requests, and the FinCEN/OFAC program rule remains unfinalised.",
-      "coins": [
-        "RLUSD",
-        "USDC"
-      ],
-      "impact": "neutral",
-      "confidence": "high",
       "link_type": "context",
-      "link_basis": "Sector-wide stablecoin rule; names no token or chain."
+      "link_basis": "Regulatory context for regional stablecoin settlement; no network or token named. Primary BoT document not fetched."
     }
   ],
   "alignments": [
@@ -194,9 +196,9 @@
       "theme": "pre-funding / settlement liquidity",
       "institution_says": "IMF Fintech Note 2023/001 notes that \"many banks in lower-income countries have to pre-fund nostro balances with correspondent banks.\"",
       "institution_source_url": "https://www.imf.org/en/-/media/files/publications/ftn063/2023/english/ftnea2023001.pdf",
-      "token_says": "Ripple and Arf describe RLUSD credit on the XRP Ledger as short-term working capital for licensed payment firms, typically repaid within one to five days as payments settle, so firms avoid prefunding destination accounts (paraphrased from coverage).",
-      "token_source_url": "https://cryptobriefing.com/arf-ripple-rlusd-xrp-ledger-liquidity/",
-      "overlap": "Lumi's analysis: both describe the cost of capital trapped while cross-border payments settle. This is indirect alignment, not an IMF endorsement or partnership. Counterpoint: IMF GFSR Oct 2026 Ch.3 notes atomic settlement can increase intraday liquidity needs by requiring prefunding.",
+      "token_says": "Ripple (ChosunBiz interview, Oct 24): XRP \"is used as a bridge asset in payment corridors where pre-funded liquidity is insufficient. Institutions can move value without parking cash in both markets.\" Ripple and Arf also describe RLUSD credit on XRPL as short-term working capital so payment firms avoid prefunding (paraphrased from coverage).",
+      "token_source_url": "https://biz.chosun.com/en/en-finance/2026/10/24/RVUB7BZFFVCNFFJ6TCIL3VI7QM/",
+      "overlap": "Lumi's analysis: both describe the cost of capital trapped in pre-funded accounts for cross-border payments. Indirect alignment only, not an IMF endorsement or partnership. Note Jeonbuk Bank's own service is dollar pre-funded, and IMF GFSR Oct 2026 Ch.3 notes atomic settlement can raise intraday liquidity needs.",
       "confidence": "medium",
       "link_type": "indirect_alignment"
     },
@@ -223,17 +225,29 @@
       "overlap": "Lumi's analysis: both treat connecting many bank and stablecoin networks as the core problem. Indirect alignment only; Quant is not on the BLOOM participant list and MAS names no interoperability vendor.",
       "confidence": "low",
       "link_type": "indirect_alignment"
+    },
+    {
+      "entity": "Banca d'Italia",
+      "coin": "QNT",
+      "theme": "interoperability across tokenized platforms",
+      "institution_says": "Banca d'Italia (Oct 23 speech): the key challenge is \"to preserve access to a risk-free settlement asset while ensuring interoperability across platforms, so that liquidity does not fragment and settlement finality is not weakened.\"",
+      "institution_source_url": "https://www.bancaditalia.it/pubblicazioni/interventi-direttorio/int-dir-2026/20261023-scotti/Scotti_23102026.pdf",
+      "token_says": "Quant says it provides interoperability, orchestration and transaction management for The Clearing House's on-chain money initiative, connecting tokenized deposits with existing rails such as RTP and CHIPS (paraphrased).",
+      "token_source_url": "https://quant.network/press-releases/the-clearing-house-partners-with-quant-to-advance-the-on-chain-money-initiative/",
+      "overlap": "Lumi's analysis: both frame connecting new tokenized ledgers to existing settlement rails as the core problem. Indirect alignment only; Banca d'Italia names no vendor and the Eurosystem's own bridge is Pontes.",
+      "confidence": "medium",
+      "link_type": "indirect_alignment"
     }
   ],
   "theses": [
     {
       "title": "Interoperability layer: private ledgers connecting to shared public rails",
       "text": "Analytical thesis, not fact: IMF and BIS papers describe national or bank ledgers interoperating through shared settlement infrastructure, and some observers read this as private XRPL-style ledgers linking to the public XRP Ledger, with Quant positioned as interoperability middleware. No IMF or BIS document names XRPL or Quant in that role.",
-      "evidence_this_window": "BLOOM's expansion puts three central banks to work on interoperability between tokenised deposits and stablecoins on different networks, with Ripple among the participants. HSBC's RedCoin launched on HSBC's own ledger. Neither names XRPL or Quant as shared settlement or interoperability infrastructure; no new IMF or BIS architecture paper in the window.",
+      "evidence_this_window": "Banca d'Italia's Oct 23 speech describes Pontes as a bridge between market DLT platforms and TARGET Services and Appia as a longer-term interoperable infrastructure, and warns against siloed proprietary platforms. That matches the 'many ledgers connecting to shared settlement' shape, but it centres central bank money, not a public ledger, and names no network. BLOOM's interoperability workstream (Ripple a participant) continues. The CPMI report on central bank money in the evolving payment system (due Oct 29) is the next primary document to check.",
       "sources": [
+        "https://www.bancaditalia.it/pubblicazioni/interventi-direttorio/int-dir-2026/20261023-scotti/Scotti_23102026.pdf",
         "https://www.mas.gov.sg/news/media-releases/2026/mas-bnm-and-bot-partner-with-industry-to-advance-cross-border-settlement-in-digital-money",
-        "https://www.about.hsbc.com.hk/news-and-media/hsbc-redcoin-launches-today",
-        "https://www.bis.org/speeches/20261019-building-trusted-foundations-digital-finance"
+        "https://www.bis.org/pages/media-centre/media-schedule.pdf"
       ]
     }
   ],
@@ -244,19 +258,31 @@
     },
     {
       "entity": "CFTC",
-      "note": "No new action in window; Oct 13 ANPRM (Regulation CTX/CAM) comments due Dec 14."
+      "note": "No new rule action in window; Frontier Forum on AI and agentic finance Oct 28 (Hedera among panelists); crypto ANPRM comments due Dec 14."
+    },
+    {
+      "entity": "SEC",
+      "note": "No new action since the Oct 23 FY2027 exam priorities listed above."
     },
     {
       "entity": "BIS",
-      "note": "No new publication in window; its BLOOM work with MAS expanded (see MAS item)."
+      "note": "No new publication in window; CPMI report on central bank money due Oct 29."
     },
     {
       "entity": "IMF",
       "note": "No new paper confirmed in window; Oct 2026 GFSR Ch.3 on tokenization remains the main reference."
     },
     {
+      "entity": "JPMorgan (Kinexys)",
+      "note": "No Kinexys news in window; JPM Coin's Ethereum expansion (Oct 19) is the latest."
+    },
+    {
+      "entity": "DTCC",
+      "note": "Secondary coverage (Oct 24) says the tokenization service has launched on Canton and DTCC's private Besu; no DTCC release confirming go-live was found, and DTCC still says October 2026."
+    },
+    {
       "entity": "Cross River Bank",
-      "note": "No new primary announcement in window; Oct 15 RLUSD-on-XRPL integration still being covered."
+      "note": "No new announcement; Oct 15 RLUSD-on-XRPL integration remains the latest."
     },
     {
       "entity": "R3 Corda",
@@ -264,54 +290,46 @@
     },
     {
       "entity": "Quant",
-      "note": "No notable primary news in window; The Clearing House on-chain money work targets live transactions in Q2 2027."
+      "note": "No new primary news; The Clearing House on-chain money work targets live transactions in Q2 2027."
     },
     {
-      "entity": "DTCC",
-      "note": "No confirmed go-live date for its tokenization service; DTCC still says October 2026."
-    },
-    {
-      "entity": "JPMorgan (Kinexys)",
-      "note": "No Kinexys news in window; J.P. Morgan Asset Management's Solana fund expansion is listed above."
+      "entity": "Hedera",
+      "note": "No new announcement since the Oct 22 Network MCP testnet launch; policy lead on the CFTC Oct 28 forum panel."
     },
     {
       "entity": "XDC Network",
-      "note": "No notable news since the Oct 21 SBI/Shinhan MOU."
-    },
-    {
-      "entity": "Axelar",
-      "note": "No notable news in window."
+      "note": "No notable news in window; MoneyGram's validator role (announced Oct 15) and the Oct 21 SBI/Shinhan MOU are the latest."
     },
     {
       "entity": "SBI Holdings",
       "note": "No new announcement beyond the Oct 21 Shinhan Card MOU."
     },
     {
-      "entity": "Securitize",
-      "note": "No new announcement beyond the Anchorage mint/redemption partnership."
+      "entity": "Axelar",
+      "note": "No notable primary news in window."
     },
     {
-      "entity": "Stellar (protocol)",
-      "note": "No protocol news; Bell (Protocol 30) testnet upgrade Nov 3."
+      "entity": "Securitize",
+      "note": "No new announcement in window."
     }
   ],
   "connections": [
     {
       "theme": "tokenized_cash_funds",
-      "text": "Franklin's sgBENJI build-up on XRPL and J.P. Morgan AM's money funds on Solana show tokenized Treasury funds spreading across public chains; JLTXX is explicitly aimed at GENIUS Act stablecoin reserves, which take effect Jan 18, 2027.",
+      "text": "Franklin's sgBENJI build-up on XRPL keeps tokenized Treasury funds moving onto public chains as the OCC's GENIUS rule and reporting forms define how stablecoin issuers will hold and report reserves.",
       "entities": [
         "Franklin Templeton",
-        "J.P. Morgan Asset Management",
         "US Treasury / OCC"
       ]
     },
     {
       "theme": "asia_payment_corridors",
-      "text": "BLOOM's Singapore-Malaysia-Thailand expansion and HSBC's RedCoin in Hong Kong add to this week's Asian stablecoin push, following the SBI/XDC/Shinhan MOU (Oct 21).",
+      "text": "Jeonbuk Bank's Ripple-based remittances in Korea, Thailand's baht stablecoin consultation and BLOOM's Singapore-Malaysia-Thailand expansion add to a busy week for Asian payment corridors, alongside HSBC's RedCoin and the SBI/XDC/Shinhan MOU (Oct 21).",
       "entities": [
+        "Ripple / Jeonbuk Bank",
+        "Bank of Thailand",
         "MAS / Bank Negara Malaysia / Bank of Thailand (BLOOM)",
-        "HSBC",
-        "SBI Holdings / XDC Network"
+        "HSBC"
       ]
     },
     {
@@ -324,10 +342,10 @@
     },
     {
       "theme": "settlement_liquidity",
-      "text": "Ripple/Arf RLUSD credit on XRPL and Ripple's BLOOM participation both target the cost and speed of cross-border settlement.",
+      "text": "Ripple describes XRP as a bridge asset for corridors short of pre-funded liquidity, while Banca d'Italia stresses a risk-free settlement asset so liquidity does not fragment across tokenized platforms.",
       "entities": [
-        "Ripple",
-        "MAS / Bank Negara Malaysia / Bank of Thailand (BLOOM)"
+        "Ripple / Jeonbuk Bank",
+        "Banca d'Italia"
       ]
     },
     {
@@ -336,6 +354,13 @@
       "entities": [
         "SEC",
         "US Treasury / OCC"
+      ]
+    },
+    {
+      "theme": "privacy_and_compliance",
+      "text": "OpenZeppelin's confidential tokens for Stellar pair private amounts with auditor access, freezing and clawback, the kind of controls regulated issuers need before moving payroll or treasury flows onto a public ledger.",
+      "entities": [
+        "Stellar (OpenZeppelin)"
       ]
     }
   ],
@@ -353,6 +378,16 @@
       "source_url": "https://coinedition.com/crypto-live-news/stellar-announces-bell-upgrade-ahead-of-november-23-validator-vote/"
     },
     {
+      "date": "2026-10-28",
+      "event": "CFTC Innovation Task Force Frontier Forum on super intelligence and agentic trading (Hedera among panelists)",
+      "source_url": "https://www.cftc.gov/media/14771/FrontierForumSeries_Agenda102826/download"
+    },
+    {
+      "date": "2026-10-29",
+      "event": "BIS CPMI report: \"The roles of central banks and central bank money in the evolving payment system\" (scheduled)",
+      "source_url": "https://www.bis.org/pages/media-centre/media-schedule.pdf"
+    },
+    {
       "date": "2026-11-03",
       "event": "Stellar Bell (Protocol 30) testnet upgrade",
       "source_url": "https://coinedition.com/crypto-live-news/stellar-announces-bell-upgrade-ahead-of-november-23-validator-vote/"
@@ -366,6 +401,11 @@
       "date": "2026-11-23",
       "event": "Stellar Bell mainnet validator vote",
       "source_url": "https://coinedition.com/crypto-live-news/stellar-announces-bell-upgrade-ahead-of-november-23-validator-vote/"
+    },
+    {
+      "date": "2026-11-23",
+      "event": "OCC comment deadline: weekly and quarterly reporting forms for payment stablecoin issuers",
+      "source_url": "https://www.federalregister.gov/documents/2026/10/23/2026-21705/agency-information-collection-activities-proposed-information-collection-submission-for-omb-review"
     },
     {
       "date": "2026-11-30",
