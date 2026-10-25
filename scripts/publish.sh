@@ -6,7 +6,7 @@
 # from the paths and kept out of every commit.
 #   PUBLISH_MSG="custom message" scripts/publish.sh
 # Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push
-#   -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
+#   -> data/ideas.json refresh (scripts/ideas.py, every publish) -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
 # Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -48,6 +48,13 @@ if [ "${BUILD_PAGES:-1}" != 0 ] && [ -f scripts/build_pages.py ] && printf '%s\n
   else
     echo "publish: WARNING build_pages.py failed; publishing data without regenerating pages" >&2
   fi
+fi
+
+# Current paper-trade ideas for api.lumitrades.io /v1/slate and /v1/brief: data/ideas.json (pending/open ideas only, no
+# closed ideas, outcomes or P&L; scripts/ideas.py) is regenerated from the private trades doc and staged on EVERY publish.
+if [ -f scripts/ideas.py ]; then
+  python3 scripts/ideas.py >/dev/null || echo "publish: WARNING scripts/ideas.py failed; data/ideas.json not refreshed" >&2
+  [ -f data/ideas.json ] && paths+=(data/ideas.json)
 fi
 
 # Search-engine ownership files at the site root must stay published: always stage them
