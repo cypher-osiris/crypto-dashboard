@@ -19,7 +19,8 @@ Keep every statement in sync with the code and the other pages:
 - paid badges: "Monitored by Lumi" (labelled paid plan on the SVG) and the planned "Verified owner" are separate from results
 - contact: hello@lumitrades.io (the address used on /trust/ and /privacy/)
 - "Checked, not test-bought" (probe-checked section) mirrors lumi-api src/trust/probe_checked.ts PROBE_LABEL / PROBE_LABEL_NOTE and
-  verdict.ts probe_checked_only (editor-approved wording, 2026-10-25); never call the free probe "uptime"
+  verdict.ts probe_checked_only (final wording 2026-10-25, no verdict line); translated into all 6 languages
+  (editor, notes/outreach/editor_review_2026-10-25/trust_policy_checked_translations.md); never call the free probe "uptime"
 - method details stay server-side (api.lumitrades.io/v1/trust/methodology); this page describes the score at a high level only
 Never name a person. No promises of returns."""
 import datetime as dt
@@ -74,8 +75,8 @@ SECTIONS = [
         "The detailed method runs on our servers; this page describes it only at a high level.",
     ]),
     ("probe-checked", "Checked, not test-bought", [
-        "Lumi sent this seller one free, unpaid request and checked its x402 payment response, whether it was reachable, its TLS certificate, its domain age, whether its payment address has any public on-chain history, and whether its listing is complete. Lumi has not paid this seller, so these checks say nothing about what a paid call returns.",
-        "Checked, not test-bought: Lumi's free checks passed (valid x402 payment response, reachable, valid TLS, complete listing), but Lumi has not paid this seller, so nothing is known about what a paid call returns.",
+        "Some sellers on the list are labelled “Checked, not test-bought.” For these sellers, Lumi sent one free, unpaid request and checked the x402 payment response, whether the seller was reachable, its TLS certificate, the domain's age, whether its payment address has any public on-chain history, and whether its listing is complete. Lumi has not paid these sellers, so these checks say nothing about what a paid call returns.",
+        "Only a paid test-buy that delivers can earn “Tested by Lumi.” A checked seller moves up only after Lumi pays it and gets a usable result, and paying Lumi never changes either label.",
     ]),
     ("oversight", "Human oversight", [
         "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.",
