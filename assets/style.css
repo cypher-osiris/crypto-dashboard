@@ -892,3 +892,34 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 .tr-about dt{color:var(--dim)}
 .tr-about dd{margin:0;overflow-wrap:anywhere}
 @media (max-width:600px){.tr-about dl{grid-template-columns:1fr;gap:.1rem}.tr-about dd{margin-bottom:.45rem}}
+
+/* Homepage chrome (.pv-*): moved here from the retired assets/dash.css on Oct 25, 2026 (index.html no longer loads dash.css). */
+.pv{--pv-up:#22c55e;--pv-down:#f43f5e;--pv-card:rgba(17,24,38,.78);--pv-gap:16px}
+.pv svg{display:block}
+.pv-top{border-bottom:1px solid var(--line)}
+.pv-top-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:14px}
+.pv-brand{display:flex;align-items:center;gap:10px;color:var(--text)}
+.pv-brand:hover{text-decoration:none}
+.pv-brand img{border-radius:10px}
+.pv-brand span{display:flex;flex-direction:column;line-height:1.2}
+.pv-brand b{font-size:1.1rem;letter-spacing:-.01em}
+.pv-brand small{color:var(--muted);font-size:.74rem}
+.pv-top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pv-social{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:9px;border:1px solid var(--line2);color:var(--muted)}
+.pv-social:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.pv-social svg{width:15px;height:15px}
+.pv-social.yt:hover{color:#ff4e45}
+.pv-main{padding-top:14px;padding-bottom:20px}
+.pv-sec{margin:34px 0;scroll-margin-top:60px}
+.pv-head{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;margin-bottom:14px}
+.pv-head .pv-h{margin:0}
+.pv-h{display:flex;align-items:center;gap:10px;font-size:1.45rem;font-weight:700;letter-spacing:-.02em;margin:0 0 14px}
+.pv-h svg{width:22px;height:22px;color:var(--cyan);flex:none}
+.pv-card{background:var(--pv-card);border:1px solid var(--line2);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);min-width:0}
+.pv-more-link{display:inline-flex;align-items:center;gap:4px;font-size:.82rem;font-weight:600}
+.pv-more-link svg{width:14px;height:14px}
+.pv .footer a{color:var(--muted);text-decoration:underline}
+@media (max-width:640px){.pv-h{font-size:1.25rem}.pv-brand small{display:none}}
+.pv-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
+.pv-lede{margin:0 0 16px;max-width:62ch;color:var(--muted);line-height:1.5}
+.ag-home.ag-one{grid-template-columns:1fr}
