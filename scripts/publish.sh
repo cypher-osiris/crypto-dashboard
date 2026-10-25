@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Publish data updates to GitHub Pages without prompts.
 #   scripts/publish.sh                    # stage everything under data/
-#   scripts/publish.sh data/log.json data/signals.json   # stage only these paths
+#   scripts/publish.sh data/signals.json   # stage only these paths (data/log.json and data/backtest.json are always skipped)
 # data/trades.json is never published (taken down Oct 24, 2026; the trades doc is private in state/): it is dropped
 # from the paths and kept out of every commit.
 #   PUBLISH_MSG="custom message" scripts/publish.sh
 # Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push
 #   -> (every publish, before the build: scripts/derive_attempts_all.py -> scripts/trust_attempts.json)
-#   -> data/ideas.json refresh (scripts/ideas.py, every publish) -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
+#   -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
 # Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -19,6 +19,7 @@ mkdir -p state
 paths=()
 for p in "$@"; do
   [ "$p" = data/trades.json ] && { echo "publish: data/trades.json is private and never published; skipping it" >&2; continue; }
+  case "$p" in data/log.json|data/backtest.json) echo "publish: $p is retired (Oct 25, 2026) and never published; skipping it" >&2; continue;; esac
   paths+=("$p")
 done
 if [ ${#paths[@]} -eq 0 ]; then
@@ -52,7 +53,7 @@ if [ -f scripts/derive_attempts_all.py ]; then
   fi
 fi
 
-# Data publishes also regenerate the static coin pages (/xdc/ etc.) + sitemap.xml and publish them in the same commit.
+# Data publishes also regenerate the static trust pages + sitemap.xml and publish them in the same commit.
 # Set BUILD_PAGES=0 to skip. A failed build only warns: the data publish still goes out.
 if [ "${BUILD_PAGES:-1}" != 0 ] && [ -f scripts/build_pages.py ] && printf '%s\n' "${paths[@]}" | grep -q '^data\(/\|$\)'; then
   if built=$(python3 scripts/build_pages.py --paths); then
@@ -62,12 +63,7 @@ if [ "${BUILD_PAGES:-1}" != 0 ] && [ -f scripts/build_pages.py ] && printf '%s\n
   fi
 fi
 
-# Current paper-trade ideas for api.lumitrades.io /v1/slate and /v1/brief: data/ideas.json (pending/open ideas only, no
-# closed ideas, outcomes or P&L; scripts/ideas.py) is regenerated from the private trades doc and staged on EVERY publish.
-if [ -f scripts/ideas.py ]; then
-  python3 scripts/ideas.py >/dev/null || echo "publish: WARNING scripts/ideas.py failed; data/ideas.json not refreshed" >&2
-  [ -f data/ideas.json ] && paths+=(data/ideas.json)
-fi
+# data/ideas.json is frozen in a neutral empty form since Oct 25, 2026 (trade ideas retired): it is never regenerated here.
 
 # Search-engine ownership files at the site root must stay published: always stage them
 # (IndexNow key <32 hex>.txt with name == content, and Bing Webmaster Tools' BingSiteAuth.xml).
@@ -83,7 +79,7 @@ done < <(find "${paths[@]}" -name '*.json' -print0)
 [ "$bad" -eq 0 ] || exit 2
 
 git add -- "${paths[@]}"
-git rm --cached -q --ignore-unmatch -- data/trades.json  # private: never in a commit
+git rm --cached -q --ignore-unmatch -- data/trades.json data/log.json data/backtest.json  # private/retired: never in a commit
 if git diff --cached --quiet -- "${paths[@]}"; then
   echo "publish: nothing to commit"
   exit 0

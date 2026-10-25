@@ -2,13 +2,12 @@
 (Not to be confused with scripts/privacy.py, which scrubs paper-trade results from data files.)
 
 Facts only, and every statement here mirrors the code. Keep it in sync when any of these change:
-- newsletter: Kit form 10079883 (build_pages.NEWSLETTER_BLOCK, index.html, assets/newsletter.js), email only
+- newsletter: Kit list (no signup form on the site since Oct 25, 2026; existing subscribers only), email only
 - analytics: Cloudflare Web Analytics beacon (build_pages.CF_BEACON), cookieless
 - hosting: GitHub Pages (CNAME); no accounts, logins or comment forms
 - third parties loaded by pages: Google Fonts, jsDelivr (Chart.js on /classic/), browser-side market data from Coinbase Exchange,
-  Kraken, CoinGecko and OKX (assets/signals.js, live.js, extras.js), country lookup api.country.is / ipapi.co (assets/affiliate.js)
-- browser storage: localStorage lumi_lang + lumi_lang_hint (assets/i18n.js), sessionStorage lumi_geo_v1 (assets/affiliate.js)
-- referral links are geo-gated by assets/affiliate.js: describe them generically, never name an exchange the site hides from US visitors
+  (none since Oct 25, 2026: the market pages, live prices and referral links were retired)
+- browser storage: localStorage lumi_lang + lumi_lang_hint (assets/i18n.js)
 - agent API (lumi-api repo): src/traffic.ts (path, status, UA, referrer host, country, daily keyed IP hash, 90 days),
   src/sales.ts (payer wallet, amount, network, tx), src/trial.ts (wallet + daily IP hash), monitor/feed signups
   (migrations/0011: wallet, endpoints, optional webhook URL / email), tips and replies (src/trust)
@@ -26,9 +25,9 @@ LEDE = ("Lumi Trades runs this website (lumitrades.io) and the agent API (api.lu
         "This page lists what is collected, by whom and why. We do not sell personal data and we do not use advertising trackers.")
 SECTIONS = [
     ("newsletter", "Newsletter", [
-        "If you subscribe to the free daily newsletter, the email address you enter is sent to Kit (ConvertKit), the email service "
-        "that stores the subscriber list and sends the emails. The form asks for your email address only, and it is used only to send "
-        "the daily newsletter.",
+        "If you subscribed to the newsletter, the email address you entered is sent to Kit (ConvertKit), the email service "
+        "that stores the subscriber list and sends the emails. It is used only to send "
+        "the newsletter.",
         "Kit asks you to confirm the subscription by email, and every newsletter has an unsubscribe link: you can unsubscribe at any time. "
         "Like most email services, Kit may record delivery details such as whether an email was opened. Kit handles this data under its own privacy policy.",
     ]),
@@ -41,17 +40,14 @@ SECTIONS = [
         "and secure its service, under GitHub's privacy statement. The site has no accounts, logins or comment forms.",
     ]),
     ("third-parties", "Third-party content and links", [
-        "Pages load fonts from Google Fonts and, on some pages, a chart library from the jsDelivr CDN. Live prices and market data are fetched "
-        "by your browser directly from public APIs (Coinbase Exchange, Kraken, CoinGecko and OKX). Like any web request, these send your IP "
-        "address and browser details to those providers. Nothing from X, YouTube or TikTok is embedded; they are plain links.",
-        "Some links to exchanges and wallet makers are affiliate or referral links: we may earn a commission if you sign up, at no cost to you. "
-        "Which links are shown depends on your region. To decide, your browser asks a country lookup service (api.country.is, or ipapi.co "
-        "as a fallback) for your country, or uses your time zone. The answer stays in your browser and is not sent to us. "
+        "Pages load fonts from Google Fonts. The vendor trust pages fetch the latest test results from Lumi's own API "
+        "(api.lumitrades.io); like any web request, this sends your IP address and browser details to that service. "
+        "Nothing from X, YouTube or TikTok is embedded; they are plain links. "
         "Once you follow a link to another site, that site's privacy policy applies.",
     ]),
     ("browser", "Stored in your browser", [
-        "This site sets no cookies. Your browser keeps your language choice and whether you dismissed the language suggestion (local storage), "
-        "and the region answer described above until you close the tab (session storage). You can clear them in your browser settings.",
+        "This site sets no cookies. Your browser keeps your language choice and whether you dismissed the language suggestion (local storage). "
+        "You can clear them in your browser settings.",
     ]),
     ("api", "The agent API (api.lumitrades.io)", [
         "The API runs on Cloudflare Workers. To operate it, it keeps a private traffic log: for each request, the path (without the query string), "

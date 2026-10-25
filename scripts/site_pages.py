@@ -1,6 +1,6 @@
 """Static info pages, one per language: /agents/ (Lumi's pay-per-call API for AI agents) and /trust/ (x402 vendor
 observations), plus /llms.txt. SEO bits (keywords, JSON-LD, the /agents/ FAQ) live in seo.py. Called by build_pages.py inside its language loop with the same helper namespace `h` that
-trade_pages.py gets (h.E, h._, h.L, h.SITE, h.ctime, h.langs, h.i18n, h.head_i18n, h.i18n_scripts, ...).
+site_chrome.py gets (h.E, h._, h.L, h.SITE, h.ctime, h.langs, h.i18n, h.head_i18n, h.i18n_scripts, ...).
 
 /trust/ is rendered to static HTML at build time from https://api.lumitrades.io/v1/trust/vendors (fetched once per
 build, cached in state/trust_vendors.json, which is git-ignored; if the API is down the cache is used). assets/trust.js
@@ -23,9 +23,8 @@ CACHE = os.path.join(ROOT, "state", "trust_vendors.json")
 BAZAAR = "https://docs.cdp.coinbase.com/x402/bazaar"
 X402SCAN = "https://www.x402scan.com/server/0b8315c8-da5e-4754-8564-e9f286edcbae"
 PAYCHECK_URL = "https://lumierepaycheck.org/e?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fevents%2Fnext48h"  # Lumière PayCheck page for one Lumi endpoint (independent check)
-SETTLED_URL = "https://settled.tools/v1/free/check?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fslate"  # Settled free check for /v1/slate (independent paid test purchase)
 PAY_ADDRESS_TEXT = "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer."
-CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026) and {settled} (a paid test purchase of <code>/v1/slate</code> was delivered)."
+CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026)."
 MCP_REG = "https://registry.modelcontextprotocol.io/v0/servers?search=lumi-trades"
 NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 
@@ -38,32 +37,22 @@ TRUST_PRICES = [
     ("Vendor trust list and seller lookup", "GET /v1/trust/vendors", "free"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify", "free"),
 ]
+# Neutral market data routes listed on the site (the list was narrowed on Oct 25, 2026).
 MARKET_PRICES = [
-    ("Signal per coin (buy/sell read, RSI/MACD/EMA)", "GET /v1/signal/{coin}", "$0.01"),
-    ("Support / resistance and 7-day scenario levels (not forecasts)", "GET /v1/levels/{coin}", "$0.01"),
-    ("All-coins scan (50 signals in one call)", "GET /v1/scan", "$0.02"),
-    ("Lite signal per coin (label, score, price)", "GET /v1/lite/{coin}", "$0.004"),
-    ("Market slate (today's paper-trade ideas)", "GET /v1/slate", "$0.02"),
     ("BTC + macro market backdrop", "GET /v1/market", "$0.02"),
     ("Daily crypto market brief", "GET /v1/brief", "$0.02"),
-    ("Yen carry-trade watch (USD/JPY, Nikkei)", "GET /v1/macro/yen", "$0.01"),
+    ("Yen watch (USD/JPY, Nikkei)", "GET /v1/macro/yen", "$0.01"),
     ("Crypto sentiment (CoinMarketCap Fear & Greed, funding)", "GET /v1/sentiment", "$0.005"),
     ("Macro and crypto events calendar", "GET /v1/events", "$0.005"),
-    ("Perpetual funding rates (50 coins)", "GET /v1/funding", "$0.003"),
+    ("Crypto funding rates", "GET /v1/funding", "$0.003"),
     ("CoinMarketCap Fear & Greed with history", "GET /v1/fear-greed", "$0.003"),
     ("Events in the next 48 hours", "GET /v1/events/next48h", "$0.003"),
     ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.10"),
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES
-# Lumi Market Ideas (signals, levels, scan, slate): the same routes and prices, shown as their own group,
-# apart from the Lumi Trust products above and the neutral market data below.
-MARKET_IDEAS_PATHS = ("/v1/signal/", "/v1/lite/", "/v1/scan", "/v1/slate", "/v1/levels/")
-MARKET_IDEAS_PRICES = [x for x in MARKET_PRICES if x[1].split(" ", 1)[1].startswith(MARKET_IDEAS_PATHS)]
-MARKET_DATA_PRICES = [x for x in MARKET_PRICES if x not in MARKET_IDEAS_PRICES]
-MARKET_IDEAS_TEXT = ("Signals, support and resistance levels, the all-coins scan and the paper-trade slate are "
-                     "Lumi Market Ideas: an AI's paper-trade analysis, sold per call like the market data and kept apart from Lumi's trust checks.")
-AGENTS_ROUTES_TEXT = ("Live signals for 51 coins, support and resistance levels for 14 tracked coins, the paper-trade slate, and market and policy briefs: "
-                      "{m} paid market routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
+MARKET_DATA_PRICES = MARKET_PRICES
+AGENTS_ROUTES_TEXT = ("Neutral market data and policy briefs: "
+                      "{m} paid market data routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
                       "in total, usable on any paid route including the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
                       "or an activated XRP Ledger account; one trial per wallet, not per chain; nothing is moved).")
 
@@ -94,12 +83,12 @@ FEED_PLANS = [
 PLANS = MONITOR_PLANS + FEED_PLANS
 
 CURL = """# 1. ask: no key, no account. The API answers 402 with a quote
-curl -i https://api.lumitrades.io/v1/signal/XRP
+curl -i "https://api.lumitrades.io/v1/trust/check?url=https://api.example.com/v1/data"
 #    HTTP/2 402
 #    PAYMENT-REQUIRED: <base64 JSON: price, networks (Base USDC, XRPL XRP/RLUSD/USDC, Stellar USDC), payTo>
 
 # 2. pay with any x402 client, then repeat the call with the signed payment
-curl https://api.lumitrades.io/v1/signal/XRP -H "PAYMENT-SIGNATURE: <payment payload>"
+curl "https://api.lumitrades.io/v1/trust/check?url=https://api.example.com/v1/data" -H "PAYMENT-SIGNATURE: <payment payload>"
 #    HTTP/2 200 + the data, PAYMENT-RESPONSE: <settlement receipt>"""
 
 MCP = """{ "mcpServers": {
@@ -269,10 +258,20 @@ def vendor_link(v):
     return home
 
 
-# ---------- "Tested by Lumi" badge on /trust/ (same look as the API badge /badge/{key}.svg and the brand video) ----------
-# Built only from the vendor's latest stored paid test-buy (last_paid_observation): result, UTC date (MM-DD-YYYY, the
-# same date the API badge prints) and chain. No paid test-buy on record = no badge. Display only: it never changes a
-# score. Mirrored in assets/trust.js (badge()).
+# ---------- "Tested by Lumi" badge + "Last test-buy" pill on /trust/ and the seller pages ----------
+# Two separate things (owner decision Oct 25, 2026):
+# 1. "Tested by Lumi" is shown ONLY when the badge is earned: score >= 80, at least 3 paid test-buys and the latest paid
+#    test-buy delivered. Source: the vendor feed's `badge` field when it has one, else GET /v1/badge/{id}.json (`earned`),
+#    fetched once per build and cached in state/trust_badges.json. Anything else (missing, error, unknown) = not earned.
+# 2. "Last test-buy: delivered / not delivered / inconclusive" describes one buy (last_paid_observation): result, UTC date
+#    (MM-DD-YYYY) and chain. No paid test-buy on record = no pill. Display only: neither changes a score.
+# Mirrored in assets/trust.js (badge(), lastBuy()).
+BADGE_URL = API + "/v1/badge/{id}.json"
+BADGE_CACHE = os.path.join(ROOT, "state", "trust_badges.json")
+BADGE_MIN_SCORE, BADGE_MIN_BUYS = 80, 3
+BADGE_EARNED = {}  # vendor id -> True when /v1/badge says earned (filled by fetch_badges())
+
+
 def badge_chain(network):
     n = str(network or "").lower()
     if n.startswith("xrpl"):
@@ -285,7 +284,7 @@ def badge_chain(network):
 
 
 def badge_result(o):
-    """'delivered' | 'no_delivery' | 'inconclusive' for a real paid test-buy, else None (never tested: no badge)."""
+    """'delivered' | 'no_delivery' | 'inconclusive' for a real paid test-buy, else None (never tested: no pill)."""
     if not o or not o.get("observed_at"):
         return None
     dv = o.get("delivery")
@@ -301,18 +300,94 @@ def badge_date(iso):
     return f"{m.group(2)}-{m.group(3)}-{m.group(1)}" if m else ""
 
 
-BADGE_NOTE = "Look for the Tested by Lumi badge: it means Lumi bought from this seller and checked the delivery."
-BADGE_KEY = ("Green: the latest paid test-buy got data back. Red: it did not. The date (UTC) and chain are those of "
-             "that test-buy. Sellers Lumi has not bought from yet have no badge.")
-BADGE_RES = {"delivered": "delivered", "no_delivery": "no delivery", "inconclusive": "inconclusive"}
+def _earned_flag(b):
+    """The feed's badge field: {earned: bool} | bool | "earned". None when absent or unreadable."""
+    if isinstance(b, bool):
+        return b
+    if isinstance(b, dict) and isinstance(b.get("earned"), bool):
+        return b["earned"]
+    if isinstance(b, str):
+        return b.strip().lower() == "earned"
+    return None
+
+
+def fetch_badges(vendors, dry=False):
+    """Fill BADGE_EARNED from GET /v1/badge/{id}.json for each vendor (parallel, short timeout), else the cache.
+    Fails closed: a vendor whose badge can't be read is treated as not earned."""
+    ids = [str(v.get("id")) for v in vendors or [] if v.get("id")]
+    try:
+        with open(BADGE_CACHE, encoding="utf-8") as f:
+            cache = {k: bool(x) for k, x in (json.load(f).get("earned") or {}).items()}
+    except Exception:
+        cache = {}
+    got = {}
+    if not dry and ids:
+        from concurrent.futures import ThreadPoolExecutor
+
+        def one(i):
+            try:
+                req = urllib.request.Request(BADGE_URL.format(id=urllib.parse.quote(i, safe="")),
+                                             headers={"Accept": "application/json", "User-Agent": "lumitrades.io build"})
+                with urllib.request.urlopen(req, timeout=8) as r:
+                    d = json.loads(r.read().decode("utf-8"))
+                if d.get("kind") == "tested_badge_verdict" and isinstance(d.get("earned"), bool):
+                    return i, d["earned"]
+            except Exception:
+                pass
+            return i, None
+        with ThreadPoolExecutor(8) as ex:
+            for i, e in ex.map(one, ids):
+                if e is not None:
+                    got[i] = e
+        if got:
+            try:
+                os.makedirs(os.path.dirname(BADGE_CACHE), exist_ok=True)
+                with open(BADGE_CACHE + ".tmp", "w", encoding="utf-8") as f:
+                    json.dump({"fetched_at": dt.datetime.now(dt.timezone.utc).isoformat(), "earned": {**cache, **got}}, f)
+                os.replace(BADGE_CACHE + ".tmp", BADGE_CACHE)
+            except OSError:
+                pass
+    BADGE_EARNED.clear()
+    BADGE_EARNED.update({i: True for i in ids if got.get(i, cache.get(i)) is True})
+    return dict(BADGE_EARNED)
+
+
+def badge_earned(v):
+    """True only when the badge is earned (feed field first, then /v1/badge). Never inferred from the score here."""
+    f = _earned_flag(v.get("badge"))
+    if f is not None:
+        return f
+    return BADGE_EARNED.get(str(v.get("id") or "")) is True
+
+
+BADGE_NOTE = ("Look for the Tested by Lumi badge: it is earned only with a score of 80 or more, at least 3 paid test-buys "
+              "and a delivered latest test-buy.")
+BADGE_KEY = ("“Last test-buy” shows the result of Lumi's latest paid test-buy (green: delivered, red: not delivered) with its date (UTC) "
+             "and chain. Sellers Lumi has not bought from yet show neither.")
+BADGE_LABEL = "Tested by Lumi"
+BADGE_EARNED_TXT = "earned"
+BADGE_EARNED_TIP = "Badge earned: score 80 or more, at least 3 paid test-buys and the latest test-buy delivered. Not an endorsement or guarantee."
+LAST_LABEL = "Last test-buy"
+BADGE_RES = {"delivered": "delivered", "no_delivery": "not delivered", "inconclusive": "inconclusive"}
 BADGE_TIP = {"delivered": "Latest paid test-buy by Lumi: data delivered.",
              "no_delivery": "Latest paid test-buy by Lumi: no data delivered.",
              "inconclusive": "Latest paid test-buy by Lumi: result inconclusive."}
 BADGE_TIP_END = "Date in UTC. A dated test result, not an endorsement or guarantee."
+NOT_SCORED = "Not scored yet"
 
 
-def badge_html(h, v):
-    """The two-pill badge for one vendor, or "" when Lumi has no real completed paid test-buy for it."""
+def earned_html(h, v):
+    """The "Tested by Lumi" pill, or "" when the badge is not earned."""
+    if not badge_earned(v):
+        return ""
+    E, _t = h.E, h._
+    label, right = _t(BADGE_LABEL), _t(BADGE_EARNED_TXT)
+    return (f'<span class="lt-badge b-earned" role="img" aria-label="{E(label)}: {E(right)}" title="{E(_t(BADGE_EARNED_TIP))}">'
+            f'<span class="lt-b-l" aria-hidden="true">{E(label)}</span><span class="lt-b-r" aria-hidden="true">{E(right)}</span></span>')
+
+
+def last_buy_html(h, v):
+    """'Last test-buy: delivered · MM-DD-YYYY · chain', or "" when Lumi has no real completed paid test-buy."""
     E, _t = h.E, h._
     o = v.get("last_paid_observation") or None
     res = badge_result(o)
@@ -321,10 +396,19 @@ def badge_html(h, v):
         return ""
     chain = badge_chain(o.get("network"))
     right = " · ".join([_t(BADGE_RES[res]), day] + ([chain] if chain else []))
-    label = _t("Tested by Lumi")
+    label = _t(LAST_LABEL)
     tip = _t(BADGE_TIP[res]) + " " + _t(BADGE_TIP_END)
-    return (f'<span class="lt-badge b-{res}" role="img" aria-label="{E(label)}: {E(right)}" title="{E(tip)}">'
+    return (f'<span class="lt-badge lt-last b-{res}" role="img" aria-label="{E(label)}: {E(right)}" title="{E(tip)}">'
             f'<span class="lt-b-l" aria-hidden="true">{E(label)}</span><span class="lt-b-r" aria-hidden="true">{E(right)}</span></span>')
+
+
+def badge_html(h, v):
+    """Earned badge (if any) followed by the per-buy pill (if any)."""
+    return earned_html(h, v) + last_buy_html(h, v)
+
+
+def score_html(h, v):
+    return h.E(h._(NOT_SCORED)) if v.get("score") is None else h.E(v.get("score"))
 
 
 # ---------- Free on-chain proof: the tx hash of each seller's latest paid test-buy (the same buy the badge shows) ----------
@@ -508,7 +592,7 @@ def vendor_row(h, v, now_ms=None):
         ev += f' <a href="{E(v["detail"])}" target="_blank" rel="noopener">· {E(_t("reply ({n})", n=v["replies"]))}</a>'
     lc = _last_checked(v)
     return (f'<tr><td>{name}{badge_html(h, v)}{tx_html(h, v)}{attempts_html(h, v, now_ms) if now_ms else ""}{seller_link_html(h, v)}<span class="vid">{E(v.get("id"))}</span></td>'
-            f'<td class="num">{"—" if v.get("score") is None else E(v.get("score"))}</td>'
+            f'<td class="num">{score_html(h, v)}</td>'
             f'<td><span class="tr-conf c-{E(conf)}">{E(_t(conf) if conf in ("low", "medium", "high") else conf)}</span></td>'
             f'<td class="num">{E(s.get("paid_test_buys") or 0)}</td><td class="num">{E(s.get("delivered") or 0)}</td>'
             f'<td>{E(h.ctime(lc)) if lc else "—"}</td><td>{ev}</td></tr>')
@@ -522,9 +606,8 @@ def _page(h, tp, path, title, desc, ld, body, V, gen_date, nav_items, current, e
     return head + tp.chrome(h, R, "../", nav_items, V, path, current) + body + tp.footer(h, R, gen_date)
 
 
-AGENTS_DESC = ("Pay-per-call crypto API for AI agents: trading signals, support and resistance levels, CoinMarketCap Fear & Greed, "
-               "a daily brief and an Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Pay with x402 in USDC "
-               "on Base or Stellar, or XRP and RLUSD on the XRPL. MCP server, no API key.")
+AGENTS_DESC = ("x402 trust checks for AI agents: check a seller before you pay, verify signed test-buy receipts, plus neutral market data "
+               "and an Institutional & Policy Brief. Pay per call in USDC on Base or Stellar, or XRP and RLUSD on the XRPL. MCP server, no API key.")
 TRUST_DESC = ("Independent x402 seller trust list: dated results of Lumi's small paid test-buys on Base, XRPL and Stellar. Paying Lumi never changes a score.")  # <=155 chars (meta description) in every language
 
 
@@ -542,9 +625,9 @@ def badge_section(h):
     html_s = f'<a href="{API}/trust/v/{{key}}"><img src="{API}/badge/{{key}}.svg" alt="{alt}" height="20"></a>'
     lk = lambda href, txt: f'<a href="{href}" target="_blank" rel="noopener">{E(txt)}</a>'
     return f"""<section class="card cp-sec" id="badge"><h2>{E(_t("Get your badge"))}</h2>
-<p>{_t("Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge shows the verdict and date of Lumi's latest stored paid test-buy of your service, plus the chain (XRPL, Base or Stellar), and links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.")}</p>
+<p>{_t("Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge is earned only when your live score is 80 or more, Lumi has made at least 3 paid test-buys and the latest one delivered data. It links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.")}</p>
 <p class="ag-badge-ex">{E(_t("Example (a real vendor):"))} <a href="{page}" target="_blank" rel="noopener"><img src="{img}" alt="{E(alt)}" height="20" loading="lazy" style="vertical-align:middle"></a></p>
-<p class="meta">{_t("<b>delivered</b> (green): the paid response contained data · <b>not delivered</b> (red): the seller answered without usable data · <b>inconclusive</b> (gray): Lumi never saw a response, a Lumi-side outcome not counted against you · <b>not yet tested</b>: Lumi has no stored result.")}</p>
+<p class="meta">{_t("Live check: <code>GET https://api.lumitrades.io/v1/badge/{key}.json</code> answers <code>earned</code> true or false with the reason. On the trust list, a separate “Last test-buy” pill shows one buy: <b>delivered</b> (green), <b>not delivered</b> (red) or <b>inconclusive</b> (gray, a Lumi-side outcome not counted against you).")}</p>
 <h3>{E(_t("Find your key"))}</h3>
 <p>{_t("Your key is your Lumi vendor id (shown on the vendor trust list) or the exact host of the x402 URL Lumi bought, for example <code>api.example.com</code>. Paste your endpoint URL, host or vendor id:")}</p>
 <form id="bd-form" class="ag-badge-form" autocomplete="off"><input id="bd-key" type="text" inputmode="url" maxlength="300" placeholder="{E(_t("https://api.example.com/v1/data or a vendor id"))}" aria-label="{E(_t("Endpoint URL, host or vendor id"))}" style="min-width:min(100%,340px);padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:rgba(5,8,14,.6);color:inherit"> <button type="submit" class="btn">{E(_t("Make my badge"))}</button></form>
@@ -553,6 +636,21 @@ def badge_section(h):
 <p class="meta">{E(_t("Markdown (README.md)"))}</p><pre class="ag-code"><code id="bd-md">{E(md)}</code></pre>
 <p class="meta">{E(_t("HTML"))}</p><pre class="ag-code"><code id="bd-html">{E(html_s)}</code></pre>
 <p class="meta">{_t("Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.")} {lk(API + "/badge", _t("Badge docs"))} · <a href="../how-it-works/#testing">{E(_t("How Lumi tests"))}</a></p></section>"""
+
+
+PAID_REPORT_H = "The full vendor report ($0.02)"
+PAID_REPORT_P = ("The full report on one vendor is a paid x402 API call for agents, not a web page: <code>GET https://api.lumitrades.io/v1/trust/vendors/{id}/report</code> "
+                 "answers <code>402 Payment Required</code> with a $0.02 quote, and an x402 client pays it and repeats the call. "
+                 "The report has the vendor's whole observation history, every tx hash with explorer links and the signed test-buy receipts.")
+PAID_REPORT_FREE = ("You don't need it to check a seller: the trust list, each seller's latest tx hash and receipt verification are free. "
+                    "x402 payments are per call and final.")
+
+
+def paid_report_section(h):
+    """/agents/#paid-report: what the $0.02 vendor report is (seller pages link here instead of to the raw paid URL)."""
+    E, _t = h.E, h._
+    return (f'<section class="card cp-sec" id="paid-report"><h2>{E(_t(PAID_REPORT_H))}</h2>\n<p>{_t(PAID_REPORT_P)}</p>\n'
+            f'<p class="meta">{E(_t(PAID_REPORT_FREE))} <a href="#flow">{E(_t("The 402 flow in two calls"))}</a> · <a href="../trust/">{E(_t("Vendor trust list (free)"))}</a></p></section>')
 
 
 def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
@@ -589,6 +687,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 {ptable(MONITOR_PLANS)}
 <p class="meta">{_t("Each test-buy is capped ($0.05 on Watch, $0.10 on Watch Plus and Watch Pro) and funded from the plan fee, never more than half of it. 10 or more endpoints: -20%; 3 terms prepaid: -10%; discounts do not stack (the larger applies). One free 14-day Watch Plus trial per seller (up to 3 endpoints, no card): it never converts and nothing is charged. A paid plan is disclosed on the seller's public entry, and findings stay public with the seller's reply next to them. The “Tested by Lumi” badge is earned only from delivery results and is removed automatically when the seller's live score drops. No auto-renew. No refunds unless Lumi can't perform the monitoring it sold; then the unperformed part is refunded.")} {lk(API + "/v1/monitor", _t("How to start"))}</p></section>
 {badge_section(h)}
+{paid_report_section(h)}
 <section class="card cp-sec" id="feed"><h2>{E(_t("Trust data feed and license"))}</h2>
 <p>{_t("Keyed, licensed access to Lumi's trust observations for facilitators, wallets and agent frameworks: bulk lookups of up to 50 URLs or payTo addresses per request, a status-change feed and, on Feed Pro, a full snapshot export.")}</p>
 {ptable(FEED_PLANS)}
@@ -596,12 +695,6 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <section class="card cp-sec" id="prices"><h2>{E(_t("Market data"))}</h2>
 <p>{_t(AGENTS_ROUTES_TEXT, **route_counts())}</p>
 {table(MARKET_DATA_PRICES)}
-<div class="ag-mi" id="market-ideas">
-<h3>Lumi Market Ideas</h3>
-{h.MI_LABEL()}
-<p>{E(_t(MARKET_IDEAS_TEXT))}</p>
-{table(MARKET_IDEAS_PRICES)}
-</div>
 <p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
 <section class="card cp-sec" id="pay"><h2>{E(_t("How to pay"))}</h2>
 <ul class="ag-list"><li>{_t("<b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.")}</li>
@@ -621,9 +714,9 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <li><a href="../trust/">{E(_t("Vendor trust list (free)"))}</a> · {lk(API + "/v1/monitor", _t("Seller monitoring"))} · {lk(API + "/v1/feed", _t("Trust data feed"))}</li>
 <li>{lk(BAZAAR, _t("Coinbase x402 Bazaar"))} · {lk(X402SCAN, "x402scan")}</li>
 <li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul>
-<p class="meta">{_t(CHECKED_BY_TEXT, paycheck=lk(PAYCHECK_URL, "Lumière PayCheck"), settled=lk(SETTLED_URL, "Settled"))}</p></section>
+<p class="meta">{_t(CHECKED_BY_TEXT, paycheck=lk(PAYCHECK_URL, "Lumière PayCheck"), )}</p></section>
 {seo.faq_html(_t, E)}
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Data, not financial advice.</strong> Signals and trade ideas are an AI's paper-trade analysis; no real money is traded.")}</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Informational data, not financial advice.</strong> Trust results are dated observations of Lumi's own checks, not a guarantee. Lumi does not trade real money.")}</span></div>
 </main>
 """
     js = '<script src="{R}assets/badge.js?v={V}" defer></script>\n'
@@ -724,6 +817,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
     att_js = json.dumps(att, separators=(",", ":"), sort_keys=True).replace("</", "<\\/")
     snap = {str(v.get("id")): tx_snapshot()[str(v.get("id"))] for v in vendors if str(v.get("id")) in tx_snapshot()}
     snap_js = json.dumps(snap, separators=(",", ":"), sort_keys=True).replace("</", "<\\/")
+    badge_js = json.dumps({str(v.get("id")): True for v in vendors if badge_earned(v)}, separators=(",", ":"), sort_keys=True).replace("</", "<\\/")
     R = "../" + ("" if h.L.en else "../")
     gen = (doc or {}).get("generated_at")
     status = "" if vendors else f'<p id="tr-status" class="muted">{E(_t("Loading observations…"))}</p>'
@@ -735,7 +829,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <p class="hx-eyebrow">{E(_t("x402 vendor trust list"))} · <span>{E(_t("free"))}</span></p>
 <h1 id="tx-h" class="hx-h1">{E(_t("Know which agent APIs actually deliver before you pay."))}</h1>
 <p class="hx-sub">{E(_t("Lumi pays x402 sellers a few cents for real, records what came back, and keeps a signed receipt for every buy."))}</p>
-<div class="hx-cta"><a class="hx-btn" href="#vendors">{E(_t("See the list"))}</a><a class="hx-btn ghost" href="../agents/">{E(_t("Full vendor report: $0.02"))}</a></div>
+<div class="hx-cta"><a class="hx-btn" href="#vendors">{E(_t("See the list"))}</a><a class="hx-btn ghost" href="../agents/#paid-report">{E(_t("Full vendor report: $0.02"))}</a></div>
 <p class="hx-price-note muted">{E(_t("$0.02 buys the full report on one vendor from this list (every check, every tx hash and the signed receipts). $0.02 is the pay check: allow, warn or block for any x402 URL before your agent pays it."))}</p>
 </div>
 <div class="tx-visual ag-panel ag-feed" id="ag-feed">
@@ -762,6 +856,7 @@ def trust_page(h, tp, nav_items, V, gen_date, doc):
 <tbody id="tr-body" data-sp="{E(json.dumps({k: seller_href(h, k) for k in SELLER_SLUGS}, separators=(",", ":")))}">{rows}</tbody></table></div>
 <script type="application/json" id="tr-tx">{snap_js}</script>
 <script type="application/json" id="tr-att">{att_js}</script>
+<script type="application/json" id="tr-badge">{badge_js}</script>
 <p class="meta">{E(_t("Listed in the order we added them, not ranked. \"Paid buys\" = paid test-buys in the window; \"Delivered\" = paid buys whose response contained data. \"Last checked\" = the most recent free quote check or paid test-buy. \"Last test-buy\" = outcome and time of the latest paid test-buy. \"On-chain tx\" = Lumi's payment for that same test-buy on the public ledger, free to check (see \"Verify it yourself\" below). Older tx hashes and the signed receipts come with the paid vendor report ($0.02 per vendor). Times in US Central."))} <span id="tr-gen">{E(_t("Data generated {when}.", when=h.ctime(gen))) if gen else ""}</span></p>
 <p class="meta">{E(_t("Raw data:"))} <a href="{VENDORS_URL}" target="_blank" rel="noopener">api.lumitrades.io/v1/trust/vendors</a> · <a href="{API}/v1/trust/methodology" target="_blank" rel="noopener">{E(_t("How scores are computed"))}</a> · <a href="../agents/">{E(_t("Lumi's data for AI agents →"))}</a></p>
 </section>
@@ -797,8 +892,7 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     if tsp:
         write(f"{P}{top_sellers_page.SLUG}index.html", tsp)
     if h.L.en:
-        write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES), ("Market data", MARKET_DATA_PRICES),
-                                                                     ("Lumi Market Ideas", MARKET_IDEAS_PRICES)]))
+        write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES), ("Market data", MARKET_DATA_PRICES)]))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
             ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3"),

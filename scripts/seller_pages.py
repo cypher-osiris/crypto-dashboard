@@ -237,7 +237,7 @@ def body_html(h, v, d, slug, now_ms):
                 f'<div class="cp-tablewrap"><table class="cp-table"><thead><tr><th>When (US Central)</th><th>Chain</th><th>Result</th><th class="num">HTTP</th></tr></thead>'
                 f'<tbody>{trs}</tbody></table></div>\n'
                 f'<p class="meta">Showing {min(len(obs), 10)} of {more} in the last {int(d.get("window_days") or 30)} days. '
-                f'Every tx hash and the signed receipts are in the <a href="{sp.API}/v1/trust/vendors/{E(urllib.parse.quote(vid, safe=""))}/report" target="_blank" rel="noopener">full report ($0.02)</a>.</p></section>\n')
+                f'Every tx hash and the signed receipts are in the <a href="../../agents/#paid-report">full report ($0.02)</a>.</p></section>\n')
     eps = [e for e in d.get("endpoints") or [] if isinstance(e, dict) and sp._https(e.get("url"))]
     ep = ""
     if eps:

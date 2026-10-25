@@ -4,7 +4,7 @@ featured prices with the API's live unpaid 402 quotes (USDC on Base, 6 decimals)
 import json, os, sys, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROBE = {"/v1/trust/check": "/v1/trust/check?url=https://api.example.com/v1/data", "/v1/verdict": "/v1/verdict?url=https://api.example.com/v1/data", "/v1/lite/{coin}": "/v1/lite/XRP"}
+PROBE = {"/v1/trust/check": "/v1/trust/check?url=https://api.example.com/v1/data", "/v1/verdict": "/v1/verdict?url=https://api.example.com/v1/data"}
 
 
 def load():

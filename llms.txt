@@ -1,13 +1,11 @@
 # Lumi Trades
 
-> Three product lines, sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger);
+> Two product lines, sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger);
 > no account or API key.
 > - Lumi Trust: x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
 >   built from real on-ledger test-buys of other pay-per-call endpoints.
 > - Market data: live prices, CoinMarketCap Fear & Greed, funding, a daily market brief, events and a daily Institutional &
->   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization).
-> - Lumi Market Ideas: an AI's buy/sell signals (RSI, MACD, EMA), support and resistance levels, the all-coins scan and the
->   paper-trade slate. Paper-trade analysis, not investment advice. Lumi does not trade real money.
+>   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Informational data, not financial advice.
 
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
@@ -20,10 +18,9 @@
 ## Pages
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid on-ledger test-buys of x402 endpoints
-- [How Lumi's market ideas work](https://lumitrades.io/how-it-works/): how the buy/sell signals are scored, how paper-trade ideas, leverage caps and Missed-it plans are set, and the tracker's fill/stop/target rules (also in es, pt, tr, ko, ja)
-- [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API, plus Lumi Market Ideas further down (also in es, pt, tr, ko, ja)
+- [How Lumi tests x402 sellers](https://lumitrades.io/how-it-works/): quote checks, paid test-buys, signed receipts, the 30-day score and the badge rule (also in es, pt, tr, ko, ja)
+- [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
-- [Trade ideas](https://lumitrades.io/trades/): Lumi Market Ideas, the active paper-trade ideas (paper-trade analysis, not investment advice)
 
 ## Prices (USD per call)
 ### Lumi Trust
@@ -36,21 +33,13 @@
 ### Market data
 - `GET /v1/market`: BTC + macro market backdrop, $0.02 per call
 - `GET /v1/brief`: Daily crypto market brief, $0.02 per call
-- `GET /v1/macro/yen`: Yen carry-trade watch (USD/JPY, Nikkei), $0.01 per call
+- `GET /v1/macro/yen`: Yen watch (USD/JPY, Nikkei), $0.01 per call
 - `GET /v1/sentiment`: Crypto sentiment (CoinMarketCap Fear & Greed, funding), $0.005 per call
 - `GET /v1/events`: Macro and crypto events calendar, $0.005 per call
-- `GET /v1/funding`: Perpetual funding rates (50 coins), $0.003 per call
+- `GET /v1/funding`: Crypto funding rates, $0.003 per call
 - `GET /v1/fear-greed`: CoinMarketCap Fear & Greed with history, $0.003 per call
 - `GET /v1/events/next48h`: Events in the next 48 hours, $0.003 per call
 - `GET /v1/institutional`: Daily Institutional & Policy Brief, $0.10 per call
-
-### Lumi Market Ideas
-> Paper-trade analysis, not investment advice. Lumi does not trade real money.
-- `GET /v1/signal/{coin}`: Signal per coin (buy/sell read, RSI/MACD/EMA), $0.01 per call
-- `GET /v1/levels/{coin}`: Support / resistance and 7-day scenario levels (not forecasts), $0.01 per call
-- `GET /v1/scan`: All-coins scan (50 signals in one call), $0.02 per call
-- `GET /v1/lite/{coin}`: Lite signal per coin (label, score, price), $0.004 per call
-- `GET /v1/slate`: Market slate (today's paper-trade ideas), $0.02 per call
 
 ## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
 - Watch Free: $0. 1 endpoint: a daily quote check, no test-buys
@@ -68,9 +57,9 @@
 - Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or /.well-known/x402, never from transaction history or a past transfer.
 
 ## Independent checks
-- Independently checked by [Lumière PayCheck](https://lumierepaycheck.org/e?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fevents%2Fnext48h) (grade A on seven Lumi endpoints, as of Oct 24, 2026) and [Settled](https://settled.tools/v1/free/check?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fslate) (a paid test purchase of /v1/slate was delivered).
+- Independently checked by [Lumière PayCheck](https://lumierepaycheck.org/e?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fevents%2Fnext48h) (grade A on seven Lumi endpoints, as of Oct 24, 2026).
 
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free
 - [Sitemap](https://lumitrades.io/sitemap.xml)
-- [Atom feed](https://lumitrades.io/feed.xml): Lumi's articles, market updates and active paper-trade ideas (English)
+- [Atom feed](https://lumitrades.io/feed.xml): Lumi's articles (English)

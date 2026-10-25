@@ -21,14 +21,14 @@ class SitePages(unittest.TestCase):
         self.assertEqual(c["t"], 3)
         self.assertEqual((c["lo"], c["hi"]), ("$0.003", "$0.10"))
         txt = sp.AGENTS_ROUTES_TEXT.format(**c)
-        self.assertIn(f"{len(sp.MARKET_PRICES)} paid market routes", txt)
+        self.assertIn(f"{len(sp.MARKET_PRICES)} paid market data routes", txt)
         self.assertNotIn("17 paid routes", txt)
 
     def test_homepage_count_matches_tables(self):
         with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as f:
             h = f.read()
         c = sp.route_counts()
-        self.assertIn(f'{c["m"]} market + {c["t"]} trust paid routes', h)
+        self.assertIn(f'Paid routes from <b class="mono">{c["lo"]}</b> to <b class="mono">{c["hi"]}</b> per call', h)
         self.assertNotIn("17 paid routes", h)
 
     def test_trial_text_covers_base_and_xrpl(self):
@@ -44,10 +44,11 @@ class SitePages(unittest.TestCase):
         self.assertIn("New Base and XRPL wallets get <b>3 free calls</b>", h)
         self.assertNotIn("no trial", h)
 
-    def test_no_projection_wording_for_levels(self):
-        lv = [p for p in sp.MARKET_PRICES if p[1] == "GET /v1/levels/{coin}"][0][0]
-        self.assertIn("scenario levels", lv)
-        self.assertNotIn("projection", lv)
+    def test_no_trading_routes_listed(self):
+        # Oct 25, 2026: the site lists neutral market data only (no signals, levels, scans or trade slates)
+        for name, route, _price in sp.MARKET_PRICES:
+            self.assertNotRegex(route, r"/v1/(signal|levels|scan|lite|slate|ideas)", route)
+            self.assertNotRegex(name, r"(?i)signal|levels|projection|trade idea|slate|bias", name)
 
     def test_a2a_link_points_to_agent_card(self):
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "site_pages.py"), encoding="utf-8") as f:
@@ -56,7 +57,7 @@ class SitePages(unittest.TestCase):
         self.assertIn('API + "/.well-known/agent-card.json"', src)
 
     def test_translations_exist_with_placeholders(self):
-        keys = [sp.AGENTS_ROUTES_TEXT, [p for p in sp.MARKET_PRICES if p[1] == "GET /v1/levels/{coin}"][0][0], "A2A agent card"]
+        keys = [sp.AGENTS_ROUTES_TEXT, "A2A agent card"] + [p[0] for p in sp.MARKET_PRICES]
         for lang in LANGS:
             d = i18n(lang)
             for k in keys:
@@ -67,49 +68,47 @@ class SitePages(unittest.TestCase):
 
 
 class CoinPageWording(unittest.TestCase):
-    """Audit 2026-10-23b L-13: coin pages show scenario levels as an outlook, never a projection or price prediction."""
+    """Oct 25, 2026: coin pages, trade pages and /classic/ are retired. Each old URL is a noindex stub that sends visitors
+    to the vendor trust list, in every language, and none is in the sitemap."""
     SLUGS = ["xdc", "xrp", "xlm", "hbar", "axl", "zbcn", "btc", "eth", "sol"]
-    BANNED = re.compile(r"projection|(?<!not a )price prediction", re.I)
 
-    def test_generator_has_no_prediction_wording(self):
-        with open(os.path.join(ROOT, "scripts", "build_pages.py"), encoding="utf-8") as f:
-            src = f.read()
-        self.assertNotIn("Price Prediction", src)
-        self.assertNotIn("price prediction?", src)
-        self.assertNotIn("-day projection", src)
-        self.assertIn("{n}-day outlook (scenario levels)", src)
-
-    def test_built_coin_pages_all_languages(self):
+    def retired_paths(self):
+        import build_pages as bp
+        self.assertEqual(list(bp.RETIRED_SLUGS), self.SLUGS)
+        out = []
         for lang in [""] + [l + "/" for l in LANGS]:
-            for slug in self.SLUGS:
-                p = os.path.join(ROOT, lang, slug, "index.html")
-                if not os.path.exists(p):
-                    continue
-                with open(p, encoding="utf-8") as f:
-                    h = f.read()
-                if not lang:
-                    m = self.BANNED.search(h)
-                    self.assertIsNone(m, (slug, m and m.group(0)))
-                    if "cp-proj" in h:
-                        self.assertIn("-day outlook (scenario levels)", h, slug)
-                elif "cp-proj" in h:
-                    head = i18n(lang[:-1])["{n}-day outlook (scenario levels)"]
-                    for part in filter(None, (x.strip() for x in head.split("{n}"))):
-                        self.assertIn(part, h, (lang, slug, part))
+            out += [lang + s + "/" for s in bp.RETIRED_SLUGS] + [lang + "trades/"] + [lang + "trades/" + t + "/" for t in bp.RETIRED_TRADE_IDS]
+        return out + list(bp.RETIRED_EN_ONLY)
 
-    def test_outlook_translations_exist(self):
-        keys = ["{n}-day outlook (scenario levels)", "What is Lumi's {n}-day outlook for {sym}?",
-                "{sym} Price Analysis Today & {name} Outlook | Lumi Trades", "{sym} Price Analysis Today & Outlook | Lumi Trades"]
-        old = ["Lumi's {n}-day projection", "What is Lumi's {sym} price prediction?",
-               "{sym} Price Analysis Today & {name} Price Prediction | Lumi Trades"]
+    def test_stubs_noindex_and_point_to_trust(self):
+        for rel in self.retired_paths():
+            with open(os.path.join(ROOT, rel, "index.html"), encoding="utf-8") as f:
+                h = f.read()
+            self.assertIn('<meta name="robots" content="noindex, follow">', h, rel)
+            self.assertRegex(h, r'<meta http-equiv="refresh" content="0; url=(\.\./)+trust/">', rel)
+            lang = rel.split("/")[0] + "/" if rel.split("/")[0] in LANGS else ""
+            self.assertIn(f'<link rel="canonical" href="https://lumitrades.io/{lang}trust/">', h, rel)
+            self.assertNotRegex(h.lower(), r"leverage|stop-loss|\btargets?\b|\bentry\b|bit[u]nix|affiliate|cp-proj", rel)
+
+    def test_not_in_sitemap(self):
+        with open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8") as f:
+            sm = f.read()
+        for rel in self.retired_paths():
+            self.assertNotIn(f"<loc>https://lumitrades.io/{rel}</loc>", sm)
+
+    def test_old_trading_keys_pruned(self):
+        old = ["{n}-day outlook (scenario levels)", "Lumi's {n}-day projection", "What is Lumi's {sym} price prediction?",
+               "{sym} Price Analysis Today & Outlook | Lumi Trades", "Leverage", "Trade ideas"]
         for lang in LANGS:
             d = i18n(lang)
-            for k in keys:
-                self.assertTrue(d.get(k), (lang, k))
-                for ph in re.findall(r"\{\w+\}", k):
-                    self.assertIn(ph, d[k], (lang, k, ph))
             for k in old:
                 self.assertNotIn(k, d, (lang, k))
+            self.assertTrue(d.get(_retired_h1()), lang)
+
+
+def _retired_h1():
+    import build_pages as bp
+    return bp.RETIRED_H1
 
 
 class Beacon(unittest.TestCase):
@@ -172,7 +171,7 @@ class TikTokLink(unittest.TestCase):
 
     def test_footers_all_languages(self):
         for pre in [""] + [l + "/" for l in LANGS]:
-            for page in ("index.html", "xrp/index.html", "how-it-works/index.html", "trades/index.html", "trust/index.html"):
+            for page in ("index.html", "how-it-works/index.html", "trust/index.html", "agents/index.html"):
                 with open(os.path.join(ROOT, pre + page), encoding="utf-8") as f:
                     self.assertIn(self.A, f.read(), pre + page)
 
@@ -231,7 +230,7 @@ class ContactPage(unittest.TestCase):
                 self.assertIn(k, tr, (lang, k[:40]))
 
     def test_footers_link_contact(self):
-        for rel in ("index.html", "privacy/index.html", "trust/index.html", "es/trust/index.html", "blog/index.html", "xrp/index.html"):
+        for rel in ("index.html", "privacy/index.html", "trust/index.html", "es/trust/index.html", "blog/index.html", "how-it-works/index.html"):
             with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
                 foot = f.read().split('<footer', 1)[1]
             self.assertIn('contact/">', foot, rel)
@@ -285,9 +284,8 @@ class PrivacyPage(unittest.TestCase):
 
 
 class NoBitunixInStaticHtml(unittest.TestCase):
-    """Bitunix doesn't serve US users: the static HTML (served to everyone) never names it; affiliate.js adds it for non-US visitors."""
-    SLUGS = CoinPageWording.SLUGS
-
+    """Oct 25, 2026: the affiliate/referral links are gone entirely. No built page in any language names the old exchange partner or carries
+    an affiliate or referral link; the scrubber stays as a safety filter for free text."""
     def test_scrubber(self):
         from i18n import no_us_hidden_names as f
         self.assertEqual(f("venues (Bitunix, Binance, OKX) list no perp"), "venues (Binance, OKX) list no perp")
@@ -295,24 +293,24 @@ class NoBitunixInStaticHtml(unittest.TestCase):
         self.assertEqual(f("Bitunix lists it"), "a supported exchange lists it")
         self.assertEqual(f("no exchange here"), "no exchange here")
 
-    def test_coin_and_trade_pages(self):
-        for lang in [""] + [l + "/" for l in LANGS]:
-            paths = [os.path.join(ROOT, lang, s, "index.html") for s in self.SLUGS]
-            tdir = os.path.join(ROOT, lang, "trades")
-            if os.path.isdir(tdir):
-                paths += [os.path.join(tdir, d, "index.html") for d in os.listdir(tdir) if os.path.isfile(os.path.join(tdir, d, "index.html"))]
-            for path in paths:
-                with open(path, encoding="utf-8") as f:
-                    self.assertNotIn("bitunix", f.read().lower(), path)
+    def test_no_affiliate_code_or_config(self):
+        self.assertFalse(os.path.exists(os.path.join(ROOT, "assets", "affiliate.js")))
+        with open(os.path.join(ROOT, "data", "config.json"), encoding="utf-8") as f:
+            cfg = json.load(f)
+        self.assertEqual(set(cfg) - {"_readme"}, set())
 
-    def test_generic_exchange_translated(self):
-        keys = ["Other international exchanges that list {sym}",
-                "Outside the US, Kraken lists {sym} in many countries, and other international exchanges list it too. Availability depends on your country; check the exchange's supported-regions page.",
-                "Outside the US, many international exchanges list {sym}. Availability depends on your country; check the exchange's supported-regions page."]
-        for lang in LANGS:
-            for k in keys:
-                self.assertIn(k, i18n(lang), (lang, k))
-                self.assertNotIn("bitunix", i18n(lang)[k].lower())
+    def test_no_bitunix_or_affiliate_in_built_html(self):
+        bad = []
+        for dp, _, files in os.walk(ROOT):
+            if "/." in dp or "/state" in dp or "/node_modules" in dp or "/posts" in dp:
+                continue
+            for fn in files:
+                if fn.endswith(".html") or fn in ("sitemap.xml", "feed.xml") or (dp.endswith("assets/i18n") and fn.endswith((".js", ".json"))):
+                    with open(os.path.join(dp, fn), encoding="utf-8") as f:
+                        low = f.read().lower()
+                    if re.search(r"bit[u]nix|affiliate(?!d)|referral|[?&]ref=|aff-foot", low):
+                        bad.append(os.path.relpath(os.path.join(dp, fn), ROOT))
+        self.assertEqual(bad, [])
 
 
 class TrustBadge(unittest.TestCase):
@@ -325,15 +323,35 @@ class TrustBadge(unittest.TestCase):
         v = {"last_paid_observation": {"observed_at": "2026-10-24T09:21:21.000Z", "network": "xrpl:0", "delivery": "delivered", "data_returned": True}}
         b = sp.badge_html(self.H, v)
         self.assertIn("b-delivered", b)
-        self.assertIn(">Tested by Lumi<", b)
+        self.assertIn(">Last test-buy<", b)
         self.assertIn(">delivered · 10-24-2026 · XRPL<", b)
+        self.assertNotIn(">Tested by Lumi<", b)  # one delivered buy is not the badge
+
+    def test_earned_only_from_badge_verdict(self):
+        v = {"id": "x-earned", "score": 91, "last_paid_observation": {"observed_at": "2026-10-24T09:21:21Z", "network": "xrpl:0", "delivery": "delivered"}}
+        old = dict(sp.BADGE_EARNED)
+        try:
+            sp.BADGE_EARNED.clear()
+            self.assertNotIn(">Tested by Lumi<", sp.badge_html(self.H, v))
+            sp.BADGE_EARNED["x-earned"] = True
+            b = sp.badge_html(self.H, v)
+            self.assertIn("b-earned", b)
+            self.assertIn(">Tested by Lumi<", b)
+            self.assertIn(">earned<", b)
+            self.assertLess(b.index("b-earned"), b.index(">Last test-buy<"))
+        finally:
+            sp.BADGE_EARNED.clear(); sp.BADGE_EARNED.update(old)
+
+    def test_not_scored_yet(self):
+        self.assertEqual(sp.score_html(self.H, {"score": None}), "Not scored yet")
+        self.assertEqual(sp.score_html(self.H, {"score": 84}), "84")
 
     def test_no_delivery_and_chains(self):
         for net, ch in (("eip155:8453", "Base"), ("stellar:pubnet", "Stellar")):
             v = {"last_paid_observation": {"observed_at": "2026-10-23T04:12:22Z", "network": net, "delivery": "not_delivered", "data_returned": False}}
             b = sp.badge_html(self.H, v)
             self.assertIn("b-no_delivery", b)
-            self.assertIn(f">no delivery · 10-23-2026 · {ch}<", b)
+            self.assertIn(f">not delivered · 10-23-2026 · {ch}<", b)
 
     def test_never_tested_or_unknown(self):
         self.assertEqual(sp.badge_html(self.H, {}), "")
@@ -348,13 +366,18 @@ class TrustBadge(unittest.TestCase):
             self.assertNotIn(w, txt)
 
     def test_translated(self):
-        keys = [sp.BADGE_NOTE, sp.BADGE_KEY, sp.BADGE_TIP_END, "Tested by Lumi", *sp.BADGE_TIP.values(), *sp.BADGE_RES.values()]
+        keys = [sp.BADGE_NOTE, sp.BADGE_KEY, sp.BADGE_TIP_END, "Tested by Lumi", sp.BADGE_EARNED_TXT, sp.BADGE_EARNED_TIP, sp.LAST_LABEL,
+                sp.NOT_SCORED, *sp.BADGE_TIP.values(), *sp.BADGE_RES.values()]
         for lang in LANGS:
             pages = i18n(lang)
             for k in keys:
                 self.assertIn(k, pages, f"{lang}: {k}")
             self.assertEqual(pages["Tested by Lumi"], "Tested by Lumi")
             self.assertIn("Tested by Lumi", pages[sp.BADGE_NOTE])
+            with open(os.path.join(ROOT, "assets", "i18n", f"{lang}.json"), encoding="utf-8") as f:
+                ui = json.load(f)["ui"]
+            for k in (sp.BADGE_EARNED_TXT, sp.BADGE_EARNED_TIP, sp.LAST_LABEL, sp.NOT_SCORED, "not delivered"):
+                self.assertIn(k, ui, f"{lang} ui: {k}")  # trust.js renders these in the browser
 
 class PaymentAttemptsLabel(unittest.TestCase):
     """Grey 'Test payment not accepted yet' label: only vendors in the derived list, only with zero paid buys, neutral wording."""

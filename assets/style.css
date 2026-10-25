@@ -867,6 +867,8 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 .lt-b-r{background:#2e8540}
 .lt-badge.b-no_delivery .lt-b-r{background:#c62828}
 .lt-badge.b-inconclusive .lt-b-r{background:#5f6b7a}
+.lt-badge.b-earned .lt-b-l{background:#1f4f8a}
+.lt-badge.b-earned .lt-b-r{background:#2e8540;font-weight:700}
 .tr-badge-note{margin:.2rem 0 .8rem;font-size:.9rem}
 .tr-badge-note .muted{display:block;font-size:.8rem;margin-top:.15rem}
 @media (max-width:600px){.lt-badge>span{padding:1px 5px}}

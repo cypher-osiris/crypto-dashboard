@@ -4,7 +4,7 @@
 Strings live in assets/i18n/<lang>.json, keyed by the ENGLISH text itself (gettext style):
   {"_meta": {...language name, locale, date formats...},
    "ui":    {"English text": "translation", ...},   # browser strings (assets/*.js) + shared ones (signal states, statuses)
-   "pages": {"English text": "translation", ...}}  # static-page strings (build_pages.py, trade_pages.py, index.html)
+   "pages": {"English text": "translation", ...}}  # static-page strings (build_pages.py, site_pages.py, index.html)
 Placeholders use {name} and must be kept as-is. A missing key falls back to the English text.
 
   python3 scripts/i18n.py check [lang]   # list missing / unused keys per language (exit 1 if any are missing)
@@ -28,8 +28,8 @@ def codes():
 
 
 
-# Bitunix doesn't serve US users, so the site names it only client-side to non-US visitors (assets/affiliate.js).
-# Static HTML is served to everyone, so Lumi's free text (trade reasoning etc. from data/*.json) is scrubbed here:
+# One exchange name is never shown on the site (it doesn't serve US users and the referral links were removed Oct 25, 2026).
+# Lumi's free text from data/*.json is scrubbed here:
 # in a list of venues the name is dropped, anywhere else it becomes "a supported exchange".
 _HIDDEN_LIST = re.compile(r"\bBitunix\s*(?:,\s*|\s+(?:and|or|/)\s+)|(?:,\s*|\s+(?:and|or|/)\s+)Bitunix\b", re.I)
 _HIDDEN = re.compile(r"\bBitunix\b", re.I)
@@ -300,14 +300,16 @@ def js_keys():
     return keys
 
 
-PY_CALL = r"(?<![\w.])(?:_t|_)\(|\bh\._\(|\bL\.t\("  # _("…") in build_pages.py, _t("…") / h._("…") in trade_pages.py
+PY_CALL = r"(?<![\w.])(?:_t|_)\(|\bh\._\(|\bL\.t\("  # _("…") in build_pages.py, _t("…") / h._("…") in site_pages.py / site_chrome.py
 
 
 def py_keys():
     """Literal keys in the page generators, so `check` also sees strings for states today's data doesn't reach
     (e.g. a breakout fill). Keep keys literal: _("A" if x else "B"), never _(f"…")."""
     keys = set()
-    for fn in ("build_pages.py", "trade_pages.py", "site_pages.py"):
+    for fn in ("build_pages.py", "site_chrome.py", "site_pages.py", "how_page.py"):
+        if not os.path.exists(os.path.join(ROOT, "scripts", fn)):
+            continue
         src = open(os.path.join(ROOT, "scripts", fn), encoding="utf-8").read()
         keys |= {k for k in _tr_literals(src, PY_CALL, py=True)}
     return keys

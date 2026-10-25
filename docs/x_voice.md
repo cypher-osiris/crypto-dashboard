@@ -44,7 +44,7 @@ still posted, but they are **secondary** (trade events, a short morning plan, a 
 9. **Fresh or nothing.** Say what changed: a fill, a stop, a level reached, news with a date. If nothing
    changed, say so in one line ("no fills, no stops, no drama"), or skip the post.
 10. **One link per post.** The site URL goes in the main post or the first reply. A news source link goes in a reply.
-    The affiliate link (if used) goes only in a reply, marked `(affiliate)`, never in a trade-alert main post, and not every day.
+    No referral or affiliate links (removed Oct 25, 2026).
 11. **News is cited, dated and neutral.** Name the institution or outlet and the date when the claim is theirs ("Ripple
     said on Oct 23", "per Economic Times") and link it in a reply. Institutional news is the main topic now (see
     *Focus* above); react with what it means for the network, or with the plan ("not trading the headline"), never with

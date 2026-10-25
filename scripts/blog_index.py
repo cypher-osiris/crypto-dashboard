@@ -75,8 +75,6 @@ def page(h, tp, V, gen_date, root=ROOT):
 <link rel="preload" href="../assets/fonts/sora-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/style.css?v={V}">
 <link rel="stylesheet" href="../assets/glow.css?v={V}">
-<script src="../assets/live.js?v={V}" defer></script>
-<script src="../assets/ticker.js?v={V}" defer></script>
 <script type="application/ld+json">{ld}</script>
 <style>
 .bi-main{{max-width:728px;padding-top:14px;padding-bottom:28px}}
@@ -96,7 +94,6 @@ def page(h, tp, V, gen_date, root=ROOT):
   <a class="cp-brand" href="../"><img class="wm" src="../assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>
   <span class="cp-top-r"><a class="cp-dash" href="../trust/">Vendor trust list →</a>{tp.social_icons(h)}</span>
 </div></header>
-<div class="ticker lt-ticker" role="region" aria-label="Live crypto prices"><div class="ticker-track" id="ticker"></div></div>
 <nav class="nav" aria-label="Site"><div class="wrap nav-inner">{nav}</div></nav>
 <main class="wrap cp-main bi-main">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › Blog</p>

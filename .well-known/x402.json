@@ -17,12 +17,6 @@
       "method": "GET",
       "url": "https://api.lumitrades.io/v1/verdict",
       "price_usd": "0.01"
-    },
-    {
-      "name": "Lumi Market Ideas: lite coin signal",
-      "method": "GET",
-      "url": "https://api.lumitrades.io/v1/lite/{coin}",
-      "price_usd": "0.004"
     }
   ],
   "networks": [

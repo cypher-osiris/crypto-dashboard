@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
-"""Static, search-friendly coin pages generated from data/*.json (stdlib only, ~0.1 s).
+"""Static site build (stdlib only): the trust-only pages in every language, sitemap.xml and feed.xml.
 
-  python3 scripts/build_pages.py            # writes <slug>/index.html for every coin in PAGES, sitemap.xml,
-                                            # and the generated coin-page link blocks in index.html + classic/index.html
+  python3 scripts/build_pages.py            # writes every generated page, sitemap.xml and feed.xml
   python3 scripts/build_pages.py --quiet    # prints only the changed paths (one per line)
-  python3 scripts/build_pages.py --paths    # all generated paths + index.html / classic/index.html if changed (used by publish.sh)
+  python3 scripts/build_pages.py --paths    # all generated paths + index.html if changed (used by publish.sh)
 
-Also (scripts/trade_pages.py): the trade-history archive /trades/ + one permalink page per idea /trades/<ID>/ from trades.json,
-and the static snapshot blocks (<!-- snap-*:start -->) + og/twitter description in index.html. A failure there only warns.
+Pages: /agents/, /trust/, /how-it-works/, /privacy/, /trust-policy/, /contact/, /top-sellers/ (scripts/site_pages.py and the
+page modules it calls), /sellers/<slug>/ (scripts/seller_pages.py), /blog/ (scripts/blog_index.py) and the language homepages
+(/<lang>/index.html from the English index.html).
 
-Each page uses that coin's own data: price/changes (prices.json), levels, bias, outlook, projection, catalysts and
-sources (analysis.json), signals (signals.json), the active slate idea + missed-it plan (trades.json), and
-the exchange list (data/config.json: coinbase product from coins.json, kraken_pairs, uphold_assets). Referral buttons
-are NOT in the HTML: assets/affiliate.js injects them per visitor region into #aff-coin / #aff-ledger.
-Only files whose content changed are rewritten. publish.sh runs this automatically when publishing data.
+Since Oct 25, 2026 the site is trust-only: no coin pages, trade ideas, levels, leverage or signals are generated. The old URLs
+(RETIRED_PATHS) get small noindex stubs that send visitors to the vendor trust list; they are not in the sitemap.
+Only files whose content changed are rewritten. publish.sh runs this automatically when publishing.
 """
 import datetime as dt, html, json, math, os, re, sys, types
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import policy_page  # /trust-policy/ (conflicts policy; footer link in every language in policy_page.LIVE_LANGS)
-import trade_pages as site_chrome  # shared nav + footer (site_nav, foot_brand) for every generated page
-import coins as _coins_mod  # private trades doc (state/trades.json; data/trades.json is no longer published)
+import site_chrome  # shared head, nav + footer (site_nav, foot_brand) for every generated page
 import i18n  # assets/i18n/<lang>.json; every page is rendered once per language (English at /, others under /<lang>/)
 
 L = i18n.Lang("en")  # current language while building (set per pass in build())
@@ -38,45 +35,15 @@ def T(_key, **kw):
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://lumitrades.io/"
 CT = ZoneInfo("America/Chicago")
-# coin id -> slug, in nav order (watchlist first, then majors with enough data for a real page)
-PAGES = [("xdce-crowd-sale", "xdc"), ("ripple", "xrp"), ("stellar", "xlm"), ("hedera-hashgraph", "hbar"),
-         ("axelar", "axl"), ("zebec-network", "zbcn"), ("bitcoin", "btc"), ("ethereum", "eth"), ("solana", "sol")]
-# Bitunix markets (non-US), checked 2026-10-21 via Bitunix public APIs: all have USDT spot; all but XDC have a USDT perpetual
-BITUNIX_PERP = {"ripple", "stellar", "hedera-hashgraph", "axelar", "zebec-network", "bitcoin", "ethereum", "solana"}
-SCHED_HTML = 'Slate reviewed daily at <b>6 AM, 12 PM, 6 PM &amp; 11 PM CT</b> · levels checked every 30 min'
-NEWSLETTER_URL = "https://trade-with-lumi.kit.com/67c20c56b8"  # Kit hosted page (form 10079883)
-
-
-# Lumi Market Ideas: the signal / levels / scan / slate / trade-idea product line (api.lumitrades.io /v1/signal, /v1/lite,
-# /v1/scan, /v1/slate, /v1/trades, /v1/levels), labelled apart from the Lumi Trust brand (/trust/, trust checks, badges).
-MI_NAME = "Lumi Market Ideas"  # product name: never translated
-MI_NOTICE = "Paper-trade analysis, not investment advice. Lumi does not trade real money."  # i18n key (6 languages)
-
-
-def MI_LABEL(extra=""):
-    """The visible Lumi Market Ideas label + short disclaimer (coin-page signal/levels/trade blocks, /trades/ pages)."""
-    return (f'<p class="mi-label{extra}" role="note"><span class="mi-tag" translate="no">{MI_NAME}</span>'
-            f'<span class="mi-txt">{E(_(MI_NOTICE))}</span></p>')
-
-
-def SCHEDULE_NOTE():  # assets/schedule.js adds local times + next review
-    return f'<p class="slate-sched"><span class="sched-ico" aria-hidden="true">⏱</span> {_(SCHED_HTML)}</p>'
-
-
-def NEWSLETTER_BLOCK(home=""):
-    return f"""<section class="nl" id="newsletter" aria-labelledby="nl-h">
-  <div class="nl-copy"><h2 id="nl-h">{T("Get Lumi's daily crypto outlook free")}</h2>
-  <p class="nl-sub">{T("Key levels, the day's paper-trade ideas and the news that matters, in one email each morning.")}</p></div>
-  <form class="nl-form" action="https://app.kit.com/forms/10079883/subscriptions" method="post" data-sv-form="10079883" data-uid="67c20c56b8">
-    <label for="nl-email">{E(_("Email address"))}</label>
-    <input id="nl-email" type="email" name="email_address" placeholder="{E(_("you@example.com"))}" autocomplete="email" required>
-    <button type="submit">{E(_("Subscribe free"))}</button>
-    <p class="nl-fine">{E(_("No spam, unsubscribe anytime. Email only, handled by Kit. Not financial advice."))} {_("By subscribing you agree to our <a href=\"{href}\">Privacy Policy</a>.", href=E(home + "privacy/"))}</p>
-    <p class="nl-msg" role="status" aria-live="polite"></p>
-  </form>
-</section>"""
-BEGIN, END = "<!-- coin-pages:start (generated by scripts/build_pages.py) -->", "<!-- coin-pages:end -->"
-FBEGIN, FEND = "<!-- coin-pages-foot:start (generated by scripts/build_pages.py) -->", "<!-- coin-pages-foot:end -->"
+# Retired Oct 25, 2026 (trust-only site): old coin-page slugs, the trade archive and the classic view. Each keeps a
+# noindex stub pointing to /<lang>/trust/ so old links still land somewhere useful.
+RETIRED_SLUGS = ("xdc", "xrp", "xlm", "hbar", "axl", "zbcn", "btc", "eth", "sol")
+RETIRED_TRADE_IDS = ("T001", "T002", "T002b", "T003", "T004", "T005", "T006", "T007", "T008", "T009", "T010", "T011", "T012",
+                     "T013", "T014")
+RETIRED_EN_ONLY = ("classic/",)
+RETIRED_H1 = "This page has been retired"
+RETIRED_P = "Lumi Trades is now a trust service for x402 sellers. This page is no longer published."
+RETIRED_LINK = "Go to the vendor trust list"
 
 E = lambda s: html.escape(str(s if s is not None else ""), quote=True)
 
@@ -132,185 +99,11 @@ def paragraphs(text, per=4):
     return "".join(f"<p>{E(p)}</p>" for p in out if p)
 
 
-def en_note():
-    """Shown on non-English pages above free text that is only written in English."""
-    return "" if L.en else f'<p class="meta i18n-note">{E(_("Lumi writes this commentary in English; numbers and levels are the same in every language."))}</p>'
-
-
 def free(obj, field, default=""):
     return L.free(obj, field, E, default)
 
 
-def chart_svg(a, an, trade):
-    hist = a.get("history") or []
-    if len(hist) < 10:
-        return ""
-    step = max(1, len(hist) // 180)
-    pts = hist[::step] + ([hist[-1]] if (len(hist) - 1) % step else [])
-    W, H, L_, R, T, B = 720, 260, 8, 66, 12, 26
-    lo, hi = min(p[1] for p in pts), max(p[1] for p in pts)
-    lv = [(x, "sup") for x in an.get("support") or []] + [(x, "res") for x in an.get("resistance") or []]
-    # include the nearest level on each side even if just outside the 30-day range
-    near = [x for x, _k in lv if lo * 0.93 <= x <= hi * 1.07]
-    lo2, hi2 = min([lo] + near), max([hi] + near)
-    pad = (hi2 - lo2) * 0.06 or hi2 * 0.02
-    y0, y1 = lo2 - pad, hi2 + pad
-    t0, t1 = pts[0][0], pts[-1][0]
-    X = lambda t: L_ + (t - t0) / ((t1 - t0) or 1) * (W - L_ - R)
-    Y = lambda v: T + (y1 - v) / ((y1 - y0) or 1) * (H - T - B)
-    d = "".join(f'{"L" if i else "M"}{X(t):.1f} {Y(v):.1f}' for i, (t, v) in enumerate(pts))
-    up = pts[-1][1] >= pts[0][1]
-    col = "#22c55e" if up else "#f43f5e"
-    g = []
-    if trade and trade.get("status") in ("pending", "open") and trade.get("entry_zone"):
-        z = trade["entry_zone"]
-        if y0 <= z["high"] and z["low"] <= y1:
-            ya, yb = Y(min(z["high"], y1)), Y(max(z["low"], y0))
-            g.append(f'<rect x="{L_}" y="{ya:.1f}" width="{W - L_ - R}" height="{max(1.5, yb - ya):.1f}" fill="rgba(245,176,65,.16)"/>')
-            g.append(f'<text x="{L_ + 4}" y="{ya - 3:.1f}" fill="#f5b041" font-size="10">{E(_("entry zone"))} {lvl(z["low"])}–{lvl(z["high"])}</text>')
-    labs = []
-    for x, k in lv:
-        if y0 <= x <= y1:
-            c = "#22c55e" if k == "sup" else "#f43f5e"
-            g.append(f'<line x1="{L_}" x2="{W - R}" y1="{Y(x):.1f}" y2="{Y(x):.1f}" stroke="{c}" stroke-opacity=".55" stroke-dasharray="4 4"/>')
-            labs.append([Y(x), Y(x), c, lvl(x)])
-    # right-edge labels: keep a minimum vertical gap so close levels don't overlap; a nudged label gets a short leader line
-    labs.sort(key=lambda q: q[0])
-    GAP, top, bot = 13.0, 7.0, H - 12.0
-    cl = [[q] for q in labs]  # clusters of labels; each cluster is centred on its true levels, merged while they collide
-    while True:
-        pos = []
-        for grp in cl:
-            n = len(grp)
-            s0 = sum(q[0] for q in grp) / n - GAP * (n - 1) / 2
-            s0 = min(max(s0, top), bot - GAP * (n - 1))
-            pos.append(s0)
-        hit = next((i for i in range(len(cl) - 1) if pos[i] + GAP * (len(cl[i]) - 1) + GAP > pos[i + 1] + 1e-6), None)
-        if hit is None:
-            break
-        cl[hit:hit + 2] = [cl[hit] + cl[hit + 1]]
-    for grp, s0 in zip(cl, pos):
-        for j, q in enumerate(grp):
-            q[1] = s0 + j * GAP
-    for ty, ly, c, lab in labs:
-        if abs(ly - ty) > 1.5:
-            g.append(f'<polyline points="{W - R:.1f},{ty:.1f} {W - R + 2:.1f},{ty:.1f} {W - R + 3.5:.1f},{ly:.1f}" fill="none" stroke="{c}" stroke-opacity=".7" stroke-width="1"/>')
-        g.append(f'<text x="{W - R + 4}" y="{ly + 3.5:.1f}" fill="{c}" font-size="10">{lab}</text>')
-    for i in range(5):
-        t = t0 + (t1 - t0) * i / 4
-        lab = L.day(dt.datetime.fromtimestamp(t / 1000, CT))
-        anchor = "start" if i == 0 else "end" if i == 4 else "middle"
-        g.append(f'<text x="{X(t):.1f}" y="{H - 8}" fill="#7d8ba0" font-size="10" text-anchor="{anchor}">{lab}</text>')
-    title = _("{name} ({sym}) price, last 30 days, with Lumi's support (green) and resistance (red) levels", name=a["name"], sym=a["symbol"])
-    return (f'<svg class="cp-chart" viewBox="0 0 {W} {H}" role="img" aria-label="{E(title)}" preserveAspectRatio="none">'
-            f'<defs><linearGradient id="cpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{col}" stop-opacity=".25"/>'
-            f'<stop offset="1" stop-color="{col}" stop-opacity="0"/></linearGradient></defs>'
-            f'<path d="{d}L{X(t1):.1f} {H - B}L{L_} {H - B}Z" fill="url(#cpg)"/>'
-            f'<path d="{d}" fill="none" stroke="{col}" stroke-width="1.6" stroke-linejoin="round"/>{"".join(g)}'
-            f'<circle cx="{X(t1):.1f}" cy="{Y(pts[-1][1]):.1f}" r="3" fill="{col}"/></svg>')
 
-
-def venues(cid, sym, coin_cfg, aff):
-    """Static exchange facts for the how-to-buy section (no links; affiliate.js adds the buttons)."""
-    us, intl = [], []
-    cb = coin_cfg.get("coinbase")
-    kp = (aff.get("kraken_pairs") or {}).get(cid)
-    up = (aff.get("uphold_assets") or {}).get(cid)
-    if cb:
-        us.append(f"Coinbase / Coinbase Advanced ({cb})")
-    if kp:
-        us.append(f"Kraken ({kp}{_(', Kraken’s ticker for {sym}', sym=sym) if kp.split('/')[0] != sym else ''})")
-    if up:
-        us.append(f"Uphold ({up})")
-    # The exchange is named only client-side, to non-US visitors (assets/affiliate.js fills #aff-coin); the static HTML,
-    # FAQ and JSON-LD are served to US visitors too, so they say "a supported exchange" (scan 2026-10-23 follow-up).
-    # Static copy names no exchange outside the US except Kraken (scan 2026-10-24: no "a supported exchange" leftovers).
-    intl = []
-    intl_list = ([_("Kraken in many countries")] if kp else []) + [_("Other international exchanges that list {sym}", sym=sym)]
-    return us, intl, intl_list, cb, kp, up
-
-
-def lev_txt(lev):
-    return _("spot (1x)") if lev == 1 else f"{lev}x"
-
-
-def dir_txt(d):
-    return _("long") if d == "long" else _("short") if d == "short" else str(d or "")
-
-
-def trade_html(t, sym, price, H):
-    if not t:
-        return ""
-    spot = t.get("leverage") == 1 or t.get("market") == "spot"
-    side = _("LONG" if t["direction"] == "long" else "SHORT") + (" " + _("SPOT (1x)") if spot else f' {t.get("leverage", 1)}x')
-    conv = f' <span class="conv-badge c-{E(t["conviction"])}">{E(_(str(t["conviction"]).capitalize() + " conviction"))}</span>' if t.get("conviction") else ""
-    z = t.get("entry_zone") or {}
-    rows = []
-    if t["status"] == "open":
-        rows.append((_("Filled at"), lvl(t.get("entry")) + (_(" (filled {when})", when=ctime(t.get("filled_at"))) if t.get("filled_at") else "")))
-    else:
-        rows.append((_("Entry zone"), f'{lvl(z.get("low"))} – {lvl(z.get("high"))}' if z else lvl(t.get("entry"))))
-        if t.get("expiry"):
-            rows.append((_("Fill by"), ctime(t["expiry"])))
-    rows.append((_("Stop"), lvl(t.get("current_stop") or t.get("stop")) + (_(" (moved to breakeven)") if t.get("current_stop") and t.get("current_stop") != t.get("stop") else "")))
-    hits = t.get("targets_hit") or []
-    for i, x in enumerate(t.get("targets") or []):
-        rows.append((_("Target {n}", n=i + 1), lvl(x) + (_(" ✓ hit") if i < len(hits) and hits[i] else "")))
-    if t.get("expires"):
-        rows.append((_("Time stop"), ctime(t["expires"])))
-    a = t.get("alt_entry") or {}
-    et = t.get("entry_type")
-    if t["status"] == "open" and et in ("breakdown", "breakout") and a.get("trigger_rule"):
-        rows[0] = (_("Filled at"), rows[0][1] + " " + (_("on a breakdown (1h close below {lvl})", lvl=lvl(a["trigger_rule"]["level"])) if et == "breakdown"
-                                                     else _("on a breakout (1h close above {lvl})", lvl=lvl(a["trigger_rule"]["level"]))))
-    grid = "".join(f"<div><small>{E(k)}</small><b class=\"mono\">{E(v)}</b></div>" for k, v in rows)
-    tf = f' <span class="tf-badge">{E(_(str(t["timeframe"]).capitalize()))}</span>' if t.get("timeframe") else ""
-    out = [f'<div class="cp-trade"><p class="cp-trade-head"><span class="side {E(t["direction"])}">{E(side)}</span>{conv}{tf} '
-           f'<span class="status s-{E(t["status"])}">{E(_(t["status"]))}</span> <span class="muted mono">{E(t["id"])}</span>'
-           f' <span class="muted">· {E(_("posted {when}", when=ctime(t.get("opened_at"))))}</span></p><div class="cp-grid">{grid}</div>']
-    if t.get("leverage_reason"):
-        lv_word = side.split(" ", 1)[1].lower() if " " in side else side
-        out.append(f'<p class="meta cp-lev-reason"><b>{E(_("Why {lev}:", lev=lv_word))}</b> {free(t, "leverage_reason")} '
-                   f'{E(_("Leverage is set per idea (1x–10x) by conviction, keeping the loss at the stop to about 25% of margin or less."))}</p>')
-    if t["status"] == "pending" and a.get("trigger_rule") and (a.get("status") or "watching") == "watching":
-        below = a.get("type") == "breakdown"
-        lv_a = f'<b class="mono">{lvl(a["trigger_rule"]["level"])}</b>'
-        out.append(f'<p class="alt-entry">{_("Or on a 1h close below {lvl}", lvl=lv_a) if below else _("Or on a 1h close above {lvl}", lvl=lv_a)} '
-                   f'<span class="muted">· {E(_("fills to {p}", p=lvl(a.get("max_fill"))))} · {E(_("stop {p}", p=lvl(a.get("stop"))))} · {E(lev_txt(a.get("leverage") or t.get("leverage") or 1))}'
-                   f'{E(_(", smaller size")) if (a.get("leverage") or 0) < (t.get("leverage") or 0) else ""}</span></p>')
-    if t.get("parent_id"):
-        out.append('<p class="meta">' + E(_("This is the “missed it” follow-up plan of idea {id}", id=t["parent_id"]))
-                   + f'{" (" + E(_(t.get("plan_type"))) + ")" if t.get("plan_type") else ""}'
-                   + f'{": " + free(t, "trigger") if t.get("trigger") else ""}.</p>')
-    mi, mp = t.get("missed_it") or {}, t.get("missed_plan") or {}
-    if t["status"] == "pending" and (mi or mp):
-        out.append(f'<h3>{E(_("If you missed the entry"))}</h3>')
-        if mi.get("note"):
-            out.append(f'<p>{free(mi, "note")}{E(_(" (missed-it limit: {lvl})", lvl=lvl(mi["max_entry"]))) if mi.get("max_entry") else ""}</p>')
-        if mp and mp.get("type") != "none":
-            mz = mp.get("entry_zone") or {}
-            out.append(f'<p><b>{E(_("Plan B ({type}):", type=_(mp.get("type"))))}</b> {free(mp, "trigger")}. '
-                       + E(_("Zone {lo}–{hi}, stop {stop}, target {target}, {lev}", lo=lvl(mz.get("low")), hi=lvl(mz.get("high")), stop=lvl(mp.get("stop")),
-                             target=lvl(mp.get("target")), lev=lev_txt(mp.get("leverage") or t.get("leverage") or 1)))
-                       + f'{". " + free(mp, "size_note") if mp.get("size_note") else ""}.</p>')
-            if mp.get("reasoning"):
-                out.append(f'<p class="meta">{free(mp, "reasoning")}</p>')
-        elif mp.get("type") == "none":
-            out.append(f'<p>{free(mp, "reasoning")}</p>')
-    if t.get("reasoning"):
-        out.append(f'<details class="why"><summary>{E(_("Why this idea"))}</summary><p>{free(t, "reasoning")}</p></details>')
-    out.append("</div>")
-    return "".join(out)
-
-
-def dedupe_sym(page, n):
-    """Collapse "<name> (<symbol>)" when the coin's name is its symbol (XRP): ASCII, full-width and unspaced brackets."""
-    for pat in (f"{n} ({n})", f"{n}({n})", f"{n}（{n}）", f"{n} （{n}）"):
-        page = page.replace(pat, n)
-    return page
-
-
-CANDLE_SOURCES = {"coinbase": "Coinbase", "kraken": "Kraken", "coingecko": "CoinGecko"}  # display names for signals' "source"
 FEED_LINK = '<link rel="alternate" type="application/atom+xml" title="Lumi Trades" href="https://lumitrades.io/feed.xml">'  # /feed.xml (scripts/feed.py)
 
 
@@ -330,23 +123,6 @@ def i18n_scripts(R):
 
 
 VERSION = "1"
-
-
-def coin_pages_block(pre, nav_items):
-    links = " ".join(f'<a href="{pre}{s}/" data-coin="{c}">{E(sy)}</a>' for c, s, sy in nav_items)
-    block = f'{BEGIN}\n<div class="wrap coin-pages" id="coin-pages"><span>{_("Coin analysis &amp; how to buy:")}</span> {links}</div>\n{END}'
-    fblock = f'{FBEGIN}\n  <p class="foot-coins">{E(_("Coin pages:"))} ' + " · ".join(
-        f'<a href="{pre}{s}/">{E(_("{sym} price analysis", sym=sy))}</a>' for c, s, sy in nav_items) + f'</p>\n  {FEND}'
-    return block, fblock
-
-
-def replace_blocks(cur, pre, nav_items):
-    block, fblock = coin_pages_block(pre, nav_items)
-    new = cur
-    for b, e, blk in ((BEGIN, END, block), (FBEGIN, FEND, fblock)):
-        if b in new and e in new:
-            new = new[:new.index(b)] + blk + new[new.index(e) + len(e):]
-    return new
 
 
 IHEAD = ("<!-- i18n-head:start (generated by scripts/build_pages.py) -->", "<!-- i18n-head:end -->")
@@ -373,14 +149,14 @@ def set_block(src, marks, body):
     return src
 
 
-INDEX_TITLE = "Lumi Trades: x402 seller trust list and free paper-trading crypto dashboard"
-INDEX_DESC = ("Free paper-trading crypto dashboard and an independent x402 seller trust list with paid test-buys on Base, XRPL and Stellar. No deposits, no accounts.")   # keep under ~155 characters (search snippets)
+INDEX_TITLE = "Lumi Trades: the trust layer for x402 and AI-agent payments"
+INDEX_DESC = ("Independent x402 seller trust list: Lumi test-buys sellers on Base, XRPL and Stellar with its own money and publishes signed evidence.")   # keep under ~155 characters (search snippets)
 # x402scan and some unfurlers read <title>, og:title and the meta description without decoding HTML entities: keep "&", quotes
 # and angle brackets out of these three (and the og/twitter description); use "and".
 INDEX_OG_TITLE = INDEX_TITLE
 INDEX_OG_DESC = INDEX_DESC
 INDEX_IMG_ALT = "Lumi wordmark under a Milky Way night sky"
-SITE_AUTHOR = "Lumi"   # <meta name="author"> (index.html and classic/index.html carry the same value)
+SITE_AUTHOR = "Lumi"   # <meta name="author">
 SITE_NAME = "Lumi"     # og:site_name on every page
 
 
@@ -391,7 +167,7 @@ CF_BEACON_TOKEN = "0212d2464cb04c11b35401da715265c6"
 CF_BEACON = ("<!-- Cloudflare Web Analytics --><script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
              "data-cf-beacon='{\"token\": \"" + CF_BEACON_TOKEN + "\"}'></script><!-- End Cloudflare Web Analytics -->")
 # hand-made pages the generators never write; build() keeps the beacon in them too
-STATIC_PAGES = ("classic/index.html", "preview/index.html")
+STATIC_PAGES = ("preview/index.html",)
 
 
 _CF_BEACON_RE = re.compile(r"<!-- Cloudflare Web Analytics -->.*?<!-- End Cloudflare Web Analytics -->", re.S)
@@ -442,39 +218,70 @@ def lang_index(en_src, langs):
         return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
     head = re.sub(r'<script type="application/ld\+json">(.*?)</script>', ld, head, count=1, flags=re.S)
     # generated blocks are refilled in this language by the caller: empty them so their English isn't translated
-    for b0, b1 in [(BEGIN, END), (FBEGIN, FEND), ISW, SWEEP, HSTATS] + [(f"<!-- snap-{k}:start (generated by scripts/build_pages.py) -->", f"<!-- snap-{k}:end -->") for k in ("glance", "slate")]:
+    for b0, b1 in [ISW, SWEEP, HSTATS]:
         if b0 in body and b1 in body:
             body = body[:body.index(b0) + len(b0)] + "\n" + body[body.index(b1):]
     body = i18n.translate_html(body, L)
-    # asset / root paths: one level up (pages like xrp/ and trades/ stay relative, i.e. inside this language)
-    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|blog/|classic/|data/))', r"\1../", h)
+    # asset / root paths: one level up (pages like trust/ and agents/ stay relative, i.e. inside this language)
+    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|blog/|sellers/|data/))', r"\1../", h)
     head, body = fix(head), fix(body)
     head = head.replace('<script src="../assets/i18n.js', f'<script src="../assets/i18n/{L.code}.js?v={VERSION}" defer></script>\n<script src="../assets/i18n.js', 1)
     return head + "</head>" + body
+
+
+def retired_trade_ids():
+    ids = set(RETIRED_TRADE_IDS)
+    for pre in [""] + [c + "/" for c in lang_dirs()]:
+        d = os.path.join(ROOT, pre, "trades")
+        if os.path.isdir(d):
+            ids |= {x for x in os.listdir(d) if os.path.isdir(os.path.join(d, x)) and re.fullmatch(r"[A-Za-z0-9_-]+", x)}
+    return sorted(ids)
+
+
+def retired_paths(lang_prefix, en):
+    """Paths (relative to a language root) of retired pages that get a stub."""
+    out = [f"{s}/" for s in RETIRED_SLUGS] + ["trades/"] + [f"trades/{i}/" for i in retired_trade_ids()]
+    return out + (list(RETIRED_EN_ONLY) if en else [])
+
+
+def retired_stub(rel):
+    """Small noindex page for a retired URL: canonical + meta refresh + a link to this language's /trust/."""
+    depth = rel.count("/")
+    home = "../" * depth
+    trust = f"{home}trust/"
+    url = f"{SITE}{L.prefix}trust/"
+    return f"""<!doctype html>
+<html lang="{L.code}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{E(_(RETIRED_H1))} | Lumi Trades</title>
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="{url}">
+<meta http-equiv="refresh" content="0; url={trust}">
+<link rel="icon" href="{"../" * (depth + (0 if L.en else 1))}favicon.ico">
+</head>
+<body style="font-family:system-ui,sans-serif;background:#0b1220;color:#e5e7eb;padding:2rem">
+<main style="max-width:36rem;margin:0 auto">
+<h1>{E(_(RETIRED_H1))}</h1>
+<p>{E(_(RETIRED_P))}</p>
+<p><a href="{trust}" style="color:#7dd3fc">{E(_(RETIRED_LINK))}</a></p>
+</main>
+</body>
+</html>
+"""
 
 
 def build(dry=False):
     """Render every page in every language. dry=True renders without writing (used by `i18n.py check`); returns the
     Lang objects (with their missing-key sets) in that case, else the list of changed paths."""
     global L, VERSION
-    prices, analysis, trades, coins, cfg = load("prices.json"), load("analysis.json"), _coins_mod.load_trades(), load("coins.json"), load("config.json")
-    try:
-        signals_all = load("signals.json")
-    except Exception:
-        signals_all = {}
-    signals = signals_all.get("coins", {})
-    aff = cfg.get("affiliate", {})
-    coin_cfg = {c["id"]: c for c in coins["coins"]}
     with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as f:
         index = f.read()
     m = re.search(r"\?v=([0-9]{8}-[0-9]+)", index)
     V = VERSION = m.group(1) if m else "1"
-    pages = [(cid, slug) for cid, slug in PAGES if cid in prices["assets"] and cid in analysis.get("coins", {})]
-    as_of = analysis.get("as_of") or prices.get("updated_utc")
     gen_date = dt.datetime.now(dt.timezone.utc).date().isoformat()
-    by_id = {t["id"]: t for t in trades.get("trades", [])}
-    slate = trades.get("slate", {}).get("coins", {})
-    nav_items = [(cid, slug, prices["assets"][cid]["symbol"]) for cid, slug in pages]
+    nav_items = []  # no coin pages (retired Oct 25, 2026)
     changed = []
     langs = i18n.all_langs()
 
@@ -494,11 +301,11 @@ def build(dry=False):
                 f.write(content)
             changed.append(rel)
 
-    trade_sm = []
-    site_sm = []  # /agents/ + /trust/ (scripts/site_pages.py)
+    site_sm = []  # /agents/ + /trust/ + policy pages (scripts/site_pages.py)
     try:
         import site_pages
         vendors_doc = site_pages.fetch_vendors(dry)
+        site_pages.fetch_badges((vendors_doc or {}).get("vendors") or [], dry)
     except Exception as e:
         print(f"build_pages: WARNING site pages unavailable: {e!r}", file=sys.stderr)
         site_pages = vendors_doc = None
@@ -510,291 +317,40 @@ def build(dry=False):
     except Exception as e:
         print(f"build_pages: WARNING seller pages unavailable: {e!r}", file=sys.stderr)
         seller_pages = None
-    trade_pages = None
-    try:
-        import trade_pages
-    except Exception as e:
-        print(f"build_pages: WARNING trade pages unavailable: {e!r}", file=sys.stderr)
 
+    h = None
     for L in langs:
-        R = "../../" if not L.en else "../"   # coin page -> site root (assets, data, classic)
-        H = "../"                             # coin page -> this language's home
-        upd_date = ctime(as_of, False)
-        price_time = ctime(prices.get("updated_utc"))
-        sig_time = ctime(signals_all.get("generated_utc"))
-        for cid, slug in pages:
-            a, an = prices["assets"][cid], analysis["coins"][cid]
-            sym, name = a["symbol"], a["name"]
-            url = f"{SITE}{L.prefix}{slug}/"
-            price = a.get("price")
-            sup, res = an.get("support") or [], an.get("resistance") or []
-            proj = an.get("projection") or {}
-            sl = slate.get(cid) or {}
-            t = by_id.get(sl.get("trade_id")) if sl.get("trade_id") else None
-            if t and t.get("status") not in ("pending", "open"):
-                t = None  # closed ideas aren't shown with their outcome (the track record is private since Oct 22, 2026)
-            sig = signals.get(cid) or {}
-            us, intl, intl_list, cb, kp, up = venues(cid, sym, coin_cfg.get(cid, {}), aff)
-
-            h1 = _("{sym} Price Analysis &amp; Levels to Watch, updated {date}", sym=sym, date=E(upd_date))
-            title = (_("{sym} Price Analysis Today & {name} Outlook | Lumi Trades", sym=sym, name=name) if name != sym
-                     else _("{sym} Price Analysis Today & Outlook | Lumi Trades", sym=sym))
-            s1, r1 = (lvl(sup[0]) if sup else _("n/a")), (lvl(res[0]) if res else _("n/a"))
-            desc = (_("{name} ({sym}) {price}, {chg} 24h. ", name=name, sym=sym, price=fp(price), chg=pct_txt(a.get('change_24h')))
-                    + _("Support {s}, resistance {r}", s=s1, r=r1)
-                    + (_("; {n}-day range {lo}–{hi}", n=proj['horizon_days'], lo=lvl(proj['bear']), hi=lvl(proj['bull'])) if proj else "")
-                    + _(". Lumi's paper-trade idea and where to buy {sym} in the US.", sym=sym))
-
-            # ---- FAQ (same text visible on the page and in FAQPage JSON-LD) ----
-            faq = []
-            if us:
-                faq.append((_("Where can I buy {sym} in the US?", sym=sym),
-                            _("{sym} is listed for US customers on {venues}.", sym=sym, venues=", ".join(us))
-                            + ("" if cb else _(" It isn't listed on Coinbase."))
-                            + _(" Availability varies by state (for example, Uphold doesn't serve New York), so check the exchange's own list before signing up.")))
-            faq.append((_("Where can I buy {sym} outside the US?", sym=sym),
-                        (_("Outside the US, Kraken lists {sym} in many countries, and other international exchanges list it too. Availability depends on your country; check the exchange's supported-regions page.", sym=sym) if kp
-                         else _("Outside the US, many international exchanges list {sym}. Availability depends on your country; check the exchange's supported-regions page.", sym=sym))))
-            if sup or res:
-                faq.append((_("What are the key {sym} support and resistance levels right now?", sym=sym),
-                            _("As of Lumi's {date} update, support is at {sup} and resistance at {res}. {sym} last traded at {price} ({time}).",
-                              date=upd_date, sup=", ".join(lvl(x) for x in sup[:3]), res=", ".join(lvl(x) for x in res[:3]), sym=sym, price=fp(price), time=price_time)))
-            if proj:
-                faq.append((_("What is Lumi's {n}-day outlook for {sym}?", n=proj['horizon_days'], sym=sym),
-                            _("Lumi's {n}-day outlook is a set of scenario levels, not a price prediction: bull case {bull}, base case {base}, bear case {bear}. It's an AI's paper-trading read of the levels and signals, reviewed at 6 AM, 12 PM, 6 PM and 11 PM CT, and not financial advice.",
-                              n=proj['horizon_days'], bull=lvl(proj['bull']), base=lvl(proj['base']), bear=lvl(proj['bear']))))
-            if t:
-                zz = t.get("entry_zone") or {}
-                faq.append((_("Is there an active {sym} trade idea?", sym=sym),
-                            _("Yes: paper idea {id} is a {dir} ({lev}), status {status}, ", id=t['id'], dir=dir_txt(t['direction']),
-                              lev=_('spot, 1x') if t.get('leverage') == 1 else str(t.get('leverage')) + 'x', status=_(t['status']))
-                            + (_("filled at {p}", p=lvl(t.get('entry'))) if t["status"] == "open" else _("entry zone {lo}–{hi}", lo=lvl(zz.get('low')), hi=lvl(zz.get('high'))))
-                            + _(", stop {stop}, targets {targets}. Paper trade only.", stop=lvl(t.get('current_stop') or t.get('stop')), targets=" / ".join(lvl(x) for x in t.get("targets") or []))))
-            else:
-                note, note_en = L.loc(sl, "note")
-                faq.append((_("Is there an active {sym} trade idea?", sym=sym), _("Not right now.") + " " + (note or _("Lumi has no setup for {sym} at the moment.", sym=sym))))
-            faq = faq[:5]
-
-            # ---- sections ----
-            stats = [("Price", fp(price)), ("24h", pc(a.get("change_24h"))), ("7d", pc(a.get("change_7d"))), ("30d", pc(a.get("change_30d"))),
-                     ("24h range", f'{lvl(a.get("low_24h"))} – {lvl(a.get("high_24h"))}'),
-                     ("Market cap", f'${a["market_cap"] / 1e9:,.2f}B' if (a.get("market_cap") or 0) >= 1e9 else f'${(a.get("market_cap") or 0) / 1e6:,.0f}M'),
-                     ("24h volume", f'${(a.get("volume_24h") or 0) / 1e6:,.1f}M'), ("Rank", f'#{a["market_cap_rank"]}' if a.get("market_cap_rank") else _("n/a"))]
-            stat_html = "".join(f'<div><small>{E(_(k))}</small><b class="mono">{v if k in ("24h", "7d", "30d") else E(v)}</b></div>' for k, v in stats)
-            lv_html = (f'<div class="levels"><div class="lv sup"><small>{E(_("Support"))}</small><b>{E(" / ".join(lvl(x) for x in sup) or "—")}</b></div>'
-                       f'<div class="lv res"><small>{E(_("Resistance"))}</small><b>{E(" / ".join(lvl(x) for x in res) or "—")}</b></div></div>')
-            proj_html = ""
-            if proj:
-                proj_html = f'<h3>{_("{n}-day outlook (scenario levels)", n=proj["horizon_days"])}</h3><div class="cp-proj">'
-                proj_html += (f'<div class="bull"><small>{E(_("Bull"))}</small><b class="mono">{lvl(proj["bull"])}</b><span>{pct_txt((proj["bull"] / price - 1) * 100) if price else ""}</span></div>'
-                              f'<div class="base"><small>{E(_("Base"))}</small><b class="mono">{lvl(proj["base"])}</b><span>{pct_txt((proj["base"] / price - 1) * 100) if price else ""}</span></div>'
-                              f'<div class="bear"><small>{E(_("Bear"))}</small><b class="mono">{lvl(proj["bear"])}</b><span>{pct_txt((proj["bear"] / price - 1) * 100) if price else ""}</span></div></div>'
-                              f'<p class="meta">{E(_("A scenario range from the levels above, not a forecast you can rely on. % vs {price}.", price=fp(price)))}</p>')
-            sig_html = ""
-            if sig.get("timeframes"):
-                rows = []
-                for tf in ("1h", "4h", "1d"):
-                    x = sig["timeframes"].get(tf)
-                    if not x:
-                        continue
-                    ind = x.get("indicators", {})
-                    rsi = (ind.get("rsi") or {}).get("value")
-                    rows.append(f'<tr><th>{tf}</th><td><b>{E(_(x.get("label")))}</b></td><td class="mono">{E(rsi if rsi is not None else "—")}</td>'
-                                f'<td>{E(L.state((ind.get("ema") or {}).get("state", "")))}</td><td>{E(L.state((ind.get("macd") or {}).get("state", "")))}</td></tr>')
-                sig_html = (f'<h3>{E(_("Signals ({label} overall)", label=_(sig.get("label", ""))))}</h3><div class="cp-tablewrap"><table class="cp-table"><thead><tr><th>{E(_("TF"))}</th><th>{E(_("Signal"))}</th><th>RSI</th><th>{E(_("EMA trend"))}</th><th>MACD</th></tr></thead>'
-                            f'<tbody>{"".join(rows)}</tbody></table></div><p class="meta">{E(_("Computed from {source} candles at {time}.", source=CANDLE_SOURCES.get(sig.get("source"), sig.get("source", "exchange")), time=sig_time))} '
-                            f'{_("The site\'s backtest shows none of these indicators has a reliable edge on its own.")}</p>')
-            cats = an.get("catalysts") or []
-            cat_html = ""
-            if cats:
-                cat_html = '<section class="card cp-sec"><h2>' + _("Recent {sym} news &amp; catalysts", sym=E(sym)) + '</h2>' + en_note().replace(_("Lumi writes this commentary in English; numbers and levels are the same in every language."), _("News items are listed in English, as published by their sources.")) + '<ul class="cp-list">' + "".join(
-                    f'<li><span class="mono muted">{E(c.get("date"))}</span> {free(c, "text")} '
-                    f'<a href="{E(c.get("url"))}" rel="noopener nofollow" target="_blank">{E(c.get("source") or _("source"))}</a></li>' for c in cats) + "</ul></section>"
-            srcs = an.get("sources") or []
-            src_html = ("<details class=\"cp-src\"><summary>" + E(_("Sources Lumi read for this update")) + "</summary><ul>" + "".join(
-                f'<li><a href="{E(s.get("url"))}" rel="noopener nofollow" target="_blank">{E(s.get("title"))}</a></li>' for s in srcs) + "</ul></details>") if srcs else ""
-            trade_sec = trade_html(t, sym, price, H) if t else f'<p>{E(_("No active idea for {sym}.", sym=sym))} {free(sl, "note")}</p>'
-            us_li = "".join(f"<li>{E(x)}</li>" for x in us) or f"<li>{E(_('No US exchange in our list carries it.'))}</li>"
-            intl_li = "".join(f"<li>{E(x)}</li>" for x in intl_list)
-            pair_hint = cb or kp or f"{sym}/USD"
-            step1 = (T("Coinbase doesn't list {sym}, so US buyers use {venues}.", sym=sym, venues=_(" or ").join(v.split(" (")[0] for v in us))
-                     if (not cb and us) else E(_("Compare fees and the trading pair before you sign up.")))
-            buy_html = f"""<section class="card cp-sec" id="how-to-buy"><h2>{E(_("How to buy {sym} ({name})", sym=sym, name=name))}</h2>
-<div class="cp-cols"><div><h3>{E(_("In the US"))}</h3><ul class="cp-list">{us_li}</ul></div><div><h3>{E(_("Outside the US"))}</h3><ul class="cp-list">{intl_li}</ul></div></div>
-<ol class="cp-steps">
-<li><b>{E(_("Pick an exchange that lists {sym} where you live.", sym=sym))}</b> {step1}</li>
-<li><b>{E(_("Create an account and verify your identity."))}</b> {E(_("Regulated exchanges ask for ID and proof of address before you can deposit."))}</li>
-<li><b>{E(_("Fund it."))}</b> {E(_("A bank transfer (ACH/SEPA) is usually the cheapest; cards cost more."))}</li>
-<li>{_("<b>Buy {sym} on the spot market</b> ({pair}). A limit order at a level you chose (see the support levels above) avoids paying the spread on a market order.", sym=E(sym), pair=E(pair_hint))}</li>
-<li><b>{E(_("Decide where to keep it."))}</b> {E(_("For long-term holdings, consider moving it to your own wallet (below). When you withdraw, pick the {name} network your wallet supports: sending on the wrong network can lose the funds.", name=name))}</li>
-</ol>
-<div class="aff-wrap cp-buy" id="aff-coin" data-coin="{E(cid)}" data-sym="{E(sym)}" data-cb="{E(cb or "")}" data-perp="{1 if cid in BITUNIX_PERP else 0}" hidden></div>
-<h3>{E(_("Self-custody: keeping {sym} in your own wallet", sym=sym))}</h3>
-<p>{E(_("Keep long-term holdings in a hardware wallet like Ledger. ")) if aff.get("ledger_url") else ""}{E(_("Coins on an exchange are an IOU from that exchange. A hardware wallet keeps the private keys on a small offline device, so you approve every transfer yourself. Before you send {sym} to any wallet, check that it supports the {name} network, write the recovery phrase on paper (never in a photo or a cloud note), and send a small test amount first.", sym=sym, name=name))}</p>
-<div class="aff-wrap" id="aff-ledger" hidden></div>
-<p class="meta">{T("Spot buying only. Lumi's ideas are paper trades; leverage magnifies losses. Not financial advice.")}</p></section>"""
-
-            faq_html = '<section class="card cp-sec" id="faq"><h2>' + E(_("{sym} FAQ", sym=sym)) + '</h2>' + "".join(
-                f"<details class=\"cp-faq\"{' open' if i == 0 else ''}><summary>{E(q)}</summary><p>{E(ans)}</p></details>" for i, (q, ans) in enumerate(faq)) + "</section>"
-            others = "".join(
-                f'<a href="{H}{s}/"><b>{E(prices["assets"][c]["symbol"])}</b> <span class="mono">{fp(prices["assets"][c].get("price"))}</span> {pc(prices["assets"][c].get("change_24h"), 1)}</a>'
-                for c, s in pages if c != cid)
-            tk_pages = ",".join(f"{c}:{L.prefix}{s}" for c, s, sy in nav_items)  # scrolling price ticker links (assets/ticker.js, relative to the site root)
-            nav = "".join(f'<a href="{H}{s}/"{" aria-current=\"page\"" if c == cid else ""}>{E(sy)}</a>' for c, s, sy in nav_items)
-            _chrome_h = types.SimpleNamespace(E=E, _=_, L=L, NEWSLETTER_URL=NEWSLETTER_URL)
-
-            ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": html.unescape(h1), "url": url, "description": desc,
-                   "dateModified": as_of, "inLanguage": L.code, "isPartOf": {"@type": "WebSite", "name": "Lumi Trades", "url": SITE + L.prefix},
-                   "about": {"@type": "Thing", "name": f"{name} ({sym})"}, "publisher": {"@type": "Organization", "name": "Lumi Trades", "url": SITE,
-                   "logo": SITE + "assets/brand/logo.png"}},
-                  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-                      {"@type": "ListItem", "position": 1, "name": "Lumi Trades", "item": SITE + L.prefix},
-                      {"@type": "ListItem", "position": 2, "name": _("{sym} analysis", sym=sym), "item": url}]},
-                  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-                      {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": ans}} for q, ans in faq]}]
-            ld_txt = json.dumps(ld, ensure_ascii=False).replace("</", "<\\/")
-            og_t = _("{sym} price analysis &amp; levels to watch ({date})", sym=E(sym), date=E(upd_date))
-            commentary = (f'<div class="cp-text">{paragraphs(L.loc(an, "commentary")[0])}</div>' if not L.loc(an, "commentary")[1]
-                          else f'{en_note()}<div class="cp-text" lang="en">{paragraphs(an.get("commentary"))}</div>')
-            bias = L.free(an, "bias", E) or E(_("no bias set"))
-
-            page = f"""<!doctype html>
-<html lang="{L.code}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{E(title)}</title>
-<meta name="description" content="{E(desc)}">
-<meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="{url}">
-{head_i18n(slug + "/", langs)}
-<meta name="theme-color" content="#070a10">
-<meta property="og:type" content="article">
-<meta property="og:site_name" content="{SITE_NAME}">
-<meta property="og:title" content="{og_t}">
-<meta property="og:description" content="{E(desc)}">
-<meta property="og:url" content="{url}">
-<meta property="og:image" content="{SITE}assets/og.png?v={V}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="article:modified_time" content="{E(as_of)}">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@lumisinsite">
-<meta name="twitter:title" content="{og_t}">
-<meta name="twitter:description" content="{E(desc)}">
-<meta name="twitter:image" content="{SITE}assets/og.png?v={V}">
-<link rel="icon" href="{R}favicon.ico?v={V}" sizes="any">
-<link rel="apple-touch-icon" href="{R}assets/apple-touch-icon.png?v={V}" sizes="180x180">
-<link rel="preload" href="{R}assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{R}assets/fonts/sora-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{R}assets/style.css?v={V}">
-<link rel="stylesheet" href="{R}assets/glow.css?v={V}">
-<script type="application/ld+json">{ld_txt}</script>
-{i18n_scripts(R)}<script src="{R}assets/affiliate.js?v={V}" defer></script>
-<script src="{R}assets/newsletter.js?v={V}" defer></script>
-<script src="{R}assets/schedule.js?v={V}" defer></script>
-<script src="{R}assets/live.js?v={V}" defer></script>
-<script src="{R}assets/ticker.js?v={V}" defer></script>
-</head>
-<body class="cp lgw">
-<div class="bg-glow" aria-hidden="true"></div>
-<header class="cp-top"><div class="wrap cp-top-inner">
-  <a class="cp-brand" href="{H}"><img class="wm" src="{R}assets/brand/wordmark.png?v={V}" alt="Lumi" width="80" height="42"><span class="sr-only"> Trades</span></a>
-  <span class="cp-top-r">{i18n.switcher(L, slug + "/", langs)}<a class="cp-dash" href="{H}trust/">{E(_("Vendor trust list →"))}</a>{site_chrome.social_icons(_chrome_h)}</span>
-</div></header>
-<div class="ticker lt-ticker" role="region" aria-label="{E(_("Live crypto prices"))}" data-pages="{tk_pages}"><div class="ticker-track" id="ticker"></div></div>
-<nav class="nav" aria-label="{E(_("Site"))}"><div class="wrap nav-inner">{site_chrome.site_nav(_chrome_h, H, nav)}</div></nav>
-<main class="wrap cp-main">
-<p class="cp-crumb"><a href="{H}">Lumi Trades</a> › {E(_("{sym} analysis", sym=sym))}</p>
-<h1>{h1}</h1>
-<p class="cp-lede">{_("{name} ({sym}) is at <b class=\"mono\">{price}</b>, {d24} over 24 hours and {d7} over 7 days.", name=E(name), sym=E(sym), price=fp(price), d24=pc(a.get("change_24h")), d7=pc(a.get("change_7d")))} {_("Lumi's read:")} <b>{bias}</b>.</p>
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_("<strong>Not financial advice. Paper trading only.</strong> Lumi is an AI; its analysis and trade ideas are for information only, and no real money is traded.")}</span></div>
-
-<section class="card cp-sec" id="price"><h2>{E(_("{sym} price today", sym=sym))}</h2>
-<div class="cp-stats">{stat_html}</div>
-{chart_svg(a, an, t)}
-<p class="meta">{_("Prices: CoinGecko snapshot, {time}. The <a href=\"{href}\">full detail view</a> streams live prices.", time=E(price_time), href=f"{R}classic/#coin-{E(cid)}")}</p></section>
-
-<section class="card cp-sec cp-mi" id="levels"><h2>{_("{sym} support &amp; resistance levels to watch", sym=E(sym))}</h2>
-{MI_LABEL()}
-{lv_html}
-{proj_html}
-{sig_html}</section>
-
-<section class="card cp-sec" id="outlook"><h2>{_("Lumi's {sym} outlook", sym=E(sym))}</h2>
-<p class="meta">{E(_("Update of {when} · {author}", when=ctime(as_of), author=analysis.get("author") or "Lumi"))}</p>
-{commentary}
-{src_html}</section>
-
-<section class="card cp-sec cp-mi" id="trade"><h2>{E(_("{sym} paper-trade idea", sym=sym))}</h2>
-{MI_LABEL()}
-{SCHEDULE_NOTE()}
-{trade_sec}
-<p class="meta">{_("Every idea is tracked against 5-minute candles. See <a href=\"{h}trades/\">all active ideas</a>", h=H)}{(_(' (this idea: <a href="{href}">{id} page</a>)', href=f'{H}trades/{E(t["id"])}/', id=E(t["id"]))) if t else ""}.</p></section>
-
-{cat_html}
-{buy_html}
-{faq_html}
-
-{NEWSLETTER_BLOCK(H)}
-
-<section class="card cp-sec" id="more"><h2>{E(_("More coin analysis"))}</h2><div class="cp-others">{others}</div>
-<p>{_("<a href=\"{h}\">← Back to the Lumi Trades dashboard</a> (market at a glance, signals and the trade slate; the <a href=\"{r}classic/\">full detail view</a> has live prices and the backtest).", h=H, r=R)}</p></section>
-</main>
-<footer class="wrap footer">
-  {site_chrome.foot_brand(_chrome_h)}
-  <p class="foot-soc">{site_chrome.social_icons(_chrome_h)}</p>
-  <p>{_("Data: CoinGecko, Coinbase Exchange &amp; Kraken public APIs · Times in US Central · Page generated {date} · Paper trades, not financial advice.", date=E(gen_date))} · <a href="{H}privacy/">{E(_("Privacy Policy"))}</a>{policy_page.footer_link(types.SimpleNamespace(L=L, E=E, _=_), H)}</p>
-  <p class="aff-foot" id="aff-foot" hidden></p>
-</footer>
-</body>
-</html>
-"""
-            if name == sym:   # e.g. XRP: say "XRP", not "XRP (XRP)" / "How to buy XRP (XRP)" (every language's bracket style)
-                page = dedupe_sym(page, E(name))
-            write(f"{L.prefix}{slug}/index.html", page)
-
-        # ---- trade history (/trades/ + /trades/<ID>/), see scripts/trade_pages.py ----
-        h = types.SimpleNamespace(E=E, fp=fp, lvl=lvl, pc=pc, pct_txt=pct_txt, ctime=ctime, CT=CT, SITE=SITE, NEWSLETTER_URL=NEWSLETTER_URL,
-                                  L=L, _=_, langs=langs, i18n=i18n, i18n_scripts=i18n_scripts, head_i18n=head_i18n, dir_txt=dir_txt,
-                                  MI_LABEL=MI_LABEL, MI_NAME=MI_NAME, MI_NOTICE=MI_NOTICE)
-        coin_slug = {c: s for c, s in pages}
-        if trade_pages:
+        h = types.SimpleNamespace(E=E, fp=fp, lvl=lvl, pc=pc, pct_txt=pct_txt, ctime=ctime, CT=CT, SITE=SITE,
+                                  L=L, _=_, langs=langs, i18n=i18n, i18n_scripts=i18n_scripts, head_i18n=head_i18n)
+        # ---- retired URLs: stubs to /<lang>/trust/ (not in the sitemap) ----
+        for rel in retired_paths(L.prefix, L.en):
+            write(f"{L.prefix}{rel}index.html", retired_stub(rel))
+        # ---- /agents/ + /trust/ + /how-it-works/ + policy pages ----
+        if site_pages:
             try:
-                sm_l = trade_pages.build(h, prices, trades, nav_items, coin_slug, V, gen_date, write)
-                if L.en:
-                    trade_sm = sm_l
-            except Exception as e:  # never block the coin pages / data publish
-                print(f"build_pages: WARNING trade pages failed ({L.code}): {e!r}", file=sys.stderr)
-                if L.en:
-                    trade_pages = None
-        # ---- /agents/ (API for AI agents) + /trust/ (x402 vendor list, static table from the API) ----
-        if site_pages and trade_pages:
-            try:
-                sm_s = site_pages.build(h, trade_pages, nav_items, V, gen_date, write, vendors_doc)
+                sm_s = site_pages.build(h, site_chrome, nav_items, V, gen_date, write, vendors_doc)
                 if L.en:
                     site_sm = sm_s
             except Exception as e:
                 print(f"build_pages: WARNING agents/trust pages failed ({L.code}): {e!r}", file=sys.stderr)
         # ---- /sellers/<host-slug>/ (English only; one page per seller on the trust list, same data as /trust/) ----
-        if L.en and site_pages and trade_pages and seller_pages:
+        if L.en and site_pages and seller_pages:
             try:
-                seller_sm = seller_pages.build(h, trade_pages, nav_items, V, gen_date, write, vendors_doc, dry)
+                seller_sm = seller_pages.build(h, site_chrome, nav_items, V, gen_date, write, vendors_doc, dry)
             except Exception as e:
                 print(f"build_pages: WARNING seller pages failed: {e!r}", file=sys.stderr)
         # ---- /blog/ index (English only; scripts/blog_index.py lists blog/<slug>/ posts) ----
-        if L.en and trade_pages:
+        if L.en:
             try:
                 import blog_index
-                blog_index.build(h, trade_pages, V, gen_date, write)
+                blog_index.build(h, site_chrome, V, gen_date, write)
             except Exception as e:
                 print(f"build_pages: WARNING blog index failed: {e!r}", file=sys.stderr)
 
-        # ---- the dashboard in this language (/<lang>/index.html from the English shell) ----
+        # ---- the homepage in this language (/<lang>/index.html from the English shell) ----
         if not L.en:
             try:
                 li = lang_index(index, langs)
-                li = replace_blocks(li, "", nav_items)
                 li = set_block(li, IHEAD, head_i18n("", langs))
                 li = set_block(li, SEOHEAD, seo_head(f"{SITE}{L.prefix}", site_pages.PRICES if site_pages else []))
                 li = set_block(li, ISW, i18n.switcher(L, "", langs))
@@ -802,16 +358,14 @@ def build(dry=False):
                     li = set_block(li, TSTEPS, site_pages.steps_html(h) + "\n" + site_pages.chains_html(h))
                     li = set_block(li, SWEEP, site_pages.sweep_html(h, vendors_doc))
                     li = set_block(li, HSTATS, site_pages.stats_html(h, vendors_doc, home=True))
-                if trade_pages:
-                    li = trade_pages.snapshot(h, li, prices, trades, analysis)
                 write(f"{L.prefix}index.html", li)
             except Exception as e:
-                print(f"build_pages: WARNING {L.code} dashboard failed: {e!r}", file=sys.stderr)
+                print(f"build_pages: WARNING {L.code} homepage failed: {e!r}", file=sys.stderr)
     L = langs[0]
     if dry:
         return langs
 
-    # ---- sitemap (every language, with xhtml:link hreflang alternates) ----
+    # ---- sitemap (every language, with xhtml:link hreflang alternates); retired stubs stay out ----
     def url_el(p, lm, fq, pr):
         out = []
         for x in langs:
@@ -822,12 +376,8 @@ def build(dry=False):
         return out
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' + (' xmlns:xhtml="http://www.w3.org/1999/xhtml"' if len(langs) > 1 else "") + '>']
-    sm += url_el("", gen_date, "hourly", "1.0")
+    sm += url_el("", gen_date, "daily", "1.0")
     for p, lm, fq, pr in site_sm:
-        sm += url_el(p, lm, fq, pr)
-    for _c, s in pages:
-        sm += url_el(f"{s}/", gen_date, "daily", "0.8")
-    for p, lm, fq, pr in trade_sm:
         sm += url_el(p, lm, fq, pr)
     # English-only static blog posts (blog/<slug>/index.html, hand-built; no language alternates)
     bdir = os.path.join(ROOT, "blog")
@@ -842,41 +392,30 @@ def build(dry=False):
         sm.append(f'  <url><loc>{SITE}{p}</loc><lastmod>{lm}</lastmod><changefreq>{fq}</changefreq><priority>{pr}</priority></url>')
     write("sitemap.xml", "\n".join(sm + ["</urlset>", ""]))
 
-    # ---- Atom feed /feed.xml (scripts/feed.py): published blog posts, Lumi's market updates, active ideas (plan only) ----
+    # ---- Atom feed /feed.xml (scripts/feed.py): published blog posts only ----
     try:
         import feed
-        write("feed.xml", feed.atom(ROOT, load("log.json"), trades, {c: a.get("symbol") for c, a in prices["assets"].items()}, lvl))
+        write("feed.xml", feed.atom(ROOT))
     except Exception as e:
         print(f"build_pages: WARNING feed.xml failed: {e!r}", file=sys.stderr)
 
-    # ---- link blocks in the main page (index.html, root) and the classic view (classic/index.html, one level down) ----
-    for path, pre in (("index.html", ""), ("classic/index.html", "../")):
-        fp_ = os.path.join(ROOT, path)
-        if not os.path.exists(fp_):
-            continue
-        with open(fp_, encoding="utf-8") as f:
-            cur = f.read()
-        new = replace_blocks(cur, pre, nav_items)
-        if path == "index.html":
-            new = set_block(new, IHEAD, head_i18n("", langs))
-            new = set_block(new, SEOHEAD, seo_head(SITE, site_pages.PRICES if site_pages else []))
-            new = set_block(new, ISW, i18n.switcher(L, "", langs))
-            if site_pages:
-                h.L, h._ = L, _
-                new = set_block(new, TSTEPS, site_pages.steps_html(h) + "\n" + site_pages.chains_html(h))
-            if site_pages and site_pages.sweep(vendors_doc):
-                h.L, h._ = L, _
-                new = set_block(new, SWEEP, site_pages.sweep_html(h, vendors_doc))
-                new = set_block(new, HSTATS, site_pages.stats_html(h, vendors_doc, home=True))
-            if trade_pages:
-                try:
-                    h.L, h._ = L, _
-                    new = trade_pages.snapshot(h, new, prices, trades, analysis)
-                except Exception as e:
-                    print(f"build_pages: WARNING index snapshot failed: {e!r}", file=sys.stderr)
-        new = with_beacon(new)
-        if new != cur:
-            write(path, new)
+    # ---- generated blocks in the English homepage (index.html) ----
+    fp_ = os.path.join(ROOT, "index.html")
+    with open(fp_, encoding="utf-8") as f:
+        cur = f.read()
+    new = set_block(cur, IHEAD, head_i18n("", langs))
+    new = set_block(new, SEOHEAD, seo_head(SITE, site_pages.PRICES if site_pages else []))
+    new = set_block(new, ISW, i18n.switcher(L, "", langs))
+    if site_pages:
+        h.L, h._ = L, _
+        new = set_block(new, TSTEPS, site_pages.steps_html(h) + "\n" + site_pages.chains_html(h))
+    if site_pages and site_pages.sweep(vendors_doc):
+        h.L, h._ = L, _
+        new = set_block(new, SWEEP, site_pages.sweep_html(h, vendors_doc))
+        new = set_block(new, HSTATS, site_pages.stats_html(h, vendors_doc, home=True))
+    new = with_beacon(new)
+    if new != cur:
+        write("index.html", new)
     for path in STATIC_PAGES:
         fp_ = os.path.join(ROOT, path)
         if os.path.exists(fp_):
@@ -898,18 +437,15 @@ if __name__ == "__main__":
         # for publish.sh: every generated page + sitemap (unchanged ones are no-ops for git add), index.html only if changed
         outs = []
         for pre in [""] + [c + "/" for c in lang_dirs()]:
-            outs += [f"{pre}{slug}/index.html" for _c, slug in PAGES if os.path.exists(os.path.join(ROOT, pre, slug, "index.html"))]
             if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
                 outs.append(f"{pre}index.html")
-            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy", "contact", "trust-policy") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
-            tdir = os.path.join(ROOT, pre, "trades")  # trade archive + permalink pages (scripts/trade_pages.py)
-            if os.path.isdir(tdir):
-                outs += [f"{pre}trades/index.html"] * os.path.exists(os.path.join(tdir, "index.html")) + sorted(
-                    f"{pre}trades/{d}/index.html" for d in os.listdir(tdir) if os.path.exists(os.path.join(tdir, d, "index.html")))
+            outs += [f"{pre}{d}/index.html" for d in ("agents", "trust", "how-it-works", "privacy", "contact", "trust-policy", "top-sellers") if os.path.exists(os.path.join(ROOT, pre, d, "index.html"))]
+            outs += [f"{pre}{r}index.html" for r in retired_paths(pre, not pre) if os.path.exists(os.path.join(ROOT, pre, r, "index.html"))]
         sdir = os.path.join(ROOT, "sellers")  # English-only seller pages (scripts/seller_pages.py)
         if os.path.isdir(sdir):
             outs += sorted(f"sellers/{d}/index.html" for d in os.listdir(sdir) if os.path.exists(os.path.join(sdir, d, "index.html")))
-        outs.append("sitemap.xml")
+        outs += ["blog/index.html", "sitemap.xml", "feed.xml"]
+        outs = [o for o in outs if os.path.exists(os.path.join(ROOT, o))]
         print("\n".join(outs + [x for x in ch if x not in outs]))
     elif "--quiet" in sys.argv:
         print("\n".join(ch))
