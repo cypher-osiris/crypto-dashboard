@@ -22,3 +22,8 @@ data/trades.json
 # Retired from the public site Oct 25, 2026 (trading update log and backtest); kept local only
 data/log.json
 data/backtest.json
+
+# Retired from the public site Oct 25, 2026 (signals and market analysis/levels); local copies, if any, stay unpublished.
+# Last published versions: state/retired_data/ (and git history).
+data/signals.json
+data/analysis.json

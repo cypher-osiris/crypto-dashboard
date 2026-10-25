@@ -57,11 +57,6 @@ def zone(t):
     return z.get("low", t["entry"]), z.get("high", t["entry"])
 
 
-def affiliate():
-    a = (load("config.json", {}) or {}).get("affiliate", {})
-    u = (a.get("bitunix_url") or "").strip()
-    return u if u.startswith("https://") else None
-
 
 # ---------------------------------------------------------------------------------------------- facts
 def missed_plan_facts(t, now_p):
@@ -205,7 +200,7 @@ def gather(now=None):
         "btc": {"price": sig(btc.get("price"), 5), "pct_24h": round(btc.get("change_24h") or 0, 1), "support": bd.get("support"), "resistance": bd.get("resistance")},
         "movers_24h": movers, "news": news, "signals": sigs,
         "sentiment": {"fear_greed": fg.get("value"), "label": fg.get("classification"), "prev": fg.get("previous"), "source": fg.get("source"), "stale": bool(fg.get("stale"))} if fg else None,
-        "links": {"site": SITE, "affiliate": affiliate()},
+        "links": {"site": SITE},
         "post_kinds": ["morning", "midday", "evening", "event", "news", "weekly", "missed"],
         "voice": "docs/x_voice.md",
     }

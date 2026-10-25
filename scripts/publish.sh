@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Publish data updates to GitHub Pages without prompts.
 #   scripts/publish.sh                    # stage everything under data/
-#   scripts/publish.sh data/signals.json   # stage only these paths (data/log.json and data/backtest.json are always skipped)
+#   scripts/publish.sh data/prices.json    # stage only these paths (data/log.json, data/backtest.json, data/signals.json and
+#                                          # data/analysis.json are retired and always skipped)
 # data/trades.json is never published (taken down Oct 24, 2026; the trades doc is private in state/): it is dropped
 # from the paths and kept out of every commit.
 #   PUBLISH_MSG="custom message" scripts/publish.sh
@@ -19,7 +20,7 @@ mkdir -p state
 paths=()
 for p in "$@"; do
   [ "$p" = data/trades.json ] && { echo "publish: data/trades.json is private and never published; skipping it" >&2; continue; }
-  case "$p" in data/log.json|data/backtest.json) echo "publish: $p is retired (Oct 25, 2026) and never published; skipping it" >&2; continue;; esac
+  case "$p" in data/log.json|data/backtest.json|data/signals.json|data/analysis.json) echo "publish: $p is retired (Oct 25, 2026) and never published; skipping it" >&2; continue;; esac
   paths+=("$p")
 done
 if [ ${#paths[@]} -eq 0 ]; then
@@ -78,8 +79,17 @@ while IFS= read -r -d '' f; do
 done < <(find "${paths[@]}" -name '*.json' -print0)
 [ "$bad" -eq 0 ] || exit 2
 
+# private/retired files never go into a commit, even when a step (privacy scrub, build) lists them
+RETIRED=(data/trades.json data/log.json data/backtest.json data/signals.json data/analysis.json)
+keep=()
+for p in "${paths[@]}"; do
+  skip=0; for r in "${RETIRED[@]}"; do [ "$p" = "$r" ] && skip=1; done
+  [ $skip = 0 ] && keep+=("$p")
+done
+paths=("${keep[@]}")
+[ ${#paths[@]} -eq 0 ] && { echo "publish: nothing to publish"; exit 0; }
 git add -- "${paths[@]}"
-git rm --cached -q --ignore-unmatch -- data/trades.json data/log.json data/backtest.json  # private/retired: never in a commit
+git rm --cached -q --ignore-unmatch -- "${RETIRED[@]}"
 if git diff --cached --quiet -- "${paths[@]}"; then
   echo "publish: nothing to commit"
   exit 0

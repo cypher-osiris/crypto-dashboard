@@ -13,7 +13,7 @@ Placeholders use {name} and must be kept as-is. A missing key falls back to the 
 build_pages.py imports this module, renders every page once per language (English at /, others under /<lang>/),
 and calls bundle() so the browser bundles never drift from the JSON.
 """
-import ast, datetime as dt, html, json, os, re, sys
+import ast, datetime as dt, hashlib, html, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR = os.path.join(ROOT, "assets", "i18n")
@@ -28,17 +28,29 @@ def codes():
 
 
 
-# One exchange name is never shown on the site (it doesn't serve US users and the referral links were removed Oct 25, 2026).
-# Lumi's free text from data/*.json is scrubbed here:
-# in a list of venues the name is dropped, anywhere else it becomes "a supported exchange".
-_HIDDEN_LIST = re.compile(r"\bBitunix\s*(?:,\s*|\s+(?:and|or|/)\s+)|(?:,\s*|\s+(?:and|or|/)\s+)Bitunix\b", re.I)
-_HIDDEN = re.compile(r"\bBitunix\b", re.I)
+# Exchange names that are never shown on the site (the old exchange partner: it doesn't serve US users and the referral
+# links were removed Oct 25, 2026). The names are kept only as SHA-256 hashes of the lowercase word, so the source doesn't
+# carry them either. Lumi's free text from data/*.json is scrubbed here: in a list of venues the name is dropped, anywhere
+# else it becomes "a supported exchange".
+HIDDEN_NAME_SHA256 = {"98126376e0565deee03d9277be277a15489e33fde40c229fce4a0d24841ca97b"}
+_WORD = re.compile(r"[A-Za-z][A-Za-z0-9]*")
+
+
+def is_hidden_name(word):
+    return hashlib.sha256(word.lower().encode()).hexdigest() in HIDDEN_NAME_SHA256
+
+
+def has_hidden_name(txt):
+    return any(is_hidden_name(w) for w in _WORD.findall(txt or ""))
 
 
 def no_us_hidden_names(txt):
-    if not txt or "itunix" not in txt.lower():
+    if not has_hidden_name(txt):
         return txt
-    return _HIDDEN.sub("a supported exchange", _HIDDEN_LIST.sub("", txt))
+    words = {w for w in _WORD.findall(txt) if is_hidden_name(w)}
+    alt = "|".join(re.escape(w) for w in sorted(words, key=len, reverse=True))
+    txt = re.sub(rf"\b(?:{alt})\s*(?:,\s*|\s+(?:and|or|/)\s+)|(?:,\s*|\s+(?:and|or|/)\s+)(?:{alt})\b", "", txt)
+    return re.sub(rf"\b(?:{alt})\b", "a supported exchange", txt)
 
 _PNL = re.compile(r"\b(?:un)?reali[sz]ed\s+P&L\b|\bP&L\b|\bprofit/loss\b|\bprofit and loss\b", re.I)
 

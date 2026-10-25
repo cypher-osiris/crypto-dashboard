@@ -248,7 +248,7 @@ class PrivacyPage(unittest.TestCase):
                 h = f.read()
             self.assertIn("hello@lumitrades.io", h)
             self.assertIn(pp.UPDATED.isoformat(), h)
-            self.assertNotIn("bitunix", h.lower())
+            self.assertFalse(__import__("i18n").has_hidden_name(h))
             self.assertIn('id="lumi-check"', h)          # Lumi Check section (English on every language page for now)
             self.assertNotIn("draft", h.lower())
             self.assertIn(f"<loc>https://lumitrades.io/{lang}privacy/</loc>", sm)
@@ -283,15 +283,22 @@ class PrivacyPage(unittest.TestCase):
             self.assertLessEqual(len(i18n(lang)[bp.INDEX_DESC]), 155, lang)
 
 
-class NoBitunixInStaticHtml(unittest.TestCase):
+class NoOldExchangeInStaticHtml(unittest.TestCase):
     """Oct 25, 2026: the affiliate/referral links are gone entirely. No built page in any language names the old exchange partner or carries
     an affiliate or referral link; the scrubber stays as a safety filter for free text."""
     def test_scrubber(self):
-        from i18n import no_us_hidden_names as f
-        self.assertEqual(f("venues (Bitunix, Binance, OKX) list no perp"), "venues (Binance, OKX) list no perp")
-        self.assertEqual(f("on Kraken or Bitunix."), "on Kraken.")
-        self.assertEqual(f("Bitunix lists it"), "a supported exchange lists it")
-        self.assertEqual(f("no exchange here"), "no exchange here")
+        import hashlib
+        import i18n as m
+        fake = hashlib.sha256(b"foonix").hexdigest()
+        m.HIDDEN_NAME_SHA256.add(fake)
+        try:
+            f = m.no_us_hidden_names
+            self.assertEqual(f("venues (Foonix, Binance, OKX) list no perp"), "venues (Binance, OKX) list no perp")
+            self.assertEqual(f("on Kraken or Foonix."), "on Kraken.")
+            self.assertEqual(f("Foonix lists it"), "a supported exchange lists it")
+            self.assertEqual(f("no exchange here"), "no exchange here")
+        finally:
+            m.HIDDEN_NAME_SHA256.discard(fake)
 
     def test_no_affiliate_code_or_config(self):
         self.assertFalse(os.path.exists(os.path.join(ROOT, "assets", "affiliate.js")))
@@ -299,7 +306,7 @@ class NoBitunixInStaticHtml(unittest.TestCase):
             cfg = json.load(f)
         self.assertEqual(set(cfg) - {"_readme"}, set())
 
-    def test_no_bitunix_or_affiliate_in_built_html(self):
+    def test_no_old_exchange_or_affiliate_in_built_html(self):
         bad = []
         for dp, _, files in os.walk(ROOT):
             if "/." in dp or "/state" in dp or "/node_modules" in dp or "/posts" in dp:
@@ -308,7 +315,7 @@ class NoBitunixInStaticHtml(unittest.TestCase):
                 if fn.endswith(".html") or fn in ("sitemap.xml", "feed.xml") or (dp.endswith("assets/i18n") and fn.endswith((".js", ".json"))):
                     with open(os.path.join(dp, fn), encoding="utf-8") as f:
                         low = f.read().lower()
-                    if re.search(r"bit[u]nix|affiliate(?!d)|referral|[?&]ref=|aff-foot", low):
+                    if __import__("i18n").has_hidden_name(low) or re.search(r"affiliate(?!d)|referral|[?&]ref=|aff-foot", low):
                         bad.append(os.path.relpath(os.path.join(dp, fn), ROOT))
         self.assertEqual(bad, [])
 
