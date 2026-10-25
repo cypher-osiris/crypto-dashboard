@@ -216,7 +216,7 @@ def body_html(h, v, d, slug, now_ms):
     if st:
         mon = STATUS_TXT.get(st, str(st))
         if any(e.get("daily_test_buy") for e in d.get("endpoints") or [] if isinstance(e, dict)):
-            mon += "; on Lumi's daily test-buy schedule"
+            mon += "; on Lumi's test-buy list (daily while new or after a failure, weekly once steady)"
         rows.append(_row("Monitoring status", E(mon)))
     if v.get("score") is not None:
         conf = str(v.get("confidence") or "")

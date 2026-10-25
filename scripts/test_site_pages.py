@@ -524,12 +524,17 @@ class PolicyPageSelection(unittest.TestCase):
         # Sales firewall (legal review 2-M1).
         self.assertIn("We never pitch paid plans to a seller within 30 days of a failed or warning result, and our sales emails never cite a seller's score.", ps)
         self.assertTrue(any("Paying Lumi never changes" in p and "never change this order" in p for p in ps))
-        # Stellar weekly-retest mode (trust_testbuys.ts STELLAR_RETEST_WEEKDAY, default Mon): new sellers daily, retests once a week.
+        # Seller rotation (tools/test_rotation.ts, 2026-10-25): new/failing/changed sellers daily, steady ones weekly on a per-seller weekday.
         stellar = [p for p in ps if p.startswith("<b>Stellar:</b>")][0]
-        for s in ("every day", "bought the day it appears", "cheapest first", "once a week", "(on Mondays)", "oldest test-buy first",
+        for s in ("every day", "bought the day it appears", "cheapest first", "once a week", "its own fixed weekday", "price or payTo change",
                   "0.15 USDC", "at most 4 buys a day", "not ranked by popularity"):
             self.assertIn(s, stellar)
         self.assertNotIn("then the sellers whose last test-buy is oldest", stellar)
+        self.assertNotIn("(on Mondays)", stellar)
+        xrpl = [p for p in ps if p.startswith("<b>XRPL:</b>")][0]
+        for s in ("fewer than 5 delivered test-buys", "once a week", "its own fixed weekday", "0.30 RLUSD and 0.10 XRP"):
+            self.assertIn(s, xrpl)
+        self.assertNotIn("We try every seller on the list once a day", xrpl)
         self.assertNotRegex(txt.lower(), r"p&l|profit|return")
 
     def test_caps_match_runners_when_present(self):
@@ -544,7 +549,14 @@ class PolicyPageSelection(unittest.TestCase):
         self.assertIn("const STELLAR_CAP = 0.15", tbs)
         self.assertIn("const STELLAR_MAX_BUYS = 4", tbs)
         self.assertIn("const MAX_PRICE = 0.05", tbs)
-        self.assertIn('const STELLAR_RETEST_WEEKDAY_DEFAULT = "Mon"', tbs)
+        # Seller rotation (2026-10-25): policy text says "fewer than 5 delivered", 7/14-day windows, per-seller weekday.
+        self.assertIn("const XRPL_NEW_MIN = 5", tbs)
+        rot = os.path.join(os.path.dirname(ROOT), "tools", "test_rotation.ts")
+        if os.path.exists(rot):
+            rs = open(rot).read()
+            self.assertIn("weeklySlot", rs)
+            self.assertIn("7 * DAY", rs)
+            self.assertIn("14 * DAY", rs)
 
     def test_no_pay_to_rank_covers_paid_badges(self):
         import policy_page as pp
@@ -573,7 +585,7 @@ class PolicyPageSelection(unittest.TestCase):
             self.assertIn('id="selection"', h)
             self.assertIn("0.75 USDC", h)
             if lang == "":
-                self.assertIn("once a week (on Mondays)", h)
+                self.assertIn("each on its own fixed weekday", h)
                 self.assertIn("at most once every 30 days", h)
                 self.assertIn("“Monitored by Lumi” badge that says it is paid", h)
             self.assertIn("Monitored by Lumi", h)
