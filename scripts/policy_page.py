@@ -18,6 +18,8 @@ Keep every statement in sync with the code and the other pages:
   binds the outreach drafts in notes/outreach/
 - paid badges: "Monitored by Lumi" (labelled paid plan on the SVG) and the planned "Verified owner" are separate from results
 - contact: hello@lumitrades.io (the address used on /trust/ and /privacy/)
+- "Checked, not test-bought" (probe-checked section) mirrors lumi-api src/trust/probe_checked.ts PROBE_LABEL / PROBE_LABEL_NOTE and
+  verdict.ts probe_checked_only (editor-approved wording, 2026-10-25); never call the free probe "uptime"
 - method details stay server-side (api.lumitrades.io/v1/trust/methodology); this page describes the score at a high level only
 Never name a person. No promises of returns."""
 import datetime as dt
@@ -25,7 +27,7 @@ import types
 
 import seo
 
-UPDATED = dt.date(2026, 10, 23)   # bump when the policy text changes (shown on the page and in dateModified)
+UPDATED = dt.date(2026, 10, 25)   # bump when the policy text changes (shown on the page and in dateModified)
 LIVE_LANGS = ("en", "es", "pt", "tr", "ko", "ja")  # languages that get this page (and the footer link); add a code once it is translated
 CONTACT = "hello@lumitrades.io"
 SLUG = "trust-policy/"
@@ -70,6 +72,10 @@ SECTIONS = [
     ("score", "How the score works", [
         "Scores come from real paid test-buys of each seller's service, and every paid test-buy is a real payment on a public ledger, kept with a signed receipt (tx hashes and receipts are in the paid vendor report). "
         "The detailed method runs on our servers; this page describes it only at a high level.",
+    ]),
+    ("probe-checked", "Checked, not test-bought", [
+        "Lumi sent this seller one free, unpaid request and checked its x402 payment response, whether it was reachable, its TLS certificate, its domain age, whether its payment address has any public on-chain history, and whether its listing is complete. Lumi has not paid this seller, so these checks say nothing about what a paid call returns.",
+        "Checked, not test-bought: Lumi's free checks passed (valid x402 payment response, reachable, valid TLS, complete listing), but Lumi has not paid this seller, so nothing is known about what a paid call returns.",
     ]),
     ("oversight", "Human oversight", [
         "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.",
