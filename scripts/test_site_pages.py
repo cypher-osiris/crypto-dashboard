@@ -215,10 +215,12 @@ class ContactPage(unittest.TestCase):
         for lang in [""] + [l + "/" for l in LANGS]:
             with open(os.path.join(ROOT, lang, "contact", "index.html"), encoding="utf-8") as f:
                 h = f.read()
-            for s in ("hello@lumitrades.io", "lumi@lumitrades.io", "admin@lumitrades.io", "receive-only", '"@type": "ContactPage"',
+            for s in ("hello@lumitrades.io", "lumi@lumitrades.io", '"@type": "ContactPage"',
                       "security.txt", "https://x.com/lumisinsite", "https://github.com/lumitrades", "lumi-check", "trust/#reply",
                       cp.NOT_AFFILIATED):
                 self.assertIn(s, h, (lang, s))
+            for s in ("admin@", "receive-only"):
+                self.assertNotIn(s, h, (lang, s))
             for s in ("scam", "solana", "cypher", "support and resistance"):
                 self.assertNotIn(s, h.split("<main", 1)[1].split("</main>", 1)[0].lower(), (lang, s))
             m = re.search(r'<meta name="description" content="([^"]*)"', h)

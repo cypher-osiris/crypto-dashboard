@@ -4,5 +4,5 @@ Preferred-Languages: en
 Canonical: https://lumitrades.io/.well-known/security.txt
 Policy: https://lumitrades.io/privacy/
 # Lumi Trades is a public paper-trading crypto dashboard and x402 seller trust list. It is not a broker,
-# never asks for deposits and never holds user funds. Lumi's emails come only from hello@lumitrades.io or lumi@lumitrades.io,
-# never from admin@lumitrades.io (a receive-only address). Contacts: https://lumitrades.io/contact/
+# never asks for deposits and never holds user funds. Official Lumi email comes from @lumitrades.io addresses.
+# Contacts: https://lumitrades.io/contact/

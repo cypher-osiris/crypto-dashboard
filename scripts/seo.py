@@ -36,11 +36,10 @@ ORG_DESC = ("Lumi Trades is an independent x402 seller trust service: Lumi makes
             "Lumi never handles funds for users.")
 # "is / isn't" line: JSON-LD disambiguatingDescription + the visible homepage footer line (same facts; keeps Lumi apart from
 # similarly named trading or brokerage sites)
-ORG_ISNT = ("Not a broker or exchange; Lumi never holds user funds. Lumi never asks for deposits, passwords or wallet keys, "
-            "and only emails from @lumitrades.io addresses (hello@ or lumi@), never from admin@.")
+ORG_ISNT = ("Not a broker or exchange; Lumi never holds user funds. Lumi never asks for deposits, passwords or wallet keys. "
+            "Official Lumi email comes from @lumitrades.io addresses.")
 CONTACT_EMAIL = "hello@lumitrades.io"
 # Organization contactPoint (every page) and the /contact/ page (scripts/contact_page.py): the only addresses Lumi emails from.
-# admin@lumitrades.io is receive-only and is deliberately not a contact point.
 CONTACT_POINTS = [
     {"@type": "ContactPoint", "contactType": "customer support", "email": CONTACT_EMAIL, "url": SITE + "contact/"},
     {"@type": "ContactPoint", "contactType": "general", "email": "lumi@lumitrades.io", "url": SITE + "contact/"},

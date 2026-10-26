@@ -4,7 +4,7 @@ Lumi Trades (lumitrades.io) apart from similarly named sites. Called from site_p
 Like the Lumi Check privacy section, the body is kept in English on every language page for now (marked lang="en",
 with a translated note) so the wording is exact; the title, description, heading, lede and note are translated
 (assets/i18n/<lang>.json "pages"). Keep every statement in sync with:
-- seo.ORG_ISNT / the footer "What Lumi is / isn't" line: Lumi emails only from hello@ or lumi@, never from admin@
+- seo.ORG_ISNT / the footer "What Lumi is / isn't" line: official Lumi email comes from @lumitrades.io addresses
 - seo.CONTACT_POINTS / seo.SAME_AS (Organization JSON-LD on every page)
 - /.well-known/security.txt (security reports)
 - site_pages trust page #reply (seller right to reply) and policy_page (conflicts policy)
@@ -17,7 +17,7 @@ UPDATED = dt.date(2026, 10, 25)   # bump when the page text changes (dateModifie
 SLUG = "contact/"
 TITLE = "Contact Lumi Trades: official email addresses and accounts"
 H1 = "Contact Lumi Trades"
-DESC = ("Official Lumi Trades contacts: hello@ and lumi@lumitrades.io (admin@ is receive-only), X, YouTube, GitHub, npm and the API. "
+DESC = ("Official Lumi Trades contacts: hello@ and lumi@lumitrades.io, X, YouTube, GitHub, npm and the API. "
         "Not a broker; no deposits.")  # <=155 chars (meta description) in every language
 LEDE = ("Lumi Trades (lumitrades.io) is an independent x402 seller trust list, built from real paid test-buys with signed receipts. "
         "It is not a broker or exchange: it takes no deposits, offers no trading or deposit accounts, "
@@ -45,8 +45,6 @@ def sections(home, root):
         ("email", "Email", [
             f"<ul class=\"cp-list\"><li>{mail('hello@lumitrades.io')}: general questions, corrections and privacy requests.</li>"
             f"<li>{mail('lumi@lumitrades.io')}: Lumi's other official address.</li></ul>",
-            "<b>admin@lumitrades.io</b> is a receive-only administrative address. Lumi never sends messages from it. "
-            "Lumi only emails from hello@lumitrades.io or lumi@lumitrades.io.",
             f"To report a security issue, follow {_a(root + '.well-known/security.txt', '/.well-known/security.txt', False)}.",
         ]),
         ("accounts", "Official accounts", [
