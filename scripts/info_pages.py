@@ -83,10 +83,60 @@ def pricing_page(h, tp, nav_items, V, gen_date):
 {ptable(sp.FEED_PLANS)}</section>
 <section class="card cp-sec" id="pay"><h2>How to pay</h2>
 <p>Pay per call with x402, no account or key: <b>USDC on Base</b>, <b>XRP, RLUSD or USDC on the XRP Ledger</b> or <b>USDC on Stellar</b>. MCP server: <code>https://api.lumitrades.io/mcp</code>. Docs: {lk("https://api.lumitrades.io/", "api.lumitrades.io")} · <a href="../agents/">The 402 flow and MCP setup →</a></p>
-<p class="meta">Every price here matches the live API's 402 quotes and <code>/.well-known/x402</code>. The price that applies is the one in the 402 quote when you pay; promotional or founder prices may apply as quoted. If the data isn't fresh the API answers 503 and you are not charged.</p></section>
+<p class="meta">Every price here matches the live API's 402 quotes and <code>/.well-known/x402</code>. The price that applies is the one in the 402 quote when you pay; promotional or founder prices may apply as quoted. If the data isn't fresh the API answers 503 and you are not charged. <a href="../prices/">Dated prices and proof, machine-readable →</a></p></section>
 </main>
 """
     page = sp._page(h, tp, "pricing/", PRICING_TITLE, PRICING_DESC, ld, body, V, gen_date, nav_items, "pricing")
+    return _english_only(page)
+
+
+# ---------- /prices/ (machine-readable price and proof page) ----------
+PRICES_TITLE = "Prices and proof: x402 seller checks | Lumi Trades"
+PRICES_DESC = ("Lumi Trades prices, copied from the live x402 402 quotes and dated: $0.01 to check a seller before "
+               "paying, $0.02 pay check or report. JSON too.")   # <=155 chars, no "&" or quotes
+PRICES_JSON = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "prices", "index.json")
+
+
+def prices_page(h, tp, nav_items, V, gen_date):
+    """Built from prices/index.json (scripts/prices_snapshot.py: unpaid GETs of the live 402 quotes, never a payment)."""
+    import json
+    E = h.E
+    with open(PRICES_JSON, encoding="utf-8") as f:
+        snap = json.load(f)
+    lk = lambda href, txt: f'<a href="{E(href)}" target="_blank" rel="noopener">{E(txt)}</a>'
+    rows = "".join(
+        f'<tr><td class="mono">{E(p["endpoint"])}</td><td class="num mono">${E(p["price_usd"])}</td><td class="mono">'
+        + "<br>".join(E(f'{o["amount"]} {o["asset"]} on {o["chain"]}') for o in p["accepts"])
+        + "</td><td>" + (lk(snap["proof"]["x402_discovery"], "Quote in x402 discovery") if "{id}" in p["quote_url"] else lk(p["quote_url"], "Live quote"))
+        + "</td></tr>" for p in snap["paid"])
+    free = "".join(f'<li><code>{E(x["endpoint"])}</code>: {E(x["name"])}, free</li>' for x in snap["free"])
+    pay_to = "".join(f'<li>{E(w["chain"])}: <code>{E(w["address"])}</code></li>' for w in snap["pay_to"])
+    pr = snap["proof"]
+    ld = [seo.organization(h._, "home")] + _ld(h, "prices/", "Prices and proof", PRICES_DESC) + [{
+        "@context": "https://schema.org", "@type": "Dataset", "name": "Lumi Trades x402 prices", "url": h.SITE + "prices/",
+        "description": PRICES_DESC, "dateModified": snap["as_of"], "isAccessibleForFree": True,
+        "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": h.SITE + "prices/index.json"}],
+        "publisher": {"@id": seo.ORG_ID}}]
+    body = f"""<main class="wrap cp-main ag-main pr-main">
+<p class="cp-crumb"><a href="../">Lumi Trades</a> › Prices and proof</p>
+<h1>Prices and proof</h1>
+<p class="cp-lede">x402 seller trust you can verify. <b>Check a seller before paying:</b> <code>GET https://api.lumitrades.io/v1/verdict?url=</code>, one signed label for <b class="mono">$0.01</b>. Every price below is copied from the live x402 402 quote, checked <time datetime="{E(snap["as_of"])}">{E(snap["as_of_ct"])}</time> (US Central). Machine-readable: <a href="index.json">prices/index.json</a>.</p>
+<section class="card cp-sec" id="paid"><h2>Paid per call (x402)</h2>
+<div class="cp-tablewrap"><table class="cp-table cp-stack pr-table"><thead><tr><th>Endpoint</th><th class="num">USD</th><th>Quoted as</th><th>Check it</th></tr></thead><tbody>{rows}</tbody></table></div>
+<p class="meta">XRP is quoted at the live XRP/USD rate on every call; the XRP amount shown is the quote at the time above. The quote you pay against is the one that applies. {E(snap["never_charged"])}</p></section>
+<section class="card cp-sec" id="free"><h2>Free</h2><ul>{free}</ul></section>
+<section class="card cp-sec" id="pay-to"><h2>Where payments go</h2>
+<p>{E(snap["pay_to_rule"])}</p><ul>{pay_to}</ul></section>
+<section class="card cp-sec" id="proof"><h2>Proof</h2><ul>
+<li><a href="../trust/">Dated test-buy results</a>: Lumi's paid test-buys of x402 sellers, each with its date, chain and transaction link</li>
+<li>{lk(pr["test_buy_wallets"], "Lumi's test-buy wallets")}: the only wallets that pay for Lumi's test-buys</li>
+<li>{lk(pr["verify_receipt"], "Verify a signed receipt")} (free) against {lk(pr["signing_keys"], "Lumi's signing keys")}</li>
+<li>{lk(pr["sample_previews"], "Free previews")} of the paid answers, with the time generated · {lk(pr["x402_discovery"], "x402 discovery")}</li>
+<li><a href="../how-it-works/">How Lumi tests x402 sellers</a></li>
+</ul><p class="meta">{E(snap["disclaimer"])}</p></section>
+</main>
+"""
+    page = sp._page(h, tp, "prices/", PRICES_TITLE, PRICES_DESC, ld, body, V, gen_date, nav_items, "pricing")
     return _english_only(page)
 
 
@@ -191,4 +241,5 @@ def build(h, tp, nav_items, V, gen_date, write):
     write("pricing/index.html", pricing_page(h, tp, nav_items, V, gen_date))
     write("about/index.html", about_page(h, tp, nav_items, V, gen_date))
     write("terms/index.html", terms_page(h, tp, nav_items, V, gen_date))
-    return [("pricing/", gen_date, "monthly", "0.6"), ("about/", gen_date, "yearly", "0.4"), ("terms/", gen_date, "yearly", "0.3")]
+    write("prices/index.html", prices_page(h, tp, nav_items, V, gen_date))
+    return [("pricing/", gen_date, "monthly", "0.6"), ("prices/", gen_date, "weekly", "0.6"), ("about/", gen_date, "yearly", "0.4"), ("terms/", gen_date, "yearly", "0.3")]

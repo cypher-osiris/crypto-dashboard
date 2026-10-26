@@ -14,7 +14,7 @@ LANGS = ("es", "pt", "ja", "ko", "tr")
 ROOT_FILES = (".nojekyll", "CNAME", "BingSiteAuth.xml", "a65be5c5e8044d1d7844e6c68287e837.txt", "favicon.ico",
               "feed.xml", "index.html", "llms.txt", "robots.txt", "site.webmanifest", "sitemap.xml")
 WELL_KNOWN = ("security.txt", "x402", "x402.json", "trustline-merchant.txt")
-PAGE_DIRS = ("about", "agents", "blog", "contact", "how-it-works", "preview", "pricing", "privacy", "sellers", "terms",
+PAGE_DIRS = ("about", "agents", "blog", "contact", "how-it-works", "preview", "prices", "pricing", "privacy", "sellers", "terms",
              "top-sellers", "trust", "trust-policy")
 SHARED_DIRS = ("assets",)
 PUBLIC_EXT = {".html", ".css", ".js", ".json", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".mp4",

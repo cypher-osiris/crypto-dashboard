@@ -28,6 +28,40 @@ def blocklist_re():
     return re.compile("|".join(f"(?:{p})" for p in pats), re.I) if pats else None
 
 class SitePages(unittest.TestCase):
+    def test_prices_snapshot_matches_table(self):
+        """prices/index.json (copied from the live 402s by scripts/prices_snapshot.py) agrees with TRUST_PRICES."""
+        with open(os.path.join(ROOT, "prices", "index.json"), encoding="utf-8") as f:
+            snap = json.load(f)
+        table = {ep: pr for _, ep, pr in sp.TRUST_PRICES if pr != "free"}
+        self.assertEqual({p["endpoint"]: "$" + p["price_usd"] for p in snap["paid"]}, table)
+        for p in snap["paid"]:
+            self.assertTrue(p["accepts"])
+            for o in p["accepts"]:
+                if o["usd_pegged"]:
+                    self.assertEqual(float(o["amount"]), float(p["price_usd"]), (p["endpoint"], o))
+        self.assertRegex(snap["as_of"], r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$")
+        self.assertIn("/v1/check/wallets", snap["proof"]["test_buy_wallets"])
+        self.assertNotRegex(json.dumps(snap).lower(), r"solana|partner|scam")
+
+    def test_prices_page_and_llms_routing(self):
+        with open(os.path.join(ROOT, "prices", "index.html"), encoding="utf-8") as f:
+            page = f.read()
+        with open(os.path.join(ROOT, "prices", "index.json"), encoding="utf-8") as f:
+            snap = json.load(f)
+        self.assertIn(snap["as_of"], page)
+        self.assertIn('href="index.json"', page)
+        self.assertIn('href="../trust/"', page)
+        for p in snap["paid"]:
+            self.assertIn("$" + p["price_usd"], page)
+        self.assertNotRegex(page.lower(), r"solana|partner|scam")
+        with open(os.path.join(ROOT, "llms.txt"), encoding="utf-8") as f:
+            llms = f.read()
+        self.assertIn("CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict?url=", llms)
+        self.assertIn("https://lumitrades.io/prices/index.json", llms)
+        bl = blocklist_re()
+        if bl:
+            self.assertIsNone(bl.search(page + json.dumps(snap)))
+
     def test_route_counts_from_tables(self):
         c = sp.route_counts()
         self.assertNotIn("m", c)

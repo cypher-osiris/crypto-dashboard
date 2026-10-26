@@ -1,0 +1,217 @@
+{
+  "kind": "lumi_prices",
+  "name": "Lumi Trades: x402 seller trust you can verify",
+  "as_of": "2026-10-26T15:44:06Z",
+  "as_of_ct": "Oct 26, 2026 10:44 AM CDT",
+  "method": "Each price is copied from the live x402 402 quote of an unpaid GET to quote_url at as_of. Request quote_url yourself to see the current quote; the quote you pay against is the one that applies.",
+  "intent": {
+    "check a seller before paying": "https://api.lumitrades.io/v1/verdict?url=<x402 resource URL>"
+  },
+  "paid": [
+    {
+      "route": "verdict",
+      "endpoint": "GET /v1/verdict?url=",
+      "price_usd": "0.01",
+      "quote_url": "https://api.lumitrades.io/v1/verdict?url=https%3A%2F%2Fapi.example.com%2Fv1%2Fdata",
+      "accepts": [
+        {
+          "network": "eip155:8453",
+          "chain": "Base",
+          "asset": "USDC",
+          "amount": "0.01",
+          "amount_raw": "10000",
+          "pay_to": "0x5E617bac19912e6d212CB303ae84655E9E203532",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "XRP",
+          "amount": "0.0077",
+          "amount_raw": "7700",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": false
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "RLUSD",
+          "amount": "0.01",
+          "amount_raw": "0.01",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "USDC",
+          "amount": "0.01",
+          "amount_raw": "0.01",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "stellar:pubnet",
+          "chain": "Stellar",
+          "asset": "USDC",
+          "amount": "0.01",
+          "amount_raw": "100000",
+          "pay_to": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L",
+          "usd_pegged": true
+        }
+      ],
+      "xrp_note": "XRP is quoted at the live XRP/USD rate on every call; the XRP amount here is the quote at as_of."
+    },
+    {
+      "route": "trust_check",
+      "endpoint": "GET /v1/trust/check?url=",
+      "price_usd": "0.02",
+      "quote_url": "https://api.lumitrades.io/v1/trust/check?url=https%3A%2F%2Fapi.example.com%2Fv1%2Fdata",
+      "accepts": [
+        {
+          "network": "eip155:8453",
+          "chain": "Base",
+          "asset": "USDC",
+          "amount": "0.02",
+          "amount_raw": "20000",
+          "pay_to": "0x5E617bac19912e6d212CB303ae84655E9E203532",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "XRP",
+          "amount": "0.0154",
+          "amount_raw": "15400",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": false
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "RLUSD",
+          "amount": "0.02",
+          "amount_raw": "0.02",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "USDC",
+          "amount": "0.02",
+          "amount_raw": "0.02",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "stellar:pubnet",
+          "chain": "Stellar",
+          "asset": "USDC",
+          "amount": "0.02",
+          "amount_raw": "200000",
+          "pay_to": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L",
+          "usd_pegged": true
+        }
+      ],
+      "xrp_note": "XRP is quoted at the live XRP/USD rate on every call; the XRP amount here is the quote at as_of."
+    },
+    {
+      "route": "vendor_report",
+      "endpoint": "GET /v1/trust/vendors/{id}/report",
+      "price_usd": "0.02",
+      "quote_url": "https://api.lumitrades.io/v1/trust/vendors/{id}/report",
+      "accepts": [
+        {
+          "network": "eip155:8453",
+          "chain": "Base",
+          "asset": "USDC",
+          "amount": "0.02",
+          "amount_raw": "20000",
+          "pay_to": "0x5E617bac19912e6d212CB303ae84655E9E203532",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "XRP",
+          "amount": "0.0154",
+          "amount_raw": "15400",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": false
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "RLUSD",
+          "amount": "0.02",
+          "amount_raw": "0.02",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "USDC",
+          "amount": "0.02",
+          "amount_raw": "0.02",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "stellar:pubnet",
+          "chain": "Stellar",
+          "asset": "USDC",
+          "amount": "0.02",
+          "amount_raw": "200000",
+          "pay_to": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L",
+          "usd_pegged": true
+        }
+      ],
+      "xrp_note": "XRP is quoted at the live XRP/USD rate on every call; the XRP amount here is the quote at as_of."
+    }
+  ],
+  "free": [
+    {
+      "name": "Free signed check (same label, from Lumi's record)",
+      "endpoint": "GET /v1/check?url="
+    },
+    {
+      "name": "Seller lookup and vendor trust list",
+      "endpoint": "GET /v1/trust/vendors"
+    },
+    {
+      "name": "Verify a signed test-buy receipt",
+      "endpoint": "POST /v1/trust/receipts/verify"
+    }
+  ],
+  "pay_to_rule": "Always take Lumi's payTo from the live 402 quote or /.well-known/x402, never from a past transfer.",
+  "pay_to": [
+    {
+      "network": "eip155:8453",
+      "chain": "Base",
+      "address": "0x5E617bac19912e6d212CB303ae84655E9E203532"
+    },
+    {
+      "network": "stellar:pubnet",
+      "chain": "Stellar",
+      "address": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L"
+    },
+    {
+      "network": "xrpl:0",
+      "chain": "XRP Ledger",
+      "address": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM"
+    }
+  ],
+  "proof": {
+    "test_buy_wallets": "https://api.lumitrades.io/v1/check/wallets",
+    "signing_keys": "https://api.lumitrades.io/v1/check/keys",
+    "verify_receipt": "https://api.lumitrades.io/v1/trust/receipts/verify",
+    "dated_test_buys": "https://lumitrades.io/trust/",
+    "how_tested": "https://lumitrades.io/how-it-works/",
+    "sample_previews": "https://api.lumitrades.io/v1/samples",
+    "x402_discovery": "https://api.lumitrades.io/.well-known/x402"
+  },
+  "never_charged": "Bad input is refused before any quote (4xx) and the API answers 503 'Not charged.' when it cannot answer.",
+  "disclaimer": "Paying Lumi never changes a score or label. Observations, not a guarantee."
+}

@@ -194,6 +194,13 @@ def llms_txt(prices, plans=(), groups=None):
 > x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
 > built from real on-ledger test-buys of other pay-per-call endpoints. Informational test evidence, not financial advice.
 
+## Intent routing
+- CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict?url=<x402 resource URL> ($0.01, one signed label; the free cached version is GET /v1/check?url=)
+- SHOULD I PAY THIS EXACT QUOTE (payTo, price) -> GET https://api.lumitrades.io/v1/trust/check?url=<url>&payTo=<address>&amount=<usd> ($0.02)
+- LOOK UP A SELLER FOR FREE -> GET https://api.lumitrades.io/v1/trust/vendors?url=<url> (or ?domain= or ?payTo=)
+- VERIFY A LUMI RECEIPT -> POST https://api.lumitrades.io/v1/trust/receipts/verify (free)
+- PRICES AND PROOF, MACHINE-READABLE -> https://lumitrades.io/prices/index.json (copied from the live 402 quotes, dated)
+
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
 - [OpenAPI spec](https://api.lumitrades.io/openapi.json): every endpoint, parameter and response
@@ -208,6 +215,7 @@ def llms_txt(prices, plans=(), groups=None):
 - [How Lumi tests x402 sellers](https://lumitrades.io/how-it-works/): quote checks, paid test-buys, signed receipts, the 30-day score and the badge rule (also in es, pt, tr, ko, ja)
 - [Home](https://lumitrades.io/): Lumi: x402 seller trust you can verify. How the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
+- [Prices and proof](https://lumitrades.io/prices/): every price copied from the live x402 402 quotes, with the date checked and links to dated proof ([JSON](https://lumitrades.io/prices/index.json))
 
 ## Prices (USD per call)
 {rows}

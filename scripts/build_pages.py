@@ -404,8 +404,8 @@ if __name__ == "__main__":
         sdir = os.path.join(ROOT, "sellers")  # English-only seller pages (scripts/seller_pages.py)
         if os.path.isdir(sdir):
             outs += sorted(f"sellers/{d}/index.html" for d in os.listdir(sdir) if os.path.exists(os.path.join(sdir, d, "index.html")))
-        outs += [f"{d}/index.html" for d in ("pricing", "about", "terms") if os.path.exists(os.path.join(ROOT, d, "index.html"))]
-        outs += ["blog/index.html", "sitemap.xml", "feed.xml"]
+        outs += [f"{d}/index.html" for d in ("pricing", "prices", "about", "terms") if os.path.exists(os.path.join(ROOT, d, "index.html"))]
+        outs += ["prices/index.json", "blog/index.html", "sitemap.xml", "feed.xml"]
         outs = [o for o in outs if os.path.exists(os.path.join(ROOT, o))]
         print("\n".join(outs + [x for x in ch if x not in outs]))
     elif "--quiet" in sys.argv:
