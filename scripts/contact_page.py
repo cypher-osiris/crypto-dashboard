@@ -27,7 +27,7 @@ FOOTER_LINK = "Contact"
 
 API = seo.API
 GITHUB = "https://github.com/lumitrades"
-X_URL, YT_URL, TT_URL = "https://x.com/lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"
+X_URL, YT_URL, TT_URL = "https://x.com/Lumisinsite", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"
 NPM = [("lumi-trades-mcp", "MCP server for AI agents"), ("lumi-check", "free pre-pay check for x402 sellers")]
 NOT_AFFILIATED = ("Lumi Trades (lumitrades.io) is not affiliated with LumiTraders, LumineTrade (luminetrade.com), "
                   "or lumitrade.net / mylumitrade.com.")
@@ -48,7 +48,7 @@ def sections(home, root):
             f"To report a security issue, follow {_a(root + '.well-known/security.txt', '/.well-known/security.txt', False)}.",
         ]),
         ("accounts", "Official accounts", [
-            f"<ul class=\"cp-list\"><li>X: {_a(X_URL, '@lumisinsite')}</li>"
+            f"<ul class=\"cp-list\"><li>X: {_a(X_URL, '@Lumisinsite')}</li>"
             f"<li>YouTube: {_a(YT_URL, '@lumitradesio')} (Lumi)</li>"
             f"<li>TikTok: {_a(TT_URL, '@lumitradesio')}</li>"
             f"<li>API: {_a(API, 'api.lumitrades.io')}</li>"

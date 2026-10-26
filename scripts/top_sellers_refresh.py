@@ -6,13 +6,13 @@
    - Base hosts               (notes/vendor_research/base_buys/log.jsonl, "bought" events: tools/catalog_buys.ts)
    - XRPL Bazaar hosts        (notes/xrpl_testbuys_*.json bazaar_coverage)
    - Stellar hosts            (notes/trust_testbuys.log stellar plans + notes/stellar_testbuys_state.json)
-2. For each key, GET the public, edge-cached badge JSON https://api.lumitrades.io/badge/<key>.json. It holds the same
+2. For each key, GET the public, edge-cached badge JSON https://api.lumitrades.io/v1/badge/<key>.json. It holds the same
    stored results as https://api.lumitrades.io/trust/v/<key> (newest first, at most 10 tests). No auth, no writes.
 3. Attach the seller's public catalog description (CDP x402 Bazaar "desc" from candidates_latest.json, or the curated
    vendor name) so top_sellers_page.py can sort sellers into categories.
 Writes scripts/top_sellers_snapshot.json. Then run build_pages.py to rebuild the page from the snapshot.
 
-Usage: python3 scripts/top_sellers_refresh.py [--box /workspace] [--workers 4]
+Usage: python3 scripts/top_sellers_refresh.py [--box <workspace dir>] [--workers 4]
 """
 import argparse, concurrent.futures as cf, datetime, glob, json, os, re, sys, time, urllib.parse, urllib.request
 
@@ -102,7 +102,7 @@ def collect(box):
 
 
 def fetch(key, tries=3):
-    url = f"{API}/badge/{urllib.parse.quote(key, safe='')}.json"
+    url = f"{API}/v1/badge/{urllib.parse.quote(key, safe='')}.json"
     for i in range(tries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "lumitrades-site-build/1 (+https://lumitrades.io/top-sellers/)"})
@@ -116,7 +116,7 @@ def fetch(key, tries=3):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--box", default="/workspace")
+    ap.add_argument("--box", default=os.environ.get("LUMI_BOX_DIR", "."))
     ap.add_argument("--workers", type=int, default=4)
     a = ap.parse_args()
     keys, desc, vendors, by_res = collect(a.box)
@@ -140,7 +140,7 @@ def main():
             out.append({"key": canon, "name": b.get("name") or canon, "desc": d[:300], "tests": tests})
     out.sort(key=lambda r: r["key"])
     snap = {"generated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "source": f"{API}/badge/<key>.json (same stored results as {API}/trust/v/<key>)", "sellers": out}
+            "source": f"{API}/v1/badge/<key>.json (same stored results as {API}/trust/v/<key>)", "sellers": out}
     with open(OUT, "w", encoding="utf-8") as f:  # one seller per line: small, readable diffs
         f.write('{"generated_at": %s,\n "source": %s,\n "sellers": [\n' % (json.dumps(snap["generated_at"]), json.dumps(snap["source"])))
         f.write(",\n".join("  " + json.dumps(r, ensure_ascii=False, separators=(",", ":")) for r in out))

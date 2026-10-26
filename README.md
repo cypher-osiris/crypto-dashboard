@@ -1,6 +1,6 @@
 # Lumi Trades: an independent trust service for x402 sellers
 
-Live site: https://lumitrades.io/ · X: [@lumisinsite](https://x.com/lumisinsite) · YouTube: [@lumitradesio](https://www.youtube.com/@lumitradesio) · TikTok: [@lumitradesio](https://www.tiktok.com/@lumitradesio).
+Live site: https://lumitrades.io/ · X: [@Lumisinsite](https://x.com/Lumisinsite) · YouTube: [@lumitradesio](https://www.youtube.com/@lumitradesio) · TikTok: [@lumitradesio](https://www.tiktok.com/@lumitradesio).
 
 Lumi test-buys x402 sellers on Base, XRPL and Stellar with its own money and publishes the signed evidence, so people
 and AI agents can check who delivers before they pay. Paying Lumi never changes a seller's label. The site is

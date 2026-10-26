@@ -5,7 +5,7 @@ site_chrome.py gets (h.E, h._, h.L, h.SITE, h.ctime, h.langs, h.i18n, h.head_i18
 /trust/ is rendered to static HTML at build time from https://api.lumitrades.io/v1/trust/vendors (fetched once per
 build, cached in state/trust_vendors.json, which is git-ignored; if the API is down the cache is used). assets/trust.js
 then refreshes the table live from the same free endpoint. Every routine that runs scripts/publish.sh with data/ files
-(dashboard update, trade tracker) rebuilds the pages, so the static table stays fresh without a separate job.
+rebuilds the pages, so the static table stays fresh without a separate job.
 """
 import datetime as dt
 import json
@@ -22,9 +22,7 @@ VENDORS_URL = API + "/v1/trust/vendors"
 CACHE = os.path.join(ROOT, "state", "trust_vendors.json")
 BAZAAR = "https://docs.cdp.coinbase.com/x402/bazaar"
 X402SCAN = "https://www.x402scan.com/server/0b8315c8-da5e-4754-8564-e9f286edcbae"
-PAYCHECK_URL = "https://lumierepaycheck.org/"  # Lumière PayCheck home (independent check)
 PAY_ADDRESS_TEXT = "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer."
-CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, as of Oct 24, 2026)."
 MCP_REG = "https://registry.modelcontextprotocol.io/v0/servers?search=lumi-trades"
 NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 
@@ -37,17 +35,9 @@ TRUST_PRICES = [
     ("Vendor trust list and seller lookup", "GET /v1/trust/vendors", "free"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify", "free"),
 ]
-# Neutral market data routes listed on the site (the list was narrowed on Oct 25, 2026).
-MARKET_PRICES = [
-    ("Crypto funding rates", "GET /v1/funding", "$0.003"),
-    ("CoinMarketCap Fear & Greed with history", "GET /v1/fear-greed", "$0.003"),
-    ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.10"),
-]
-PRICES = TRUST_PRICES + MARKET_PRICES
-MARKET_DATA_PRICES = MARKET_PRICES
-AGENTS_ROUTES_TEXT = ("Neutral market data and policy briefs: "
-                      "{m} paid market data routes (table below) plus {t} paid trust routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
-                      "in total, usable on any paid route including the policy brief (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
+PRICES = TRUST_PRICES
+AGENTS_ROUTES_TEXT = ("{t} paid routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls "
+                      "in total, usable on any paid route (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC "
                       "or an activated XRP Ledger account; one trial per wallet, not per chain; nothing is moved).")
 
 
@@ -55,12 +45,12 @@ def route_counts():
     """Paid route counts and price range, computed from the tables above (the /agents/ text and the homepage use these)."""
     paid = [x[2] for x in PRICES if x[2] != "free"]
     num = lambda s: float(s.lstrip("$"))
-    return {"m": len(MARKET_PRICES), "t": sum(1 for x in TRUST_PRICES if x[2] != "free"),
+    return {"t": sum(1 for x in TRUST_PRICES if x[2] != "free"),
             "lo": min(paid, key=num), "hi": max(paid, key=num)}
 
 
 # (plan, price, what you get). Live: GET /v1/monitor and GET /v1/feed. 30-day plans, no auto-renew.
-# Watch tiers went live 2026-10-24 (per endpoint; legacy Monitor $9 / Monitor Plus $29 are grandfathered in the API, not sold here).
+# Watch tiers went live 2026-10-24 (per endpoint). Older plans are no longer sold (their subscribe paths answer 410).
 MONITOR_PLANS = [
     ("Watch Free", ("{p}", "$0"), "1 endpoint: a daily quote check, no test-buys"),
     ("Watch", ("{p} per endpoint per 30 days", "$5"), "Hourly quote checks, a weekly test-buy, alerts, 30-day history and a status page"),
@@ -70,7 +60,7 @@ MONITOR_PLANS = [
     ("Audit", ("{p} one-time", "$99"), "One test-buy of every listed endpoint, with a full report signed by Lumi's wallet"),
 ]
 FEED_PLANS = [
-    ("Free", ("{p}", "$0"), "1,000 lookups a month per key (wallet-signature signup), returns the verdict only"),
+    ("Feed Free", ("{p}", "$0"), "1,000 lookups a month per key (wallet-signature signup), returns the verdict only"),
     ("Feed credits", ("{p} per 1,000 lookups", "$1.50"), "Prepaid lookups on top of the free 1,000 a month; credits never expire"),
     ("Feed", ("{p} per 30 days", "$99"), "100,000 bulk lookups, delta feed, full evidence and receipts"),
     ("Feed Pro", ("{p} per 30 days", "$199"), "500,000 lookups, delta feed, licensed full snapshot export, status-change webhooks, receipts"),
@@ -91,21 +81,24 @@ MCP = """{ "mcpServers": {
 } }"""
 
 
-SWEEP_ALL = ("As of {date}, Lumi had checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar, "
-             "made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.")
+# Legal review MF4: always state the full split (delivered / not delivered / inconclusive), never "only N returned data".
+SWEEP_ALL = ("As of {date}, Lumi had checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar "
+             "and bought from {bought}: {delivered} delivered data, {nd} did not, and {inc} were inconclusive because of errors on Lumi's side "
+             "(not counted against the sellers). Every payment is an XRPL mainnet transaction.")
 SWEEP_PART = ("As of {date}, Lumi had checked {checked} of the {total} third-party hosts that list an XRPL payment option in Coinbase's x402 "
-              "Bazaar, made a real XRPL mainnet purchase from {bought}, and {delivered} returned data. Every payment is an XRPL mainnet transaction.")
+              "Bazaar and bought from {bought}: {delivered} delivered data, {nd} did not, and {inc} were inconclusive because of errors on Lumi's side "
+              "(not counted against the sellers). Every payment is an XRPL mainnet transaction.")
 
 
 def sweep(doc):
     """The dated XRPL Bazaar sweep exactly as the live API reports it (catalog.purchase_verified_by_chain.xrpl.bazaar_sweep), or None."""
     try:
         sw = doc["catalog"]["purchase_verified_by_chain"]["xrpl"]["bazaar_sweep"]
-        n = {k: int(sw[k]) for k in ("hosts_checked", "hosts_total", "hosts_bought", "delivered")}
+        n = {k: int(sw[k]) for k in ("hosts_checked", "hosts_total", "hosts_bought", "delivered", "not_delivered", "inconclusive")}
         day = __import__("datetime").date.fromisoformat(str(sw["as_of"])[:10])
     except Exception:
         return None
-    if not (0 < n["hosts_checked"] <= n["hosts_total"] and n["delivered"] <= n["hosts_bought"] <= n["hosts_checked"]):
+    if not (0 < n["hosts_checked"] <= n["hosts_total"] and n["delivered"] + n["not_delivered"] + n["inconclusive"] == n["hosts_bought"] <= n["hosts_checked"]):
         return None
     return {**n, "as_of": day}
 
@@ -118,7 +111,8 @@ def sweep_html(h, doc):
     import datetime as _dt
     d = h.L.date(_dt.datetime(sw["as_of"].year, sw["as_of"].month, sw["as_of"].day), with_time=False)
     tpl = SWEEP_ALL if sw["hosts_checked"] == sw["hosts_total"] else SWEEP_PART
-    return h.E(h._(tpl, date=d, checked=sw["hosts_checked"], total=sw["hosts_total"], bought=sw["hosts_bought"], delivered=sw["delivered"]))
+    return h.E(h._(tpl, date=d, checked=sw["hosts_checked"], total=sw["hosts_total"], bought=sw["hosts_bought"], delivered=sw["delivered"],
+                       nd=sw["not_delivered"], inc=sw["inconclusive"]))
 
 
 
@@ -601,8 +595,7 @@ def _page(h, tp, path, title, desc, ld, body, V, gen_date, nav_items, current, e
     return head + tp.chrome(h, R, "../", nav_items, V, path, current) + body + tp.footer(h, R, gen_date)
 
 
-AGENTS_DESC = ("x402 trust checks for AI agents: check a seller before you pay, verify signed test-buy receipts, plus neutral market data "
-               "and an Institutional & Policy Brief. Pay per call in USDC on Base or Stellar, or XRP and RLUSD on the XRPL. MCP server, no API key.")
+AGENTS_DESC = ("x402 trust checks for AI agents: check a seller before you pay, read its test-buy report and verify signed receipts for free.")
 TRUST_DESC = ("Independent x402 seller trust list: dated results of Lumi's small paid test-buys on Base, XRPL and Stellar. Paying Lumi never changes a score.")  # <=155 chars (meta description) in every language
 
 
@@ -610,14 +603,14 @@ BADGE_EXAMPLE = "printmoneylab"  # a real curated vendor with delivered test-buy
 
 
 def badge_section(h):
-    """/agents/#badge: the free "Tested by Lumi" badge (api.lumitrades.io/badge/{key}.svg) with an example and a
+    """/agents/#badge: the free "Tested by Lumi" badge (api.lumitrades.io/v1/badge/{key}.svg) with an example and a
     client-side "find your key" helper (assets/badge.js builds the URLs; no listing or search of the catalog)."""
     E, _t = h.E, h._
     k = BADGE_EXAMPLE
-    img, page = f"{API}/badge/{k}.svg", f"{API}/trust/v/{k}"
-    alt = "Tested by Lumi: latest dated x402 test-buy result"
-    md = f"[![{alt}]({API}/badge/{{key}}.svg)]({API}/trust/v/{{key}})"
-    html_s = f'<a href="{API}/trust/v/{{key}}"><img src="{API}/badge/{{key}}.svg" alt="{alt}" height="20"></a>'
+    img, page = f"{API}/v1/badge/{k}.svg", f"{API}/trust/v/{k}"
+    alt = "Lumi test-buy badge: live status"   # legal MF3: the SVG itself shows earned or not
+    md = f"[![{alt}]({API}/v1/badge/{{key}}.svg)]({API}/trust/v/{{key}})"
+    html_s = f'<a href="{API}/trust/v/{{key}}"><img src="{API}/v1/badge/{{key}}.svg" alt="{alt}" height="20"></a>'
     lk = lambda href, txt: f'<a href="{href}" target="_blank" rel="noopener">{E(txt)}</a>'
     return f"""<section class="card cp-sec" id="badge"><h2>{E(_t("Get your badge"))}</h2>
 <p>{_t("Sell an x402 endpoint that Lumi has tested? Show it. The free “Tested by Lumi” badge is earned only when your live score is 80 or more, Lumi has made at least 3 paid test-buys and the latest one delivered data. It links to a public result page with the dated tests and your right to reply. No sign-up, and paying Lumi never changes the result.")}</p>
@@ -630,7 +623,7 @@ def badge_section(h):
 <p class="muted" id="bd-err" hidden></p>
 <p class="meta">{E(_t("Markdown (README.md)"))}</p><pre class="ag-code"><code id="bd-md">{E(md)}</code></pre>
 <p class="meta">{E(_t("HTML"))}</p><pre class="ag-code"><code id="bd-html">{E(html_s)}</code></pre>
-<p class="meta">{_t("Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.")} {lk(API + "/badge", _t("Badge docs"))} · <a href="../how-it-works/#testing">{E(_t("How Lumi tests"))}</a></p></section>"""
+<p class="meta">{_t("Factual test evidence, not an endorsement or guarantee. Updated within the hour of each new test. Questions or a dispute: <a href=\"mailto:hello@lumitrades.io\">hello@lumitrades.io</a>.")} {lk(API + "/v1/badge", _t("Badge docs"))} · <a href="../how-it-works/#testing">{E(_t("How Lumi tests"))}</a></p></section>"""
 
 
 PAID_REPORT_H = "The full vendor report ($0.02)"
@@ -656,7 +649,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
     pthead = f'<thead><tr><th>{E(_t("Plan"))}</th><th>{E(_t("Price"))}</th><th>{E(_t("What you get"))}</th></tr></thead>'
     ptable = lambda items: ('<div class="cp-tablewrap"><table class="cp-table cp-stack">' + pthead + "<tbody>" + "".join(
         f'<tr><td>{E(_t(n))}</td><td class="mono">{E(_t(fmt, p=p) if fmt != "{p}" else p)}</td><td>{E(_t(d))}</td></tr>' for n, (fmt, p), d in items) + "</tbody></table></div>")
-    title = _t("x402 trust checks and data for AI agents | Lumi Trades")
+    title = _t("x402 trust checks for AI agents | Lumi Trades")
     desc = _t(AGENTS_DESC)
     url = h.SITE + h.L.prefix + "agents/"
     ld = [seo.organization(_t), seo.web_api(_t, h.L.code, PRICES, url),
@@ -670,8 +663,8 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
     lk = lambda href, txt: f'<a href="{href}" target="_blank" rel="noopener">{E(txt)}</a>'
     body = f"""<main class="wrap cp-main ag-main">
 <p class="cp-crumb"><a href="../">Lumi Trades</a> › {E(_t("For AI agents"))}</p>
-<h1>{E(_t("Lumi for AI agents: x402 trust checks and crypto data"))}</h1>
-<p class="cp-lede">{_t("Lumi tests x402 sellers independently: real on-ledger test-buys, a signed receipt for each one, and coverage on the XRP Ledger, Base and Stellar. Agents can check a seller before they pay it, sellers can have their own endpoints monitored, and platforms can license the data. Lumi also sells crypto market data one call at a time. No account and no API key: the API answers <code>402 Payment Required</code> with a quote, the agent pays, and gets the answer.")}</p>
+<h1>{E(_t("Lumi for AI agents: check x402 sellers before you pay"))}</h1>
+<p class="cp-lede">{_t("Lumi tests x402 sellers independently: real on-ledger test-buys, a signed receipt for each one, and coverage on the XRP Ledger, Base and Stellar. Agents can check a seller before they pay it, sellers can have their own endpoints monitored, and platforms can license the data. Every paid call works the same way. No account and no API key: the API answers <code>402 Payment Required</code> with a quote, the agent pays, and gets the answer.")}</p>
 <section class="card cp-sec" id="trust"><h2>{E(_t("Check a seller before you pay"))}</h2>
 <p>{_t("Call <code>GET /v1/trust/check?url=</code> with the x402 URL your agent is about to pay (optionally with the payTo and price you were quoted). It answers allow, warn or block with coded reasons, built from Lumi's index of Coinbase's x402 Bazaar, free 402-quote checks and Lumi's own test-buys. Where Lumi has bought from that seller, the paid answer carries Lumi's signed test-buy receipts, which anyone can verify for free. The vendor trust list is free. Paying Lumi, for a check or for monitoring, never changes a score.")}</p>
 {f"<p>{sweep_html(h, vendors_doc)}</p>" if sweep_html(h, vendors_doc) else ""}
@@ -687,9 +680,8 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <p>{_t("Keyed, licensed access to Lumi's trust observations for facilitators, wallets and agent frameworks: bulk lookups of up to 50 URLs or payTo addresses per request, a status-change feed and, on Feed Pro, a full snapshot export.")}</p>
 {ptable(FEED_PLANS)}
 <p class="meta">{_t("License: no resale or redistribution of the raw data, attribution required, no warranty. Prepaid credits never expire. 30-day plans, no auto-renew.")} {lk(API + "/v1/feed/license", _t("License terms"))} · {lk(API + "/v1/feed", _t("Feed docs"))}</p></section>
-<section class="card cp-sec" id="prices"><h2>{E(_t("Market data"))}</h2>
+<section class="card cp-sec" id="prices"><h2>{E(_t("Prices and free trial"))}</h2>
 <p>{_t(AGENTS_ROUTES_TEXT, **route_counts())}</p>
-{table(MARKET_DATA_PRICES)}
 <p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
 <section class="card cp-sec" id="pay"><h2>{E(_t("How to pay"))}</h2>
 <ul class="ag-list"><li>{_t("<b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.")}</li>
@@ -700,18 +692,17 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <section class="card cp-sec" id="flow"><h2>{E(_t("The 402 flow in two calls"))}</h2>
 <pre class="ag-code"><code>{E(CURL)}</code></pre></section>
 <section class="card cp-sec" id="mcp"><h2>{E(_t("MCP server"))}</h2>
-<p>{_t("Remote MCP (streamable HTTP) for Claude, Cursor or any MCP client. Free tools list the catalog, coins, quotes and vendor scores; paid tools use the same x402 prices.")}</p>
+<p>{_t("Remote MCP (streamable HTTP) for Claude, Cursor or any MCP client. Free tools list the catalog, price quotes and vendor scores; paid tools use the same x402 prices.")}</p>
 <pre class="ag-code"><code>{E(MCP)}</code></pre>
-<p class="meta">{_t("Local option: <code>npx -y lumi-trades-mcp</code> (npm package <code>lumi-trades-mcp</code>), which pays per call from your agent's own funds with a per-call spending cap; settings are in the package README. Registry name: <code>io.github.cypher-osiris/lumi-trades-mcp</code>.")}</p></section>
+<p class="meta">{_t("Local option: <code>npx -y lumi-trades-mcp</code> (npm package <code>lumi-trades-mcp</code>), which pays per call from your agent's own funds with a per-call spending cap; settings are in the package README.")}</p></section>
 <section class="card cp-sec" id="links"><h2>{E(_t("Links"))}</h2>
 <ul class="ag-list">
 <li>{lk(API + "/", "api.lumitrades.io")} · {lk(API + "/openapi.json", "openapi.json")} · {lk(API + "/skill.md", "skill.md")} · {lk(API + "/.well-known/x402", ".well-known/x402")}</li>
 <li><a href="../trust/">{E(_t("Vendor trust list (free)"))}</a> · {lk(API + "/v1/monitor", _t("Seller monitoring"))} · {lk(API + "/v1/feed", _t("Trust data feed"))}</li>
 <li>{lk(BAZAAR, _t("Coinbase x402 Bazaar"))} · {lk(X402SCAN, "x402scan")}</li>
-<li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul>
-<p class="meta">{_t(CHECKED_BY_TEXT, paycheck=lk(PAYCHECK_URL, "Lumière PayCheck"), )}</p></section>
+<li>{lk(MCP_REG, _t("Official MCP Registry"))} · {lk(NPM, "npm: lumi-trades-mcp")} · {lk(API + "/.well-known/agent-card.json", _t("A2A agent card"))}</li></ul></section>
 {seo.faq_html(_t, E)}
-<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Informational data, not financial advice.</strong> Trust results are dated observations of Lumi's own checks, not a guarantee. Lumi does not trade real money.")}</span></div>
+<div class="disclaimer" role="note"><span class="warn-ico" aria-hidden="true">!</span><span>{_t("<strong>Informational test evidence, not financial advice.</strong> Trust results are dated observations of Lumi's own checks, not a guarantee. Lumi's only payments are its own small test-buys.")}</span></div>
 </main>
 """
     js = '<script src="{R}assets/badge.js?v={V}" defer></script>\n'
@@ -755,7 +746,7 @@ VERIFY_FREE = "The tx proof is free. The full report on a vendor, with its whole
 VERIFY_NONE = "Sellers without a recorded hash for their latest test-buy show no tx link."
 VERIFY_SCORE = "Paying Lumi never changes a score: scores come only from Lumi's own checks."
 ABOUT_H = "About Lumi Trades"
-ABOUT_P = ("Lumi Trades is an independent trust list for x402, bridging trust between Base, XRPL and Stellar. Lumi makes "
+ABOUT_P = ("Lumi Trades is an independent trust list for x402 sellers on Base, XRPL and Stellar. Lumi makes "
            "small paid test-buys from x402 sellers on all three chains and publishes what came back; it does not move "
            "funds between chains. It launched in October 2026.")
 ABOUT_SAFE = "Lumi never asks for deposits, never holds user funds and never offers investment returns."
@@ -887,7 +878,7 @@ def build(h, tp, nav_items, V, gen_date, write, vendors_doc):
     if tsp:
         write(f"{P}{top_sellers_page.SLUG}index.html", tsp)
     if h.L.en:
-        write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES), ("Market data", MARKET_DATA_PRICES)]))
+        write("llms.txt", seo.llms_txt(PRICES, PLANS, groups=[("Lumi Trust", TRUST_PRICES)]))
     lm = ((vendors_doc or {}).get("generated_at") or gen_date)[:10]
     return [("agents/", gen_date, "weekly", "0.8"), ("trust/", lm, "daily", "0.7"), ("how-it-works/", gen_date, "monthly", "0.7"),
             ("privacy/", privacy_page.UPDATED.isoformat(), "yearly", "0.3"),

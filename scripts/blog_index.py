@@ -64,7 +64,7 @@ def page(h, tp, V, gen_date, root=ROOT):
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@lumisinsite">
+<meta name="twitter:site" content="@Lumisinsite">
 <meta name="twitter:title" content="Lumi Trades blog">
 <meta name="twitter:description" content="{E(desc)}">
 <meta name="twitter:image" content="{h.SITE}assets/og.png?v={V}">
@@ -104,7 +104,8 @@ def page(h, tp, V, gen_date, root=ROOT):
 <footer class="wrap footer">
   {tp.foot_brand(h)}
   <p class="foot-soc">{tp.social_icons(h)}</p>
-  <p>Times in US Central · Page generated {E(gen_date)} · Not financial advice. · <a href="../privacy/">Privacy Policy</a> · <a href="../trust-policy/">Conflicts policy</a> · <a href="../top-sellers/">Top tested sellers</a> · <a href="../contact/">Contact</a></p>
+  <p class="foot-isnt">{tp.FOOT_INDEP.format(href="../trust-policy/")}</p>
+  <p>Times in US Central · Page generated {E(gen_date)} · Not financial advice. · <a href="../privacy/">Privacy Policy</a> · <a href="../trust-policy/">Conflicts policy</a> · <a href="../top-sellers/">Sellers with delivered test-buys</a> · <a href="../contact/">Contact</a></p>
 </footer>
 </body>
 </html>

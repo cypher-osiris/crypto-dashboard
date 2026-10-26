@@ -6,7 +6,7 @@
   const I = window.LumiI18n || { t: (s, v) => (v ? s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s) };
   const tr = I.t;
   const $ = (id) => document.getElementById(id);
-  const ALT = "Tested by Lumi: latest dated x402 test-buy result";
+  const ALT = "Lumi test-buy badge: live status";
   const ID = /^[a-z0-9][a-z0-9-]{0,63}$/;
   const HOST = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,62}$/;
   function keyOf(raw) {
@@ -31,7 +31,7 @@
         return;
       }
       err.hidden = true;
-      const img = `${API}/badge/${encodeURIComponent(k)}.svg`, page = `${API}/trust/v/${encodeURIComponent(k)}`;
+      const img = `${API}/v1/badge/${encodeURIComponent(k)}.svg`, page = `${API}/trust/v/${encodeURIComponent(k)}`;
       out.textContent = "";
       const a = document.createElement("a");
       a.href = page; a.target = "_blank"; a.rel = "noopener";

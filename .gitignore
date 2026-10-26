@@ -16,14 +16,22 @@ node_modules/
 state/
 posts/
 
-# Paper-trade ideas are private (taken down from the site Oct 24, 2026): the trades doc lives in state/
-data/trades.json
+# Trading-era data and pages were removed from the repo and the site on Oct 25, 2026 (trust-only cleanup).
+data/
+/btc/
+/eth/
+/sol/
+/xrp/
+/xlm/
+/hbar/
+/xdc/
+/zbcn/
+/axl/
+/classic/
+/trades/
 
-# Retired from the public site Oct 25, 2026 (trading update log and backtest); kept local only
-data/log.json
-data/backtest.json
+# Built site (scripts/build_site.py): only this directory is published to Pages.
+_site/
 
-# Retired from the public site Oct 25, 2026 (signals and market analysis/levels); local copies, if any, stay unpublished.
-# Last published versions: state/retired_data/ (and git history).
-data/signals.json
-data/analysis.json
+# Private names checked by scripts/test_site_pages.py (never commit).
+site_blocklist.txt

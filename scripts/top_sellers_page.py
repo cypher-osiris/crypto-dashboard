@@ -27,12 +27,12 @@ API = "https://api.lumitrades.io"
 CONTACT = "hello@lumitrades.io"
 MIN_DELIVERED, WINDOW, MAX_AGE_DAYS = 2, 3, 45
 
-TITLE = "Best tested x402 APIs by category | Lumi Trades"
-H1 = "Top tested sellers by category"
-DESC = ("x402 APIs that kept delivering in Lumi's own paid test-buys, grouped by what they sell: market data, AI tools, "
-        "search and safety checks. Chosen from test results only; paying Lumi never changes who is listed or the order.")
-LEDE = ("These x402 sellers delivered data again and again in Lumi's paid test-buys. We buy from them with our own money and "
-        "record every result. This list is built from those results only.")
+TITLE = "x402 APIs with delivered test-buys, by category | Lumi Trades"
+H1 = "Sellers with delivered test-buys, by category"
+DESC = ("x402 APIs that delivered in Lumi's own paid test-buys, grouped by what they sell: data APIs, AI tools, "
+        "search and pre-payment checks. Chosen from test results only; paying Lumi never changes who is listed or the order.")
+LEDE = ("These x402 sellers delivered data in Lumi's recent paid test-buys. Sample sizes are small; this is not a ranking or "
+        "an endorsement. We buy from them with our own money and record every result. This list is built from those results only.")
 RULE_HEAD = "How a seller gets on this list"
 RULE = [
     "A seller is listed when its latest paid test-buy delivered data, at least {n} of its last {m} paid test-buys delivered data, and its latest test-buy is less than {days} days old.",
@@ -44,11 +44,11 @@ RULE = [
     "This is a record of past test results, not an endorsement or a guarantee. Past results do not predict future ones. Questions about an entry: <a href=\"mailto:{mail}\">{mail}</a>.",
 ]
 CATEGORIES = [  # (id, label, keyword regex on description + name + endpoint path); most hits wins
-    ("checks", "Safety checks and validation", r"preflight|\bsafe\b|safety|honeypot|rug pull|\bchecks?\b|ofac|sanctions screen|screening|validat|reachab|facilitator"),
+    ("checks", "Pre-payment checks and validation", r"preflight|\bsafe\b|safety|honeypot|rug pull|\bchecks?\b|ofac|sanctions screen|screening|validat|reachab|facilitator"),
     ("ai", "AI and LLM tools", r"chat/completions|chat completion|\bllm\b|openai|\bgpt|language model|agent question|inference|prompt"),
     ("weather", "Weather", r"weather|forecast|temperature"),
     ("search", "Search and web data", r"search|wikipedia|web page|scrape|crawl|listings|news"),
-    ("market", "Market, crypto and finance data", r"price|\bmarkets?\b|crypto|token|perp|funding|exchange rate|\bfx\b|currenc|macro|\bcpi\b|options|premium|\bamm\b|signal|stock"),
+    ("market", "Finance and crypto data APIs", r"price|\bmarkets?\b|crypto|token|perp|funding|exchange rate|\bfx\b|currenc|macro|\bcpi\b|options|premium|\bamm\b|signal|stock"),
     ("other", "Other tools", r""),
 ]
 CAT_LABEL = {c: l for c, l, _ in CATEGORIES}
@@ -57,8 +57,8 @@ L_OF, L_VIEW = "{d} of {n}", "View results"
 L_ASOF = "Data as of {date}. Test dates are in UTC."
 L_COUNT = "Sellers: {n}"
 L_EMPTY = "No seller meets the rule yet."
-FOOTER_LINK = "Top tested sellers"
-TRUST_NOTE = "x402 sellers that kept delivering in our paid test-buys, by category."
+FOOTER_LINK = "Sellers with delivered test-buys"
+TRUST_NOTE = "x402 sellers that delivered in our recent paid test-buys, by category."
 
 
 def _ts(s):

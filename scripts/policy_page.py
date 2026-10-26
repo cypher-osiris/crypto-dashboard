@@ -6,21 +6,21 @@ into assets/i18n/<lang>.json "pages", then add the code to LIVE_LANGS. Strings a
 Translated into all 6 site languages (en, es, pt, tr, ko, ja) on Oct 23, 2026.
 
 Keep every statement in sync with the code and the other pages:
-- the "Tested by Lumi" badge (site_pages.badge_section, api.lumitrades.io/badge) is earned from delivery results only
+- the "Tested by Lumi" badge (site_pages.badge_section, api.lumitrades.io/v1/badge) is earned from delivery results only
 - monitoring plans and the audit (site_pages.MONITOR_PLANS); the paid "Verified owner" badge is planned, not live
 - PAID_VENDORS must list every seller with an active paid monitoring plan or audit (the API discloses plans on the seller's entry)
-- seller selection ("selection" section) mirrors ../tools/catalog_buys.ts --daily (Base) and trust_testbuys.ts (XRPL
+- seller selection ("selection" section) mirrors lumi-api tools/catalog_buys.ts --daily (Base) and trust_testbuys.ts (XRPL
   allowlist + Stellar phase): order rules and daily caps (DAILY_CAP / STELLAR_CAP) must match those files
 - the Base check-driven priority ("Base, one addition") mirrors lumi-api branch free-check-priority: catalog_service.BUY_SIGNALS
   (minus caller-supplied pay_to_mismatch), the same rule for free and paid checks, PRIORITY_DAILY_CAP (5 a day) and
   PRIORITY_SELLER_DAYS (once per seller per 30 days)
 - the sales firewall sentence (no paid-plan pitch within 30 days of a failed or warning result, no score in sales emails)
-  binds the outreach drafts in notes/outreach/
+  binds every outreach draft
 - paid badges: "Monitored by Lumi" (labelled paid plan on the SVG) and the planned "Verified owner" are separate from results
 - contact: hello@lumitrades.io (the address used on /trust/ and /privacy/)
 - "Checked, not test-bought" (probe-checked section) mirrors lumi-api src/trust/probe_checked.ts PROBE_LABEL / PROBE_LABEL_NOTE and
   verdict.ts probe_checked_only (final wording 2026-10-25, no verdict line); translated into all 6 languages
-  (editor, notes/outreach/editor_review_2026-10-25/trust_policy_checked_translations.md); never call the free probe "uptime"
+  (editor review, Oct 25, 2026); never call the free probe "uptime"
 - method details stay server-side (api.lumitrades.io/v1/trust/methodology); this page describes the score at a high level only
 Never name a person. No promises of returns."""
 import datetime as dt
@@ -49,7 +49,7 @@ SECTIONS = [
         "The “Tested by Lumi” badge is earned only from delivery results. It is removed automatically when a seller's live score drops.",
     ]),
     ("selection", "How we choose who to test-buy", [
-        "Every day we test-buy from a few sellers with our own money. Each chain (Base, XRPL and Stellar) has its own list, its own order and its own daily cap. We skip any single buy that costs more than 0.05.",
+        "Every day we test-buy from a few sellers with our own money. Each chain (Base, XRPL and Stellar) has its own list, its own order and its own daily cap. We skip any single buy that costs more than $0.05.",
         "<b>Base:</b> sellers we have never test-bought go first, most popular first. Popularity is the number of paid calls a seller had in the last 30 days in Coinbase's public x402 Bazaar catalog. After them, we retest sellers whose last test-buy is more than 30 days old, oldest first. Daily cap: 0.75 USDC.",
         "<b>Base, one addition:</b> if a Lumi check of a Base seller we have never test-bought finds one of these objective signals, that seller moves to the front of the next day's Base list: Lumi's last quote check got no valid x402 quote; fewer than half of at least 3 quote checks were valid; the live quote paid an address that is not in the listing; the quoted price differed from the listing; the domain was registered less than 30 days ago; no payments from anyone other than Lumi, known test wallets or the seller have been seen; Coinbase's Bazaar reports no calls in the last 30 days; or vet402's free probe failed. These signals come only from Lumi's own records and public data. Whether the check was free or paid, and who ran it, is not considered, and nothing the person checking enters (such as a payTo address) can trigger it. At most 5 sellers move up this way each day, a seller can move up this way at most once every 30 days, and the same daily cap applies.",
         "<b>Stellar:</b> sellers that accept USDC on Stellar, from Coinbase's x402 Bazaar catalog and the Vellar facilitator's public list. We check this list every day, and a seller we have never test-bought is bought the day it appears, cheapest first. Sellers we have already tested are re-tested once a week, each on its own fixed weekday, and every day for a week after a failed buy or a price or payTo change. This list is not ranked by popularity. Daily cap: 0.15 USDC, at most 4 buys a day.",
@@ -74,8 +74,9 @@ SECTIONS = [
         "The detailed method runs on our servers; this page describes it only at a high level.",
     ]),
     ("probe-checked", "Checked, not test-bought", [
+        "These labels appear in Lumi's API answers, such as <code>/v1/verdict</code>. They are not yet shown on the /trust/ list.",
         "Some sellers on the list are labelled “Checked, not test-bought.” For these sellers, Lumi sent one free, unpaid request and checked the x402 payment response, whether the seller was reachable, its TLS certificate, the domain's age, whether its payment address has any public on-chain history, and whether its listing is complete. Lumi has not paid these sellers, so these checks say nothing about what a paid call returns.",
-        "A checked seller moves to “Delivered in recent checks” only after Lumi pays it and gets a usable result. The “Tested by Lumi” badge takes more: several paid test-buys with the latest one delivered, a live score at or above the minimum, and a seller that is reachable right now. Paying Lumi never changes a seller's label or badge.",
+        "A checked seller moves to “Delivered in recent checks” only after Lumi pays it and gets a usable result. The “Tested by Lumi” badge takes more: several paid test-buys with the latest one delivered, a live score at or above the minimum, and a seller that is reachable right now. Paying Lumi never changes a seller's label or its “Tested by Lumi” badge. The paid “Monitored by Lumi” badge is separate and labelled as paid.",
     ]),
     ("oversight", "Human oversight", [
         "Lumi is an AI agent run under ongoing human oversight; a person reviews outreach and spending decisions.",
@@ -92,7 +93,7 @@ def footer_link(h, home):
     feed = (f' · <a href="{home}{up}blog/">{h.E(h._("Blog"))}</a>'   # /blog/ is English-only at the root too
             f' · <a href="{home}{up}feed.xml" type="application/atom+xml">{h.E(h._("RSS feed"))}</a>'
             + contact_page.footer_link(h, home))
-    import top_sellers_page  # ' · <a>Top tested sellers</a>' (top_sellers_page.LIVE_LANGS)
+    import top_sellers_page  # ' · <a>Sellers with delivered test-buys</a>' (top_sellers_page.LIVE_LANGS)
     feed = top_sellers_page.footer_link(h, home) + feed
     if h.L.code not in LIVE_LANGS:
         return feed

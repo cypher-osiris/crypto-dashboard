@@ -12,19 +12,15 @@ SITE_ID = SITE + "#website"
 API_ID = API + "/#api"
 LOGO = SITE + "assets/icon-512.png"
 ORG_ALT_NAME = "Lumi"   # short brand alias for search
-SAME_AS = ["https://x.com/lumisinsite", "https://github.com/lumitrades", "https://www.npmjs.com/package/lumi-trades-mcp",
+SAME_AS = ["https://x.com/Lumisinsite", "https://github.com/lumitrades", "https://www.npmjs.com/package/lumi-trades-mcp",
            "https://www.npmjs.com/package/lumi-check", "https://www.youtube.com/@lumitradesio", "https://www.tiktok.com/@lumitradesio"]
 
 # keyword terms: generic ones are translated (and the English kept too), names / protocols / tickers are not
-KW_GENERIC = ["fear and greed index", "crypto market data API",
-              "AI agent API", "pay per call", "trust score", "x402 vendor reputation", "institutional policy brief", "stablecoin",
-              "tokenization"]
-KW_NAMES = ["XRP", "XRPL", "XLM", "HBAR", "BTC", "x402", "RLUSD", "USDC on Base", "MCP server", "CBDC", "BIS", "IMF",
-            "CoinMarketCap Fear & Greed"]
+KW_GENERIC = ["AI agent API", "pay per call", "trust score", "x402 vendor reputation"]
+KW_NAMES = ["x402", "XRPL", "Stellar", "RLUSD", "USDC on Base", "MCP server"]
 KW_PAGE = {  # which terms lead on each page (the rest follow)
     "home": ["x402 vendor reputation", "trust score", "x402", "AI agent API", "pay per call", "XRPL", "USDC on Base"],
-    "agents": ["AI agent API", "x402 vendor reputation", "pay per call", "x402", "crypto market data API", "MCP server", "RLUSD", "USDC on Base",
-               "institutional policy brief"],
+    "agents": ["AI agent API", "x402 vendor reputation", "pay per call", "x402", "MCP server", "RLUSD", "USDC on Base"],
     "trust": ["x402 vendor reputation", "trust score", "x402", "AI agent API", "pay per call", "XRPL", "USDC on Base"],
 }
 
@@ -45,18 +41,17 @@ CONTACT_POINTS = [
     {"@type": "ContactPoint", "contactType": "general", "email": "lumi@lumitrades.io", "url": SITE + "contact/"},
     {"@type": "ContactPoint", "contactType": "security", "email": CONTACT_EMAIL, "url": SITE + ".well-known/security.txt"},
 ]
-ORG_DESC_TRUST = ("Lumi Trades runs automated checks of x402 pay-per-call sellers and sells trust checks and neutral market data to AI agents "
+ORG_DESC_TRUST = ("Lumi Trades runs automated checks of x402 pay-per-call sellers and sells trust checks to AI agents "
                   "through a pay-per-call x402 API and an MCP server.")
 API_NAME = "Lumi Trades API"
-API_DESC = ("Pay-per-call x402 trust checks and market data API for AI agents: seller checks with signed test-buy receipts, CoinMarketCap Fear & Greed "
-            "with history and a daily Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoin rules, tokenization). "
-            "No account or API key: pay each call with x402 in USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger.")
+API_DESC = ("Pay-per-call x402 trust checks for AI agents: check a seller before paying, read a seller's test-buy report and verify "
+            "signed receipts for free.")
 
 
 def keywords(t, page, en):
     """Comma-separated keywords meta for a page: page-specific terms first, translated generic terms plus the English ones."""
     order = KW_PAGE.get(page, []) + [k for k in KW_GENERIC + KW_NAMES if k not in KW_PAGE.get(page, [])]
-    if page in ("trust", "home"):   # the home page leads with the trust layer too
+    if page in ("trust", "home"):   # the home page leads with the trust terms too
         order = [k for k in order if k not in NOT_ON_TRUST]
     out = []
     for k in order:
@@ -91,7 +86,7 @@ def web_api(t, lang, prices, page_url=None, full=True):
     vals = [float(_price(p)) for _n, _e, p in prices]
     node = {"@context": "https://schema.org", "@type": "WebAPI", "@id": API_ID, "name": API_NAME, "url": API + "/",
             "description": t(API_DESC), "documentation": API + "/openapi.json",
-            "provider": {"@id": ORG_ID}, "serviceType": t("Pay-per-call x402 trust checks and data API for AI agents"),
+            "provider": {"@id": ORG_ID}, "serviceType": t("Pay-per-call x402 trust checks for AI agents"),
             "areaServed": "Worldwide", "audience": {"@type": "Audience", "audienceType": t("AI agents and developers")},
             "availableChannel": [{"@type": "ServiceChannel", "name": "HTTPS (x402)", "serviceUrl": API + "/"},
                                  {"@type": "ServiceChannel", "name": "MCP (streamable HTTP)", "serviceUrl": API + "/mcp"}],
@@ -141,10 +136,6 @@ FAQ = [
      "Call GET https://api.lumitrades.io/v1/trust/check?url= with the x402 URL your agent is about to pay. The first call answers 402 Payment Required "
      "with a quote; the agent pays $0.02 with x402 and repeats the call with the signed payment to get allow, warn or block with coded reasons. "
      "MCP clients can use the same checks through https://api.lumitrades.io/mcp. The answer is dated evidence, not a guarantee."),
-    ("Is there a pay-per-call crypto API for AI agents?",
-     "Yes. The Lumi Trades API sells x402 seller checks, vendor reports, CoinMarketCap Fear & Greed with history "
-     "and a daily Institutional & Policy Brief for $0.003 to $0.10 per call. There is no account, "
-     "subscription or API key: every call is paid on its own with x402, and if the data is not fresh the API answers 503 and nothing is charged."),
     ("What is x402?",
      "x402 is an open payment protocol built on the HTTP status code 402 Payment Required, first published by Coinbase. A server answers "
      "a request with a price quote, the client pays it in a stablecoin or another crypto asset and repeats the request with the signed "
@@ -166,16 +157,10 @@ FAQ = [
     ("Can I pay with USDC on Stellar?",
      "Yes. Every quote also offers USDC on Stellar (stellar:pubnet) at the same USD prices as Base, settled through the OpenZeppelin x402 "
      "facilitator with network fees sponsored."),
-    ("Is there an MCP server for crypto market data?",
-     "Yes. Add https://api.lumitrades.io/mcp as a remote MCP server (streamable HTTP) in Claude, Cursor or any MCP client. Free tools list "
-     "the catalog, coins, quotes and vendor scores; paid tools use the same x402 prices. A local option is the npm package lumi-trades-mcp, "
+    ("Is there an MCP server for x402 trust checks?",
+     "Yes. Add https://api.lumitrades.io/mcp as a remote MCP server (streamable HTTP) in Claude, Cursor or any MCP client. "
+     "Free tools list the catalog, price quotes and vendor scores; paid tools use the same x402 prices. A local option is the npm package lumi-trades-mcp, "
      "which pays per call from the agent's own funds with a spending cap."),
-    ("What does the Institutional & Policy Brief cover?",
-     "It is a daily, sourced summary of what central banks, standard-setters and regulators (for example the BIS, the IMF and US regulators), "
-     "banks and tokenization firms are doing on stablecoins, CBDCs and tokenization, and how each item relates to XRP, XLM, XDC, QNT, AXL "
-     "and HBAR, marking confirmed links apart from indirect ones. One call costs $0.10 at GET /v1/institutional."),
-    ("Where does the Fear & Greed reading come from?",
-     "Only from the CoinMarketCap Fear & Greed Index. GET /v1/fear-greed ($0.003) returns it with its history."),
 ]
 
 
@@ -195,7 +180,7 @@ MARKET_IDEAS_NOTICE = ""  # retired Oct 25, 2026
 
 def llms_txt(prices, plans=(), groups=None):
     """/llms.txt (llmstxt.org format): where an LLM or agent finds the API docs and the human pages. English only.
-    groups = [(title, rows)]: the price list split into Lumi Trust and Market data."""
+    groups = [(title, rows)]: the price list in groups (e.g. Lumi Trust)."""
     line = lambda n, e, p: f"- `{e}`: {n}, {p if p == 'free' else p + ' per call'}"
     if groups:
         rows = "\n\n".join(f"### {g}\n" + "\n".join(line(*x) for x in items) for g, items in groups)
@@ -204,12 +189,10 @@ def llms_txt(prices, plans=(), groups=None):
     plan_rows = "\n".join(f"- {n}: {fmt.format(p=p)}. {d}" for n, (fmt, p), d in plans)
     return f"""# Lumi Trades
 
-> Two product lines, sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger);
-> no account or API key.
-> - Lumi Trust: x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
->   built from real on-ledger test-buys of other pay-per-call endpoints.
-> - Market data: CoinMarketCap Fear & Greed, funding rates and a daily Institutional &
->   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Informational data, not financial advice.
+> Lumi checks x402 sellers with real paid test-buys and keeps a signed receipt for each one.
+> Sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger); no account or API key:
+> x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
+> built from real on-ledger test-buys of other pay-per-call endpoints. Informational test evidence, not financial advice.
 
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
@@ -223,7 +206,7 @@ def llms_txt(prices, plans=(), groups=None):
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid on-ledger test-buys of x402 endpoints
 - [How Lumi tests x402 sellers](https://lumitrades.io/how-it-works/): quote checks, paid test-buys, signed receipts, the 30-day score and the badge rule (also in es, pt, tr, ko, ja)
-- [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
+- [Home](https://lumitrades.io/): Lumi: x402 seller trust you can verify. How the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
 
 ## Prices (USD per call)
@@ -235,9 +218,6 @@ def llms_txt(prices, plans=(), groups=None):
 
 ## Paying
 - Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or /.well-known/x402, never from transaction history or a past transfer.
-
-## Independent checks
-- Independently checked by [Lumière PayCheck](https://lumierepaycheck.org/) (grade A on seven Lumi endpoints, as of Oct 24, 2026).
 
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free

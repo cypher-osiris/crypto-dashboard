@@ -14,15 +14,28 @@ def i18n(lang):
         return json.load(f)["pages"]
 
 
+
+def blocklist_re():
+    """Optional blocklist for generated copy. Never hard-coded here: read from the SITE_BLOCKLIST_RE env var (a regex)
+    or the git-ignored file named by SITE_BLOCKLIST_FILE (default: site_blocklist.txt at the repo root), one regex per
+    line. Returns None when neither is set."""
+    pats = [os.environ.get("SITE_BLOCKLIST_RE", "").strip()]
+    f = os.environ.get("SITE_BLOCKLIST_FILE", os.path.join(ROOT, "site_blocklist.txt"))
+    if os.path.exists(f):
+        with open(f, encoding="utf-8") as fh:
+            pats += [ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")]
+    pats = [p for p in pats if p]
+    return re.compile("|".join(f"(?:{p})" for p in pats), re.I) if pats else None
+
 class SitePages(unittest.TestCase):
     def test_route_counts_from_tables(self):
         c = sp.route_counts()
-        self.assertEqual(c["m"], len(sp.MARKET_PRICES))
+        self.assertNotIn("m", c)
         self.assertEqual(c["t"], 3)
-        self.assertEqual((c["lo"], c["hi"]), ("$0.003", "$0.10"))
+        self.assertEqual((c["lo"], c["hi"]), ("$0.01", "$0.02"))
         txt = sp.AGENTS_ROUTES_TEXT.format(**c)
-        self.assertIn(f"{len(sp.MARKET_PRICES)} paid market data routes", txt)
-        self.assertNotIn("17 paid routes", txt)
+        self.assertIn("3 paid routes", txt)
+        self.assertNotRegex(txt.lower(), r"market data|policy brief")
 
     def test_homepage_count_matches_tables(self):
         with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as f:
@@ -45,10 +58,12 @@ class SitePages(unittest.TestCase):
         self.assertNotIn("no trial", h)
 
     def test_no_trading_routes_listed(self):
-        # Oct 25, 2026: the site lists neutral market data only (no signals, levels, scans or trade slates)
-        for name, route, _price in sp.MARKET_PRICES:
-            self.assertNotRegex(route, r"/v1/(signal|levels|scan|lite|slate|ideas)", route)
-            self.assertNotRegex(name, r"(?i)signal|levels|projection|trade idea|slate|bias", name)
+        # Oct 25, 2026: trust-only. The site lists x402 trust routes only (no market data, signals, levels or briefs)
+        self.assertFalse(hasattr(sp, "MARKET_PRICES"))
+        self.assertIs(sp.PRICES, sp.TRUST_PRICES)
+        for name, route, _price in sp.PRICES:
+            self.assertRegex(route, r"^(GET|POST) /v1/(trust/|verdict)", route)
+            self.assertNotRegex(name, r"(?i)signal|levels|projection|trade idea|slate|bias|market|fear|greed|brief", name)
 
     def test_a2a_link_points_to_agent_card(self):
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "site_pages.py"), encoding="utf-8") as f:
@@ -57,38 +72,31 @@ class SitePages(unittest.TestCase):
         self.assertIn('API + "/.well-known/agent-card.json"', src)
 
     def test_translations_exist_with_placeholders(self):
-        keys = [sp.AGENTS_ROUTES_TEXT, "A2A agent card"] + [p[0] for p in sp.MARKET_PRICES]
+        keys = [sp.AGENTS_ROUTES_TEXT, "A2A agent card"] + [p[0] for p in sp.PRICES]
         for lang in LANGS:
             d = i18n(lang)
             for k in keys:
                 self.assertTrue(d.get(k), (lang, k[:40]))
-            for ph in ("{m}", "{t}", "{lo}", "{hi}"):
+            for ph in ("{t}", "{lo}", "{hi}"):
                 self.assertIn(ph, d[sp.AGENTS_ROUTES_TEXT], (lang, ph))
+            self.assertNotIn("{m}", d[sp.AGENTS_ROUTES_TEXT], lang)
 
 
 
 class CoinPageWording(unittest.TestCase):
-    """Oct 25, 2026: coin pages, trade pages and /classic/ are retired. Each old URL is a noindex stub that sends visitors
-    to the vendor trust list, in every language, and none is in the sitemap."""
+    """Oct 25, 2026 (trust-only cleanup): coin pages, trade pages and /classic/ are removed from the repo and from the
+    published _site/ (they 404 now), and none is in the sitemap."""
     SLUGS = ["xdc", "xrp", "xlm", "hbar", "axl", "zbcn", "btc", "eth", "sol"]
 
     def retired_paths(self):
-        import build_pages as bp
-        self.assertEqual(list(bp.RETIRED_SLUGS), self.SLUGS)
         out = []
         for lang in [""] + [l + "/" for l in LANGS]:
-            out += [lang + s + "/" for s in bp.RETIRED_SLUGS] + [lang + "trades/"] + [lang + "trades/" + t + "/" for t in bp.RETIRED_TRADE_IDS]
-        return out + list(bp.RETIRED_EN_ONLY)
+            out += [lang + s + "/" for s in self.SLUGS] + [lang + "trades/"]
+        return out + ["classic/"]
 
-    def test_stubs_noindex_and_point_to_trust(self):
+    def test_retired_pages_gone(self):
         for rel in self.retired_paths():
-            with open(os.path.join(ROOT, rel, "index.html"), encoding="utf-8") as f:
-                h = f.read()
-            self.assertIn('<meta name="robots" content="noindex, follow">', h, rel)
-            self.assertRegex(h, r'<meta http-equiv="refresh" content="0; url=(\.\./)+trust/">', rel)
-            lang = rel.split("/")[0] + "/" if rel.split("/")[0] in LANGS else ""
-            self.assertIn(f'<link rel="canonical" href="https://lumitrades.io/{lang}trust/">', h, rel)
-            self.assertNotRegex(h.lower(), r"leverage|stop-loss|\btargets?\b|\bentry\b|bit[u]nix|affiliate|cp-proj", rel)
+            self.assertFalse(os.path.exists(os.path.join(ROOT, rel, "index.html")), rel)
 
     def test_not_in_sitemap(self):
         with open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8") as f:
@@ -98,17 +106,12 @@ class CoinPageWording(unittest.TestCase):
 
     def test_old_trading_keys_pruned(self):
         old = ["{n}-day outlook (scenario levels)", "Lumi's {n}-day projection", "What is Lumi's {sym} price prediction?",
-               "{sym} Price Analysis Today & Outlook | Lumi Trades", "Leverage", "Trade ideas"]
+               "{sym} Price Analysis Today & Outlook | Lumi Trades", "Leverage", "Trade ideas", "Market data",
+               "Daily Institutional & Policy Brief", "Trust layer for AI-agent payments"]
         for lang in LANGS:
             d = i18n(lang)
             for k in old:
                 self.assertNotIn(k, d, (lang, k))
-            self.assertTrue(d.get(_retired_h1()), lang)
-
-
-def _retired_h1():
-    import build_pages as bp
-    return bp.RETIRED_H1
 
 
 class Beacon(unittest.TestCase):
@@ -165,7 +168,7 @@ class TikTokLink(unittest.TestCase):
                     yt = src.count('href="https://www.youtube.com/@lumitradesio"')
                     if yt and src.count(f'href="{self.TT}" rel="me noopener"') != yt:
                         missing.append(os.path.relpath(p, ROOT))
-                    if '"sameAs": ["https://x.com/lumisinsite"' in src and f'"{self.TT}"' not in src:
+                    if '"sameAs": ["https://x.com/Lumisinsite"' in src and f'"{self.TT}"' not in src:
                         missing.append(os.path.relpath(p, ROOT) + " (sameAs)")
         self.assertEqual(missing, [])
 
@@ -216,7 +219,7 @@ class ContactPage(unittest.TestCase):
             with open(os.path.join(ROOT, lang, "contact", "index.html"), encoding="utf-8") as f:
                 h = f.read()
             for s in ("hello@lumitrades.io", "lumi@lumitrades.io", '"@type": "ContactPage"',
-                      "security.txt", "https://x.com/lumisinsite", "https://github.com/lumitrades", "lumi-check", "trust/#reply",
+                      "security.txt", "https://x.com/Lumisinsite", "https://github.com/lumitrades", "lumi-check", "trust/#reply",
                       cp.NOT_AFFILIATED):
                 self.assertIn(s, h, (lang, s))
             for s in ("admin@", "receive-only"):
@@ -304,9 +307,8 @@ class NoOldExchangeInStaticHtml(unittest.TestCase):
 
     def test_no_affiliate_code_or_config(self):
         self.assertFalse(os.path.exists(os.path.join(ROOT, "assets", "affiliate.js")))
-        with open(os.path.join(ROOT, "data", "config.json"), encoding="utf-8") as f:
-            cfg = json.load(f)
-        self.assertEqual(set(cfg) - {"_readme"}, set())
+        # data/ (including the old affiliate config) is no longer in the repo or the published site
+        self.assertFalse(os.path.exists(os.path.join(ROOT, "data", "config.json")))
 
     def test_no_old_exchange_or_affiliate_in_built_html(self):
         bad = []
@@ -427,7 +429,10 @@ class PaymentAttemptsLabel(unittest.TestCase):
                 off = sp.attempts_html(self.h(), dict(base, latest_probes=probes), self.NOW)
                 self.assertIn("Lumi has tried 4 times on XRPL", off)
                 self.assertNotIn("online", off)
-            self.assertNotRegex(on.lower(), r"scam|fraud|" + os.environ.get("LUMI_PRIVATE_NAME_RE", "owner-name-redacted"))
+            self.assertNotRegex(on.lower(), r"scam|fraud")
+            bl = blocklist_re()
+            if bl:
+                self.assertIsNone(bl.search(on))
         finally:
             sp.att_snapshot = old
 
@@ -571,7 +576,10 @@ class PolicyPageSelection(unittest.TestCase):
 
     def test_caps_match_runners_when_present(self):
         import re as _re
-        cb, tb = os.path.join(os.path.dirname(ROOT), "tools", "catalog_buys.ts"), os.path.join(os.path.dirname(ROOT), "tools", "trust_testbuys.ts")
+        tools = os.environ.get("LUMI_TOOLS_DIR", "")
+        if not tools:
+            self.skipTest("LUMI_TOOLS_DIR not set")
+        cb, tb = os.path.join(tools, "catalog_buys.ts"), os.path.join(tools, "trust_testbuys.ts")
         if not (os.path.exists(cb) and os.path.exists(tb)):
             self.skipTest("runners not on this machine")
         cbs, tbs = open(cb).read(), open(tb).read()
@@ -583,7 +591,7 @@ class PolicyPageSelection(unittest.TestCase):
         self.assertIn("const MAX_PRICE = 0.05", tbs)
         # Seller rotation (2026-10-25): policy text says "fewer than 5 delivered", 7/14-day windows, per-seller weekday.
         self.assertIn("const XRPL_NEW_MIN = 5", tbs)
-        rot = os.path.join(os.path.dirname(ROOT), "tools", "test_rotation.ts")
+        rot = os.path.join(tools, "test_rotation.ts")
         if os.path.exists(rot):
             rs = open(rot).read()
             self.assertIn("weeklySlot", rs)

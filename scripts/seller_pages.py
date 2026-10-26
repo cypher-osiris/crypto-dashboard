@@ -1,4 +1,4 @@
-"""/sellers/<host-slug>/: one English page per seller on the curated x402 trust list ("is <seller> legit",
+"""/sellers/<host-slug>/: one English page per seller on the curated x402 trust list ("<seller> test-buy results",
 "<seller> x402 review" searches). Built by build_pages.py on the English pass from the same data as /trust/:
 https://api.lumitrades.io/v1/trust/vendors (site_pages.fetch_vendors) plus each seller's free entry
 https://api.lumitrades.io/v1/trust/vendors/<id> (observations, endpoints, pay-to chains, replies), cached in
@@ -253,7 +253,7 @@ def body_html(h, v, d, slug, now_ms):
     enc = urllib.parse.quote(vid, safe="")
     return f"""<main class="wrap cp-main sl-main">
 <p class="cp-crumb"><a href="../../">Lumi Trades</a> › <a href="../../trust/">Vendor trust</a> › {E(nm)}</p>
-<h1>Is {E(nm)} legit? Lumi's x402 test-buy results</h1>
+<h1>{E(nm)}: Lumi's x402 test-buy results</h1>
 <p class="cp-lede">{lede}</p>
 <section class="card cp-sec" id="summary"><h2>Summary</h2>
 {table}
@@ -285,7 +285,7 @@ def page(h, tp, nav_items, V, gen_date, v, d, slug, now_ms):
     path = f"{DIR}/{slug}/"
     url = h.SITE + path
     nm = short_name(v)
-    title = f"Is {nm} legit? Lumi's x402 test-buy results"
+    title = f"{nm}: Lumi's x402 test-buy results"
     desc = description(v, d, h)
     lc = sp._last_checked(v)
     about = {"@type": "WebAPI", "name": str(v.get("name") or nm)}

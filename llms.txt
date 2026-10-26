@@ -1,11 +1,9 @@
 # Lumi Trades
 
-> Two product lines, sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger);
-> no account or API key.
-> - Lumi Trust: x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
->   built from real on-ledger test-buys of other pay-per-call endpoints.
-> - Market data: CoinMarketCap Fear & Greed, funding rates and a daily Institutional &
->   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Informational data, not financial advice.
+> Lumi checks x402 sellers with real paid test-buys and keeps a signed receipt for each one.
+> Sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger); no account or API key:
+> x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
+> built from real on-ledger test-buys of other pay-per-call endpoints. Informational test evidence, not financial advice.
 
 ## API docs (api.lumitrades.io)
 - [API home](https://api.lumitrades.io/): overview, prices and the 402 flow
@@ -19,7 +17,7 @@
 - [For AI agents](https://lumitrades.io/agents/): what the API sells, prices, how to pay, MCP setup and FAQ
 - [x402 vendor trust list](https://lumitrades.io/trust/): automated quote checks and paid on-ledger test-buys of x402 endpoints
 - [How Lumi tests x402 sellers](https://lumitrades.io/how-it-works/): quote checks, paid test-buys, signed receipts, the 30-day score and the badge rule (also in es, pt, tr, ko, ja)
-- [Home](https://lumitrades.io/): Lumi, the trust layer for AI-agent payments: how the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
+- [Home](https://lumitrades.io/): Lumi: x402 seller trust you can verify. How the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
 
 ## Prices (USD per call)
@@ -30,11 +28,6 @@
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free
 - `POST /v1/trust/receipts/verify`: Verify a signed test-buy receipt, free
 
-### Market data
-- `GET /v1/funding`: Crypto funding rates, $0.003 per call
-- `GET /v1/fear-greed`: CoinMarketCap Fear & Greed with history, $0.003 per call
-- `GET /v1/institutional`: Daily Institutional & Policy Brief, $0.10 per call
-
 ## Seller monitoring and trust data feed (x402, 30-day plans, no auto-renew)
 - Watch Free: $0. 1 endpoint: a daily quote check, no test-buys
 - Watch: $5 per endpoint per 30 days. Hourly quote checks, a weekly test-buy, alerts, 30-day history and a status page
@@ -42,7 +35,7 @@
 - Re-test pack: $6.50 one-time. 30 test-buys, used when you ask, valid 365 days
 - Founder pack: $5.00 one-time. 24 test-buys, valid 365 days; first 10 sellers, one per company
 - Audit: $99 one-time. One test-buy of every listed endpoint, with a full report signed by Lumi's wallet
-- Free: $0. 1,000 lookups a month per key (wallet-signature signup), returns the verdict only
+- Feed Free: $0. 1,000 lookups a month per key (wallet-signature signup), returns the verdict only
 - Feed credits: $1.50 per 1,000 lookups. Prepaid lookups on top of the free 1,000 a month; credits never expire
 - Feed: $99 per 30 days. 100,000 bulk lookups, delta feed, full evidence and receipts
 - Feed Pro: $199 per 30 days. 500,000 lookups, delta feed, licensed full snapshot export, status-change webhooks, receipts
@@ -50,9 +43,6 @@
 
 ## Paying
 - Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or /.well-known/x402, never from transaction history or a past transfer.
-
-## Independent checks
-- Independently checked by [Lumière PayCheck](https://lumierepaycheck.org/) (grade A on seven Lumi endpoints, as of Oct 24, 2026).
 
 ## Optional
 - [Vendor trust list as JSON](https://api.lumitrades.io/v1/trust/vendors): free

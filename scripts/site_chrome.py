@@ -31,7 +31,7 @@ def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None, keywo
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@lumisinsite">
+<meta name="twitter:site" content="@Lumisinsite">
 <meta name="twitter:title" content="{h.E(title.replace(' | Lumi Trades', ''))}">
 <meta name="twitter:description" content="{h.E(desc)}">
 <meta name="twitter:image" content="{h.SITE}assets/og.png?v={V}">
@@ -41,7 +41,9 @@ def page_head(h, title, desc, url, V, path, kind="article", extra_ld=None, keywo
 
 
 # Shared site chrome for every generated page. Trust pages only: the market/trading section was retired on Oct 25, 2026.
-FOOT_BRAND = "<b>Lumi Trades</b>: the trust layer for AI-agent payments. Informational test evidence only, not financial advice."
+FOOT_BRAND = "<b>Lumi Trades</b>: independent test-buys of x402 sellers, with receipts anyone can check. Informational test evidence only, not financial advice."
+# Legal SF1: every "independent" claim sits next to the material-connection disclosure and the conflicts policy link.
+FOOT_INDEP = "Lumi is independent of the sellers it tests: no seller pays for a score (see our <a href=\"{href}\">conflicts policy</a>)."
 TRUST_METHOD = "trust-policy/#score"   # nav "How it works" = how the trust score works (policy_page.SECTIONS "score")
 HOW_TESTS = "How Lumi tests x402 sellers"   # title of /how-it-works/ (scripts/how_page.py)
 
@@ -73,7 +75,7 @@ SOCIAL_SVG = {
 
 def social_icons(h, cls="soc"):
     E, _ = h.E, h._
-    items = (("x", "https://x.com/lumisinsite", _("Lumi on X (@lumisinsite)")),
+    items = (("x", "https://x.com/Lumisinsite", _("Lumi on X (@Lumisinsite)")),
              ("yt", "https://www.youtube.com/@lumitradesio", _("Lumi on YouTube")),
              ("tt", "https://www.tiktok.com/@lumitradesio", _("Lumi on TikTok")))
     return (f'<span class="{cls}">' + "".join(f'<a class="soc-i {k}" href="{u}" rel="me noopener" target="_blank" aria-label="{E(l)}" title="{E(l)}">{SOCIAL_SVG[k]}</a>'
@@ -84,7 +86,7 @@ def foot_brand(h):
     """First footer line: positioning + social links (same on every generated page)."""
     E, _ = h.E, h._
     return (f'<p class="foot-brand">{_(FOOT_BRAND)} '
-            f'<a href="https://x.com/lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @lumisinsite"))}</a> · '
+            f'<a href="https://x.com/Lumisinsite" rel="me noopener" target="_blank">{E(_("Follow @Lumisinsite"))}</a> · '
             f'<a href="https://www.youtube.com/@lumitradesio" rel="me noopener" target="_blank">{E(_("Lumi on YouTube"))}</a> · '
             f'<a href="https://www.tiktok.com/@lumitradesio" rel="me noopener" target="_blank">TikTok</a></p>')
 
@@ -107,6 +109,7 @@ def footer(h, pre, gen_date):
     E, _ = h.E, h._
     P = pre + h.L.prefix
     return (f'<footer class="wrap footer">\n  {foot_brand(h)}\n  <p class="foot-soc">{social_icons(h)}</p>\n'
+            f'  <p class="foot-isnt">{_(FOOT_INDEP, href=E(P + "trust-policy/"))}</p>\n'
             f'  <p>{_("Times in US Central · Page generated {date}", date=E(gen_date))} · <a href="{P}privacy/">{E(_("Privacy Policy"))}</a>{_policy_link(h, pre)}'
             f'{extra_footer_links(h, P)}</p>\n</footer>\n</body>\n</html>\n')
 
