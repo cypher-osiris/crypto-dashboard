@@ -199,7 +199,7 @@
   "Vendor trust list and seller lookup": "판매자 신뢰 목록과 판매자 조회",
   "Verify a signed test-buy receipt": "서명된 테스트 구매 영수증 검증",
   "What you get": "포함 내용",
-  "x402 pay check: allow / warn / block with reasons, signed receipts": "x402 결제 확인: 이유와 함께 allow / warn / block, 서명된 영수증",
+  "x402 pay check: allow / warn / block with reasons, signed verdict": "x402 결제 확인: 이유와 함께 allow / warn / block, 서명된 판정",
   "{p} one-time": "1회 {p}",
   "{p} per 1,000 lookups": "1,000회 조회당 {p}",
   "{p} per 30 days": "30일 {p}",

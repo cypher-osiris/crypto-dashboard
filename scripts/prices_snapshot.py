@@ -27,7 +27,7 @@ ROUTES = [
 DECIMALS = {"eip155:8453": 6, "stellar:pubnet": 7}   # atomic units; XRP is in drops (6); XRPL IOUs are decimal strings
 CHAIN = {"eip155:8453": "Base", "xrpl:0": "XRP Ledger", "stellar:pubnet": "Stellar"}
 FREE = [
-    ("Free signed check (same label, from Lumi's record)", "GET /v1/check?url="),
+    ("Signed check from Lumi's record (same label as /v1/verdict)", "GET /v1/check?url="),
     ("Seller lookup and vendor trust list", "GET /v1/trust/vendors"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify"),
 ]

@@ -29,7 +29,7 @@ NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 # (product, method + path, price in USD); keys are translated, paths and prices are not.
 # Every price here was checked against the live API (https://api.lumitrades.io/ 402 quotes + /.well-known/x402, v1.1.7, Oct 25 2026).
 TRUST_PRICES = [
-    ("x402 pay check: allow / warn / block with reasons, signed receipts", "GET /v1/trust/check?url=", "$0.02"),
+    ("x402 pay check: allow / warn / block with reasons, signed verdict", "GET /v1/trust/check?url=", "$0.02"),
     ("Pre-payment check, one label (delivered in recent checks / check first / recent checks failed / not enough data)", "GET /v1/verdict?url=", "$0.01"),
     ("Full report on one curated vendor (observation history, tx hashes, signed receipts)", "GET /v1/trust/vendors/{id}/report", "$0.02"),
     ("Vendor trust list and seller lookup", "GET /v1/trust/vendors", "free"),

@@ -26,11 +26,11 @@
 - [How Lumi tests x402 sellers](https://lumitrades.io/how-it-works/): quote checks, paid test-buys, signed receipts, the 30-day score and the badge rule (also in es, pt, tr, ko, ja)
 - [Home](https://lumitrades.io/): Lumi: x402 seller trust you can verify. How the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
-- [Prices and proof](https://lumitrades.io/prices/): every price copied from the live x402 402 quotes, with the date checked and links to dated proof ([JSON](https://lumitrades.io/prices/index.json))
+- [Prices and proof](https://lumitrades.io/prices/): every price copied from the live x402 quotes, with the date checked and links to dated proof ([JSON](https://lumitrades.io/prices/index.json))
 
 ## Prices (USD per call)
 ### Lumi Trust
-- `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed receipts, $0.02 per call
+- `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed verdict, $0.02 per call
 - `GET /v1/verdict?url=`: Pre-payment check, one label (delivered in recent checks / check first / recent checks failed / not enough data), $0.01 per call
 - `GET /v1/trust/vendors/{id}/report`: Full report on one curated vendor (observation history, tx hashes, signed receipts), $0.02 per call
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free

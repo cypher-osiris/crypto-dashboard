@@ -215,7 +215,7 @@ def llms_txt(prices, plans=(), groups=None):
 - [How Lumi tests x402 sellers](https://lumitrades.io/how-it-works/): quote checks, paid test-buys, signed receipts, the 30-day score and the badge rule (also in es, pt, tr, ko, ja)
 - [Home](https://lumitrades.io/): Lumi: x402 seller trust you can verify. How the seller checks work, the trust list and the agent API (also in es, pt, tr, ko, ja)
 - [How the trust score works](https://lumitrades.io/trust-policy/#score): selection, no pay-to-rank, disclosures and the score method (also in es, pt, tr, ko, ja)
-- [Prices and proof](https://lumitrades.io/prices/): every price copied from the live x402 402 quotes, with the date checked and links to dated proof ([JSON](https://lumitrades.io/prices/index.json))
+- [Prices and proof](https://lumitrades.io/prices/): every price copied from the live x402 quotes, with the date checked and links to dated proof ([JSON](https://lumitrades.io/prices/index.json))
 
 ## Prices (USD per call)
 {rows}

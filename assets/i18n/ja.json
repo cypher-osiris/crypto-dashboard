@@ -199,7 +199,7 @@
   "Vendor trust list and seller lookup": "販売者の信頼リストと販売者検索",
   "Verify a signed test-buy receipt": "署名付きテスト購入レシートの検証",
   "What you get": "内容",
-  "x402 pay check: allow / warn / block with reasons, signed receipts": "x402支払いチェック：理由付きのallow / warn / block、署名付きレシート",
+  "x402 pay check: allow / warn / block with reasons, signed verdict": "x402支払いチェック：理由付きのallow / warn / block、署名付きの判定",
   "{p} one-time": "1回 {p}",
   "{p} per 1,000 lookups": "1,000回の照会ごとに{p}",
   "{p} per 30 days": "30日 {p}",
