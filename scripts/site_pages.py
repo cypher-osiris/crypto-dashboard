@@ -22,7 +22,7 @@ VENDORS_URL = API + "/v1/trust/vendors"
 CACHE = os.path.join(ROOT, "state", "trust_vendors.json")
 BAZAAR = "https://docs.cdp.coinbase.com/x402/bazaar"
 X402SCAN = "https://www.x402scan.com/server/0b8315c8-da5e-4754-8564-e9f286edcbae"
-PAYCHECK_URL = "https://lumierepaycheck.org/e?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fevents%2Fnext48h"  # Lumière PayCheck page for one Lumi endpoint (independent check)
+PAYCHECK_URL = "https://lumierepaycheck.org/"  # Lumière PayCheck home (independent check)
 PAY_ADDRESS_TEXT = "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer."
 CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, as of Oct 24, 2026)."
 MCP_REG = "https://registry.modelcontextprotocol.io/v0/servers?search=lumi-trades"
