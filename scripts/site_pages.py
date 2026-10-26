@@ -32,6 +32,8 @@ TRUST_PRICES = [
     ("x402 pay check: allow / warn / block with reasons, signed verdict", "GET /v1/trust/check?url=", "$0.02"),
     ("Pre-payment check, one label (delivered in recent checks / check first / recent checks failed / not enough data)", "GET /v1/verdict?url=", "$0.01"),
     ("Full report on one curated vendor (observation history, tx hashes, signed receipts)", "GET /v1/trust/vendors/{id}/report", "$0.02"),
+    ("Test-buy record for one seller (dated test-buys, tx hashes, signed receipts)", "GET /v1/trust/receipts?seller=", "$0.005"),
+    ("Check several sellers at once (up to 10 record-based labels, one signed answer)", "GET /v1/check/batch?urls=", "$0.008"),
     ("Vendor trust list and seller lookup", "GET /v1/trust/vendors", "free"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify", "free"),
 ]

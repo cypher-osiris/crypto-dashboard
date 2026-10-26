@@ -23,6 +23,8 @@ ROUTES = [
     ("verdict", "GET /v1/verdict?url=", f"/v1/verdict?url={EX}"),
     ("trust_check", "GET /v1/trust/check?url=", f"/v1/trust/check?url={EX}"),
     ("vendor_report", "GET /v1/trust/vendors/{id}/report", "/v1/trust/vendors/{id}/report"),
+    ("receipts", "GET /v1/trust/receipts?seller=", "/v1/trust/receipts"),   # bare path: the live 402 quote, no seller named
+    ("batch_check", "GET /v1/check/batch?urls=", f"/v1/check/batch?urls={EX},data.example.org"),
 ]
 DECIMALS = {"eip155:8453": 6, "stellar:pubnet": 7}   # atomic units; XRP is in drops (6); XRPL IOUs are decimal strings
 CHAIN = {"eip155:8453": "Base", "xrpl:0": "XRP Ledger", "stellar:pubnet": "Stellar"}

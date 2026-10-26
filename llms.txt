@@ -8,6 +8,8 @@
 ## Intent routing
 - CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict?url=<x402 resource URL> ($0.01, one signed label; the free cached version is GET /v1/check?url=)
 - SHOULD I PAY THIS EXACT QUOTE (payTo, price) -> GET https://api.lumitrades.io/v1/trust/check?url=<url>&payTo=<address>&amount=<usd> ($0.02)
+- CHECK SEVERAL SELLERS AT ONCE -> GET https://api.lumitrades.io/v1/check/batch?urls= ($0.008)
+- SEE THE TEST-BUY RECORD FOR ONE SELLER -> GET https://api.lumitrades.io/v1/trust/receipts?seller= ($0.005)
 - LOOK UP A SELLER FOR FREE -> GET https://api.lumitrades.io/v1/trust/vendors?url=<url> (or ?domain= or ?payTo=)
 - VERIFY A LUMI RECEIPT -> POST https://api.lumitrades.io/v1/trust/receipts/verify (free)
 - PRICES AND PROOF, MACHINE-READABLE -> https://lumitrades.io/prices/index.json (copied from the live 402 quotes, dated)
@@ -33,6 +35,8 @@
 - `GET /v1/trust/check?url=`: x402 pay check: allow / warn / block with reasons, signed verdict, $0.02 per call
 - `GET /v1/verdict?url=`: Pre-payment check, one label (delivered in recent checks / check first / recent checks failed / not enough data), $0.01 per call
 - `GET /v1/trust/vendors/{id}/report`: Full report on one curated vendor (observation history, tx hashes, signed receipts), $0.02 per call
+- `GET /v1/trust/receipts?seller=`: Test-buy record for one seller (dated test-buys, tx hashes, signed receipts), $0.005 per call
+- `GET /v1/check/batch?urls=`: Check several sellers at once (up to 10 record-based labels, one signed answer), $0.008 per call
 - `GET /v1/trust/vendors`: Vendor trust list and seller lookup, free
 - `POST /v1/trust/receipts/verify`: Verify a signed test-buy receipt, free
 

@@ -65,10 +65,10 @@ class SitePages(unittest.TestCase):
     def test_route_counts_from_tables(self):
         c = sp.route_counts()
         self.assertNotIn("m", c)
-        self.assertEqual(c["t"], 3)
-        self.assertEqual((c["lo"], c["hi"]), ("$0.01", "$0.02"))
+        self.assertEqual(c["t"], 5)
+        self.assertEqual((c["lo"], c["hi"]), ("$0.005", "$0.02"))
         txt = sp.AGENTS_ROUTES_TEXT.format(**c)
-        self.assertIn("3 paid routes", txt)
+        self.assertIn("5 paid routes", txt)
         self.assertNotRegex(txt.lower(), r"market data|policy brief")
 
     def test_homepage_count_matches_tables(self):
@@ -96,7 +96,7 @@ class SitePages(unittest.TestCase):
         self.assertFalse(hasattr(sp, "MARKET_PRICES"))
         self.assertIs(sp.PRICES, sp.TRUST_PRICES)
         for name, route, _price in sp.PRICES:
-            self.assertRegex(route, r"^(GET|POST) /v1/(trust/|verdict)", route)
+            self.assertRegex(route, r"^(GET|POST) /v1/(trust/|verdict|check/batch)", route)
             self.assertNotRegex(name, r"(?i)signal|levels|projection|trade idea|slate|bias|market|fear|greed|brief", name)
 
     def test_a2a_link_points_to_agent_card(self):

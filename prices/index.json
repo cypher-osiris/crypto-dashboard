@@ -1,8 +1,8 @@
 {
   "kind": "lumi_prices",
   "name": "Lumi Trades: x402 seller trust you can verify",
-  "as_of": "2026-10-26T15:57:53Z",
-  "as_of_ct": "Oct 26, 2026 10:57 AM CDT",
+  "as_of": "2026-10-26T16:12:44Z",
+  "as_of_ct": "Oct 26, 2026 11:12 AM CDT",
   "method": "Each price is copied from the live x402 402 quote of an unpaid GET to quote_url at as_of. Request quote_url yourself to see the current quote; the quote you pay against is the one that applies.",
   "intent": {
     "check a seller before paying": "https://api.lumitrades.io/v1/verdict?url=<x402 resource URL>"
@@ -164,6 +164,114 @@
           "asset": "USDC",
           "amount": "0.02",
           "amount_raw": "200000",
+          "pay_to": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L",
+          "usd_pegged": true
+        }
+      ],
+      "xrp_note": "XRP is quoted at the live XRP/USD rate on every call; the XRP amount here is the quote at as_of."
+    },
+    {
+      "route": "receipts",
+      "endpoint": "GET /v1/trust/receipts?seller=",
+      "price_usd": "0.005",
+      "quote_url": "https://api.lumitrades.io/v1/trust/receipts",
+      "accepts": [
+        {
+          "network": "eip155:8453",
+          "chain": "Base",
+          "asset": "USDC",
+          "amount": "0.005",
+          "amount_raw": "5000",
+          "pay_to": "0x5E617bac19912e6d212CB303ae84655E9E203532",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "XRP",
+          "amount": "0.0039",
+          "amount_raw": "3900",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": false
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "RLUSD",
+          "amount": "0.005",
+          "amount_raw": "0.005",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "USDC",
+          "amount": "0.005",
+          "amount_raw": "0.005",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "stellar:pubnet",
+          "chain": "Stellar",
+          "asset": "USDC",
+          "amount": "0.005",
+          "amount_raw": "50000",
+          "pay_to": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L",
+          "usd_pegged": true
+        }
+      ],
+      "xrp_note": "XRP is quoted at the live XRP/USD rate on every call; the XRP amount here is the quote at as_of."
+    },
+    {
+      "route": "batch_check",
+      "endpoint": "GET /v1/check/batch?urls=",
+      "price_usd": "0.008",
+      "quote_url": "https://api.lumitrades.io/v1/check/batch?urls=https%3A%2F%2Fapi.example.com%2Fv1%2Fdata,data.example.org",
+      "accepts": [
+        {
+          "network": "eip155:8453",
+          "chain": "Base",
+          "asset": "USDC",
+          "amount": "0.008",
+          "amount_raw": "8000",
+          "pay_to": "0x5E617bac19912e6d212CB303ae84655E9E203532",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "XRP",
+          "amount": "0.0062",
+          "amount_raw": "6200",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": false
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "RLUSD",
+          "amount": "0.008",
+          "amount_raw": "0.008",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "xrpl:0",
+          "chain": "XRP Ledger",
+          "asset": "USDC",
+          "amount": "0.008",
+          "amount_raw": "0.008",
+          "pay_to": "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM",
+          "usd_pegged": true
+        },
+        {
+          "network": "stellar:pubnet",
+          "chain": "Stellar",
+          "asset": "USDC",
+          "amount": "0.008",
+          "amount_raw": "80000",
           "pay_to": "GCKTH26VNR4H4WLCXS5DX6563XRQQXWP5QKQWFD6CHOGTZJ2N5GKBU2L",
           "usd_pegged": true
         }
