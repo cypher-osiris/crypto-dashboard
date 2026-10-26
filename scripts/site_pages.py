@@ -24,7 +24,7 @@ BAZAAR = "https://docs.cdp.coinbase.com/x402/bazaar"
 X402SCAN = "https://www.x402scan.com/server/0b8315c8-da5e-4754-8564-e9f286edcbae"
 PAYCHECK_URL = "https://lumierepaycheck.org/e?url=https%3A%2F%2Fapi.lumitrades.io%2Fv1%2Fevents%2Fnext48h"  # Lumière PayCheck page for one Lumi endpoint (independent check)
 PAY_ADDRESS_TEXT = "Pay address: always take Lumi's pay address (payTo) from the live 402 payment response or <code>/.well-known/x402</code>, never from transaction history or a past transfer."
-CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, for example <code>/v1/events/next48h</code>, as of Oct 24, 2026)."
+CHECKED_BY_TEXT = "Independently checked by {paycheck} (grade A on seven Lumi endpoints, as of Oct 24, 2026)."
 MCP_REG = "https://registry.modelcontextprotocol.io/v0/servers?search=lumi-trades"
 NPM = "https://www.npmjs.com/package/lumi-trades-mcp"
 
@@ -39,13 +39,8 @@ TRUST_PRICES = [
 ]
 # Neutral market data routes listed on the site (the list was narrowed on Oct 25, 2026).
 MARKET_PRICES = [
-    ("BTC + macro market backdrop", "GET /v1/market", "$0.02"),
-    ("Yen watch (USD/JPY, Nikkei)", "GET /v1/macro/yen", "$0.01"),
-    ("Crypto sentiment (CoinMarketCap Fear & Greed, funding)", "GET /v1/sentiment", "$0.005"),
-    ("Macro and crypto events calendar", "GET /v1/events", "$0.005"),
     ("Crypto funding rates", "GET /v1/funding", "$0.003"),
     ("CoinMarketCap Fear & Greed with history", "GET /v1/fear-greed", "$0.003"),
-    ("Events in the next 48 hours", "GET /v1/events/next48h", "$0.003"),
     ("Daily Institutional & Policy Brief", "GET /v1/institutional", "$0.10"),
 ]
 PRICES = TRUST_PRICES + MARKET_PRICES

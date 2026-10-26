@@ -50,7 +50,7 @@ ORG_DESC_TRUST = ("Lumi Trades runs automated checks of x402 pay-per-call seller
                   "through a pay-per-call x402 API and an MCP server.")
 API_NAME = "Lumi Trades API"
 API_DESC = ("Pay-per-call x402 trust checks and market data API for AI agents: seller checks with signed test-buy receipts, CoinMarketCap Fear & Greed "
-            "sentiment, a daily market brief and a daily Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoin rules, tokenization). "
+            "with history and a daily Institutional & Policy Brief (BIS, IMF, CBDCs, stablecoin rules, tokenization). "
             "No account or API key: pay each call with x402 in USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger.")
 
 
@@ -143,7 +143,7 @@ FAQ = [
      "with a quote; the agent pays $0.02 with x402 and repeats the call with the signed payment to get allow, warn or block with coded reasons. "
      "MCP clients can use the same checks through https://api.lumitrades.io/mcp. The answer is dated evidence, not a guarantee."),
     ("Is there a pay-per-call crypto API for AI agents?",
-     "Yes. The Lumi Trades API sells x402 seller checks, vendor reports, CoinMarketCap Fear & Greed sentiment, a daily market brief "
+     "Yes. The Lumi Trades API sells x402 seller checks, vendor reports, CoinMarketCap Fear & Greed with history "
      "and a daily Institutional & Policy Brief for $0.003 to $0.10 per call. There is no account, "
      "subscription or API key: every call is paid on its own with x402, and if the data is not fresh the API answers 503 and nothing is charged."),
     ("What is x402?",
@@ -176,7 +176,7 @@ FAQ = [
      "banks and tokenization firms are doing on stablecoins, CBDCs and tokenization, and how each item relates to XRP, XLM, XDC, QNT, AXL "
      "and HBAR, marking confirmed links apart from indirect ones. One call costs $0.10 at GET /v1/institutional."),
     ("Where does the Fear & Greed reading come from?",
-     "Only from the CoinMarketCap Fear & Greed Index. GET /v1/sentiment ($0.005) returns it together with BTC funding and market breadth."),
+     "Only from the CoinMarketCap Fear & Greed Index. GET /v1/fear-greed ($0.003) returns it with its history."),
 ]
 
 
@@ -209,7 +209,7 @@ def llms_txt(prices, plans=(), groups=None):
 > no account or API key.
 > - Lumi Trust: x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
 >   built from real on-ledger test-buys of other pay-per-call endpoints.
-> - Market data: live prices, CoinMarketCap Fear & Greed, funding, a daily market brief, events and a daily Institutional &
+> - Market data: CoinMarketCap Fear & Greed, funding rates and a daily Institutional &
 >   Policy Brief (BIS, IMF, CBDCs, stablecoins, tokenization). Informational data, not financial advice.
 
 ## API docs (api.lumitrades.io)
