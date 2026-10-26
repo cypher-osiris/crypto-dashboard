@@ -40,7 +40,6 @@ TRUST_PRICES = [
 # Neutral market data routes listed on the site (the list was narrowed on Oct 25, 2026).
 MARKET_PRICES = [
     ("BTC + macro market backdrop", "GET /v1/market", "$0.02"),
-    ("Daily crypto market brief", "GET /v1/brief", "$0.02"),
     ("Yen watch (USD/JPY, Nikkei)", "GET /v1/macro/yen", "$0.01"),
     ("Crypto sentiment (CoinMarketCap Fear & Greed, funding)", "GET /v1/sentiment", "$0.005"),
     ("Macro and crypto events calendar", "GET /v1/events", "$0.005"),
@@ -695,7 +694,7 @@ def agents_page(h, tp, nav_items, V, gen_date, vendors_doc=None):
 <section class="card cp-sec" id="prices"><h2>{E(_t("Market data"))}</h2>
 <p>{_t(AGENTS_ROUTES_TEXT, **route_counts())}</p>
 {table(MARKET_DATA_PRICES)}
-<p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/v1/coins</code>, <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
+<p class="meta">{_t("Prices per call in USD. If the data isn't fresh the API answers 503 and you are not charged. Free: <code>/openapi.json</code>, <code>/skill.md</code>, <code>/.well-known/x402</code>.")}</p></section>
 <section class="card cp-sec" id="pay"><h2>{E(_t("How to pay"))}</h2>
 <ul class="ag-list"><li>{_t("<b>USDC on Base</b> (eip155:8453), settled through Coinbase's x402 facilitator. Works with Coinbase AgentKit and any x402 client.")}</li>
 <li>{_t("<b>XRP Ledger</b>: XRP, RLUSD or USDC, verified on-ledger.")}</li>

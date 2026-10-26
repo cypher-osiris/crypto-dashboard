@@ -32,7 +32,6 @@
 
 ### Market data
 - `GET /v1/market`: BTC + macro market backdrop, $0.02 per call
-- `GET /v1/brief`: Daily crypto market brief, $0.02 per call
 - `GET /v1/macro/yen`: Yen watch (USD/JPY, Nikkei), $0.01 per call
 - `GET /v1/sentiment`: Crypto sentiment (CoinMarketCap Fear & Greed, funding), $0.005 per call
 - `GET /v1/events`: Macro and crypto events calendar, $0.005 per call
