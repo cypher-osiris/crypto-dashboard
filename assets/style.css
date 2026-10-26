@@ -923,3 +923,8 @@ p code,li code,td code{overflow-wrap:anywhere;word-break:break-word}
 .pv-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
 .pv-lede{margin:0 0 16px;max-width:62ch;color:var(--muted);line-height:1.5}
 .ag-home.ag-one{grid-template-columns:1fr}
+/* /pricing/: long product and plan text wraps inside the card on desktop (the global td nowrap clipped it); prices stay on one line */
+.pr-main .cp-table th,.pr-main .cp-table td{white-space:normal}
+.pr-main .cp-table td.mono{overflow-wrap:anywhere}
+.pr-main .cp-table td.num,.pr-main .cp-table td.pr-price{white-space:nowrap;overflow-wrap:normal}
+.pr-main .pr-plans td:nth-child(2){min-width:9.5em}

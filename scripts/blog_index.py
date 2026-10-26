@@ -105,7 +105,7 @@ def page(h, tp, V, gen_date, root=ROOT):
   {tp.foot_brand(h)}
   <p class="foot-soc">{tp.social_icons(h)}</p>
   <p class="foot-isnt">{tp.FOOT_INDEP.format(href="../trust-policy/")}</p>
-  <p>Times in US Central · Page generated {E(gen_date)} · Not financial advice. · <a href="../privacy/">Privacy Policy</a> · <a href="../trust-policy/">Conflicts policy</a> · <a href="../top-sellers/">Sellers with delivered test-buys</a> · <a href="../contact/">Contact</a></p>
+  <p>Times in US Central · Page generated {E(gen_date)} · Not financial advice. · <a href="../privacy/">Privacy Policy</a> · <a href="../trust-policy/">Conflicts policy</a> · <a href="../top-sellers/">Sellers with delivered test-buys</a> · <a href="../contact/">Contact</a> · <a href="../pricing/">Pricing</a> · <a href="../about/">About</a> · <a href="../terms/">Terms</a></p>
 </footer>
 </body>
 </html>

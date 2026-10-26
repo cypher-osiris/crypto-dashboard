@@ -219,7 +219,7 @@ def lang_index(en_src, langs):
             body = body[:body.index(b0) + len(b0)] + "\n" + body[body.index(b1):]
     body = i18n.translate_html(body, L)
     # asset / root paths: one level up (pages like trust/ and agents/ stay relative, i.e. inside this language)
-    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|blog/|sellers/|data/))', r"\1../", h)
+    fix = lambda h: re.sub(r'((?:href|src)=")(?=(?:assets/|favicon\.ico|site\.webmanifest|feed\.xml|blog/|sellers/|data/|pricing/|about/|terms/))', r"\1../", h)
     head, body = fix(head), fix(body)
     head = head.replace('<script src="../assets/i18n.js', f'<script src="../assets/i18n/{L.code}.js?v={VERSION}" defer></script>\n<script src="../assets/i18n.js', 1)
     return head + "</head>" + body
@@ -229,6 +229,9 @@ def build(dry=False):
     """Render every page in every language. dry=True renders without writing (used by `i18n.py check`); returns the
     Lang objects (with their missing-key sets) in that case, else the list of changed paths."""
     global L, VERSION
+    if not dry:
+        import info_pages  # Legal placeholder guard: fails the build while /terms/ would carry [NOTICE ADDRESS: to supply]
+        info_pages.check_placeholders()
     with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as f:
         index = f.read()
     m = re.search(r"\?v=([0-9]{8}-[0-9]+)", index)
@@ -263,6 +266,7 @@ def build(dry=False):
         print(f"build_pages: WARNING site pages unavailable: {e!r}", file=sys.stderr)
         site_pages = vendors_doc = None
     seller_sm = []  # /sellers/<host-slug>/ (scripts/seller_pages.py, English only)
+    info_sm = []  # /pricing/, /about/, /terms/ (scripts/info_pages.py, English only)
     try:
         import seller_pages
         if site_pages:
@@ -289,6 +293,10 @@ def build(dry=False):
                 seller_sm = seller_pages.build(h, site_chrome, nav_items, V, gen_date, write, vendors_doc, dry)
             except Exception as e:
                 print(f"build_pages: WARNING seller pages failed: {e!r}", file=sys.stderr)
+        # ---- /pricing/, /about/, /terms/ (English only, scripts/info_pages.py; no try: a failure here fails the build) ----
+        if L.en:
+            import info_pages
+            info_sm = info_pages.build(h, site_chrome, nav_items, V, gen_date, write)
         # ---- /blog/ index (English only; scripts/blog_index.py lists blog/<slug>/ posts) ----
         if L.en:
             try:
@@ -329,6 +337,9 @@ def build(dry=False):
     sm += url_el("", gen_date, "daily", "1.0")
     for p, lm, fq, pr in site_sm:
         sm += url_el(p, lm, fq, pr)
+    # English-only /pricing/, /about/ and /terms/ (scripts/info_pages.py; no language versions yet)
+    for p, lm, fq, pr in info_sm:
+        sm.append(f'  <url><loc>{SITE}{p}</loc><lastmod>{lm}</lastmod><changefreq>{fq}</changefreq><priority>{pr}</priority></url>')
     # English-only static blog posts (blog/<slug>/index.html, hand-built; no language alternates)
     bdir = os.path.join(ROOT, "blog")
     if os.path.isfile(os.path.join(bdir, "index.html")):
@@ -393,6 +404,7 @@ if __name__ == "__main__":
         sdir = os.path.join(ROOT, "sellers")  # English-only seller pages (scripts/seller_pages.py)
         if os.path.isdir(sdir):
             outs += sorted(f"sellers/{d}/index.html" for d in os.listdir(sdir) if os.path.exists(os.path.join(sdir, d, "index.html")))
+        outs += [f"{d}/index.html" for d in ("pricing", "about", "terms") if os.path.exists(os.path.join(ROOT, d, "index.html"))]
         outs += ["blog/index.html", "sitemap.xml", "feed.xml"]
         outs = [o for o in outs if os.path.exists(os.path.join(ROOT, o))]
         print("\n".join(outs + [x for x in ch if x not in outs]))

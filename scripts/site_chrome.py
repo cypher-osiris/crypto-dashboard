@@ -111,12 +111,16 @@ def footer(h, pre, gen_date):
     return (f'<footer class="wrap footer">\n  {foot_brand(h)}\n  <p class="foot-soc">{social_icons(h)}</p>\n'
             f'  <p class="foot-isnt">{_(FOOT_INDEP, href=E(P + "trust-policy/"))}</p>\n'
             f'  <p>{_("Times in US Central · Page generated {date}", date=E(gen_date))} · <a href="{P}privacy/">{E(_("Privacy Policy"))}</a>{_policy_link(h, pre)}'
-            f'{extra_footer_links(h, P)}</p>\n</footer>\n</body>\n</html>\n')
+            f'{extra_footer_links(h, pre)}</p>\n</footer>\n</body>\n</html>\n')
 
 
-def extra_footer_links(h, P):
-    """Extra footer links (none on main)."""
-    return ""
+INFO_LINKS = (("pricing/", "Pricing"), ("about/", "About"), ("terms/", "Terms"))   # English-only pages (scripts/info_pages.py)
+
+
+def extra_footer_links(h, root):
+    """Footer links to /pricing/, /about/ and /terms/ (English-only, at the site root; root = path prefix to the site root)."""
+    E, _ = h.E, h._
+    return "".join(f' · <a href="{root}{p}">{E(_(t))}</a>' for p, t in INFO_LINKS)
 
 
 def assets(h, pre, V):

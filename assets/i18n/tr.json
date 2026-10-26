@@ -509,6 +509,9 @@
   "Lumi is independent of the sellers it tests: no seller pays for a score (see our <a href=\"trust-policy/\">conflicts policy</a>).": "Lumi test ettiği satıcılardan bağımsızdır: hiçbir satıcı puan için ödeme yapmaz (<a href=\"trust-policy/\">çıkar çatışması politikamıza</a> bakın).",
   "x402 APIs with delivered test-buys, by category | Lumi Trades": "Test alımlarında teslim eden x402 API'leri, kategoriye göre | Lumi Trades",
   "{t} paid routes, from {lo} to {hi} per call. Free trial: new Base and XRPL wallets get 3 free calls in total, usable on any paid route (send <code>X-Lumi-Trial: 1</code> and sign in with a Base wallet holding at least 0.01 USDC or an activated XRP Ledger account; one trial per wallet, not per chain; nothing is moved).": "{t} ücretli rota, çağrı başına {lo} ile {hi} arası. Ücretsiz deneme: yeni Base ve XRPL cüzdanları, herhangi bir ücretli rotada kullanılabilen toplam 3 ücretsiz çağrı alır (<code>X-Lumi-Trial: 1</code> gönderin ve en az 0,01 USDC bulunan bir Base cüzdanı veya etkinleştirilmiş bir XRP Ledger hesabıyla oturum açın; zincir başına değil, cüzdan başına bir deneme; hiçbir şey taşınmaz).",
-  "Latest paid test-buy by Lumi: result inconclusive.": "Lumi'nin son ücretli test alımı: sonuç belirsiz."
+  "Latest paid test-buy by Lumi: result inconclusive.": "Lumi'nin son ücretli test alımı: sonuç belirsiz.",
+  "Pricing": "Fiyatlar",
+  "About": "Hakkında",
+  "Terms": "Koşullar"
  }
 }

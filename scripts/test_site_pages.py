@@ -634,5 +634,92 @@ class PolicyPageSelection(unittest.TestCase):
             self.assertNotIn("{mail}", h)
 
 
+class InfoPages(unittest.TestCase):
+    """/pricing/, /about/ and /terms/ (scripts/info_pages.py): English only, published (indexed, in the sitemap), linked
+    from every footer; trust-only copy; the postal address only in /terms/ section 17."""
+    SLUGS = ("pricing", "about", "terms")
+
+    def read(self, rel):
+        with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+            return f.read()
+
+    def test_published_english_only(self):
+        sm = self.read("sitemap.xml")
+        for slug in self.SLUGS:
+            t = self.read(f"{slug}/index.html")
+            self.assertIn('<meta name="robots" content="index, follow', t, slug)
+            self.assertNotIn("noindex", t, slug)
+            self.assertIn(f"<loc>https://lumitrades.io/{slug}/</loc>", sm, slug)
+            self.assertNotIn('hreflang="es"', t, slug)
+            for l in LANGS:
+                self.assertFalse(os.path.exists(os.path.join(ROOT, l, slug)), (l, slug))
+            body = t.split("<main", 1)[1].split("</main>", 1)[0]
+            low = re.sub(r'href="[^"]*"', "", body.lower())
+            for w in ("draft", "[pending", "placeholder", "trust layer", "market data", "policy brief", "fear", "greed",
+                      "sentiment", "funding", "signal", "leverage", "trade idea", "bitunix", "solana", "paper trading",
+                      "write to us", "based in", "/workspace", "independent"):
+                self.assertNotIn(w, low, (slug, w))
+
+    def test_terms_addendum_b(self):
+        import info_pages
+        t = self.read("terms/index.html")
+        for s_ in ("Who runs the service", "sole proprietorship", "DISCLAIMER OF WARRANTIES", "LIMITATION OF LIABILITY",
+                   "US$100", "OFAC", "Governing law", "principally resides and conducts business",
+                   "must be sent by email to", "and are effective when received",
+                   "Our postal address, provided as required by law, is:", 'href="mailto:legal@lumitrades.io"',
+                   "Trust Data Licence, version 2026-10-22"):
+            self.assertIn(s_, t)
+        self.assertNotEqual(info_pages.NOTICE_ADDRESS, info_pages.NOTICE_PLACEHOLDER)
+        # D14 open: no refund/retry remedy paragraph until the refund/credit flow exists.
+        self.assertNotIn("If a payment settles but you", t)
+        self.assertNotIn("Idempotency-Key", t)
+        self.assertIn(info_pages.NOTICE_ADDRESS, t)
+        self.assertNotIn("[NOTICE ADDRESS", t)
+        self.assertNotIn("[PENDING", t)
+
+    def test_postal_address_only_on_terms(self):
+        import info_pages
+        street = info_pages.NOTICE_ADDRESS.split(",")[1].strip()
+        hits = []
+        for dp, _, files in os.walk(ROOT):
+            if "/." in dp or "/state" in dp or "/scripts" in dp or "/node_modules" in dp or "/_site" in dp:
+                continue
+            for fn in files:
+                if fn.endswith((".html", ".txt", ".xml", ".json", ".js")):
+                    with open(os.path.join(dp, fn), encoding="utf-8", errors="ignore") as f:
+                        if street in f.read():
+                            hits.append(os.path.relpath(os.path.join(dp, fn), ROOT))
+        self.assertEqual(sorted(hits), ["terms/index.html"])
+
+    def test_pricing_matches_tables(self):
+        t = self.read("pricing/index.html")
+        for _, ep, pr in sp.TRUST_PRICES:
+            self.assertIn(ep.replace("&", "&amp;"), t)
+            self.assertIn(pr, t)
+        for nm, _, _ in sp.MONITOR_PLANS + sp.FEED_PLANS:
+            self.assertIn(nm, t)
+        self.assertNotIn("other-routes", t)
+
+    def test_every_footer_links_info_pages(self):
+        n = 0
+        for dp, _, files in os.walk(ROOT):
+            if "/." in dp or "/scripts" in dp or "/_site" in dp or "/node_modules" in dp:
+                continue
+            for fn in files:
+                if not fn.endswith(".html"):
+                    continue
+                rel = os.path.relpath(os.path.join(dp, fn), ROOT)
+                raw = self.read(rel)
+                if "<footer" not in raw:
+                    continue
+                foot = raw.split("<footer", 1)[1]
+                depth = rel.count("/")
+                root = "../" * depth
+                for slug in self.SLUGS:
+                    self.assertIn(f'href="{root}{slug}/"', foot, (rel, slug))
+                n += 1
+        self.assertGreater(n, 50)
+
+
 if __name__ == "__main__":
     unittest.main()
