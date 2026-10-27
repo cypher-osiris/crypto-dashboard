@@ -84,12 +84,14 @@ MCP = """{ "mcpServers": {
 
 
 # Legal review MF4: always state the full split (delivered / not delivered / inconclusive), never "only N returned data".
-SWEEP_ALL = ("As of {date}, Lumi had checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar "
+SWEEP_ALL = ("In a one-off sweep completed {date}, Lumi checked all {checked} third-party hosts that list an XRPL payment option in Coinbase's x402 Bazaar "
              "and bought from {bought}: {delivered} delivered data, {nd} did not, and {inc} were inconclusive because of errors on Lumi's side "
              "(not counted against the sellers). Every payment is an XRPL mainnet transaction.")
-SWEEP_PART = ("As of {date}, Lumi had checked {checked} of the {total} third-party hosts that list an XRPL payment option in Coinbase's x402 "
+SWEEP_PART = ("In a one-off sweep completed {date}, Lumi checked {checked} of the {total} third-party hosts that list an XRPL payment option in Coinbase's x402 "
               "Bazaar and bought from {bought}: {delivered} delivered data, {nd} did not, and {inc} were inconclusive because of errors on Lumi's side "
               "(not counted against the sellers). Every payment is an XRPL mainnet transaction.")
+# The sweep above is a dated one-off snapshot; this sentence carries today's live figures (catalog.counts.as_of) so the block never reads stale.
+SWEEP_LIVE = "As of {date}, the trust list covers {indexed} x402 listings across {domains} seller domains, with {buys} paid test-buys on record."
 
 
 def sweep(doc):
@@ -113,8 +115,17 @@ def sweep_html(h, doc):
     import datetime as _dt
     d = h.L.date(_dt.datetime(sw["as_of"].year, sw["as_of"].month, sw["as_of"].day), with_time=False)
     tpl = SWEEP_ALL if sw["hosts_checked"] == sw["hosts_total"] else SWEEP_PART
-    return h.E(h._(tpl, date=d, checked=sw["hosts_checked"], total=sw["hosts_total"], bought=sw["hosts_bought"], delivered=sw["delivered"],
-                       nd=sw["not_delivered"], inc=sw["inconclusive"]))
+    out = h.E(h._(tpl, date=d, checked=sw["hosts_checked"], total=sw["hosts_total"], bought=sw["hosts_bought"], delivered=sw["delivered"],
+                      nd=sw["not_delivered"], inc=sw["inconclusive"]))
+    st = trust_stats(doc)
+    try:
+        day = _dt.date.fromisoformat((st or {}).get("as_of") or "")
+    except ValueError:
+        day = None
+    if st and day and st["indexed"] and st["domains"] and st["buys"]:
+        ld = h.L.date(_dt.datetime(day.year, day.month, day.day), with_time=False)
+        out = h.E(h._(SWEEP_LIVE, date=ld, indexed=_n(st["indexed"]), domains=_n(st["domains"]), buys=_n(st["buys"]))) + " " + out
+    return out
 
 
 
