@@ -1,0 +1,12 @@
+# XRP Ledger account declaration for lumitrades.io (XLS-26). Account Domain is set to lumitrades.io on-ledger.
+[METADATA]
+modified = 2026-10-27T00:00:00.000Z
+
+[[ACCOUNTS]]
+address = "rM8kmmnz5qPMg7V3r7SHYXgDGvm8PhzLvM"
+network = "main"
+desc = "Lumi Trades test-buy and payment account"
+
+[[PRINCIPALS]]
+name = "Lumi Trades"
+email = "hello@lumitrades.io"
