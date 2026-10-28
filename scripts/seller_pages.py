@@ -63,11 +63,11 @@ def _load_cache():
 
 
 def _fetch_one(vid):
-    req = urllib.request.Request(DETAIL_URL.format(id=urllib.parse.quote(vid, safe="")),
-                                 headers={"Accept": "application/json", "User-Agent": "lumitrades.io build"})
-    with urllib.request.urlopen(req, timeout=8) as r:
-        d = json.loads(r.read().decode("utf-8"))
+    d = sp.get_json(DETAIL_URL.format(id=urllib.parse.quote(vid, safe="")))
     return d if d.get("kind") == "trust_vendor" and d.get("id") == vid else None
+
+
+_LAST = [None, {}]  # (sorted ids, result) of the last live fetch_details() call in this process
 
 
 def fetch_details(ids, dry=False):
@@ -75,11 +75,14 @@ def fetch_details(ids, dry=False):
     cache = _load_cache()
     if dry:
         return {i: cache[i] for i in ids if i in cache}
+    key = tuple(sorted(ids))
+    if _LAST[0] == key:  # already fetched this run (build_pages.py's BUILD_REQUIRE_LIVE check)
+        return dict(_LAST[1])
     got = {}
     try:
         with cf.ThreadPoolExecutor(max_workers=8) as ex:
             futs = {ex.submit(_fetch_one, i): i for i in ids}
-            for f in cf.as_completed(futs, timeout=40):
+            for f in cf.as_completed(futs, timeout=300):
                 try:
                     d = f.result()
                     if d:
@@ -88,6 +91,7 @@ def fetch_details(ids, dry=False):
                     pass
     except Exception as e:
         print(f"seller_pages: detail fetch incomplete ({e!r}), using cache", file=__import__("sys").stderr)
+    sp.LIVE["details"] = bool(ids) and all(i in got for i in ids)
     if got:
         cache.update(got)
         try:
@@ -97,7 +101,9 @@ def fetch_details(ids, dry=False):
             os.replace(DETAIL_CACHE + ".tmp", DETAIL_CACHE)
         except OSError:
             pass
-    return {i: (got.get(i) or cache.get(i)) for i in ids if got.get(i) or cache.get(i)}
+    out = {i: (got.get(i) or cache.get(i)) for i in ids if got.get(i) or cache.get(i)}
+    _LAST[0], _LAST[1] = key, out
+    return out
 
 
 def has_data(v):

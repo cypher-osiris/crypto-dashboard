@@ -262,6 +262,13 @@ def build(dry=False):
         import site_pages
         vendors_doc = site_pages.fetch_vendors(dry)
         site_pages.fetch_badges((vendors_doc or {}).get("vendors") or [], dry)
+        if not dry and os.environ.get("BUILD_REQUIRE_LIVE") == "1":
+            import seller_pages as _sp_chk
+            ids = [str(v["id"]) for v in (vendors_doc or {}).get("vendors") or [] if v.get("id")]
+            _sp_chk.fetch_details(ids)  # warms the detail fetch so a partial one stops the build before any write
+            if not all(site_pages.LIVE.values()):
+                print(f"build_pages: live API data incomplete {site_pages.LIVE}; not writing pages (BUILD_REQUIRE_LIVE=1)", file=sys.stderr)
+                sys.exit(5)
     except Exception as e:
         print(f"build_pages: WARNING site pages unavailable: {e!r}", file=sys.stderr)
         site_pages = vendors_doc = None

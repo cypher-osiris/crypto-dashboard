@@ -9,7 +9,8 @@
 # Steps (git pull/push bounded by GIT_NET_TIMEOUT, default 120 s): take state/lock -> git pull --rebase --autostash -> (data paths: scripts/privacy.py, scripts/build_pages.py) -> validate JSON -> git add -> commit only if changed -> push
 #   -> (every publish, before the build: scripts/derive_attempts_all.py -> scripts/trust_attempts.json)
 #   -> IndexNow ping (scripts/indexnow_ping.py: one POST with the sitemap URLs whose files changed in the pushed commit; INDEXNOW=0 skips; a failed ping never fails the publish).
-# Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, other = git failure.
+# Exit codes: 0 ok / nothing to publish, 2 invalid JSON, 3 lock timeout, 4 privacy scrub failed, 5 page build failed
+# with nothing else to publish (e.g. live API fetch incomplete), other = git failure.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export GIT_TERMINAL_PROMPT=0 GIT_EDITOR=true
@@ -35,7 +36,8 @@ gitnet pull --rebase --autostash --quiet
 
 # Data publishes first scrub paper-trade results out of the public files (scripts/privacy.py; the full trades doc is
 # state/trades_full.json, git-ignored). A failed scrub stops the publish so results never go out by accident.
-if [ -f scripts/privacy.py ] && printf '%s\n' "${paths[@]}" | grep -q '^data\(/\|$\)'; then
+# (Only when data/ exists: it was retired Oct 25, 2026, and privacy.py can't run without data/coins.json.)
+if [ -f scripts/privacy.py ] && [ -d data ] && printf '%s\n' "${paths[@]}" | grep -q '^data\(/\|$\)'; then
   if scrubbed=$(python3 scripts/privacy.py --lock-held --paths); then
     while IFS= read -r p; do [ -n "$p" ] && paths+=("$p"); done <<< "$scrubbed"
   else
@@ -54,12 +56,17 @@ if [ -f scripts/derive_attempts_all.py ]; then
   fi
 fi
 
-# Data publishes also regenerate the static trust pages + sitemap.xml and publish them in the same commit.
-# Set BUILD_PAGES=0 to skip. A failed build only warns: the data publish still goes out.
+# Data publishes (and a bare `scripts/publish.sh`, the page refresh) regenerate the static trust pages + sitemap.xml from
+# the live API and publish them in the same commit. BUILD_REQUIRE_LIVE=1: the build writes nothing (exit 5) unless every
+# API fetch was live, so a slow network never ships cached/empty pages. Set BUILD_PAGES=0 to skip.
+# A failed build only warns when real data files are being published; with no data files (data/ was retired Oct 25,
+# 2026) a failed build stops the publish.
 if [ "${BUILD_PAGES:-1}" != 0 ] && [ -f scripts/build_pages.py ] && printf '%s\n' "${paths[@]}" | grep -q '^data\(/\|$\)'; then
-  if built=$(python3 scripts/build_pages.py --paths); then
+  if built=$(BUILD_REQUIRE_LIVE=1 python3 scripts/build_pages.py --paths); then
     while IFS= read -r p; do [ -n "$p" ] && paths+=("$p"); done <<< "$built"
   else
+    have_data=0; for p in "${paths[@]}"; do case "$p" in data|data/*) [ -e "$p" ] && have_data=1;; esac; done
+    if [ "$have_data" = 0 ]; then echo "publish: build_pages.py failed and there is no data to publish; not publishing" >&2; exit 5; fi
     echo "publish: WARNING build_pages.py failed; publishing data without regenerating pages" >&2
   fi
 fi
@@ -76,7 +83,7 @@ done
 bad=0
 while IFS= read -r -d '' f; do
   python3 -m json.tool "$f" >/dev/null 2>&1 || { echo "publish: invalid JSON: $f" >&2; bad=1; }
-done < <(find "${paths[@]}" -name '*.json' -print0)
+done < <(for p in "${paths[@]}"; do [ -e "$p" ] && printf '%s\0' "$p"; done | xargs -0r -I{} find {} -name '*.json' -print0)
 [ "$bad" -eq 0 ] || exit 2
 
 # private/retired files never go into a commit, even when a step (privacy scrub, build) lists them
@@ -86,6 +93,9 @@ for p in "${paths[@]}"; do
   skip=0; for r in "${RETIRED[@]}"; do [ "$p" = "$r" ] && skip=1; done
   [ $skip = 0 ] && keep+=("$p")
 done
+paths=("${keep[@]}")
+# paths that don't exist (e.g. the retired data/ directory) can't be staged: drop them so `git add` doesn't fail
+keep=(); for p in "${paths[@]}"; do [ -e "$p" ] && keep+=("$p"); done
 paths=("${keep[@]}")
 [ ${#paths[@]} -eq 0 ] && { echo "publish: nothing to publish"; exit 0; }
 git add -- "${paths[@]}"

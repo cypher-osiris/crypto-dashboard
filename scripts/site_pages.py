@@ -19,6 +19,27 @@ import seo
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API = "https://api.lumitrades.io"
 VENDORS_URL = API + "/v1/trust/vendors"
+# Set by fetch_vendors()/fetch_badges() (and seller_pages.fetch_details()): True only when the data came from the live API
+# this run, not from the state/ cache. build_pages.py refuses to write pages for a publish unless every fetch was live
+# (BUILD_REQUIRE_LIVE=1, set by scripts/publish.sh), so a slow or failed fetch can't ship stale or empty pages.
+LIVE = {"vendors": False, "badges": False, "details": False}
+FETCH_TRIES, FETCH_TIMEOUT = 3, 30  # per request; the box network is sometimes slow (54 KB took 20-90 s on Oct 28, 2026)
+
+
+def get_json(url, tries=FETCH_TRIES, timeout=FETCH_TIMEOUT):
+    """GET url as JSON with a few retries (raises the last error)."""
+    import time
+    err = None
+    for i in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "lumitrades.io build"})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except Exception as e:
+            err = e
+            if i + 1 < tries:
+                time.sleep(2 * (i + 1))
+    raise err
 CACHE = os.path.join(ROOT, "state", "trust_vendors.json")
 BAZAAR = "https://docs.cdp.coinbase.com/x402/bazaar"
 X402SCAN = "https://www.x402scan.com/server/0b8315c8-da5e-4754-8564-e9f286edcbae"
@@ -210,11 +231,10 @@ def fetch_vendors(dry=False):
     doc = None
     if not dry:
         try:
-            req = urllib.request.Request(VENDORS_URL, headers={"Accept": "application/json", "User-Agent": "lumitrades.io build"})
-            with urllib.request.urlopen(req, timeout=10) as r:
-                d = json.loads(r.read().decode("utf-8"))
+            d = get_json(VENDORS_URL)
             if d.get("kind") == "trust_vendors" and isinstance(d.get("vendors"), list):
                 doc = d
+                LIVE["vendors"] = True
                 try:
                     os.makedirs(os.path.dirname(CACHE), exist_ok=True)
                     tmp = CACHE + ".tmp"
@@ -328,10 +348,7 @@ def fetch_badges(vendors, dry=False):
 
         def one(i):
             try:
-                req = urllib.request.Request(BADGE_URL.format(id=urllib.parse.quote(i, safe="")),
-                                             headers={"Accept": "application/json", "User-Agent": "lumitrades.io build"})
-                with urllib.request.urlopen(req, timeout=8) as r:
-                    d = json.loads(r.read().decode("utf-8"))
+                d = get_json(BADGE_URL.format(id=urllib.parse.quote(i, safe="")))
                 if d.get("kind") == "tested_badge_verdict" and isinstance(d.get("earned"), bool):
                     return i, d["earned"]
             except Exception:
@@ -349,6 +366,7 @@ def fetch_badges(vendors, dry=False):
                 os.replace(BADGE_CACHE + ".tmp", BADGE_CACHE)
             except OSError:
                 pass
+    LIVE["badges"] = bool(ids) and not dry and all(i in got for i in ids)
     BADGE_EARNED.clear()
     BADGE_EARNED.update({i: True for i in ids if got.get(i, cache.get(i)) is True})
     return dict(BADGE_EARNED)
