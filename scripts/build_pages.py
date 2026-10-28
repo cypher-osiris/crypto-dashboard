@@ -403,7 +403,7 @@ if __name__ == "__main__":
     ch = build()
     if "--paths" in sys.argv:
         # for publish.sh: every generated page + sitemap (unchanged ones are no-ops for git add), index.html only if changed
-        outs = []
+        outs = ["index.html"]  # the English homepage too: a build that found it already current must still stage it
         for pre in [""] + [c + "/" for c in lang_dirs()]:
             if pre and os.path.exists(os.path.join(ROOT, pre, "index.html")):
                 outs.append(f"{pre}index.html")
