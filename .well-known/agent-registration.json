@@ -1,0 +1,30 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Lumi Trades",
+  "description": "Lumi independently test-buys x402 paid APIs and publishes signed delivery receipts. Lumi posts ERC-8004 feedback only for test-buys it observed as delivered.",
+  "image": "https://lumitrades.io/assets/icon-512.png",
+  "services": [
+    {
+      "name": "web",
+      "endpoint": "https://lumitrades.io/"
+    },
+    {
+      "name": "x402-api",
+      "endpoint": "https://api.lumitrades.io/"
+    }
+  ],
+  "x402Support": true,
+  "active": true,
+  "registrations": [
+    {
+      "agentId": 1143051,
+      "agentRegistry": "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+    }
+  ],
+  "supportedTrust": [
+    "reputation"
+  ],
+  "reviewerAddresses": [
+    "eip155:8453:0x7722DfAE6bbed2Fd02Dc07455c2f5BF14bE25E4a"
+  ]
+}
