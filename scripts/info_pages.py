@@ -54,7 +54,7 @@ def _ld(h, slug, name, desc):
 
 # ---------- /pricing/ ----------
 PRICING_TITLE = "Pricing: trust checks, seller monitoring and data feed | Lumi Trades"
-PRICING_DESC = ("Lumi Trades prices: free trust list, $0.02 check before paying a URL, $0.02 vendor report, seller monitoring from $5 "
+PRICING_DESC = ("Lumi Trades prices: free trust list, free check before paying a URL (100 a day), $0.02 vendor report, seller monitoring from $5 "
                 "and a trust data feed. Pay per call with x402.")   # <=155 chars, no "&" or quotes
 
 
@@ -73,7 +73,7 @@ def pricing_page(h, tp, nav_items, V, gen_date):
 <h1>Pricing</h1>
 <p class="cp-lede">The vendor trust list is free. Everything else is pay per call with x402: no account, no API key. New Base and XRPL wallets get <b>3 free calls</b> in total, usable on any paid route (one trial per wallet, not per chain). Paying Lumi never changes a score or label.</p>
 <section class="card cp-sec" id="trust"><h2>Check a seller before you pay</h2>
-<p>The pay check, <code>GET /v1/trust/check?url=</code>, answers allow, warn or block with reasons for any x402 URL, for <b class="mono">$0.02</b> per check. The full report on one vendor from the list, with tx hashes and signed receipts, is <b class="mono">$0.02</b>. The <a href="../trust/">vendor trust list</a> is free.</p>
+<p>The pay check, <code>GET /v1/trust/check?url=</code>, answers allow, warn or block with reasons for any x402 URL, <b>free for 100 checks a day</b> (per IP and per key). The full report on one vendor from the list, with tx hashes and signed receipts, is <b class="mono">$0.02</b>. The <a href="../trust/">vendor trust list</a> is free.</p>
 {table(sp.TRUST_PRICES)}</section>
 <section class="card cp-sec" id="sellers"><h2>For sellers: monitoring and audits</h2>
 <p><b>Sellers:</b> prove you control your payTo wallet, then Lumi test-buys your endpoints and alerts you when something breaks. Watch <b class="mono">$5</b> or Watch Pro <b class="mono">$20</b> per endpoint per 30 days, with a free tier and a free 14-day Watch trial; Re-test pack <b class="mono">$6.50</b> (30 test-buys) or Founder pack <b class="mono">$5.00</b> (24 test-buys, first 10 sellers); Audit <b class="mono">$99</b> one-time. A paid plan is disclosed on the seller's public entry and never changes its label. No auto-renew; no refunds unless Lumi can't perform the monitoring. {lk("https://api.lumitrades.io/v1/monitor", "How to start →")}</p>

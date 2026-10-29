@@ -31,7 +31,7 @@ def live_usdc(path):
     req = urllib.request.Request("https://api.lumitrades.io" + path, headers={"User-Agent": "lumitrades-site-check"})
     try:
         urllib.request.urlopen(req, timeout=20)
-        raise AssertionError(f"{path}: expected 402")
+        return 0.0  # answered without payment: a free route (e.g. /v1/trust/check, 100 a day)
     except urllib.error.HTTPError as e:
         assert e.code == 402, f"{path}: HTTP {e.code}"
         body = json.loads(e.read())

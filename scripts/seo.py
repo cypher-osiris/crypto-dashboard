@@ -133,8 +133,8 @@ def trust_dataset(t, lang, page_url, doc, vendors_url):
 # /agents/ FAQ: (question, answer). Answers are plain text (also used as FAQPage JSON-LD), facts only.
 FAQ = [
     ("How can my AI agent check an x402 seller before paying?",
-     "Call GET https://api.lumitrades.io/v1/trust/check?url= with the x402 URL your agent is about to pay. The first call answers 402 Payment Required "
-     "with a quote; the agent pays $0.02 with x402 and repeats the call with the signed payment to get allow, warn or block with coded reasons. "
+     "Call GET https://api.lumitrades.io/v1/trust/check?url= with the x402 URL your agent is about to pay. It is free for 100 checks a day (per IP and per key), "
+     "with no payment, and answers allow, warn or block with coded reasons. "
      "MCP clients can use the same checks through https://api.lumitrades.io/mcp. The answer is dated evidence, not a guarantee."),
     ("What is x402?",
      "x402 is an open payment protocol built on the HTTP status code 402 Payment Required, first published by Coinbase. A server answers "
@@ -196,7 +196,7 @@ def llms_txt(prices, plans=(), groups=None):
 
 ## Intent routing
 - CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict?url=<x402 resource URL> ($0.01, one signed label; the free cached version is GET /v1/check?url=)
-- SHOULD I PAY THIS EXACT QUOTE (payTo, price) -> GET https://api.lumitrades.io/v1/trust/check?url=<url>&payTo=<address>&amount=<usd> ($0.02)
+- SHOULD I PAY THIS EXACT QUOTE (payTo, price) -> GET https://api.lumitrades.io/v1/trust/check?url=<url>&payTo=<address>&amount=<usd> (free, 100 a day per IP and per key)
 - CHECK SEVERAL SELLERS AT ONCE -> GET https://api.lumitrades.io/v1/check/batch?urls= ($0.008)
 - SEE THE TEST-BUY RECORD FOR ONE SELLER -> GET https://api.lumitrades.io/v1/trust/receipts?seller= ($0.005)
 - LOOK UP A SELLER FOR FREE -> GET https://api.lumitrades.io/v1/trust/vendors?url=<url> (or ?domain= or ?payTo=)

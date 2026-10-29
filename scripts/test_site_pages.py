@@ -65,10 +65,10 @@ class SitePages(unittest.TestCase):
     def test_route_counts_from_tables(self):
         c = sp.route_counts()
         self.assertNotIn("m", c)
-        self.assertEqual(c["t"], 5)
+        self.assertEqual(c["t"], 4)  # Oct 29, 2026: /v1/trust/check is free
         self.assertEqual((c["lo"], c["hi"]), ("$0.005", "$0.02"))
         txt = sp.AGENTS_ROUTES_TEXT.format(**c)
-        self.assertIn("5 paid routes", txt)
+        self.assertIn("4 paid routes", txt)
         self.assertNotRegex(txt.lower(), r"market data|policy brief")
 
     def test_homepage_count_matches_tables(self):

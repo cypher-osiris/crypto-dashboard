@@ -21,7 +21,6 @@ EX = "https%3A%2F%2Fapi.example.com%2Fv1%2Fdata"
 # route, path template (as in TRUST_PRICES), the unpaid URL that returns the 402 quote
 ROUTES = [
     ("verdict", "GET /v1/verdict?url=", f"/v1/verdict?url={EX}"),
-    ("trust_check", "GET /v1/trust/check?url=", f"/v1/trust/check?url={EX}"),
     ("vendor_report", "GET /v1/trust/vendors/{id}/report", "/v1/trust/vendors/{id}/report"),
     ("receipts", "GET /v1/trust/receipts?seller=", "/v1/trust/receipts"),   # bare path: the live 402 quote, no seller named
     ("batch_check", "GET /v1/check/batch?urls=", f"/v1/check/batch?urls={EX},data.example.org"),
@@ -29,6 +28,7 @@ ROUTES = [
 DECIMALS = {"eip155:8453": 6, "stellar:pubnet": 7}   # atomic units; XRP is in drops (6); XRPL IOUs are decimal strings
 CHAIN = {"eip155:8453": "Base", "xrpl:0": "XRP Ledger", "stellar:pubnet": "Stellar"}
 FREE = [
+    ("Pay check: allow / warn / block with reasons (100 a day per IP and per key)", "GET /v1/trust/check?url="),
     ("Signed check from Lumi's record (same label as /v1/verdict)", "GET /v1/check?url="),
     ("Seller lookup and vendor trust list", "GET /v1/trust/vendors"),
     ("Verify a signed test-buy receipt", "POST /v1/trust/receipts/verify"),
