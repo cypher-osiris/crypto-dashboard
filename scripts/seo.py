@@ -178,12 +178,21 @@ def faq_html(t, E):
 MARKET_IDEAS_NOTICE = ""  # retired Oct 25, 2026
 
 
+# Labels every Lumi check answer carries (summary_facts.label), and the high-value check price (0.5% of the amount).
+CHECK_LABELS = "checks_passed / check_first / checks_failed / no_data"
+HIGH_VALUE_PRICE = "0.5% of the amount, min $0.005, max $0.25"
+HIGH_VALUE_ROW = (f"- `GET /v1/trust/check/high-value?url=&amount=`: the free check's label and score plus a live re-check and an "
+                  f"amount-bound signed receipt, {HIGH_VALUE_PRICE} per call")
+
+
 def llms_txt(prices, plans=(), groups=None):
     """/llms.txt (llmstxt.org format): where an LLM or agent finds the API docs and the human pages. English only.
     groups = [(title, rows)]: the price list in groups (e.g. Lumi Trust)."""
     line = lambda n, e, p: f"- `{e}`: {n}, {p if p == 'free' else p + ' per call'}"
     if groups:
         rows = "\n\n".join(f"### {g}\n" + "\n".join(line(*x) for x in items) for g, items in groups)
+        # The high-value check is priced by amount, not per call, so it is not a TRUST_PRICES row (2026-10-30).
+        rows += "\n" + HIGH_VALUE_ROW
     else:
         rows = "\n".join(line(*x) for x in prices)
     plan_rows = "\n".join(f"- {n}: {fmt.format(p=p)}. {d}" for n, (fmt, p), d in plans)
@@ -191,12 +200,13 @@ def llms_txt(prices, plans=(), groups=None):
 
 > Lumi checks x402 sellers with real paid test-buys and keeps a signed receipt for each one.
 > Sold per call to AI agents with x402 (USDC on Base or Stellar, or XRP, RLUSD or USDC on the XRP Ledger); no account or API key:
-> x402 seller checks (allow / warn / block), vendor reports, signed test-buy receipts and a free vendor trust list
+> a free x402 seller check (one label: {CHECK_LABELS}), vendor reports, signed test-buy receipts and a free vendor trust list
 > built from real on-ledger test-buys of other pay-per-call endpoints. Informational test evidence, not financial advice.
 
 ## Intent routing
-- CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict?url=<x402 resource URL> ($0.01, one signed label; the free cached version is GET /v1/check?url=)
-- SHOULD I PAY THIS EXACT QUOTE (payTo, price) -> GET https://api.lumitrades.io/v1/trust/check?url=<url>&payTo=<address>&amount=<usd> (free, 100 a day per IP and per key)
+- CHECK A SELLER BEFORE PAYING (start here, free) -> GET https://api.lumitrades.io/v1/trust/check?url=<x402 resource URL>&payTo=<address>&amount=<usd> (free, 100 a day per IP and per key; payTo and amount optional; one label: {CHECK_LABELS})
+- LIVE RE-CHECK BEFORE A LARGER PAYMENT -> GET https://api.lumitrades.io/v1/trust/check/high-value?url=<url>&amount=<usd> ({HIGH_VALUE_PRICE}, e.g. $0.05 for amount=10; same label and score as the free check, paying never changes them)
+- ONE SIGNED LABEL ONLY -> GET https://api.lumitrades.io/v1/verdict?url=<url> ($0.01; reads the same data as the free check)
 - CHECK SEVERAL SELLERS AT ONCE -> GET https://api.lumitrades.io/v1/check/batch?urls= ($0.008)
 - SEE THE TEST-BUY RECORD FOR ONE SELLER -> GET https://api.lumitrades.io/v1/trust/receipts?seller= ($0.005)
 - LOOK UP A SELLER FOR FREE -> GET https://api.lumitrades.io/v1/trust/vendors?url=<url> (or ?domain= or ?payTo=)

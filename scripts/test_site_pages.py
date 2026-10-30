@@ -56,7 +56,13 @@ class SitePages(unittest.TestCase):
         self.assertNotRegex(page.lower(), r"solana|partner|scam")
         with open(os.path.join(ROOT, "llms.txt"), encoding="utf-8") as f:
             llms = f.read()
-        self.assertIn("CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict?url=", llms)
+        # 2026-10-30: agents are routed to the free check first; the high-value price is shown; labels are named.
+        self.assertIn("CHECK A SELLER BEFORE PAYING (start here, free) -> GET https://api.lumitrades.io/v1/trust/check?url=", llms)
+        self.assertNotIn("CHECK A SELLER BEFORE PAYING -> GET https://api.lumitrades.io/v1/verdict", llms)
+        self.assertIn("checks_passed / check_first / checks_failed / no_data", llms)
+        self.assertIn("/v1/trust/check/high-value?url=&amount=`", llms)
+        self.assertIn("0.5% of the amount, min $0.005, max $0.25 per call", llms)
+        self.assertNotRegex(llms.lower(), r"solana")
         self.assertIn("https://lumitrades.io/prices/index.json", llms)
         bl = blocklist_re()
         if bl:
